@@ -1,0 +1,32 @@
+include(FetchContent)
+
+message(STATUS "Looking for KDCore dependencies")
+
+# spdlog Logging Library
+find_package(spdlog QUIET)
+if (NOT TARGET spdlog::spdlog)
+    message(STATUS "spdlog was not found. Fetching from git")
+    FetchContent_Declare(
+        spdlog
+        GIT_REPOSITORY https://github.com/gabime/spdlog.git
+        GIT_TAG v1.8.5
+        )
+    set(SPDLOG_INSTALL ON CACHE BOOL "Should install spdlog")
+    FetchContent_MakeAvailable(spdlog)
+endif()
+
+# whereami library
+FetchContent_Declare(
+    whereami
+    GIT_REPOSITORY https://github.com/gpakosz/whereami
+    GIT_TAG e4b7ba1be0e9fd60728acbdd418bc7195cdd37e7 # master at 5/July/2021
+    )
+FetchContent_MakeAvailable(whereami)
+
+# doctest library
+FetchContent_Declare(
+    doctest
+    GIT_REPOSITORY https://github.com/onqtam/doctest.git
+    GIT_TAG 2.4.6
+    )
+FetchContent_MakeAvailable(doctest)

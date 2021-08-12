@@ -1,0 +1,3 @@
+find_dependency(spdlog)
+
+include("${CMAKE_CURRENT_LIST_DIR}/KDCoreConfigTargets.cmake")

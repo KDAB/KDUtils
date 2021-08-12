@@ -1,0 +1,63 @@
+{
+    "version": 2,
+    "configurePresets": [
+        {
+            "name": "configure-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "KDCORE_BUILD_TESTS": "OFF",
+                "KDCORE_CODE_COVERAGE": "OFF"
+            }
+        },
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "inherits": [
+                "configure-base"
+            ],
+            "binaryDir": "${sourceDir}/build/Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "KDCORE_BUILD_TESTS": "ON",
+                "KDCORE_CODE_COVERAGE": "ON"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "inherits": [
+                "configure-base"
+            ],
+            "binaryDir": "${sourceDir}/build/Release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "profile",
+            "displayName": "Profile",
+            "inherits": [
+                "configure-base"
+            ],
+            "binaryDir": "${sourceDir}/build/Profile",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        },
+        {
+            "name": "release",
+            "configurePreset": "release"
+        },
+        {
+            "name": "profile",
+            "configurePreset": "profile"
+        }
+    ]
+}
