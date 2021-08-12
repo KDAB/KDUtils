@@ -59,5 +59,11 @@
             "name": "profile",
             "configurePreset": "profile"
         }
+    ],
+    "testPresets": [
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        }
     ]
 }
