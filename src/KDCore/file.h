@@ -30,6 +30,7 @@ public:
     ByteArray readAll();
     void write(const ByteArray &data);
     std::string fileName() const;
+    const std::string &path() const;
 
     size_t size() const;
 

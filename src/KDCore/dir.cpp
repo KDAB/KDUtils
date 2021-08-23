@@ -47,7 +47,7 @@ bool Dir::rmdir()
     return std::filesystem::remove_all(dPath, e) > 0;
 }
 
-std::string Dir::path() const
+const std::string &Dir::path() const
 {
     return m_path;
 }

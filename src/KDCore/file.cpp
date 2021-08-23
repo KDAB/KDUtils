@@ -80,6 +80,11 @@ std::string File::fileName() const
     return p.filename().u8string();
 }
 
+const std::string &File::path() const
+{
+    return m_path;
+}
+
 std::uintmax_t File::size() const
 {
     std::error_code e;

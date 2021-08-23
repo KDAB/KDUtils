@@ -18,7 +18,7 @@ public:
     bool exists() const;
     bool mkdir();
     bool rmdir();
-    std::string path() const;
+    const std::string &path() const;
     std::string dirName() const;
     std::string absoluteFilePath(const std::string &file) const;
 
