@@ -32,7 +32,7 @@ public:
     std::string fileName() const;
     const std::string &path() const;
 
-    size_t size() const;
+    std::uintmax_t size() const;
 
 private:
     std::string m_path;
