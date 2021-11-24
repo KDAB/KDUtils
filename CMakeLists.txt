@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(KDCore CXX C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(BUILD_SHARED_LIBS ON)
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 include(FeatureSummary)
 include(CMakeDependentOption)
