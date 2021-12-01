@@ -3,8 +3,10 @@ include(FetchContent)
 message(STATUS "Looking for KDCore dependencies")
 
 # spdlog Logging Library
+# spdlog needs to be installed. If already exists in the prefix, we don't want to override it, so first we try to find it
+# If we dont find it, then we fetch it and install it
 find_package(spdlog QUIET)
-if (NOT TARGET spdlog::spdlog)
+if (NOT ${spdlog_FOUND})
     message(STATUS "spdlog was not found. Fetching from git")
     FetchContent_Declare(
         spdlog
