@@ -44,6 +44,7 @@ include(GenerateExportHeader)
 generate_export_header(KDCore BASE_NAME kdcore)
 configure_file(${CMAKE_CURRENT_BINARY_DIR}/kdcore_export.h ${CMAKE_BINARY_DIR}/include/KDCore/kdcore_export.h)
 target_include_directories(KDCore PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kdcore_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDCore)
 
 set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/KDCoreConfig.cmake.in")
 set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/KDCoreConfig.cmake")
