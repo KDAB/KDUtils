@@ -3,6 +3,7 @@ KDUtils
 A set of C++ helpers and wrappers around stdlib
 
 You get:
+
 * ByteArray
 * Dir
 * ElaspedTimer
@@ -23,6 +24,12 @@ Stay up-to-date with KDAB product announcements:
 * [KDAB Blogs](https://www.kdab.com/category/blogs)
 * [KDAB on Twitter](https://twitter.com/KDABQt)
 
+Licensing
+=========
+KDUtils is (C) 2018-2022, Klarälvdalens Datakonsult AB, and is licensed according to
+the terms of the [AGPL 3.0](LICENSES/AGPL-3.0-only.txt).
+
+Contact KDAB at <info@kdab.com> to inquire about commercial licensing.
 
 Get Involved
 ============

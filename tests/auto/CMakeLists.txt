@@ -1,3 +1,13 @@
+# This file is part of KDUtils.
+#
+# SPDX-FileCopyrightText: 2021-2022 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+# Author: Paul Lemire <paul.lemire@kdab.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Contact KDAB at <info@kdab.com> for commercial licensing options.
+#
+
 add_feature_info(KDUtils-Test ON "KDUtils Unit Tests")
 
 include (${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
