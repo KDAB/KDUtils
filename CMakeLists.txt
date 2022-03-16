@@ -9,7 +9,12 @@
 #
 
 cmake_minimum_required(VERSION 3.12)
-project(KDUtils CXX C)
+project(KDUtils
+    DESCRIPTION "A set of C++ helpers and wrappers around stdlib"
+    LANGUAGES CXX C
+    VERSION 0.95
+    HOMEPAGE_URL "https://github.com/KDAB/KDUtils"
+)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
