@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-namespace KDCore {
+namespace KDUtils {
 
 Dir::Dir()
 {
@@ -86,4 +86,4 @@ bool Dir::operator==(const Dir &other) const
     return std::filesystem::path(m_path) == std::filesystem::path(other.m_path);
 }
 
-} // namespace KDCore
+} // namespace KDUtils

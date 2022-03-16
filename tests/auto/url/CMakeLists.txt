@@ -1,5 +1,5 @@
 add_executable(tst_url tst_url.cpp)
-target_link_libraries(tst_url PRIVATE KDCore doctest::doctest)
+target_link_libraries(tst_url PRIVATE KDUtils doctest::doctest)
 get_filename_component(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../assets/ ABSOLUTE)
 target_compile_definitions(tst_url PRIVATE ASSETS="${ASSETS_DIR}/")
-doctest_discover_tests(tst_url ADD_LABELS 1 PROPERTIES LABELS "KDCore")
+doctest_discover_tests(tst_url ADD_LABELS 1 PROPERTIES LABELS "KDUtils")

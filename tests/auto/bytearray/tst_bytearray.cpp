@@ -26,10 +26,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <KDCore/bytearray.h>
+#include <KDUtils/bytearray.h>
 #include <cstring>
 
-using namespace KDCore;
+using namespace KDUtils;
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>

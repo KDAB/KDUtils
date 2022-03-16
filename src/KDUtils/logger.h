@@ -1,10 +1,10 @@
-#ifndef KDCORE_LOGGER_H
-#define KDCORE_LOGGER_H
+#ifndef KDUTILS_LOGGER_H
+#define KDUTILS_LOGGER_H
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-namespace KDCore {
+namespace KDUtils {
 
 class Logger
 {
@@ -88,6 +88,6 @@ private:
     spdlog::level::level_enum m_logLevel = spdlog::level::debug;
 };
 
-} // namespace KDCore
+} // namespace KDUtils
 
 #endif // KUESA_COREUTILS_LOGGER_H

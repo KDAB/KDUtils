@@ -26,18 +26,18 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef KDCORE_BYTEARRAY_H
-#define KDCORE_BYTEARRAY_H
+#ifndef KDUTILS_BYTEARRAY_H
+#define KDUTILS_BYTEARRAY_H
 
 #include <vector>
 #include <stdint.h>
 #include <string>
 
-#include <KDCore/kdcore_export.h>
+#include <KDUtils/kdutils_export.h>
 
-namespace KDCore {
+namespace KDUtils {
 
-class KDCORE_EXPORT ByteArray
+class KDUTILS_EXPORT ByteArray
 {
 public:
     ByteArray();
@@ -86,10 +86,10 @@ private:
     std::vector<uint8_t> m_data;
 };
 
-KDCORE_EXPORT bool operator==(const ByteArray &a, const ByteArray &b);
-KDCORE_EXPORT bool operator!=(const ByteArray &a, const ByteArray &b);
-KDCORE_EXPORT ByteArray operator+(const ByteArray &a, const ByteArray &b);
+KDUTILS_EXPORT bool operator==(const ByteArray &a, const ByteArray &b);
+KDUTILS_EXPORT bool operator!=(const ByteArray &a, const ByteArray &b);
+KDUTILS_EXPORT ByteArray operator+(const ByteArray &a, const ByteArray &b);
 
-} // namespace KDCore
+} // namespace KDUtils
 
 #endif // KUESA_COREUTILS_BYTEARRAY_H

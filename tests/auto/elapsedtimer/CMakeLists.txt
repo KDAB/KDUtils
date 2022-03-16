@@ -1,5 +1,5 @@
 add_executable(tst_elapsedtimer tst_elapsedtimer.cpp)
-target_link_libraries(tst_elapsedtimer PRIVATE KDCore doctest::doctest)
+target_link_libraries(tst_elapsedtimer PRIVATE KDUtils doctest::doctest)
 get_filename_component(ASSETS_ELAPSEDTIMER ${CMAKE_CURRENT_SOURCE_ELAPSEDTIMER}/../assets/ ABSOLUTE)
 target_compile_definitions(tst_elapsedtimer PRIVATE ASSETS="${ASSETS_ELAPSEDTIMER}/")
-doctest_discover_tests(tst_elapsedtimer ADD_LABELS 1 PROPERTIES LABELS "KDCore")
+doctest_discover_tests(tst_elapsedtimer ADD_LABELS 1 PROPERTIES LABELS "KDUtils")

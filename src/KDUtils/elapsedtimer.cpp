@@ -1,6 +1,6 @@
 #include "elapsedtimer.h"
 
-namespace KDCore {
+namespace KDUtils {
 
 ElapsedTimer::ElapsedTimer() = default;
 
@@ -32,4 +32,4 @@ void ElapsedTimer::start()
     m_startTimePoint = Clock::now();
 }
 
-} // namespace KDCore
+} // namespace KDUtils

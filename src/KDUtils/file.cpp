@@ -1,6 +1,6 @@
 #include "file.h"
 
-namespace KDCore {
+namespace KDUtils {
 
 File::File(const std::string &path)
     : m_path(path)
@@ -91,4 +91,4 @@ std::uintmax_t File::size() const
     return std::filesystem::file_size(m_path, e);
 }
 
-} // namespace KDCore
+} // namespace KDUtils

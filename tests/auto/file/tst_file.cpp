@@ -26,8 +26,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <KDCore/file.h>
-using namespace KDCore;
+#include <KDUtils/file.h>
+using namespace KDUtils;
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>

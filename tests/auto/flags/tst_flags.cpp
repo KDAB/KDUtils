@@ -26,9 +26,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <KDCore/flags.h>
+#include <KDUtils/flags.h>
 
-using namespace KDCore;
+using namespace KDUtils;
 
 enum Enum {
     A = (1 << 0),

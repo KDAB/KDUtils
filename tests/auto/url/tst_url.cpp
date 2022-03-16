@@ -26,9 +26,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <KDCore/url.h>
+#include <KDUtils/url.h>
 
-namespace KC = KDCore;
+namespace KC = KDUtils;
 
 #define StringLiteral(str)                    \
     ([]() noexcept -> std::string {           \

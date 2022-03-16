@@ -1,10 +1,10 @@
-#ifndef KDCORE_FLAGS_H
-#define KDCORE_FLAGS_H
+#ifndef KDUTILS_FLAGS_H
+#define KDUTILS_FLAGS_H
 
 #include <type_traits>
 #include <functional>
 
-namespace KDCore {
+namespace KDUtils {
 
 template<typename E>
 class Flags
@@ -114,7 +114,7 @@ private:
     FlagsInt m_flags = FlagsInt(0);
 };
 
-} // namespace KDCore
+} // namespace KDUtils
 
 // clang-format off
 #define OPERATORS_FOR_FLAGS(Flags)                                                                   \

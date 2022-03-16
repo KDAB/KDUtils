@@ -26,10 +26,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <KDCore/elapsedtimer.h>
+#include <KDUtils/elapsedtimer.h>
 #include <thread>
 
-using namespace KDCore;
+using namespace KDUtils;
 using namespace std::literals::chrono_literals;
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN

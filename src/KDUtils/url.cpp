@@ -3,7 +3,7 @@
 
 using namespace std::string_literals;
 
-namespace KDCore {
+namespace KDUtils {
 
 Url::Url(const std::string &url)
     : m_url(url)
@@ -62,14 +62,14 @@ Url Url::fromLocalFile(const std::string &url)
     return Url(std::string("file://") + url);
 }
 
-KDCORE_EXPORT bool operator==(const Url &a, const Url &b)
+KDUTILS_EXPORT bool operator==(const Url &a, const Url &b)
 {
     return a.url() == b.url();
 }
 
-KDCORE_EXPORT bool operator!=(const Url &a, const Url &b)
+KDUTILS_EXPORT bool operator!=(const Url &a, const Url &b)
 {
     return !(a == b);
 }
 
-} // namespace KDCore
+} // namespace KDUtils

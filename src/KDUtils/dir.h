@@ -1,13 +1,13 @@
-#ifndef KDCORE_DIR_H
-#define KDCORE_DIR_H
+#ifndef KDUTILS_DIR_H
+#define KDUTILS_DIR_H
 
-#include <KDCore/kdcore_export.h>
+#include <KDUtils/kdutils_export.h>
 #include <string>
 #include <filesystem>
 
-namespace KDCore {
+namespace KDUtils {
 
-class KDCORE_EXPORT Dir
+class KDUTILS_EXPORT Dir
 {
 public:
     Dir();
@@ -30,6 +30,6 @@ private:
     std::string m_path;
 };
 
-} // namespace KDCore
+} // namespace KDUtils
 
 #endif // KUESA_COREUTILS_DIR_H

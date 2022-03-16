@@ -1,12 +1,12 @@
-#ifndef KDCORE_URL_H
-#define KDCORE_URL_H
+#ifndef KDUTILS_URL_H
+#define KDUTILS_URL_H
 
-#include <KDCore/kdcore_export.h>
+#include <KDUtils/kdutils_export.h>
 #include <string>
 
-namespace KDCore {
+namespace KDUtils {
 
-class KDCORE_EXPORT Url
+class KDUTILS_EXPORT Url
 {
 public:
     Url() = default;
@@ -30,9 +30,9 @@ private:
     std::string m_path;
 };
 
-KDCORE_EXPORT bool operator==(const Url &a, const Url &b);
-KDCORE_EXPORT bool operator!=(const Url &a, const Url &b);
+KDUTILS_EXPORT bool operator==(const Url &a, const Url &b);
+KDUTILS_EXPORT bool operator!=(const Url &a, const Url &b);
 
-} // namespace KDCore
+} // namespace KDUtils
 
 #endif // KUESA_COREUTILS_URL_H

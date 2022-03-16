@@ -6,8 +6,8 @@
             "hidden": true,
             "generator": "Ninja",
             "cacheVariables": {
-                "KDCORE_BUILD_TESTS": "OFF",
-                "KDCORE_CODE_COVERAGE": "OFF"
+                "KDUTILS_BUILD_TESTS": "OFF",
+                "KDUTILS_CODE_COVERAGE": "OFF"
             }
         },
         {
@@ -19,8 +19,8 @@
             "binaryDir": "${sourceDir}/build/Debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "KDCORE_BUILD_TESTS": "ON",
-                "KDCORE_CODE_COVERAGE": "ON"
+                "KDUTILS_BUILD_TESTS": "ON",
+                "KDUTILS_CODE_COVERAGE": "ON"
             }
         },
         {

@@ -2,7 +2,7 @@
 #include <cstring>
 #include <algorithm>
 
-namespace KDCore {
+namespace KDUtils {
 
 ByteArray::ByteArray()
 {
@@ -308,4 +308,4 @@ ByteArray operator+(const ByteArray &a, const ByteArray &b)
     return ByteArray(a) += b;
 }
 
-} // namespace KDCore
+} // namespace KDUtils

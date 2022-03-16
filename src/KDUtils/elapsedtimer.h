@@ -1,13 +1,13 @@
-#ifndef KDCORE_ELAPSEDTIMER_H
-#define KDCORE_ELAPSEDTIMER_H
+#ifndef KDUTILS_ELAPSEDTIMER_H
+#define KDUTILS_ELAPSEDTIMER_H
 
-#include <KDCore/kdcore_export.h>
+#include <KDUtils/kdutils_export.h>
 #include <chrono>
 #include <ratio>
 
-namespace KDCore {
+namespace KDUtils {
 
-class KDCORE_EXPORT ElapsedTimer
+class KDUTILS_EXPORT ElapsedTimer
 {
 public:
     using Clock = std::chrono::high_resolution_clock;
@@ -28,6 +28,6 @@ private:
     TimePoint m_startTimePoint = Clock::now();
 };
 
-} // namespace KDCore
+} // namespace KDUtils
 
 #endif // KUESA_COREUTILS_ELAPSEDTIMER_H

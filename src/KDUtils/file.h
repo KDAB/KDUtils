@@ -1,15 +1,15 @@
-#ifndef KDCORE_FILE_H
-#define KDCORE_FILE_H
+#ifndef KDUTILS_FILE_H
+#define KDUTILS_FILE_H
 
-#include <KDCore/kdcore_export.h>
-#include <KDCore/bytearray.h>
+#include <KDUtils/kdutils_export.h>
+#include <KDUtils/bytearray.h>
 #include <iostream>
 #include <fstream>
 #include <filesystem>
 
-namespace KDCore {
+namespace KDUtils {
 
-class KDCORE_EXPORT File
+class KDUTILS_EXPORT File
 {
 public:
     File(const std::string &path);
@@ -39,6 +39,6 @@ private:
     std::fstream m_stream;
 };
 
-} // namespace KDCore
+} // namespace KDUtils
 
 #endif // KUESA_COREUTILS_FILE_H

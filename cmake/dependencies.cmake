@@ -1,6 +1,6 @@
 include(FetchContent)
 
-message(STATUS "Looking for KDCore dependencies")
+message(STATUS "Looking for KDUtils dependencies")
 
 # spdlog Logging Library
 # spdlog needs to be installed. If already exists in the prefix, we don't want to override it, so first we try to find it
