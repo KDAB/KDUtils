@@ -1,3 +1,14 @@
+/*
+  This file is part of KDUtils.
+
+  SPDX-FileCopyrightText: 2021-2022 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+  Author: Paul Lemire <paul.lemire@kdab.com>
+
+  SPDX-License-Identifier: AGPL-3.0
+
+  Contact KDAB at <info@kdab.com> for commercial licensing options.
+*/
+
 #ifndef KDUTILS_FLAGS_H
 #define KDUTILS_FLAGS_H
 
