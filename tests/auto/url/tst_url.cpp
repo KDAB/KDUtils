@@ -49,7 +49,7 @@ TEST_SUITE("Url")
         static_assert(std::is_default_constructible<KC::Url>{},
                       "Url should be default constructible");
         static_assert(std::is_copy_constructible<KC::Url>{},
-                      "Url should be be copy constructible");
+                      "Url should be copy constructible");
         static_assert(std::is_copy_assignable<KC::Url>{},
                       "Url should be copy assignable");
         static_assert(std::is_move_constructible<KC::Url>{},
