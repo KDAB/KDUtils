@@ -6,7 +6,7 @@ You get:
 
 * ByteArray
 * Dir
-* ElaspedTimer
+* ElapsedTimer
 * File
 * Flags
 * Url
