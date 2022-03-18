@@ -39,7 +39,7 @@ TEST_SUITE("Flags")
             A_CIE = 0,
         };
 
-        enum ClassUIntEnum : uint {
+        enum ClassUIntEnum : unsigned int {
             A_CUE = 0,
         };
 
