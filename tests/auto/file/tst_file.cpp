@@ -39,7 +39,7 @@ TEST_SUITE("File")
         }
         {
             // GIVEN
-            File f(TST_DIR "tst_file");
+            File f(TST_DIR "tst_file.cpp");
 
             // THEN
             CHECK(f.exists());
@@ -57,8 +57,8 @@ TEST_SUITE("File")
         }
         {
             // GIVEN
-            File f(TST_DIR "tst_file");
-            const auto expectedSize = std::filesystem::file_size(std::filesystem::path(TST_DIR).append("tst_file"));
+            File f(TST_DIR "tst_file.cpp");
+            const auto expectedSize = std::filesystem::file_size(std::filesystem::path(TST_DIR).append("tst_file.cpp"));
 
             // THEN
             CHECK(f.size() == expectedSize);
@@ -68,16 +68,16 @@ TEST_SUITE("File")
     TEST_CASE("checkFileName")
     {
         // GIVEN
-        File f(TST_DIR "tst_file");
+        File f(TST_DIR "tst_file.cpp");
 
         // THEN
-        CHECK(f.fileName() == "tst_file");
+        CHECK(f.fileName() == "tst_file.cpp");
     }
 
     TEST_CASE("checkCanOpenAndReadExistingFile")
     {
         // GIVEN
-        File f(TST_DIR "tst_file");
+        File f(TST_DIR "tst_file.cpp");
 
         // THEN
         CHECK(f.exists());
