@@ -153,7 +153,7 @@ bool ByteArray::endsWith(const ByteArray &b) const
     return std::memcmp(constData() + size() - b.size(), b.constData(), b.size()) == 0;
 }
 
-ByteArray::ByteArray(ByteArray &&other)
+ByteArray::ByteArray(ByteArray &&other) noexcept
     : m_data(std::move(other.m_data))
 {
 }
@@ -163,7 +163,7 @@ ByteArray::ByteArray(std::vector<uint8_t> &&data)
 {
 }
 
-ByteArray &ByteArray::operator=(ByteArray &&other)
+ByteArray &ByteArray::operator=(ByteArray &&other) noexcept
 {
     if (this != &other)
         m_data = std::move(other.m_data);
@@ -230,11 +230,11 @@ namespace {
 constexpr int8_t getInverseFromB64(uint8_t c)
 {
     if (c >= 'A' && c <= 'Z')
-        return c - 'A';
+        return static_cast<int8_t>(c - 'A');
     if (c >= 'a' && c <= 'z')
-        return c - 'a' + 26;
+        return static_cast<int8_t>(c - 'a' + 26);
     if (c >= '0' && c <= '9')
-        return c - '0' + 52;
+        return static_cast<int8_t>(c - '0' + 52);
     if (c == '+' || c == '-')
         return 62;
     if (c == '/' || c == '_')

@@ -34,9 +34,9 @@ public:
     ByteArray &operator=(const ByteArray &);
     ByteArray &operator=(const char *);
 
-    ByteArray(ByteArray &&other);
+    ByteArray(ByteArray &&other) noexcept;
     explicit ByteArray(std::vector<uint8_t> &&data);
-    ByteArray &operator=(ByteArray &&other);
+    ByteArray &operator=(ByteArray &&other) noexcept;
 
     ByteArray mid(size_t pos, size_t len = 0) const;
     ByteArray left(size_t left) const;

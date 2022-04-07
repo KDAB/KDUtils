@@ -75,14 +75,14 @@ ByteArray File::readAll()
     b.resize(s);
     // Move to beginning and read all
     m_stream.seekg(0);
-    m_stream.read(reinterpret_cast<char *>(b.data()), s);
+    m_stream.read(reinterpret_cast<char *>(b.data()), static_cast<std::streamsize>(s));
     return b;
 }
 
 void File::write(const ByteArray &data)
 {
     if (isOpen())
-        m_stream.write(reinterpret_cast<const char *>(data.constData()), data.size());
+        m_stream.write(reinterpret_cast<const char *>(data.constData()), static_cast<std::streamsize>(data.size()));
 }
 
 std::string File::fileName() const
