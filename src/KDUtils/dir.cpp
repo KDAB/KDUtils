@@ -79,11 +79,11 @@ std::string Dir::absoluteFilePath(const std::string &file) const
 
 Dir Dir::applicationDir()
 {
-    const int length = wai_getExecutablePath(NULL, 0, NULL);
+    const int length = wai_getExecutablePath(NULL, 0, NULL); // NOLINT(modernize-use-nullptr)
     if (length >= 0) {
         std::string appPath;
         appPath.resize(length);
-        wai_getExecutablePath(appPath.data(), length, NULL);
+        wai_getExecutablePath(appPath.data(), length, NULL); // NOLINT(modernize-use-nullptr)
 
         const std::filesystem::path appFSPath(appPath);
         return Dir(appFSPath.parent_path().append(""));
