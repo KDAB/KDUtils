@@ -1,6 +1,6 @@
 KDUtils
 =======
-A set of C++ helpers and wrappers around stdlib
+A set of C++ helpers and wrappers around the C++ standard library
 
 You get:
 

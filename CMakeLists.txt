@@ -10,7 +10,7 @@
 
 cmake_minimum_required(VERSION 3.12)
 project(KDUtils
-    DESCRIPTION "A set of C++ helpers and wrappers around stdlib"
+    DESCRIPTION "A set of C++ helpers and wrappers around the C++ standard library"
     LANGUAGES CXX C
     VERSION 0.95
     HOMEPAGE_URL "https://github.com/KDAB/KDUtils"
