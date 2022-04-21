@@ -19,7 +19,7 @@ namespace KDUtils {
 Url::Url(const std::string &url)
     : m_url(url)
 {
-    std::regex rexExp(u8"(?:(.*):(?:\\/\\/)?)?(.*\\/)*(.+\\..+)?"s);
+    std::regex rexExp(u8"(?:([^\\/]{2,})?:(?:\\/\\/)?)?(.*\\/)*(.+\\..+)?"s);
     std::smatch match;
     const bool hasMatch = std::regex_match(m_url, match, rexExp);
     if (hasMatch) {

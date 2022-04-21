@@ -163,6 +163,13 @@ TEST_SUITE("Url")
             // THEN
             CHECK(url.scheme() == StringLiteral(""));
         }
+        {
+            // GIVEN
+            KC::Url url(StringLiteral("C:/users/bruce_w/my_file.txt"));
+
+            // THEN
+            CHECK(url.scheme() == StringLiteral(""));
+        }
     }
 
     TEST_CASE("checkPath")
@@ -208,6 +215,13 @@ TEST_SUITE("Url")
 
             // THEN
             CHECK(url.path() == StringLiteral(""));
+        }
+        {
+            // GIVEN
+            KC::Url url(StringLiteral("C:/users/bruce_w/my_file.txt"));
+
+            // THEN
+            CHECK(url.path() == StringLiteral("C:/users/bruce_w/"));
         }
     }
 
