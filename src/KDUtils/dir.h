@@ -29,7 +29,7 @@ public:
     bool exists() const;
     bool mkdir();
     bool rmdir();
-    const std::string &path() const;
+    std::string path() const;
     std::string dirName() const;
     std::string absoluteFilePath(const std::string &file) const;
 
@@ -38,7 +38,7 @@ public:
     bool operator==(const Dir &other) const;
 
 private:
-    std::string m_path;
+    std::filesystem::path m_path;
 };
 
 } // namespace KDUtils

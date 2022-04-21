@@ -40,41 +40,36 @@ Dir::Dir(const std::filesystem::path &path)
 bool Dir::exists() const
 {
     std::error_code e;
-    const std::filesystem::path dPath{ m_path };
-    return std::filesystem::exists(dPath, e) && std::filesystem::is_directory(m_path, e);
+    return std::filesystem::exists(m_path, e) && std::filesystem::is_directory(m_path, e);
 }
 
 bool Dir::mkdir()
 {
     std::error_code e;
-    const std::filesystem::path dPath{ m_path };
-    return std::filesystem::create_directory(dPath, e);
+    return std::filesystem::create_directory(m_path, e);
 }
 
 bool Dir::rmdir()
 {
     std::error_code e;
-    const std::filesystem::path dPath{ m_path };
-    return std::filesystem::remove_all(dPath, e) > 0;
+    return std::filesystem::remove_all(m_path, e) > 0;
 }
 
-const std::string &Dir::path() const
+std::string Dir::path() const
 {
-    return m_path;
+    return m_path.generic_u8string();
 }
 
 std::string Dir::dirName() const
 {
-    const std::filesystem::path p{ m_path };
-    return p.parent_path().filename().u8string();
+    return m_path.parent_path().filename().generic_u8string();
 }
 
 std::string Dir::absoluteFilePath(const std::string &file) const
 {
     std::error_code e;
-    const std::filesystem::path dPath{ m_path };
     const std::filesystem::path fPath{ file };
-    return std::filesystem::absolute(dPath / fPath, e).u8string();
+    return std::filesystem::absolute(m_path / fPath, e).generic_u8string();
 }
 
 Dir Dir::applicationDir()
@@ -94,7 +89,7 @@ Dir Dir::applicationDir()
 
 bool Dir::operator==(const Dir &other) const
 {
-    return std::filesystem::path(m_path) == std::filesystem::path(other.m_path);
+    return m_path == other.m_path;
 }
 
 } // namespace KDUtils
