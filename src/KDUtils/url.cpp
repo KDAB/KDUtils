@@ -64,17 +64,17 @@ std::string Url::url() const
 
 Url Url::fromLocalFile(const std::string &url)
 {
-    Url u(url);
+    std::string path = Dir::fromNativeSeparators(url);
+    Url u(path);
     // If url has a scheme, we return it
     if (!u.scheme().empty())
         return u;
     // Do we hold a path?
     if (u.path().empty())
-        return Url(std::string("file:") + url);
-    std::string path = Dir::fromNativeSeparators(url);
+        return Url(std::string("file:") + path);
     const bool isWindowsPath = path.size() > 1 && path[1] == ':' && path[0] != '/';
     if (isWindowsPath)
-        path.insert(0, "/");
+        path.insert(path.begin(), '/');
     return Url(std::string("file://") + path);
 }
 

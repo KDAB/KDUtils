@@ -117,6 +117,13 @@ TEST_SUITE("Url")
             // THEN -> Nothing since url has already a scheme
             CHECK(url == KC::Url(StringLiteral("file:file.txt")));
         }
+        {
+            // GIVEN
+            KC::Url url = KC::Url::fromLocalFile(StringLiteral("C:/users/bruce_w/file.txt"));
+
+            // THEN
+            CHECK(url == KC::Url(StringLiteral("file:///C:/users/bruce_w/file.txt")));
+        }
     }
 
     TEST_CASE("checkScheme")
