@@ -10,6 +10,7 @@
 */
 
 #include "url.h"
+#include "dir.h"
 #include <regex>
 
 using namespace std::string_literals;
@@ -70,7 +71,11 @@ Url Url::fromLocalFile(const std::string &url)
     // Do we hold a path?
     if (u.path().empty())
         return Url(std::string("file:") + url);
-    return Url(std::string("file://") + url);
+    std::string path = Dir::fromNativeSeparators(url);
+    const bool isWindowsPath = path.size() > 1 && path[1] == ':' && path[0] != '/';
+    if (isWindowsPath)
+        path.insert(0, "/");
+    return Url(std::string("file://") + path);
 }
 
 KDUTILS_EXPORT bool operator==(const Url &a, const Url &b)

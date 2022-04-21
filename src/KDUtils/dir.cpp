@@ -87,6 +87,11 @@ Dir Dir::applicationDir()
     return {};
 }
 
+std::string Dir::fromNativeSeparators(const std::string &path)
+{
+    return std::filesystem::path(path).generic_u8string();
+}
+
 bool Dir::operator==(const Dir &other) const
 {
     return m_path == other.m_path;

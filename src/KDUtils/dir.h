@@ -34,6 +34,7 @@ public:
     std::string absoluteFilePath(const std::string &file) const;
 
     static Dir applicationDir();
+    static std::string fromNativeSeparators(const std::string &path);
 
     bool operator==(const Dir &other) const;
 
