@@ -15,7 +15,7 @@ message(STATUS "Looking for KDUtils dependencies")
 # spdlog Logging Library
 # spdlog needs to be installed. If already exists in the prefix, we don't want to override it, so first we try to find it
 # If we don't find it, then we fetch it and install it
-find_package(spdlog QUIET)
+find_package(spdlog 1.8.5 QUIET)
 if (NOT ${spdlog_FOUND})
     message(STATUS "spdlog was not found. Fetching from git")
     FetchContent_Declare(
