@@ -48,6 +48,7 @@ set_target_properties(KDUtils
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN 1
 )
+target_compile_features(KDUtils INTERFACE cxx_std_17) # b/c of std::filesystem (a C++17 feature) usage in public API
 
 generate_export_header(KDUtils BASE_NAME kdutils)
 configure_file(${CMAKE_CURRENT_BINARY_DIR}/kdutils_export.h ${CMAKE_BINARY_DIR}/include/KDUtils/kdutils_export.h)
