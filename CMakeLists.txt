@@ -16,12 +16,12 @@ project(KDUtils
     HOMEPAGE_URL "https://github.com/KDAB/KDUtils"
 )
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 include(FeatureSummary)
 include(CMakeDependentOption)
 include(cmake/dependencies.cmake)
+include(GenerateExportHeader)
 include(GNUInstallDirs)
 include(CTest)
 

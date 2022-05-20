@@ -40,7 +40,6 @@ target_include_directories(KDUtils PRIVATE
     )
 target_sources(KDUtils PRIVATE ${whereami_SOURCE_DIR}/src/whereami.c)
 
-
 set_target_properties(KDUtils
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
@@ -50,7 +49,6 @@ set_target_properties(KDUtils
     VISIBILITY_INLINES_HIDDEN 1
 )
 
-include(GenerateExportHeader)
 generate_export_header(KDUtils BASE_NAME kdutils)
 configure_file(${CMAKE_CURRENT_BINARY_DIR}/kdutils_export.h ${CMAKE_BINARY_DIR}/include/KDUtils/kdutils_export.h)
 target_include_directories(KDUtils PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>)
