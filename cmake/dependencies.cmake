@@ -17,7 +17,6 @@ message(STATUS "Looking for KDUtils dependencies")
 # If we don't find it, then we fetch it and install it
 find_package(spdlog 1.8.5 QUIET)
 if (NOT ${spdlog_FOUND})
-    message(STATUS "spdlog was not found. Fetching from git")
     FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
