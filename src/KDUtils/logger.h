@@ -13,7 +13,11 @@
 #define KDUTILS_LOGGER_H
 
 #include <spdlog/spdlog.h>
+#if defined(ANDROID)
+#include <spdlog/sinks/android_sink.h>
+#else
 #include <spdlog/sinks/stdout_color_sinks.h>
+#endif
 
 namespace KDUtils {
 
@@ -32,7 +36,11 @@ public:
     {
         // Create logger if it wasn't already (use multithread logger just to be safe)
         if (!m_logger)
+#if defined(ANDROID)
+            m_logger = spdlog::android_logger_mt(category, category);
+#else
             m_logger = spdlog::stdout_color_mt(category);
+#endif
 
         switch (m_type) {
         case Logger::Type::Debug:
