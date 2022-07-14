@@ -17,6 +17,10 @@
 #include <fstream>
 #include <filesystem>
 
+#if defined(ANDROID)
+#include <android/asset_manager.h>
+#endif
+
 namespace KDUtils {
 
 class KDUTILS_EXPORT File
@@ -46,8 +50,16 @@ public:
 
 private:
     std::string m_path;
+#if defined(ANDROID)
+    AAsset *m_asset = nullptr;
+#else
     std::fstream m_stream;
+#endif
 };
+
+#if defined(ANDROID)
+KDUTILS_EXPORT void setAssetManager(AAssetManager *assetManager);
+#endif
 
 } // namespace KDUtils
 

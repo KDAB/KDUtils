@@ -29,6 +29,9 @@ set(HEADERS
 add_library(KDUtils ${SOURCES} ${HEADERS})
 add_library(KDUtils::KDUtils ALIAS KDUtils)
 target_link_libraries(KDUtils PUBLIC spdlog::spdlog)
+if (ANDROID)
+    target_link_libraries(KDUtils PUBLIC android)
+endif()
 
 target_include_directories(KDUtils PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
