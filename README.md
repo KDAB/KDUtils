@@ -12,6 +12,11 @@ You get:
 * Url
 * Logger
 
+Building
+========
+
+Linux
+* sudo apt install libxkbcommon-dev libxcb-xkb-dev libxkbcommon-x11-dev wayland-scanner++ wayland-protocols
 
 Contact
 =======

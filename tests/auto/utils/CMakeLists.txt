@@ -10,7 +10,7 @@
 
 add_feature_info(KDUtils-Test ON "KDUtils Unit Tests")
 
-include (${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
+include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 
 add_subdirectory(bytearray)
 add_subdirectory(file)
@@ -19,13 +19,13 @@ add_subdirectory(elapsedtimer)
 add_subdirectory(flags)
 add_subdirectory(url)
 
-if (KDUTILS_CODE_COVERAGE)
+if(KDUTILS_CODE_COVERAGE)
     include(${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
     setup_target_for_coverage_gcovr_html(
-    NAME KDUtils_coverage
-    EXECUTABLE ctest -L "KDUtils"
-    EXCLUDE
-    "${CMAKE_BINARY_DIR}/_deps/*"
-    "${CMAKE_BINARY_DIR}/src/*"
+        NAME KDUtils_coverage
+        EXECUTABLE ctest -L "KDUtils"
+        EXCLUDE
+        "${CMAKE_BINARY_DIR}/_deps/*"
+        "${CMAKE_BINARY_DIR}/src/*"
     )
 endif()

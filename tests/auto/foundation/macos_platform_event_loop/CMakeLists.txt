@@ -1,0 +1,19 @@
+# This file is part of KDUtils.
+#
+# SPDX-FileCopyrightText: 2021-2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+# Author: Paul Lemire <paul.lemire@kdab.com>
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Contact KDAB at <info@kdab.com> for commercial licensing options.
+#
+
+project(test-core-macos-platform-event-loop VERSION 0.1 LANGUAGES CXX)
+
+add_executable(${PROJECT_NAME}
+    tst_macos_platform_event_loop.cpp
+)
+
+target_link_libraries(${PROJECT_NAME} KDFoundation doctest)
+
+add_test(NAME ${PROJECT_NAME} COMMAND $<TARGET_FILE:${PROJECT_NAME}>)

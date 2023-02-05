@@ -1,0 +1,39 @@
+/*
+  This file is part of KDUtils.
+
+  SPDX-FileCopyrightText: 2018-2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+  Author: Paul Lemire <paul.lemire@kdab.com>
+
+  SPDX-License-Identifier: AGPL-3.0-only
+
+  Contact KDAB at <info@kdab.com> for commercial licensing options.
+*/
+
+#pragma once
+
+#include <chrono>
+#include <windows.h>
+#undef max
+
+#include <KDFoundation/platform/abstract_platform_timer.h>
+
+namespace KDFoundation {
+
+class Timer;
+
+class KDFOUNDATION_API Win32PlatformTimer : public AbstractPlatformTimer
+{
+public:
+    Win32PlatformTimer(Timer *timer);
+    ~Win32PlatformTimer() override;
+
+private:
+    void arm(std::chrono::microseconds us);
+    void disarm();
+    static void callback(HWND hwnd, UINT uMsg, UINT_PTR timerId, DWORD dwTime);
+
+    Timer *m_timer;
+    uintptr_t m_id{ 0 };
+};
+
+} // namespace KDFoundation

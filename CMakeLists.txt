@@ -18,13 +18,7 @@ project(KDUtils
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-include(FeatureSummary)
-include(CMakeDependentOption)
-include(cmake/dependencies.cmake)
-include(GenerateExportHeader)
-include(GNUInstallDirs)
-include(CTest)
-
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -32,10 +26,31 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+cmake_policy(SET CMP0090 NEW) # Stop export(PACKAGE) from modifying the system-wide cmake package system
+cmake_policy(SET CMP0117 NEW) # Do not add /GR to CMAKE_CXX_FLAGS
+
+include(FeatureSummary)
+include(CMakeDependentOption)
+include(cmake/dependencies.cmake)
+include(GenerateExportHeader)
+include(GNUInstallDirs)
+include(CTest)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    option(KDUTILS_CODE_COVERAGE "Code Coverage" OFF)
+
+    if(KDUTILS_CODE_COVERAGE)
+        include(cmake/CodeCoverage.cmake)
+    endif()
+endif()
+
 add_subdirectory(src/KDUtils)
+add_subdirectory(src/KDFoundation)
+add_subdirectory(src/KDGui)
 
 option(KDUTILS_BUILD_TESTS ON)
-if (KDUTILS_BUILD_TESTS)
+
+if(KDUTILS_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
