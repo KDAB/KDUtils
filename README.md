@@ -26,7 +26,7 @@ Stay up-to-date with KDAB product announcements:
 
 Licensing
 =========
-KDUtils is (C) 2018-2022, Klarälvdalens Datakonsult AB, and is licensed according to
+KDUtils is (C) 2018-2023, Klarälvdalens Datakonsult AB, and is licensed according to
 the terms of the [AGPL 3.0](LICENSES/AGPL-3.0-only.txt).
 
 Contact KDAB at <info@kdab.com> to inquire about commercial licensing.
