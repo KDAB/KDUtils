@@ -135,3 +135,20 @@ foreach(file ${HEADERS})
     get_filename_component(dir ${file} DIRECTORY)
     install(FILES ${file} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDFoundation/${dir})
 endforeach()
+
+set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/KDFoundationConfig.cmake.in")
+set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/KDFoundationConfig.cmake")
+
+install(
+    TARGETS KDFoundation
+    EXPORT KDFoundation
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(EXPORT KDFoundation DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDFoundation NAMESPACE KDFoundation:: FILE KDFoundationConfigTargets.cmake)
+include(CMakePackageConfigHelpers)
+configure_file("${project_config_in}" "${project_config_out}" @ONLY)
+install(FILES "${project_config_out}" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDFoundation)
+install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDFoundation)

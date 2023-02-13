@@ -156,3 +156,20 @@ foreach(file ${HEADERS})
     get_filename_component(dir ${file} DIRECTORY)
     install(FILES ${file} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDGui/${dir})
 endforeach()
+
+set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/KDGuiConfig.cmake.in")
+set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/KDGuiConfig.cmake")
+
+install(
+    TARGETS KDGui
+    EXPORT KDGui
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(EXPORT KDGui DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDGui NAMESPACE KDGui:: FILE KDGuiConfigTargets.cmake)
+include(CMakePackageConfigHelpers)
+configure_file("${project_config_in}" "${project_config_out}" @ONLY)
+install(FILES "${project_config_out}" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDGui)
+install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDGui)
