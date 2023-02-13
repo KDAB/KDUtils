@@ -25,9 +25,6 @@ namespace KDFoundation {
 class Event;
 class TimerEvent;
 
-class Entity;
-class Component;
-
 class KDFOUNDATION_API Object : public EventReceiver
 {
 public:
@@ -50,11 +47,6 @@ public:
     template<typename T>
     Object *addChild(std::unique_ptr<T> &&child)
     {
-        static_assert(!std::is_base_of<Entity, T>::value,
-                      "The T type must not inherit from Entity. Use Entity::addChildEntity");
-        static_assert(!std::is_base_of<Component, T>::value,
-                      "The T type must not inherit from Component. Use Entity::addComponent");
-
         // Caller has to transfer ownership to us so there should not be an old parent
         assert(child->parent() == nullptr);
 
@@ -69,10 +61,6 @@ public:
     template<typename T, typename... Ts>
     T *createChild(Ts... args)
     {
-        static_assert(!std::is_base_of<Entity, T>::value,
-                      "The T type must not inherit from Entity. Use Entity::createChildEntity");
-        static_assert(!std::is_base_of<Component, T>::value,
-                      "The T type must not inherit from Component. Use Entity::createComponent");
         auto child = std::make_unique<T>(std::forward<Ts>(args)...);
         return static_cast<T *>(this->addChild(std::move(child)));
     }
@@ -80,11 +68,6 @@ public:
     template<typename T>
     std::unique_ptr<Object> takeChild(T *child)
     {
-        static_assert(!std::is_base_of<Entity, T>::value,
-                      "The T type must not inherit from Entity. Use Entity::takeEntity");
-        static_assert(!std::is_base_of<Component, T>::value,
-                      "The T type must not inherit from Component. Use Entity::takeComponent");
-
         // Find the child from the raw pointer
         auto childIt = std::find_if(
                 m_children.begin(),

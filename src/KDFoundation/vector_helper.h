@@ -72,28 +72,4 @@ inline size_t indexOf(const std::vector<T> &destination, const T &element)
     return std::distance(destination.cbegin(), it);
 }
 
-using BucketIndices = std::tuple<size_t, size_t, size_t>; // startIdx, endIdx, bucketIdx
-
-template<typename Container>
-std::vector<BucketIndices> splitIntoBuckets(const Container &container, uint32_t idealBucketSize)
-{
-    const size_t containerSize = container.size();
-    uint32_t maxAvailableThreads = 1;
-    if constexpr (USE_THREADS)
-        maxAvailableThreads = std::thread::hardware_concurrency();
-    const uint32_t actualBucketSize = std::max(size_t(idealBucketSize), containerSize / maxAvailableThreads);
-    const size_t bucketCount = std::max(size_t(1), containerSize / actualBucketSize);
-
-    std::vector<BucketIndices> buckets;
-    buckets.reserve(bucketCount);
-
-    for (auto i = 0; i < bucketCount - 1; ++i) {
-        const size_t startIdx = i * actualBucketSize;
-        buckets.emplace_back(startIdx, startIdx + actualBucketSize, i);
-    }
-    const size_t lastStartIdx = (bucketCount - 1) * actualBucketSize;
-    buckets.emplace_back(lastStartIdx, lastStartIdx + (containerSize - lastStartIdx), bucketCount - 1);
-    return buckets;
-}
-
 } // namespace KDFoundation
