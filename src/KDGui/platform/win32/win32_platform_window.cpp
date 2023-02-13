@@ -21,11 +21,6 @@
 #include <KDGui/platform/win32/win32_keyboard_map.h>
 #include <KDGui/gui_events.h>
 
-#include <KDFoundation/core_application.h>
-#include <KDFoundation/event.h>
-
-#include <KDFoundation/logging.h>
-
 #include <windowsx.h> // for GET_X_LPARAM
 #include <hidusage.h>
 
