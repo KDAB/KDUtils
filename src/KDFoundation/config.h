@@ -14,9 +14,3 @@
 // clang-format off
 #define KD_@PLATFORM_NAME@
 // clang-format on
-
-namespace KDFoundation {
-
-constexpr bool USE_THREADS = true;
-
-} // namespace KDFoundation
