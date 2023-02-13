@@ -8,7 +8,7 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.16)
 project(KDUtils
     DESCRIPTION "A set of C++ helpers and wrappers around the C++ standard library"
     LANGUAGES CXX C
@@ -18,7 +18,10 @@ project(KDUtils
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/ECM/modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/ECM/find-modules")
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -48,7 +51,7 @@ add_subdirectory(src/KDUtils)
 add_subdirectory(src/KDFoundation)
 add_subdirectory(src/KDGui)
 
-option(KDUTILS_BUILD_TESTS ON)
+option(KDUTILS_BUILD_TESTS "Build the tests" ON)
 
 if(KDUTILS_BUILD_TESTS)
     enable_testing()

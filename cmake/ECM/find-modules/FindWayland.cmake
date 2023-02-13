@@ -56,7 +56,7 @@ package config file.
 Since pre-1.0.0.
 #]=======================================================================]
 
-include(${CMAKE_CURRENT_LIST_DIR}/ECMFindModuleHelpers.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/ECMFindModuleHelpersStub.cmake)
 
 ecm_find_package_version_check(Wayland)
 
@@ -117,7 +117,7 @@ find_package_handle_standard_args(Wayland
     HANDLE_COMPONENTS
 )
 
-pkg_get_variable(Wayland_DATADIR wayland-server pkgdatadir)
+pkg_get_variable(Wayland_DATADIR wayland-scanner pkgdatadir)
 if (CMAKE_CROSSCOMPILING AND (NOT EXISTS "${Wayland_DATADIR}/wayland.xml"))
     # PKG_CONFIG_SYSROOT_DIR only applies to -I and -L flags, so pkg-config
     # does not prepend CMAKE_SYSROOT when cross-compiling unless you pass

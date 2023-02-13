@@ -12,3 +12,4 @@ EXCLUDE style
 #no need to check 3rdparty stuff
 SKIP /3rdparty/
 SKIP /cmake/CodeCoverage\.cmake
+SKIP /cmake/ECM
