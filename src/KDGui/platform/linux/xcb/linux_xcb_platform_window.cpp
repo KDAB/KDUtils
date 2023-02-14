@@ -332,3 +332,8 @@ void LinuxXcbPlatformWindow::handleTextInput(const std::string &str)
     TextInputEvent ev{ str };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
+
+xcb_connection_t *LinuxXcbPlatformWindow::connection() const
+{
+    return m_platformIntegration->connection();
+}

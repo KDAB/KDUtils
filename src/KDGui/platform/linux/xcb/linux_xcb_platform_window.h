@@ -74,6 +74,9 @@ public:
     void handleKeyRelease(uint32_t timestamp, uint8_t nativeKeycode, Key key, KeyboardModifiers modifiers) override;
     void handleTextInput(const std::string &str) override;
 
+    xcb_window_t handle() const { return m_xcbWindow; }
+    xcb_connection_t *connection() const;
+
 private:
     enum class CursorMode {
         Normal = 0,

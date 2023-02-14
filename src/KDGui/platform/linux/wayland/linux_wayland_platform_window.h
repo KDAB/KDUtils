@@ -83,6 +83,8 @@ public:
 
     KDBindings::Signal<> cursorChanged;
 
+    wl_surface *handle() const { return m_surface; }
+
 private:
     enum class CursorMode {
         Normal = 0,
