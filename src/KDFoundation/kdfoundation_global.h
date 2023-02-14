@@ -15,27 +15,3 @@
 #include <KDUtils/kdutils_global.h>
 
 #define KDFOUNDATION_API KDFOUNDATION_EXPORT
-
-#include <string>
-
-namespace KDFoundation {
-
-inline std::string assetPath()
-{
-#if defined(ASSET_PATH)
-    return ASSET_PATH;
-#else
-    return "";
-#endif
-}
-
-inline std::string largeAssetPath()
-{
-#if defined(LARGE_ASSET_PATH)
-    return LARGE_ASSET_PATH;
-#else
-    return "";
-#endif
-}
-
-} // namespace KDFoundation
