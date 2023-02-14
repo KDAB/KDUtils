@@ -21,7 +21,6 @@ set(HEADERS
     gui_events.h
     kdgui_global.h
     kdgui_keys.h
-    window_extent_watcher.h
     window.h
 )
 

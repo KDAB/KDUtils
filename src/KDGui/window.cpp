@@ -19,26 +19,6 @@
 using namespace KDFoundation;
 using namespace KDGui;
 
-KDGuiWindowExtentWatcher::KDGuiWindowExtentWatcher(Window *w)
-    : m_window{ w }
-{
-}
-
-uint32_t KDGuiWindowExtentWatcher::width() const
-{
-    return m_window->width() * m_window->scaleFactor();
-}
-
-uint32_t KDGuiWindowExtentWatcher::height() const
-{
-    return m_window->height() * m_window->scaleFactor();
-}
-
-float KDGuiWindowExtentWatcher::scaleFactor() const
-{
-    return m_window->scaleFactor();
-}
-
 Window::Window()
     : Object()
 {

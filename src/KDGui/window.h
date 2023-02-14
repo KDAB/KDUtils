@@ -15,7 +15,6 @@
 #include <KDFoundation/kdfoundation_global.h>
 #include <KDFoundation/logging.h>
 #include <KDGui/kdgui_global.h>
-#include <KDGui/window_extent_watcher.h>
 #include <KDGui/position.h>
 
 #include <kdbindings/property.h>
@@ -37,20 +36,6 @@ class MouseMoveEvent;
 class MousePressEvent;
 class MouseReleaseEvent;
 class MouseWheelEvent;
-
-class Window;
-
-class KDGUI_API KDGuiWindowExtentWatcher : public WindowExtentWatcher
-{
-public:
-    explicit KDGuiWindowExtentWatcher(Window *w);
-    uint32_t width() const override;
-    uint32_t height() const override;
-    float scaleFactor() const override;
-
-private:
-    Window *m_window = nullptr;
-};
 
 class KDGUI_API Window : public KDFoundation::Object
 {
