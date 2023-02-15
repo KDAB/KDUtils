@@ -23,7 +23,7 @@
 #include <wayland-xdg-shell-client-protocol.h>
 
 #include <array>
-#include <assert.h>
+#include <cassert>
 
 using namespace KDFoundation;
 using namespace KDGui;
@@ -41,7 +41,7 @@ LinuxWaylandPlatformWindow::LinuxWaylandPlatformWindow(
     });
     window->scaleFactor.valueChanged().connect([this](float value) {
         if (m_surface) {
-            wl_surface_set_buffer_scale(m_surface, value);
+            wl_surface_set_buffer_scale(m_surface, int32_t(value));
         }
     });
 }
@@ -65,7 +65,7 @@ bool LinuxWaylandPlatformWindow::create()
     };
     wl_surface_add_listener(m_surface, &listener, this);
 
-    wl_surface_set_buffer_scale(m_surface, window()->scaleFactor());
+    wl_surface_set_buffer_scale(m_surface, int32_t(window()->scaleFactor()));
 
     return true;
 }
@@ -140,7 +140,7 @@ void LinuxWaylandPlatformWindow::setTitle(const std::string &title)
 void LinuxWaylandPlatformWindow::setSize(uint32_t width, uint32_t height)
 {
     if (m_xdgSurface) {
-        xdg_surface_set_window_geometry(m_xdgSurface, 0, 0, width, height);
+        xdg_surface_set_window_geometry(m_xdgSurface, 0, 0, int32_t(width), int32_t(height));
     }
 }
 
@@ -246,8 +246,8 @@ void LinuxWaylandPlatformWindow::close(xdg_toplevel *toplevel)
 
 void LinuxWaylandPlatformWindow::configureBounds(xdg_toplevel *toplevel, int32_t width, int32_t height)
 {
-    int32_t w = window()->width();
-    int32_t h = window()->height();
+    int32_t w = int32_t(window()->width());
+    int32_t h = int32_t(window()->height());
     if (width != 0 && width < w) {
         w = width;
     }
@@ -270,8 +270,9 @@ void LinuxWaylandPlatformWindow::updateScaleFactor()
     // use the highest scale factor of all the outputs this window is visible on
     float factor = 1;
     for (auto *output : m_enteredOutputs) {
-        if (output->scaleFactor() > factor) {
-            factor = output->scaleFactor();
+        const float outputScaleFactor = float(output->scaleFactor());
+        if (outputScaleFactor > factor) {
+            factor = outputScaleFactor;
         }
     }
     window()->scaleFactor = factor;

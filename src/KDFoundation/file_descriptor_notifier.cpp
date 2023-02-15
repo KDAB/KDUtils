@@ -15,7 +15,7 @@
 
 #include <KDFoundation/logging.h>
 
-#include <assert.h>
+#include <cassert>
 
 using namespace KDFoundation;
 

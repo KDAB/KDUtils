@@ -241,7 +241,7 @@ void LinuxWaylandPlatformInput::setCursor()
         wl_surface_attach(m_pointer.cursorSurface, buffer, 0, 0);
         wl_surface_commit(m_pointer.cursorSurface);
 
-        wl_pointer_set_cursor(m_pointer.pointer, m_pointer.lastSerial, m_pointer.cursorSurface, image->hotspot_x, image->hotspot_y);
+        wl_pointer_set_cursor(m_pointer.pointer, m_pointer.lastSerial, m_pointer.cursorSurface, int32_t(image->hotspot_x), int32_t(image->hotspot_y));
     } else {
         wl_pointer_set_cursor(m_pointer.pointer, m_pointer.lastSerial, nullptr, 0, 0);
         pointerLock();
@@ -305,9 +305,9 @@ void LinuxWaylandPlatformInput::pointerButton(wl_pointer *pointer, uint32_t seri
     }();
 
     if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
-        m_pointer.focus->handleMousePress(time, btn, m_pointer.pos.x, m_pointer.pos.y);
+        m_pointer.focus->handleMousePress(time, btn, int16_t(m_pointer.pos.x), int16_t(m_pointer.pos.y));
     } else {
-        m_pointer.focus->handleMouseRelease(time, btn, m_pointer.pos.x, m_pointer.pos.y);
+        m_pointer.focus->handleMouseRelease(time, btn, int16_t(m_pointer.pos.x), int16_t(m_pointer.pos.y));
     }
     m_pointer.lastSerial = serial;
 }
@@ -315,8 +315,8 @@ void LinuxWaylandPlatformInput::pointerButton(wl_pointer *pointer, uint32_t seri
 void LinuxWaylandPlatformInput::pointerAxis(wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value)
 {
     const double delta = -wl_fixed_to_double(value);
-    const int32_t xDelta = axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL ? delta : 0;
-    const int32_t yDelta = axis == WL_POINTER_AXIS_VERTICAL_SCROLL ? delta : 0;
+    const int32_t xDelta = axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL ? int32_t(delta) : 0;
+    const int32_t yDelta = axis == WL_POINTER_AXIS_VERTICAL_SCROLL ? int32_t(delta) : 0;
 
     if (m_version >= WL_POINTER_FRAME_SINCE_VERSION) {
         m_pointer.accumulatedEvent.axis += Position(xDelta, yDelta);
@@ -336,7 +336,7 @@ void LinuxWaylandPlatformInput::pointerFrame(wl_pointer *pointer)
     }
 
     if (ev.axis != Position(0, 0)) {
-        m_pointer.focus->handleMouseWheel(ev.time, ev.axis.x, ev.axis.y);
+        m_pointer.focus->handleMouseWheel(ev.time, int32_t(ev.axis.x), int32_t(ev.axis.y));
         ev.axis = Position(0, 0);
     }
     if (ev.pos != Position(0, 0)) {
@@ -506,11 +506,11 @@ void LinuxWaylandPlatformInput::touchDown(wl_touch *touch, uint32_t serial, uint
     }
 
     m_touch.focus = LinuxWaylandPlatformWindow::fromSurface(surface);
-    m_touch.points.push_back(Touch::Point{ id, Position(wl_fixed_to_double(x), wl_fixed_to_double(y)) });
+    m_touch.points.push_back(Touch::Point{ id, Position(int64_t(wl_fixed_to_double(x)), int64_t(wl_fixed_to_double(y))) });
     m_touch.time = time;
 
     m_touch.focus->handleMouseMove(time, 1, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
-    m_touch.focus->handleMousePress(time, 1, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
+    m_touch.focus->handleMousePress(time, 1, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
 }
 
 void LinuxWaylandPlatformInput::touchUp(wl_touch *touch, uint32_t serial, uint32_t time, int32_t id)
@@ -519,7 +519,7 @@ void LinuxWaylandPlatformInput::touchUp(wl_touch *touch, uint32_t serial, uint32
         return;
     }
 
-    m_touch.focus->handleMouseRelease(time, 1, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
+    m_touch.focus->handleMouseRelease(time, 1, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
     m_touch.points.clear();
 }
 
@@ -540,7 +540,7 @@ void LinuxWaylandPlatformInput::touchFrame(wl_touch *touch)
 void LinuxWaylandPlatformInput::touchCancel(wl_touch *touch)
 {
     if (m_touch.points.size() > 0) {
-        m_touch.focus->handleMouseRelease(m_touch.time, 1, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
+        m_touch.focus->handleMouseRelease(m_touch.time, 1, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
         m_touch.points.clear();
     }
 }

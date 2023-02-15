@@ -12,6 +12,7 @@
 #include "bytearray.h"
 #include <cstring>
 #include <algorithm>
+#include <array>
 
 namespace KDUtils {
 
@@ -82,13 +83,13 @@ ByteArray ByteArray::mid(size_t pos, size_t len) const
     if (len == 0)
         len = size() - pos;
     len = std::min(len, size());
-    return ByteArray({ m_data.begin() + pos, m_data.begin() + pos + len });
+    return ByteArray({ m_data.begin() + pos, m_data.begin() + int64_t(pos + len) });
 }
 
 ByteArray ByteArray::left(size_t left) const
 {
     left = std::min(left, size());
-    return ByteArray({ m_data.begin(), m_data.begin() + left });
+    return ByteArray({ m_data.begin(), m_data.begin() + int64_t(left) });
 }
 
 int64_t ByteArray::indexOf(uint8_t v) const
@@ -104,7 +105,7 @@ ByteArray &ByteArray::remove(size_t pos, size_t len)
     if (pos >= size())
         return *this;
     len = std::min(size() - pos, len);
-    m_data.erase(m_data.begin() + pos, m_data.begin() + pos + len);
+    m_data.erase(m_data.begin() + pos, m_data.begin() + int64_t(pos + len));
     return *this;
 }
 
@@ -244,7 +245,7 @@ constexpr int8_t getInverseFromB64(uint8_t c)
 
 int8_t *getInverseB64Table()
 {
-    static int8_t table[255];
+    static std::array<int8_t, 255> table;
     static bool initialized = false;
 
     if (!initialized) {
@@ -266,7 +267,7 @@ ByteArray ByteArray::fromBase64(const ByteArray &base64)
 
     int64_t outIdx = 0;
     int64_t inIdx = 0;
-    uint8_t pending4Bytes[4];
+    std::array<uint8_t, 4> pending4Bytes;
 
     for (size_t i = 0, m = base64.size(); i < m; ++i) {
         // Have we reached right most padding

@@ -83,7 +83,7 @@ void LinuxPlatformEventLoop::waitForEvents(int timeout)
         const auto &notifierSet = m_notifiers[ePollEvent.data.fd];
 
         // Find which notifiers for this fd should be poked
-        const int eventTypes = ePollEvent.events;
+        const uint32_t eventTypes = ePollEvent.events;
 
         if (notifierSet.events[0] &&
             (eventTypes & EPOLLIN || eventTypes & EPOLLHUP || eventTypes & EPOLLERR)) {

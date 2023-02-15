@@ -176,7 +176,7 @@ void LinuxXcbPlatformWindow::disableCursor()
     const auto windowSize = queryWindowSize();
     xcb_warp_pointer(connection, XCB_NONE, m_xcbWindow,
                      0, 0, 0, 0,
-                     windowSize.x / 2, windowSize.y / 2);
+                     int16_t(windowSize.x / 2), int16_t(windowSize.y / 2));
     m_previousWarpedCursorPosition = windowSize / 2;
 
     // Grab the cursor
@@ -205,7 +205,7 @@ void LinuxXcbPlatformWindow::enableCursor()
     // Restore the cursor position
     xcb_warp_pointer(connection, XCB_NONE, m_xcbWindow,
                      0, 0, 0, 0,
-                     m_cursorRestorePosition.x, m_cursorRestorePosition.y);
+                     int16_t(m_cursorRestorePosition.x), int16_t(m_cursorRestorePosition.y));
 
     // Reset the default cursor (inherit from parent window)
     uint32_t values[] = { 0 };
@@ -298,7 +298,7 @@ void LinuxXcbPlatformWindow::handleMouseMove(uint32_t timestamp, uint8_t button,
             const auto connection = m_platformIntegration->connection();
             xcb_warp_pointer(connection, XCB_NONE, m_xcbWindow,
                              0, 0, 0, 0,
-                             center.x, center.y);
+                             int16_t(center.x), int16_t(center.y));
             m_previousWarpedCursorPosition = center;
         }
     }

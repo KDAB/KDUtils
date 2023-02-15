@@ -24,7 +24,7 @@
 
 #include <spdlog_setup/conf.h>
 
-#include "assert.h"
+#include <cassert>
 
 using namespace KDFoundation;
 

@@ -12,7 +12,7 @@
 #include "object.h"
 #include "event.h"
 
-#include <assert.h>
+#include <cassert>
 #include <algorithm>
 
 using namespace KDFoundation;

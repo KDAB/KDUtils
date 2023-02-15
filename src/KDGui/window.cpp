@@ -124,7 +124,7 @@ void Window::onVisibleChanged(const bool &visible)
 {
     SPDLOG_LOGGER_INFO(m_logger, "{}()", __FUNCTION__);
     create();
-    if (visible == true) {
+    if (visible) {
         m_platformWindow->map();
     } else {
         m_platformWindow->unmap();
@@ -142,7 +142,7 @@ void Window::onCursorEnabledChanged(const bool &cursorEnabled)
 {
     SPDLOG_LOGGER_INFO(m_logger, "{}()", __FUNCTION__);
     if (m_platformWindow && m_platformWindow->isCreated()) {
-        if (cursorEnabled == true) {
+        if (cursorEnabled) {
             m_platformWindow->enableCursor();
         } else {
             m_platformWindow->disableCursor();
@@ -154,7 +154,7 @@ void Window::onRawMouseInputEnabledChanged(const bool &rawMouseInputEnabled)
 {
     SPDLOG_LOGGER_INFO(m_logger, "{}()", __FUNCTION__);
     if (m_platformWindow && m_platformWindow->isCreated()) {
-        if (rawMouseInputEnabled == true) {
+        if (rawMouseInputEnabled) {
             m_platformWindow->enableRawMouseInput();
         } else {
             m_platformWindow->disableRawMouseInput();

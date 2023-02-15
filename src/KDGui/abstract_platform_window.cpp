@@ -12,7 +12,7 @@
 #include <KDGui/abstract_platform_window.h>
 #include "window.h"
 
-#include <assert.h>
+#include <cassert>
 
 using namespace KDGui;
 
