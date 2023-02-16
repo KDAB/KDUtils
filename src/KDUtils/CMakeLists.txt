@@ -24,6 +24,7 @@ set(HEADERS
     flags.h
     logger.h
     url.h
+    kdutils_global.h
 )
 
 add_library(KDUtils ${SOURCES} ${HEADERS})
