@@ -22,6 +22,7 @@ set(HEADERS
     kdgui_global.h
     kdgui_keys.h
     window.h
+    position.h
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
