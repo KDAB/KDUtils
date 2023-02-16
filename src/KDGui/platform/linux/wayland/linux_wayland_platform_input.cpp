@@ -93,7 +93,7 @@ void LinuxWaylandPlatformInput::capabilities(wl_seat *seat, uint32_t caps)
         destroyKeyboard();
     }
 
-    const bool hasTouch = caps = WL_SEAT_CAPABILITY_TOUCH;
+    const bool hasTouch = caps & WL_SEAT_CAPABILITY_TOUCH;
     if (hasTouch && !m_touch.touch) {
         initTouch();
     } else if (!hasTouch && m_touch.touch) {

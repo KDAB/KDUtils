@@ -134,7 +134,7 @@ void LinuxXkbKeyboard::handleKeyPress(xcb_key_press_event_t *ev)
     const auto keysym = xkb_state_key_get_one_sym(m_state.get(), keycode);
 
     // Update the xkb state
-    auto changedState = xkb_state_update_key(m_state.get(), keycode, XKB_KEY_DOWN);
+    (void)xkb_state_update_key(m_state.get(), keycode, XKB_KEY_DOWN);
 
     char s[16];
     xkb_keysym_get_name(keysym, s, sizeof(s));
@@ -165,7 +165,7 @@ void LinuxXkbKeyboard::handleKeyRelease(xcb_key_release_event_t *ev)
     const auto keysym = xkb_state_key_get_one_sym(m_state.get(), keycode);
 
     // Update the xkb state
-    auto changedState = xkb_state_update_key(m_state.get(), keycode, XKB_KEY_UP);
+    (void)xkb_state_update_key(m_state.get(), keycode, XKB_KEY_UP);
 
     char s[16];
     xkb_keysym_get_name(keysym, s, sizeof(s));

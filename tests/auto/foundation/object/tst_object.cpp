@@ -252,7 +252,7 @@ TEST_CASE("Object destruction")
     {
         auto parent = new Object();
         for (int i = 0; i < 10; ++i)
-            auto child = parent->createChild<CountedObject>();
+            parent->createChild<CountedObject>();
 
         REQUIRE(CountedObject::ms_objectCount == 10);
 
