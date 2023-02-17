@@ -52,7 +52,10 @@ public:
         }
     }
 
-    Logger::Type type() const { return m_type; }
+    Logger::Type type() const
+    {
+        return m_type;
+    }
 
     // For actual logging
     template<typename FormatString, typename... Args>
@@ -68,8 +71,14 @@ public:
     }
 
     // For cWarning/cDebug macros
-    Logger warn() const { return Logger(m_category, m_type); }
-    Logger debug() const { return Logger(m_category, m_type); }
+    Logger warn() const
+    {
+        return Logger(m_category, m_type);
+    }
+    Logger debug() const
+    {
+        return Logger(m_category, m_type);
+    }
 
     template<typename FormatString, typename... Args>
     Logger warn(const FormatString &fmt, Args &&...args) const
