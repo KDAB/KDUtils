@@ -8,7 +8,6 @@
 
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
-//krazy:excludeall=insecurenet "http usage in this file is for testing purposes"
 
 #include <KDUtils/url.h>
 

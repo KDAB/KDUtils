@@ -6,11 +6,13 @@ EXTRA kdabcopyright-reuse,kdabcontactus,fosslicense-reuse
 #exclude checks now being done by clazy or clang-tools
 EXCLUDE strings,explicit,normalize,passbyvalue,operators,nullstrcompare,nullstrassign,doublequote_chars,qobject,sigsandslots,staticobjects,dpointer
 #more to exclude
-EXCLUDE qminmax,captruefalse,typedefs,inline,constref
+EXCLUDE qminmax,captruefalse,typedefs,inline,constref,insecurenet
 EXCLUDE style
 
 SKIP .cmake-format.py
 #no need to check 3rdparty stuff
 SKIP /3rdparty/
-SKIP /cmake/CodeCoverage\.cmake
+#skip borrowed cmake code
+SKIP /cmake/CodeCoverage.cmake
+SKIP /cmake/KDSelectLibraryConfigurations.cmake
 SKIP /cmake/ECM
