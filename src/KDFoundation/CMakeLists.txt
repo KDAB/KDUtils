@@ -43,44 +43,51 @@ set(HEADERS
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    list(APPEND SOURCES
+    list(
+        APPEND
+        SOURCES
         platform/linux/linux_platform_event_loop.cpp
         platform/linux/linux_platform_integration.cpp
         platform/linux/linux_platform_timer.cpp
     )
-    list(APPEND HEADERS
+    list(
+        APPEND
+        HEADERS
         platform/linux/linux_platform_event_loop.h
         platform/linux/linux_platform_integration.h
         platform/linux/linux_platform_timer.h
     )
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    list(APPEND SOURCES
+    list(
+        APPEND
+        SOURCES
         platform/win32/win32_platform_event_loop.cpp
         platform/win32/win32_platform_integration.cpp
         platform/win32/win32_platform_timer.cpp
     )
-    list(APPEND HEADERS
+    list(
+        APPEND
+        HEADERS
         platform/win32/win32_platform_event_loop.h
         platform/win32/win32_platform_integration.h
         platform/win32/win32_platform_timer.h
     )
     set_source_files_properties(core_application.cpp PROPERTIES COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    list(APPEND SOURCES
-        platform/macos/macos_platform_event_loop.mm
-        platform/macos/macos_platform_integration.mm
-    )
+    list(APPEND SOURCES platform/macos/macos_platform_event_loop.mm platform/macos/macos_platform_integration.mm)
 endif()
 
-add_library(KDFoundation SHARED
-    ${SOURCES}
-    ${HEADERS}
+add_library(
+    KDFoundation SHARED
+    ${SOURCES} ${HEADERS}
 )
-add_library(KDUtils::Foundation ALIAS KDFoundation)
+add_library(
+    KDUtils::Foundation ALIAS KDFoundation
+)
 
-target_link_libraries(KDFoundation PUBLIC
-    KDUtils::Utils
-    KDBindings
+target_link_libraries(
+    KDFoundation
+    PUBLIC KDUtils::Utils KDBindings
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -102,26 +109,40 @@ endif()
 # Require >=C++17 for us and downstream projects
 target_compile_features(KDFoundation PUBLIC cxx_std_17)
 
-target_include_directories(KDFoundation PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..>
-    $<INSTALL_INTERFACE:include>
+target_include_directories(
+    KDFoundation
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../..> $<INSTALL_INTERFACE:include>
 )
-target_include_directories(KDFoundation PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>)
+target_include_directories(
+    KDFoundation
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+)
 
 #
 # Logging configuration
 #
 # Compile out some of the SPDLOG macros based on build type
-target_compile_options(KDFoundation PUBLIC
-    -DSPDLOG_ACTIVE_LEVEL=$<IF:$<CONFIG:Debug>,SPDLOG_LEVEL_TRACE,SPDLOG_LEVEL_WARN>
+target_compile_options(
+    KDFoundation PUBLIC -DSPDLOG_ACTIVE_LEVEL=$<IF:$<CONFIG:Debug>,SPDLOG_LEVEL_TRACE,SPDLOG_LEVEL_WARN>
 )
-target_link_libraries(KDFoundation PRIVATE spdlog_setup::spdlog_setup)
+target_link_libraries(
+    KDFoundation
+    PRIVATE spdlog_setup::spdlog_setup
+)
 
 generate_export_header(KDFoundation BASE_NAME kdfoundation)
-configure_file(${CMAKE_CURRENT_BINARY_DIR}/kdfoundation_export.h ${CMAKE_BINARY_DIR}/include/KDFoundation/kdfoundation_export.h)
+configure_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/kdfoundation_export.h ${CMAKE_BINARY_DIR}/include/KDFoundation/kdfoundation_export.h
+)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h ${CMAKE_BINARY_DIR}/include/KDFoundation/config.h)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/kdfoundation_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDFoundation)
-install(FILES ${CMAKE_BINARY_DIR}/include/KDFoundation/config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDFoundation)
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/kdfoundation_export.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDFoundation
+)
+install(
+    FILES ${CMAKE_BINARY_DIR}/include/KDFoundation/config.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDFoundation
+)
 
 if(KDUTILS_CODE_COVERAGE)
     append_coverage_compiler_flags()
@@ -147,8 +168,19 @@ install(
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-install(EXPORT KDFoundation DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDFoundation NAMESPACE KDFoundation:: FILE KDFoundationConfigTargets.cmake)
+install(
+    EXPORT KDFoundation
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDFoundation
+    NAMESPACE KDFoundation::
+    FILE KDFoundationConfigTargets.cmake
+)
 include(CMakePackageConfigHelpers)
 configure_file("${project_config_in}" "${project_config_out}" @ONLY)
-install(FILES "${project_config_out}" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDFoundation)
-install(FILES ${HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDFoundation)
+install(
+    FILES "${project_config_out}"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDFoundation
+)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDFoundation
+)

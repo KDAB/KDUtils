@@ -13,25 +13,27 @@ project(KDFoundation-Tests)
 
 include_directories(./common)
 
-function(add_core_test NAME SOURCES)
-    add_executable(${NAME} ${SOURCES})
+# add a test with the specifed name
+function(add_core_test name sources)
+    add_executable(${name} ${sources})
 
-    target_link_libraries(${NAME} PRIVATE KDUtils::Foundation doctest)
+    target_link_libraries(${name} PRIVATE KDUtils::Foundation doctest)
 
-    add_test(NAME ${NAME} COMMAND $<TARGET_FILE:${NAME}>)
-    set_tests_properties(${NAME} PROPERTIES LABELS "Foundatation")
+    add_test(NAME ${name} COMMAND $<TARGET_FILE:${name}>)
+    set_tests_properties(${name} PROPERTIES LABELS "Foundatation")
 
     if(APPLE)
-        target_compile_options(${NAME} PRIVATE -Wno-deprecated-declarations)
+        target_compile_options(${name} PRIVATE -Wno-deprecated-declarations)
     endif()
 endfunction()
 
-function(add_core_bench NAME SOURCES)
-    add_executable(${NAME} ${SOURCES})
-    target_link_libraries(${NAME} PRIVATE KDUtils::Foundation doctest nanobench)
+# add a benchmark with the specifed name
+function(add_core_bench name sources)
+    add_executable(${name} ${sources})
+    target_link_libraries(${name} PRIVATE KDUtils::Foundation doctest nanobench)
 
-    add_test(NAME ${NAME} COMMAND $<TARGET_FILE:${NAME}>)
-    set_tests_properties(${NAME} PROPERTIES LABELS "Foundation")
+    add_test(NAME ${name} COMMAND $<TARGET_FILE:${name}>)
+    set_tests_properties(${name} PROPERTIES LABELS "Foundation")
 endfunction()
 
 add_subdirectory(constexpr_sort)
@@ -53,9 +55,16 @@ add_feature_info(KDFoundation-Tests ON "Build Tests")
 
 if(KDUTILS_CODE_COVERAGE)
     setup_target_for_coverage_gcovr_html(
-        NAME foundation_coverage
-        BASE_DIRECTORY ${CMAKE_SOURCE_DIR}
-        EXECUTABLE ctest -L "Foundation" -E test-foundation-linux-platform-event-loop
+        NAME
+        foundation_coverage
+        BASE_DIRECTORY
+        ${CMAKE_SOURCE_DIR}
+        EXECUTABLE
+        ctest
+        -L
+        "Foundation"
+        -E
+        test-foundation-linux-platform-event-loop
         EXCLUDE
         "${CMAKE_BINARY_DIR}/_deps/*"
         "${CMAKE_BINARY_DIR}/src/*"

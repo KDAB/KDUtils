@@ -9,7 +9,8 @@
 #
 
 cmake_minimum_required(VERSION 3.16)
-project(KDUtils
+project(
+    KDUtils
     DESCRIPTION "A set of C++ helpers and wrappers around the C++ standard library"
     LANGUAGES CXX C
     VERSION 0.95

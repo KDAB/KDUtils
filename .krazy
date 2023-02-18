@@ -9,6 +9,7 @@ EXCLUDE strings,explicit,normalize,passbyvalue,operators,nullstrcompare,nullstra
 EXCLUDE qminmax,captruefalse,typedefs,inline,constref
 EXCLUDE style
 
+SKIP .cmake-format.py
 #no need to check 3rdparty stuff
 SKIP /3rdparty/
 SKIP /cmake/CodeCoverage\.cmake

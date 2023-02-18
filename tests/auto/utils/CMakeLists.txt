@@ -22,8 +22,12 @@ add_subdirectory(url)
 if(KDUTILS_CODE_COVERAGE)
     include(${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
     setup_target_for_coverage_gcovr_html(
-        NAME KDUtils_coverage
-        EXECUTABLE ctest -L "KDUtils"
+        NAME
+        KDUtils_coverage
+        EXECUTABLE
+        ctest
+        -L
+        "KDUtils"
         EXCLUDE
         "${CMAKE_BINARY_DIR}/_deps/*"
         "${CMAKE_BINARY_DIR}/src/*"

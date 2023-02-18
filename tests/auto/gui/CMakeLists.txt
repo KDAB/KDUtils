@@ -23,9 +23,14 @@ add_feature_info(KDGui-Tests ON "Build Tests")
 
 if(KDUTILS_CODE_COVERAGE)
     setup_target_for_coverage_gcovr_html(
-        NAME gui_coverage
-        BASE_DIRECTORY ${CMAKE_SOURCE_DIR}
-        EXECUTABLE ctest -L "Gui"
+        NAME
+        gui_coverage
+        BASE_DIRECTORY
+        ${CMAKE_SOURCE_DIR}
+        EXECUTABLE
+        ctest
+        -L
+        "Gui"
         EXCLUDE
         "${CMAKE_BINARY_DIR}/_deps/*"
         "${CMAKE_BINARY_DIR}/src/*"

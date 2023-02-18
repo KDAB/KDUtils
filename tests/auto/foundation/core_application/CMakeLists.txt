@@ -8,8 +8,10 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-project(test-core-core-application VERSION 0.1 LANGUAGES CXX)
-
-add_core_test(${PROJECT_NAME}
-    tst_core_application.cpp
+project(
+    test-core-core-application
+    VERSION 0.1
+    LANGUAGES CXX
 )
+
+add_core_test(${PROJECT_NAME} tst_core_application.cpp)
