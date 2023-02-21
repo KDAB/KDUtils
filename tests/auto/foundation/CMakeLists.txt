@@ -13,7 +13,7 @@ project(KDFoundation-Tests)
 
 include_directories(./common)
 
-# add a test with the specifed name
+# add a test with the specified name
 function(add_core_test name sources)
     add_executable(${name} ${sources})
 
@@ -27,7 +27,7 @@ function(add_core_test name sources)
     endif()
 endfunction()
 
-# add a benchmark with the specifed name
+# add a benchmark with the specified name
 function(add_core_bench name sources)
     add_executable(${name} ${sources})
     target_link_libraries(${name} PRIVATE KDUtils::Foundation doctest nanobench)
