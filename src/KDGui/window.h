@@ -58,7 +58,7 @@ public:
     void create();
     void destroy();
     bool isCreated() const { return m_platformWindow != nullptr; }
-    AbstractPlatformWindow *platformWindow() { return m_platformWindow.get(); }
+    AbstractPlatformWindow *platformWindow() const { return m_platformWindow.get(); }
 
     void registerEventReceiver(KDFoundation::Object *receiver);
     void unregisterEventReceiver(KDFoundation::Object *receiver);
