@@ -74,7 +74,7 @@ endif()
 fetchcontent_declare(
     KDBindings
     GIT_REPOSITORY https://github.com/KDAB/KDBindings.git
-    GIT_TAG 1.0
+    GIT_TAG v1.0.2
     USES_TERMINAL_DOWNLOAD YES USES_TERMINAL_UPDATE YES
 )
 fetchcontent_makeavailable(KDBindings)
