@@ -78,7 +78,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 endif()
 
 add_library(
-    KDFoundation SHARED
+    KDFoundation
     ${SOURCES} ${HEADERS}
 )
 add_library(
@@ -94,7 +94,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     target_link_libraries(KDFoundation PUBLIC "-framework Cocoa" "-framework QuartzCore")
 endif()
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    target_compile_definitions(KDFoundation PRIVATE PLATFORM_ANDROID)
+    set(PLATFORM_NAME "PLATFORM_ANDROID")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_compile_definitions(KDFoundation PRIVATE PLATFORM_LINUX)
     set(PLATFORM_NAME "PLATFORM_LINUX")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")

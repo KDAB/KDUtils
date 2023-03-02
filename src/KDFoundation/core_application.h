@@ -15,15 +15,18 @@
 #include <KDFoundation/logging.h>
 #include <KDFoundation/object.h>
 #include <KDFoundation/event_queue.h>
+#include <KDFoundation/platform/abstract_platform_integration.h>
 
 #include <kdbindings/property.h>
 
 #include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 namespace KDFoundation {
 
 class AbstractPlatformEventLoop;
-class AbstractPlatformIntegration;
 class Postman;
 
 class KDFOUNDATION_API CoreApplication : public Object
@@ -31,8 +34,8 @@ class KDFOUNDATION_API CoreApplication : public Object
 public:
     KDBindings::Property<std::string> applicationName{};
 
-    CoreApplication();
-    ~CoreApplication();
+    CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration = {});
+    ~CoreApplication() override;
 
     static inline CoreApplication *instance() { return ms_application; }
 
@@ -51,11 +54,13 @@ public:
     int exec();
     void quit();
 
-    AbstractPlatformIntegration *platformIntegration() { return m_platformIntegration.get(); }
+    AbstractPlatformIntegration *platformIntegration();
+
+    using FileReader = std::function<std::optional<std::vector<uint8_t>>(const std::string &filename)>;
+    static void registerFileReader(const FileReader &fileReader);
+    static std::vector<uint8_t> readFile(const std::string &filename);
 
 protected:
-    CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration);
-
     static CoreApplication *ms_application;
     static bool ms_loggingSetup;
     std::shared_ptr<spdlog::logger> m_logger;

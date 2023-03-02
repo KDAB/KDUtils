@@ -21,7 +21,7 @@ namespace KDGui {
 class KDGUI_API GuiApplication : public KDFoundation::CoreApplication
 {
 public:
-    GuiApplication();
+    GuiApplication(std::unique_ptr<AbstractGuiPlatformIntegration> &&platformIntegration = {});
 
     static inline GuiApplication *instance() { return static_cast<GuiApplication *>(ms_application); }
 

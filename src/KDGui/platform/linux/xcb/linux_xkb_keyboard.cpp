@@ -27,7 +27,7 @@ LinuxXkbKeyboard::LinuxXkbKeyboard(LinuxXcbPlatformIntegration *platformIntegrat
 {
     m_logger = spdlog::get("xkeyboard");
     if (!m_logger) {
-        m_logger = spdlog::stdout_color_mt("xkeyboard");
+        m_logger = KDFoundation::createLogger("xkeyboard");
         m_logger->set_level(spdlog::level::trace);
     }
 

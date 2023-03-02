@@ -31,8 +31,8 @@ public:
 
     explicit Logger(const char *category, Logger::Type type)
         : m_category(category)
-        , m_type(type)
         , m_logger(spdlog::get(category))
+        , m_type(type)
     {
         // Create logger if it wasn't already (use multithread logger just to be safe)
         if (!m_logger)

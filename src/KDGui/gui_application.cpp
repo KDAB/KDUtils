@@ -19,6 +19,8 @@
 #include <KDGui/platform/win32/win32_gui_platform_integration.h>
 #elif defined(PLATFORM_MACOS)
 #include <KDGui/platform/cocoa/cocoa_platform_integration.h>
+#elif defined(ANDROID)
+#include <KDGui/platform/android/android_platform_integration.h>
 #endif
 
 #include <KDFoundation/logging.h>
@@ -37,13 +39,20 @@ static std::unique_ptr<KDGui::AbstractGuiPlatformIntegration> createLinuxIntegra
 }
 #endif
 
-GuiApplication::GuiApplication()
-#if defined(PLATFORM_LINUX)
-    : KDFoundation::CoreApplication(createLinuxIntegration())
-#elif defined(PLATFORM_WIN32)
-    : KDFoundation::CoreApplication(std::make_unique<Win32GuiPlatformIntegration>())
-#elif defined(PLATFORM_MACOS)
-    : KDFoundation::CoreApplication(std::make_unique<CocoaPlatformIntegration>())
-#endif
+static std::unique_ptr<AbstractGuiPlatformIntegration> createPlatformIntegration()
 {
+#if defined(ANDROID)
+    return std::make_unique<AndroidPlatformIntegration>();
+#elif defined(PLATFORM_LINUX)
+    return createLinuxIntegration();
+#elif defined(PLATFORM_WIN32)
+    return std::make_unique<Win32GuiPlatformIntegration>();
+#elif defined(PLATFORM_MACOS)
+    return std::make_unique<CocoaPlatformIntegration>();
+#endif
+    return {};
 }
+
+GuiApplication::GuiApplication(std::unique_ptr<AbstractGuiPlatformIntegration> &&platformIntegration)
+    : CoreApplication(platformIntegration ? std::move(platformIntegration) : createPlatformIntegration())
+{}

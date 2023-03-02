@@ -11,7 +11,6 @@
 
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/platform/abstract_platform_event_loop.h>
-#include <KDFoundation/platform/abstract_platform_integration.h>
 #include "postman.h"
 
 #if defined(PLATFORM_LINUX)
@@ -30,29 +29,30 @@ using namespace KDFoundation;
 
 CoreApplication *CoreApplication::ms_application = nullptr;
 bool CoreApplication::ms_loggingSetup = false;
+static std::vector<CoreApplication::FileReader> s_fileReaders;
 
-CoreApplication::CoreApplication()
-    : Object()
+static std::optional<std::vector<uint8_t>> readLocalFile(const std::string &filename)
 {
-    init();
+    auto logger = spdlog::get("application");
+    if (!logger)
+        logger = createLogger("application");
+    SPDLOG_LOGGER_TRACE(logger, "Loading file: {}", filename);
+    std::ifstream file(filename, std::ios::ate | std::ios::binary);
+    if (!file.is_open())
+        return {};
+
+    auto res = std::make_optional<std::vector<uint8_t>>();
+    const size_t fileSize = static_cast<size_t>(file.tellg());
+    res->resize(fileSize);
+    file.seekg(0);
+    file.read(reinterpret_cast<char *>(res->data()), static_cast<std::streamsize>(fileSize));
+    file.close();
+    return res;
 }
 
 CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration)
     : Object()
-{
-    m_platformIntegration = std::move(platformIntegration);
-    init();
-}
-
-CoreApplication::~CoreApplication()
-{
-    // Destroy the event loop and platform integration before removing the app instance
-    m_platformEventLoop = std::unique_ptr<AbstractPlatformEventLoop>();
-    m_platformIntegration = std::unique_ptr<AbstractPlatformIntegration>();
-    ms_application = nullptr;
-}
-
-void CoreApplication::init()
+    , m_platformIntegration{std::move(platformIntegration)}
 {
     assert(ms_application == nullptr);
     ms_application = this;
@@ -73,7 +73,7 @@ void CoreApplication::init()
 
     m_logger = spdlog::get("application");
     if (!m_logger) {
-        m_logger = spdlog::stdout_color_mt("application");
+        m_logger = createLogger("application");
         m_logger->set_level(spdlog::level::info);
     }
 
@@ -81,6 +81,7 @@ void CoreApplication::init()
     if (const char *display = std::getenv("DISPLAY"))
         SPDLOG_LOGGER_INFO(m_logger, "DISPLAY={}", display);
 
+    s_fileReaders.emplace_back(readLocalFile);
     // Create a default postman object
     m_postman = std::make_unique<Postman>();
 
@@ -100,6 +101,14 @@ void CoreApplication::init()
     m_platformEventLoop = m_platformIntegration->createPlatformEventLoop();
     m_platformIntegration->init();
     m_platformEventLoop->setPostman(m_postman.get());
+}
+
+CoreApplication::~CoreApplication()
+{
+    // Destroy the event loop and platform integration before removing the app instance
+    m_platformEventLoop = std::unique_ptr<AbstractPlatformEventLoop>();
+    m_platformIntegration = std::unique_ptr<AbstractPlatformIntegration>();
+    ms_application = nullptr;
 }
 
 void CoreApplication::postEvent(Object *target, std::unique_ptr<Event> &&event)
@@ -152,6 +161,26 @@ int CoreApplication::exec()
 void CoreApplication::quit()
 {
     postEvent(this, std::make_unique<QuitEvent>());
+}
+
+AbstractPlatformIntegration *CoreApplication::platformIntegration()
+{
+    return m_platformIntegration.get();
+}
+
+void CoreApplication::registerFileReader(const FileReader &fileReader)
+{
+    s_fileReaders.push_back(fileReader);
+}
+
+std::vector<uint8_t> CoreApplication::readFile(const std::string &filename)
+{
+    for (const auto &fr : s_fileReaders) {
+        if (auto res = fr(filename)) {
+            return std::move(*res);
+        }
+    }
+    throw std::runtime_error("failed to open file!");
 }
 
 void CoreApplication::event(EventReceiver *target, Event *event)

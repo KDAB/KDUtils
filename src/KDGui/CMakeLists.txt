@@ -74,10 +74,25 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         platform/cocoa/cocoa_platform_integration_impl.h
         platform/cocoa/cocoa_platform_window.h
     )
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    list(
+        APPEND
+        SOURCES
+        platform/android/android_platform_event_loop.cpp
+        platform/android/android_platform_integration.cpp
+        platform/android/android_platform_window.cpp
+    )
+    list(
+        APPEND
+        HEADERS
+        platform/android/android_platform_event_loop.h
+        platform/android/android_platform_integration.h
+        platform/android/android_platform_window.h
+    )
 endif()
 
 add_library(
-    KDGui SHARED
+    KDGui
     ${SOURCES} ${PUBLIC_HEADERS} ${PRIVATE_HEADERS}
 )
 add_library(
@@ -168,6 +183,11 @@ endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     target_compile_definitions(KDGui PRIVATE PLATFORM_MACOS)
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    set(APP_GLUE_DIR ${ANDROID_NDK}/sources/android/native_app_glue)
+    target_include_directories(KDGui PRIVATE ${APP_GLUE_DIR})
 endif()
 
 target_include_directories(

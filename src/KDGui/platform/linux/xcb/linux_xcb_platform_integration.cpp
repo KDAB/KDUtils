@@ -62,7 +62,7 @@ LinuxXcbPlatformEventLoop *LinuxXcbPlatformIntegration::createPlatformEventLoopI
     // the central logging configuration in CoreApplication has had a chance to execute.
     m_logger = spdlog::get("xcb");
     if (!m_logger) {
-        m_logger = spdlog::stdout_color_mt("xcb");
+        m_logger = KDFoundation::createLogger("xcb");
         m_logger->set_level(spdlog::level::info);
     }
 

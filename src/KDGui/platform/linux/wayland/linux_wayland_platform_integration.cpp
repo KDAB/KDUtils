@@ -46,7 +46,7 @@ void LinuxWaylandPlatformIntegration::init()
 {
     m_logger = spdlog::get("wayland");
     if (!m_logger) {
-        m_logger = spdlog::stdout_color_mt("wayland");
+        m_logger = KDFoundation::createLogger("wayland");
         m_logger->set_level(spdlog::level::info);
     }
 

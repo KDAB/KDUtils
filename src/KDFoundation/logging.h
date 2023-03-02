@@ -16,6 +16,10 @@
 
 #include <cstdint>
 
+#ifdef ANDROID
+#  include <spdlog/sinks/android_sink.h>
+#endif
+
 namespace KDFoundation {
 
 enum class LogLevel : std::uint8_t {
@@ -26,5 +30,14 @@ enum class LogLevel : std::uint8_t {
     Error,
     Critical
 };
+
+inline std::shared_ptr<spdlog::logger> createLogger(const std::string &name)
+{
+#ifdef ANDROID
+    return spdlog::android_logger_mt(name, "serenity");
+#else
+    return spdlog::stdout_color_mt(name);
+#endif
+}
 
 } // namespace KDFoundation

@@ -17,7 +17,14 @@ project(
     HOMEPAGE_URL "https://github.com/KDAB/KDUtils"
 )
 
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+if (ANDROID)
+    option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+    option(KDUTILS_BUILD_TESTS "Build the tests" OFF)
+else()
+    option(KDUTILS_BUILD_TESTS "Build the tests" ON)
+    option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/ECM/modules")
@@ -51,8 +58,6 @@ endif()
 add_subdirectory(src/KDUtils)
 add_subdirectory(src/KDFoundation)
 add_subdirectory(src/KDGui)
-
-option(KDUTILS_BUILD_TESTS "Build the tests" ON)
 
 if(KDUTILS_BUILD_TESTS)
     enable_testing()
