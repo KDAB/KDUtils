@@ -15,6 +15,7 @@ Contact KDAB at <info@kdab.com> for commercial licensing options.
 #include <KDFoundation/core_application.h>
 #include <KDGui/window.h>
 
+#include <dlfcn.h>
 #include <filesystem>
 
 #include "android_platform_event_loop.h"
@@ -95,10 +96,11 @@ static void handle_cmd(android_app* app, int32_t cmd)
     }
 }
 
-extern "C" int main(int argc, char**argv);
-
 void android_main(struct android_app* app)
 {
+    using MainType = int (*)(int, const char**);
+    // find "main" function
+    const auto main = reinterpret_cast<MainType>(dlsym(RTLD_DEFAULT, "main"));
     // Set the callback to process system events
     app->onAppCmd = handle_cmd;
     KDGui::AndroidPlatformIntegration::s_androidApp = app;
@@ -109,7 +111,9 @@ void android_main(struct android_app* app)
                 source->process(app, source);
         }
     } while (app->destroyRequested == 0 && !startMain);
-    static char* appStr = "SerenityNativeApplication";
-    if (startMain)
+    static const char* appStr = "SerenityNativeApplication";
+    if (startMain && main)
         exit(main(1, &appStr));
+    else
+        exit(-1);
 }
