@@ -180,6 +180,12 @@ std::vector<uint8_t> CoreApplication::readFile(const std::string &filename)
             return std::move(*res);
         }
     }
+    auto logger = spdlog::get("application");
+    if (!logger)
+        logger = createLogger("application");
+
+    SPDLOG_LOGGER_ERROR(logger, "Can't load: {}", filename);
+
     throw std::runtime_error("failed to open file!");
 }
 
