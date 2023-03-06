@@ -125,8 +125,8 @@ target_include_directories(
 # Logging configuration
 #
 # Compile out some of the SPDLOG macros based on build type
-target_compile_options(
-    KDFoundation PUBLIC -DSPDLOG_ACTIVE_LEVEL=$<IF:$<CONFIG:Debug>,SPDLOG_LEVEL_TRACE,SPDLOG_LEVEL_WARN>
+target_compile_definitions(
+    KDFoundation PRIVATE SPDLOG_ACTIVE_LEVEL=$<IF:$<CONFIG:Debug>,SPDLOG_LEVEL_TRACE,SPDLOG_LEVEL_WARN>
 )
 target_link_libraries(
     KDFoundation
