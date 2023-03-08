@@ -26,14 +26,14 @@ namespace KDGui {
 void AndroidPlatformEventLoop::androidHandleCmd(android_app *app, int32_t cmd)
 {
     switch (cmd) {
-//    case APP_CMD_INIT_WINDOW:
-//// TODO handle me
-//        break;
-//    case APP_CMD_TERM_WINDOW:
-//// TODO handle me
-//        break;
+        //    case APP_CMD_INIT_WINDOW:
+        //// TODO handle me
+        //        break;
+        //    case APP_CMD_TERM_WINDOW:
+        //// TODO handle me
+        //        break;
     case APP_CMD_WINDOW_RESIZED:
-        reinterpret_cast<AndroidPlatformEventLoop*>(AndroidPlatformIntegration::s_androidApp->userData)->androidPlatformIntegration()->handleWindowResize();
+        reinterpret_cast<AndroidPlatformEventLoop *>(AndroidPlatformIntegration::s_androidApp->userData)->androidPlatformIntegration()->handleWindowResize();
         break;
     default:
         __android_log_print(ANDROID_LOG_INFO, "AndroidPlatformEventLoop", "event not handled: %d", cmd);
@@ -46,14 +46,14 @@ int32_t AndroidPlatformEventLoop::androidHandleInputEvent(android_app *app, AInp
     case AINPUT_EVENT_TYPE_KEY:
         if (AKeyEvent_getKeyCode(event) == AKEYCODE_BACK) {
             auto vm = app->activity->vm;
-            JNIEnv* env = nullptr;
-            int res = vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
+            JNIEnv *env = nullptr;
+            int res = vm->GetEnv(reinterpret_cast<void **>(&env), JNI_VERSION_1_6);
             if (res == JNI_EDETACHED) {
                 JavaVMAttachArgs aargs = { JNI_VERSION_1_6, "Serenity Thread", nullptr };
                 vm->AttachCurrentThread(&env, &aargs);
             }
             const auto finish = env->GetMethodID(env->GetObjectClass(app->activity->clazz), "finish", "()V");
-            env->CallVoidMethod(app->activity->clazz, finish , 0);
+            env->CallVoidMethod(app->activity->clazz, finish, 0);
             return 1; // prevent default handler
         }
         break;
@@ -80,8 +80,8 @@ AndroidPlatformEventLoop::AndroidPlatformEventLoop(AndroidPlatformIntegration *a
 
 void AndroidPlatformEventLoop::waitForEvents(int timeout)
 {
-    android_poll_source* source;
-    if (ALooper_pollAll(timeout, nullptr, nullptr, (void**)&source) >= 0) {
+    android_poll_source *source;
+    if (ALooper_pollAll(timeout, nullptr, nullptr, (void **)&source) >= 0) {
         if (source != nullptr)
             source->process(AndroidPlatformIntegration::s_androidApp, source);
     }
@@ -139,14 +139,14 @@ AndroidPlatformIntegration *AndroidPlatformEventLoop::androidPlatformIntegration
 }
 
 std::unique_ptr<KDFoundation::AbstractPlatformTimer>
-AndroidPlatformEventLoop::createPlatformTimerImpl(KDFoundation::Timer */*timer*/)
+AndroidPlatformEventLoop::createPlatformTimerImpl(KDFoundation::Timer * /*timer*/)
 {
     return {};
 }
 
 int AndroidPlatformEventLoop::ALooperCallback(int fd, int events, void *data)
 {
-    auto thiz = reinterpret_cast<AndroidPlatformEventLoop*>(data);
+    auto thiz = reinterpret_cast<AndroidPlatformEventLoop *>(data);
     if (!thiz->m_postman)
         return 1;
     auto &notifierSet = thiz->m_notifiers[fd];

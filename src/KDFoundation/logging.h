@@ -17,7 +17,7 @@
 #include <cstdint>
 
 #ifdef ANDROID
-#  include <spdlog/sinks/android_sink.h>
+#include <spdlog/sinks/android_sink.h>
 #endif
 
 namespace KDFoundation {

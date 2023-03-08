@@ -55,7 +55,7 @@ protected:
     std::unique_ptr<KDFoundation::AbstractPlatformTimer> createPlatformTimerImpl(KDFoundation::Timer *timer) final;
 
 private:
-    static int ALooperCallback(int fd, int events, void* data);
+    static int ALooperCallback(int fd, int events, void *data);
     struct NotifierSet {
         int androidEvents() const;
 
@@ -63,8 +63,8 @@ private:
 
         bool isEmpty() const;
     };
-    static void androidHandleCmd(android_app* app, int32_t cmd);
-    static int32_t androidHandleInputEvent(struct android_app* app, AInputEvent* event);
+    static void androidHandleCmd(android_app *app, int32_t cmd);
+    static int32_t androidHandleInputEvent(struct android_app *app, AInputEvent *event);
 
 private:
     int m_events;

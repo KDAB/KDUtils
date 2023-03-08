@@ -25,7 +25,8 @@ namespace KDGui {
 AndroidPlatformWindow::AndroidPlatformWindow(AndroidPlatformIntegration *androidPlatformIntegrationSerenity, Window *window)
     : AbstractPlatformWindow(window)
     , m_androidPlatformIntegrationSerenity(androidPlatformIntegrationSerenity)
-{}
+{
+}
 
 bool AndroidPlatformWindow::create()
 {
@@ -52,24 +53,24 @@ bool AndroidPlatformWindow::isCreated()
     return AndroidPlatformIntegration::s_androidApp->userData;
 }
 
-void AndroidPlatformWindow::map() {}
+void AndroidPlatformWindow::map() { }
 
-void AndroidPlatformWindow::unmap() {}
+void AndroidPlatformWindow::unmap() { }
 
-void AndroidPlatformWindow::disableCursor() {}
+void AndroidPlatformWindow::disableCursor() { }
 
-void AndroidPlatformWindow::enableCursor() {}
+void AndroidPlatformWindow::enableCursor() { }
 
-void AndroidPlatformWindow::enableRawMouseInput() {}
+void AndroidPlatformWindow::enableRawMouseInput() { }
 
-void AndroidPlatformWindow::disableRawMouseInput() {}
+void AndroidPlatformWindow::disableRawMouseInput() { }
 
 void AndroidPlatformWindow::setTitle(const std::string &title)
 {
     m_title = title;
 }
 
-void AndroidPlatformWindow::setSize(uint32_t /*width*/, uint32_t /*height*/) {}
+void AndroidPlatformWindow::setSize(uint32_t /*width*/, uint32_t /*height*/) { }
 
 void AndroidPlatformWindow::handleResize(uint32_t width, uint32_t height)
 {
@@ -124,4 +125,4 @@ ANativeWindow *AndroidPlatformWindow::nativeWindow()
     return AndroidPlatformIntegration::s_androidApp->window;
 }
 
-} // namespace KDGui {
+} // namespace KDGui

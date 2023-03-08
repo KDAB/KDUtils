@@ -55,4 +55,5 @@ static std::unique_ptr<AbstractGuiPlatformIntegration> createPlatformIntegration
 
 GuiApplication::GuiApplication(std::unique_ptr<AbstractGuiPlatformIntegration> &&platformIntegration)
     : CoreApplication(platformIntegration ? std::move(platformIntegration) : createPlatformIntegration())
-{}
+{
+}

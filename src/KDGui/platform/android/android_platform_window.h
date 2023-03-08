@@ -28,7 +28,7 @@ namespace KDGui {
 
 class AndroidPlatformIntegration;
 
-class KDGUI_API AndroidPlatformWindow: public AbstractPlatformWindow
+class KDGUI_API AndroidPlatformWindow : public AbstractPlatformWindow
 {
 public:
     AndroidPlatformWindow(AndroidPlatformIntegration *androidPlatformIntegration, Window *window);
@@ -56,7 +56,8 @@ public:
     void handleKeyRelease(uint32_t timestamp, uint8_t nativeKeyCode, Key key, KeyboardModifiers modifiers) final;
     void handleTextInput(const std::string &str) final;
 
-    ANativeWindow* nativeWindow();
+    ANativeWindow *nativeWindow();
+
 private:
     std::string m_title;
     AndroidPlatformIntegration *m_androidPlatformIntegrationSerenity;

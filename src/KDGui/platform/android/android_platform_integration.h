@@ -27,24 +27,23 @@ struct android_app;
 
 namespace KDGui {
 
-
 class KDGUI_API AndroidPlatformIntegration : public AbstractGuiPlatformIntegration
 {
 public:
     AndroidPlatformIntegration();
     void handleWindowResize();
-    void registerPlatformWindow(AbstractPlatformWindow* window);
-    void unregisterPlatformWindow(AbstractPlatformWindow* window);
+    void registerPlatformWindow(AbstractPlatformWindow *window);
+    void unregisterPlatformWindow(AbstractPlatformWindow *window);
 
 public:
-    static android_app* s_androidApp;
+    static android_app *s_androidApp;
 
 private:
     KDFoundation::AbstractPlatformEventLoop *createPlatformEventLoopImpl() override;
     AbstractPlatformWindow *createPlatformWindowImpl(Window *window) override;
 
 private:
-    std::unordered_set<AbstractPlatformWindow*> m_windows;
+    std::unordered_set<AbstractPlatformWindow *> m_windows;
 };
 
 } // namespace KDGui

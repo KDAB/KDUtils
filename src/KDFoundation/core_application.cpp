@@ -52,7 +52,7 @@ static std::optional<std::vector<uint8_t>> readLocalFile(const std::string &file
 
 CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration)
     : Object()
-    , m_platformIntegration{std::move(platformIntegration)}
+    , m_platformIntegration{ std::move(platformIntegration) }
 {
     assert(ms_application == nullptr);
     ms_application = this;
