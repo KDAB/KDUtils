@@ -93,7 +93,7 @@ endif()
 
 add_library(
     KDGui
-    ${SOURCES} ${PUBLIC_HEADERS} ${PRIVATE_HEADERS}
+    ${SOURCES}
 )
 add_library(
     KDUtils::Gui ALIAS KDGui
