@@ -17,7 +17,7 @@ project(
     HOMEPAGE_URL "https://github.com/KDAB/KDUtils"
 )
 
-if (ANDROID)
+if(ANDROID)
     option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
     option(KDUTILS_BUILD_TESTS "Build the tests" OFF)
 else()
