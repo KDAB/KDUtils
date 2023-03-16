@@ -87,7 +87,7 @@ add_library(
 
 target_link_libraries(
     KDFoundation
-    PUBLIC KDUtils::Utils KDBindings
+    PUBLIC KDUtils::Utils KDAB::KDBindings
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
