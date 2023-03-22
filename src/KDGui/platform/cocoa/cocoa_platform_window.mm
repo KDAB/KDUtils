@@ -18,6 +18,7 @@
 #include <KDFoundation/event.h>
 #include <KDFoundation/logging.h>
 
+#import <Cocoa/Cocoa.h>
 #import <QuartzCore/CAMetalLayer.h>
 
 using namespace KDFoundation;

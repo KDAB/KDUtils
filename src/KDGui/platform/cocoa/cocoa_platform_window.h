@@ -13,8 +13,7 @@
 
 #include <KDGui/abstract_platform_window.h>
 
-#import <Cocoa/Cocoa.h>
-
+#include <objc/objc-runtime.h>
 namespace KDGui {
 
 class CocoaPlatformWindow : public AbstractPlatformWindow

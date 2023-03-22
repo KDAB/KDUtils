@@ -14,6 +14,8 @@
 
 #include <KDFoundation/platform/macos/macos_platform_event_loop.h>
 
+#import <Cocoa/Cocoa.h>
+
 using namespace KDGui;
 
 static void createMenuBar()

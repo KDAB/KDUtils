@@ -11,8 +11,7 @@
 
 #pragma once
 
-#import <Cocoa/Cocoa.h>
-
+#include <objc/objc-runtime.h>
 namespace KDFoundation {
 class AbstractPlatformEventLoop;
 }
