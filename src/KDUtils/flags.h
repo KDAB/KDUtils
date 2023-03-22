@@ -90,7 +90,7 @@ public:
 
     constexpr inline bool testFlag(E flag) const noexcept
     {
-        const FlagsInt fInt(flag);
+        const FlagsInt fInt = static_cast<FlagsInt>(flag);
         return ((m_flags & fInt) == fInt) && (fInt != 0 || m_flags == fInt);
     }
 
