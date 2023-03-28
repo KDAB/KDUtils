@@ -40,7 +40,6 @@ add_subdirectory(constexpr_sort)
 add_subdirectory(core_application)
 add_subdirectory(event)
 add_subdirectory(event_queue)
-add_subdirectory(flags)
 add_subdirectory(object)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")

@@ -27,7 +27,6 @@ set(HEADERS
     event_receiver.h
     event.h
     file_descriptor_notifier.h
-    flags.h
     formatters.h
     hashutils.h
     kdfoundation_global.h
