@@ -77,7 +77,7 @@ public:
         return *this;
     }
 
-    constexpr inline Flags operator&(E mask) const noexcept { return Flags::fromInt(FlagsInt(mask) & FlagsInt(m_flags)); }
+    constexpr inline Flags operator&(E mask) const noexcept { return Flags::fromInt(m_flags & FlagsInt(mask)); }
     constexpr inline Flags operator&(Flags flags) const noexcept { return Flags::fromInt(m_flags & flags.m_flags); }
 
     constexpr inline Flags operator|(E mask) const noexcept { return Flags::fromInt(m_flags | FlagsInt(mask)); }
