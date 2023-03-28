@@ -10,5 +10,6 @@
 
 include(CMakeFindDependencyMacro)
 find_dependency(KDUtils)
+find_dependency(KDBindings)
 
 include("${CMAKE_CURRENT_LIST_DIR}/KDFoundationConfigTargets.cmake")

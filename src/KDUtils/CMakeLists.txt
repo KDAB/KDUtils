@@ -32,12 +32,13 @@ add_library(
     ${SOURCES} ${HEADERS}
 )
 add_library(
-    KDUtils::Utils ALIAS KDUtils
+    KDUtils::KDUtils ALIAS KDUtils
 )
 target_link_libraries(
     KDUtils
     PUBLIC spdlog::spdlog
 )
+
 if(ANDROID)
     target_link_libraries(KDUtils PUBLIC android)
 endif()

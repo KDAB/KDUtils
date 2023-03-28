@@ -81,12 +81,12 @@ add_library(
     ${SOURCES} ${HEADERS}
 )
 add_library(
-    KDUtils::Foundation ALIAS KDFoundation
+    KDUtils::KDFoundation ALIAS KDFoundation
 )
 
 target_link_libraries(
     KDFoundation
-    PUBLIC KDUtils::Utils KDAB::KDBindings
+    PUBLIC KDUtils::KDUtils KDAB::KDBindings
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -173,7 +173,7 @@ install(
 install(
     EXPORT KDFoundation
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDFoundation
-    NAMESPACE KDFoundation::
+    NAMESPACE KDUtils::
     FILE KDFoundationConfigTargets.cmake
 )
 include(CMakePackageConfigHelpers)

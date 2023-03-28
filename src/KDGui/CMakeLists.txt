@@ -96,10 +96,10 @@ add_library(
     ${SOURCES}
 )
 add_library(
-    KDUtils::Gui ALIAS KDGui
+    KDUtils::KDGui ALIAS KDGui
 )
 
-set(KDGUI_PUBLIC_LIBS KDUtils::Foundation)
+set(KDGUI_PUBLIC_LIBS KDUtils::KDFoundation)
 
 target_link_libraries(
     KDGui
@@ -228,7 +228,7 @@ install(
 install(
     EXPORT KDGui
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/KDGui
-    NAMESPACE KDGui::
+    NAMESPACE KDUtils::
     FILE KDGuiConfigTargets.cmake
 )
 include(CMakePackageConfigHelpers)
