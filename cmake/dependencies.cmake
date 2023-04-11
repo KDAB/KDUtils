@@ -33,8 +33,8 @@ if(NOT TARGET spdlog::spdlog)
     set_target_properties(
         spdlog
         PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-                   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-                   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     )
 endif()
 
@@ -67,6 +67,7 @@ if(NOT TARGET spdlog_setup::spdlog_setup)
 
     if(UNIX)
         target_compile_options(spdlog_setup INTERFACE -Wno-deprecated-declarations)
+        target_compile_options(spdlog_setup INTERFACE -Wno-unqualified-std-cast-call)
     endif()
 endif()
 
