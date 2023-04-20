@@ -4,7 +4,7 @@ Upstream-Contact: Paul Lemire <paul.lemire@kdab.com>
 Source: https://github.com/KDAB/KDUtils
 
 #misc source code
-Files: CMakePresets.json
+Files: CMakePresets.json CMakeUserPresets-example.json
 Copyright: 2018-2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
 License: MIT
 
@@ -23,6 +23,6 @@ Files: cmake/CodeCoverage.cmake
 Copyright: Copyright (c) 2012 - 2017, Lars Bilke
 License: BSD-3-Clause
 
-Files: cmake/ECM/modules/* cmake/ECM/find-modules/*
+Files: cmake/ECM/modules/_ cmake/ECM/find-modules/_
 Copyright: The KDE Project
 License: BSD-3-Clause
