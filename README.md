@@ -27,8 +27,8 @@ sudo apt install libxkbcommon-dev libxcb-xkb-dev libxkbcommon-x11-dev wayland-sc
 
 ## Licensing
 
-KDUtils is (C) 2018-2023, Klarälvdalens Datakonsult AB, and is licensed according to
-the terms of the [AGPL 3.0](LICENSES/AGPL-3.0-only.txt).
+KDUtils is (C) 2018-2023, Klarälvdalens Datakonsult AB, and is available under the
+terms of the [MIT](LICENSES/MIT.txt) license.
 
 Contact KDAB at <info@kdab.com> to inquire about commercial licensing.
 
