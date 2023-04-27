@@ -1,7 +1,7 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 
-exclude: ^(cmake/ECM|cmake/CodeCoverage.cmake|cmake/KDSelectLibraryConfigurations.cmake|cmake/CheckAtomic.cmake|cmake/KDSelectLibraryConfigurations.cmake)
+exclude: ^(cmake/ECM|cmake/CodeCoverage.cmake|cmake/CheckAtomic.cmake)
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v3.2.0

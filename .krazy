@@ -14,5 +14,4 @@ SKIP .cmake-format.py
 SKIP /3rdparty/
 #skip borrowed cmake code
 SKIP /cmake/CodeCoverage.cmake
-SKIP /cmake/KDSelectLibraryConfigurations.cmake
 SKIP /cmake/ECM
