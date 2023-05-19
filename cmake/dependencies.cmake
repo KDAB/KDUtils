@@ -19,7 +19,17 @@ message(STATUS "Looking for KDUtils dependencies")
 find_package(spdlog 1.8.5 QUIET)
 
 if(NOT TARGET spdlog::spdlog)
-    fetchcontent_declare(
+    get_property(tmp GLOBAL PROPERTY PACKAGES_NOT_FOUND)
+    list(
+        FILTER
+        tmp
+        EXCLUDE
+        REGEX
+        spdlog
+    )
+    set_property(GLOBAL PROPERTY PACKAGES_NOT_FOUND ${tmp})
+
+    FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
         GIT_TAG v1.8.5
@@ -28,7 +38,7 @@ if(NOT TARGET spdlog::spdlog)
         ON
         CACHE BOOL "Install spdlog" FORCE
     )
-    fetchcontent_makeavailable(spdlog)
+    FetchContent_MakeAvailable(spdlog)
 
     set_target_properties(
         spdlog
