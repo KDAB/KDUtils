@@ -167,10 +167,10 @@ with section("lint"):
   disabled_codes = []
 
   # regular expression pattern describing valid function names
-  function_pattern = '[0-9a-z_]+'
+  function_pattern = '[0-9A-Za-z_]+'
 
   # regular expression pattern describing valid macro names
-  macro_pattern = '[0-9a-z_]+'
+  macro_pattern = '[0-9A-Za-z_]+'
 
   # regular expression pattern describing valid names for variables with global
   # (cache) scope
@@ -194,7 +194,7 @@ with section("lint"):
 
   # regular expression pattern describing valid names for function/macro
   # arguments and loop variables.
-  argument_var_pattern = '[a-z_][a-z0-9_]+'
+  argument_var_pattern = '[A-Za-z_][A-Za-z0-9_]+'
 
   # regular expression pattern describing valid names for keywords used in
   # functions or macros
@@ -237,4 +237,13 @@ with section("misc"):
 
   # A dictionary containing any per-command configuration overrides. Currently
   # only `command_case` is supported.
-  per_command = {}
+  per_command = {
+    "CompileShader" : {"command_case" : "unchanged"},
+    "CompileShaderSet" : {"command_case" : "unchanged"},
+    "FetchContent_Declare" : {"command_case" : "unchanged"},
+    "FetchContent_GetProperties" : {"command_case" : "unchanged"},
+    "FetchContent_MakeAvailable" : {"command_case" : "unchanged"},
+    "FetchContent_Populate" : {"command_case" : "unchanged"},
+}
+
+
