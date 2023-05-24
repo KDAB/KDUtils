@@ -29,26 +29,6 @@ using namespace KDFoundation;
 
 CoreApplication *CoreApplication::ms_application = nullptr;
 bool CoreApplication::ms_loggingSetup = false;
-static std::vector<CoreApplication::FileReader> s_fileReaders;
-
-static std::optional<std::vector<uint8_t>> readLocalFile(const std::string &filename)
-{
-    auto logger = spdlog::get("application");
-    if (!logger)
-        logger = createLogger("application");
-    SPDLOG_LOGGER_TRACE(logger, "Loading file: {}", filename);
-    std::ifstream file(filename, std::ios::ate | std::ios::binary);
-    if (!file.is_open())
-        return {};
-
-    auto res = std::make_optional<std::vector<uint8_t>>();
-    const size_t fileSize = static_cast<size_t>(file.tellg());
-    res->resize(fileSize);
-    file.seekg(0);
-    file.read(reinterpret_cast<char *>(res->data()), static_cast<std::streamsize>(fileSize));
-    file.close();
-    return res;
-}
 
 CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration)
     : Object()
@@ -81,7 +61,6 @@ CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&
     if (const char *display = std::getenv("DISPLAY"))
         SPDLOG_LOGGER_INFO(m_logger, "DISPLAY={}", display);
 
-    s_fileReaders.emplace_back(readLocalFile);
     // Create a default postman object
     m_postman = std::make_unique<Postman>();
 
@@ -166,27 +145,6 @@ void CoreApplication::quit()
 AbstractPlatformIntegration *CoreApplication::platformIntegration()
 {
     return m_platformIntegration.get();
-}
-
-void CoreApplication::registerFileReader(const FileReader &fileReader)
-{
-    s_fileReaders.push_back(fileReader);
-}
-
-std::vector<uint8_t> CoreApplication::readFile(const std::string &filename)
-{
-    for (const auto &fr : s_fileReaders) {
-        if (auto res = fr(filename)) {
-            return std::move(*res);
-        }
-    }
-    auto logger = spdlog::get("application");
-    if (!logger)
-        logger = createLogger("application");
-
-    SPDLOG_LOGGER_ERROR(logger, "Can't load: {}", filename);
-
-    throw std::runtime_error("failed to open file!");
 }
 
 void CoreApplication::event(EventReceiver *target, Event *event)

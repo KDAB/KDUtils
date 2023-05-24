@@ -56,11 +56,6 @@ public:
 
     AbstractPlatformIntegration *platformIntegration();
 
-    using FileReader = std::function<std::optional<std::vector<uint8_t>>(const std::string &filename)>;
-    static void registerFileReader(const FileReader &fileReader);
-    static std::vector<uint8_t> readFile(const std::string &filename);
-
-protected:
     static CoreApplication *ms_application;
     static bool ms_loggingSetup;
     std::shared_ptr<spdlog::logger> m_logger;

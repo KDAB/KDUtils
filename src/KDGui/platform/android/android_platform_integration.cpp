@@ -12,7 +12,7 @@
 #include "android_platform_integration.h"
 
 #include <android_native_app_glue.h>
-#include <KDFoundation/core_application.h>
+#include <KDUtils/file.h>
 #include <KDGui/window.h>
 
 #include <dlfcn.h>
@@ -37,21 +37,7 @@ AbstractPlatformWindow *AndroidPlatformIntegration::createPlatformWindowImpl(Win
 
 AndroidPlatformIntegration::AndroidPlatformIntegration()
 {
-    KDFoundation::CoreApplication::registerFileReader([](const std::string &fileName) -> std::optional<std::vector<uint8_t>> {
-        auto path = std::filesystem::path{ fileName }.lexically_normal();
-        if (path.empty())
-            return {};
-        const char *p = *path.c_str() == '/' ? path.c_str() + 1 : path.c_str();
-        if (auto afile = AAssetManager_open(s_androidApp->activity->assetManager, p, AASSET_MODE_BUFFER)) {
-            size_t fileLength = AAsset_getLength(afile);
-            auto res = std::make_optional<std::vector<uint8_t>>();
-            res->resize(fileLength);
-            AAsset_read(afile, res->data(), fileLength);
-            AAsset_close(afile);
-            return res;
-        }
-        return {};
-    });
+    KDUtils::File::setAssetManager(s_androidApp->activity->assetManager);
 }
 
 void AndroidPlatformIntegration::handleWindowResize()
