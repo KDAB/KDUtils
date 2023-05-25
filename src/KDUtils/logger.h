@@ -57,15 +57,18 @@ public:
         return m_type;
     }
 
+    template<typename... Args>
+    using FormatString = fmt::format_string<Args...>;
+
     // For actual logging
-    template<typename FormatString, typename... Args>
-    void warn(const FormatString &fmt, Args &&...args)
+    template<typename... Args>
+    void warn(FormatString<Args...> fmt, Args &&...args)
     {
         m_logger->warn(fmt, std::forward<Args>(args)...);
     }
 
-    template<typename FormatString, typename... Args>
-    void debug(const FormatString &fmt, Args &&...args)
+    template<typename... Args>
+    void debug(FormatString<Args...> fmt, Args &&...args)
     {
         m_logger->debug(fmt, std::forward<Args>(args)...);
     }
@@ -80,16 +83,16 @@ public:
         return Logger(m_category, m_type);
     }
 
-    template<typename FormatString, typename... Args>
-    Logger warn(const FormatString &fmt, Args &&...args) const
+    template<typename... Args>
+    Logger warn(FormatString<Args...> fmt, Args &&...args) const
     {
         Logger l(m_category, m_type);
         l.warn(fmt, std::forward<Args>(args)...);
         return l;
     }
 
-    template<typename FormatString, typename... Args>
-    Logger debug(const FormatString &fmt, Args &&...args) const
+    template<typename... Args>
+    Logger debug(FormatString<Args...> fmt, Args &&...args) const
     {
         Logger l(m_category, m_type);
         l.debug(fmt, std::forward<Args>(args)...);

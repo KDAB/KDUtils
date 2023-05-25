@@ -16,7 +16,7 @@ namespace KC = KDUtils;
 #define StringLiteral(str)                    \
     ([]() noexcept -> std::string {           \
         using namespace std::string_literals; \
-        return u8##str##s;                    \
+        return str##s;                        \
     }())
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
