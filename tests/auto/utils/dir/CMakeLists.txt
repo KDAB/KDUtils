@@ -17,7 +17,9 @@ target_link_libraries(
     PRIVATE KDUtils doctest::doctest
 )
 get_filename_component(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../assets/ ABSOLUTE)
-target_compile_definitions(tst_dir PRIVATE TST_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+target_compile_definitions(
+    tst_dir PRIVATE TST_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" EXECUTABLE_DIR="$<TARGET_FILE_DIR:tst_dir>"
+)
 doctest_discover_tests(
     tst_dir
     ADD_LABELS

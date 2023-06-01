@@ -120,7 +120,7 @@ TEST_SUITE("Dir")
         const Dir appDir = Dir::applicationDir();
 
         // THEN
-        CHECK(appDir == Dir(TST_DIR));
+        CHECK(appDir == Dir(EXECUTABLE_DIR));
     }
 
     TEST_CASE("checkStripTrailingSeparator")
