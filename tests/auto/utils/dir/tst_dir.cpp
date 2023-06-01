@@ -122,4 +122,13 @@ TEST_SUITE("Dir")
         // THEN
         CHECK(appDir == Dir(TST_DIR));
     }
+
+    TEST_CASE("checkStripTrailingSeparator")
+    {
+        // GIVEN
+        Dir d(TST_DIR "/");
+
+        // THEN
+        CHECK(d.path() == TST_DIR);
+    }
 }

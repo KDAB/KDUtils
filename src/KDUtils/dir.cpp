@@ -25,15 +25,20 @@ Dir::Dir()
 Dir::Dir(const char *path)
     : m_path(path)
 {
+    // If the filename part is empty, the parameter was likely supplied
+    // with a trailing separator. If so, strip it by going to the parent.
+    if (m_path.filename().empty()) {
+        m_path = m_path.parent_path();
+    }
 }
 
 Dir::Dir(const std::string &path)
-    : m_path(path)
+    : Dir(path.c_str())
 {
 }
 
 Dir::Dir(const std::filesystem::path &path)
-    : m_path(path.string())
+    : Dir(path.string())
 {
 }
 
@@ -62,7 +67,7 @@ std::string Dir::path() const
 
 std::string Dir::dirName() const
 {
-    return m_path.parent_path().filename().generic_u8string();
+    return m_path.filename().generic_u8string();
 }
 
 std::string Dir::absoluteFilePath(const std::string &file) const
@@ -81,7 +86,7 @@ Dir Dir::applicationDir()
         wai_getExecutablePath(appPath.data(), length, NULL); // NOLINT(modernize-use-nullptr)
 
         const std::filesystem::path appFSPath(appPath);
-        return Dir(appFSPath.parent_path().append(""));
+        return Dir(appFSPath.parent_path());
     }
 
     return {};
