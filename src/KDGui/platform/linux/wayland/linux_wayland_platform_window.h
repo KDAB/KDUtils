@@ -21,6 +21,7 @@ struct wl_surface;
 struct xdg_surface;
 struct xdg_toplevel;
 struct wl_output;
+struct wl_display;
 
 namespace KDGui {
 
@@ -43,6 +44,7 @@ public:
 
     static LinuxWaylandPlatformWindow *fromSurface(wl_surface *surface);
     inline wl_surface *surface() const { return m_surface; }
+    wl_display *display() const;
 
     bool create() override;
     bool destroy() override;

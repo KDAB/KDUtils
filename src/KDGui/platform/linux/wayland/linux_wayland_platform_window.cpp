@@ -53,6 +53,11 @@ LinuxWaylandPlatformWindow *LinuxWaylandPlatformWindow::fromSurface(wl_surface *
     return w;
 }
 
+wl_display *LinuxWaylandPlatformWindow::display() const
+{
+    return m_platformIntegration->display();
+}
+
 bool LinuxWaylandPlatformWindow::create()
 {
     if (m_surface)
