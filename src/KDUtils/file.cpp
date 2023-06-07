@@ -38,13 +38,18 @@ File::~File()
 
 bool File::exists() const
 {
+    return exists(m_path);
+}
+
+bool File::exists(const std::string &path)
+{
 #if !defined(ANDROID)
     std::error_code e;
-    return std::filesystem::exists(m_path, e) && std::filesystem::is_regular_file(m_path, e);
+    return std::filesystem::exists(path, e) && std::filesystem::is_regular_file(path, e);
 #else
     if (!s_assetManager)
         return false;
-    const std::filesystem::path p(m_path);
+    const std::filesystem::path p(path);
     const std::string parentPath = p.parent_path().u8string();
     const std::string fileName = p.filename().u8string();
     bool found = false;

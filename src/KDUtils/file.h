@@ -34,6 +34,7 @@ public:
     File &operator=(File &) = delete;
 
     bool exists() const;
+    static bool exists(const std::string &path);
 
     bool open(std::ios_base::openmode mode);
     bool isOpen() const;
