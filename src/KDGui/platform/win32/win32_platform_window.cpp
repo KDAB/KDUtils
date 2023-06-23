@@ -139,7 +139,7 @@ LRESULT windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             platformWindow->updateCursor();
             return true;
         }
-        return 0;
+        break;
     }
     case WM_INPUT: {
         HRAWINPUT rawInput = (HRAWINPUT)lParam;
