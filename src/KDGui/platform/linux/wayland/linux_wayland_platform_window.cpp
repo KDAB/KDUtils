@@ -21,6 +21,7 @@
 #include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 #include <wayland-xdg-shell-client-protocol.h>
+#include <wayland-xdg-decoration-unstable-v1-client-protocol.h>
 
 #include <array>
 #include <cassert>
@@ -107,6 +108,12 @@ void LinuxWaylandPlatformWindow::map()
 
     wl_surface_commit(m_surface);
     wl_display_roundtrip_queue(m_platformIntegration->display(), m_platformIntegration->queue());
+
+    if (auto manager = m_platformIntegration->xdgDecoration().object) {
+        auto decoration = zxdg_decoration_manager_v1_get_toplevel_decoration(manager, m_toplevel);
+
+        zxdg_toplevel_decoration_v1_set_mode(decoration, ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+    }
 }
 
 void LinuxWaylandPlatformWindow::unmap()

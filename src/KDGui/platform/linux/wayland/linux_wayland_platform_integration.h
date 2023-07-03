@@ -28,6 +28,7 @@ struct wl_shm;
 struct xdg_wm_base;
 struct zwp_relative_pointer_manager_v1;
 struct zwp_pointer_constraints_v1;
+struct zxdg_decoration_manager_v1;
 
 namespace KDGui {
 
@@ -57,6 +58,7 @@ public:
     const Global<xdg_wm_base> &xdgShell() const { return m_xdgShell; }
     const Global<zwp_relative_pointer_manager_v1> &relativePointerManagerV1() const { return m_relativePointerV1; }
     const Global<zwp_pointer_constraints_v1> &pointerConstraintsV1() const { return m_pointerConstraintsV1; }
+    const Global<zxdg_decoration_manager_v1> &xdgDecoration() const { return m_decorationV1; }
 
     wl_cursor_theme *cursorTheme() const { return m_cursorTheme; }
 
@@ -79,6 +81,7 @@ private:
     Global<wl_shm> m_shm;
     Global<zwp_relative_pointer_manager_v1> m_relativePointerV1;
     Global<zwp_pointer_constraints_v1> m_pointerConstraintsV1;
+    Global<zxdg_decoration_manager_v1> m_decorationV1;
 
     std::vector<std::unique_ptr<LinuxWaylandPlatformInput>> m_inputs;
     std::vector<std::unique_ptr<LinuxWaylandPlatformOutput>> m_outputs;

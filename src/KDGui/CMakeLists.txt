@@ -168,6 +168,13 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
             PROTOCOL
             ${WaylandProtocols_DATADIR}/unstable/pointer-constraints/pointer-constraints-unstable-v1.xml
         )
+        ecm_add_wayland_client_protocol(
+            WAYLAND_SOURCES
+            BASENAME
+            xdg-decoration-unstable-v1
+            PROTOCOL
+            ${WaylandProtocols_DATADIR}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml
+        )
         target_sources(KDGui PRIVATE ${WAYLAND_SOURCES} ${WAYLAND_HEADERS})
         target_include_directories(KDGui PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 

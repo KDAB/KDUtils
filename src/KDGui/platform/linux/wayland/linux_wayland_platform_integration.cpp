@@ -21,6 +21,7 @@
 #include <wayland-xdg-shell-client-protocol.h>
 #include <wayland-zwp-relative-pointer-unstable-v1-client-protocol.h>
 #include <wayland-zwp-pointer-constraints-v1-client-protocol.h>
+#include <wayland-xdg-decoration-unstable-v1-client-protocol.h>
 
 using namespace KDGui;
 
@@ -151,6 +152,9 @@ void LinuxWaylandPlatformIntegration::global(wl_registry *registry, uint32_t id,
         auto ver = std::min(LinuxWaylandPlatformInput::pointerConstraintsV1SupportedVersion, version);
         auto constraints = reinterpret_cast<zwp_pointer_constraints_v1 *>(wl_registry_bind(registry, id, &zwp_pointer_constraints_v1_interface, ver));
         m_pointerConstraintsV1 = { constraints, ver, id };
+    } else if (std::string_view("zxdg_decoration_manager_v1") == name) {
+        auto decoration = reinterpret_cast<zxdg_decoration_manager_v1 *>(wl_registry_bind(registry, id, &zxdg_decoration_manager_v1_interface, 1));
+        m_decorationV1 = { decoration, 1, id };
     }
 }
 
