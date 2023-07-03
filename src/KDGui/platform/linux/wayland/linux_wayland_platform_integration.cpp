@@ -88,7 +88,7 @@ void LinuxWaylandPlatformIntegration::init()
         SPDLOG_LOGGER_CRITICAL(m_logger, "The Wayland server does not support xdg_wm_base! Aborting.");
         throw std::runtime_error("The Wayland server does not support xdg_wm_base!");
     }
-    if (!m_xdgShell.object) {
+    if (!m_shm.object) {
         SPDLOG_LOGGER_CRITICAL(m_logger, "The Wayland server does not support wl_shm! Aborting.");
         throw std::runtime_error("The Wayland server does not support wl_shm!");
     }
