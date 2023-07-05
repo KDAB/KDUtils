@@ -163,13 +163,18 @@ const std::string &File::path() const
 
 std::uintmax_t File::size() const
 {
+    return size(m_path);
+}
+
+std::uintmax_t File::size(const std::string &path)
+{
 #if !defined(ANDROID)
     std::error_code e;
-    return std::filesystem::file_size(m_path, e);
+    return std::filesystem::file_size(path, e);
 #else
     if (!s_assetManager)
         return 0;
-    AAsset *asset = AAssetManager_open(s_assetManager, assetPath(m_path), AASSET_MODE_UNKNOWN);
+    AAsset *asset = AAssetManager_open(s_assetManager, assetPath(path), AASSET_MODE_UNKNOWN);
     if (!asset)
         return 0;
     const auto s = AAsset_getLength(asset);

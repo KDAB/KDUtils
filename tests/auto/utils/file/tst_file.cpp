@@ -10,6 +10,7 @@
 */
 
 #include <KDUtils/file.h>
+#include <KDUtils/file_mapper.h>
 using namespace KDUtils;
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
@@ -143,5 +144,135 @@ TEST_SUITE("File")
 
         // THEN
         CHECK(!f.exists());
+    }
+
+    TEST_CASE("tryMapNonexistentFile")
+    {
+        auto mapper = FileMapper(File("notreal.txt"));
+        const uint8_t *data = mapper.map();
+        CHECK(data == nullptr);
+    }
+
+    TEST_CASE("checkByteArrayAndMappingAreIdentical")
+    {
+        ByteArray copied;
+        std::string path(TST_DIR "tst_file.cpp");
+        File f(path);
+
+        // copy bytes into memory
+        f.open(std::ios::in | std::ios::binary);
+        copied = f.readAll();
+        f.close();
+
+        // now map instead
+        FileMapper mapped(std::move(f));
+        // read-only map in this case by assigning to const pointer
+        const uint8_t *mapped_data = mapped.map();
+        const uint8_t *copied_data = copied.data();
+
+        for (int i = 0; i < mapped.size(); i++) {
+            CHECK(mapped_data[i] == copied_data[i]);
+        }
+    }
+
+    TEST_CASE("checkMappingDoesNotModify")
+    {
+        std::string path(TST_DIR "tst_file.cpp");
+        ByteArray readBefore;
+        ByteArray readMapped;
+        ByteArray readWriteMapped;
+        ByteArray readAfter;
+
+        {
+            File f(path);
+            f.open(std::ios::in | std::ios::binary);
+            readBefore = f.readAll();
+            f.close();
+        }
+        {
+            // create a read-only mapping by declaring the mapper as const
+            const auto mapper = FileMapper(File(path));
+            const uint8_t *data = mapper.map();
+            readMapped = ByteArray(data, mapper.size());
+            CHECK(readMapped.size() == mapper.size());
+        }
+        {
+            auto mapper = FileMapper(File(path));
+            const uint8_t *data = mapper.map();
+            readWriteMapped = ByteArray(data, mapper.size());
+        }
+        {
+            File f(path);
+            f.open(std::ios::in | std::ios::binary);
+            readAfter = f.readAll();
+            f.close();
+        }
+
+        // check that there was no modification before the read-only mapping occurred
+        CHECK(readMapped.vector() == readBefore.vector());
+        // no modification between read-only and writeable mappings
+        CHECK(readMapped.vector() == readWriteMapped.vector());
+        // no modification at any point
+        CHECK(readBefore.vector() == readAfter.vector());
+    }
+
+    TEST_CASE("checkFileSizeMatchWithMapping")
+    {
+        std::string path(TST_DIR "tst_file.cpp");
+        File f(path);
+        size_t fileSize = f.size();
+        auto mapper = FileMapper(File(path));
+        mapper.map(); // just map it so there is a mapping to query the size of
+
+        CHECK(mapper.size() == f.size());
+    }
+
+    TEST_CASE("mappedFileWriting")
+    {
+        std::string path(TST_DIR "tst_file.cpp");
+        ByteArray copiedContents;
+        ByteArray originalContents; // copy for restoring file state at the end
+        {
+            auto mapper = FileMapper(File(path));
+            auto *mapping = mapper.map();
+            copiedContents = ByteArray(mapping, mapper.size());
+            originalContents = copiedContents;
+
+            // perform identical write to both
+            std::string intro = "hello, I am the new start to this file\n";
+            CHECK(intro.size() < mapper.size()); // no overwrite
+            std::memcpy(mapping, intro.data(), intro.size());
+            std::memcpy(copiedContents.data(), intro.data(), intro.size());
+        }
+
+        // at this point, the intro string should be written to both
+        // copiedContents and the file on disk
+
+        // now get file contents to compare
+        File f(path);
+        f.open(std::ios::in | std::ios::binary);
+        ByteArray fileContents = f.readAll();
+        f.close();
+
+        // main comparison of this test
+        for (size_t i = 0; i < copiedContents.size(); i++) {
+            CHECK(fileContents.data()[i] == copiedContents.data()[i]);
+        }
+
+        // we're done, now restore original file state
+        {
+            auto mapper = FileMapper(File(path));
+            auto *mapping = mapper.map();
+            std::memcpy(mapping, originalContents.data(), originalContents.size());
+        }
+
+        // make sure restore went correctly
+        {
+            f.open(std::ios::in | std::ios::binary);
+            ByteArray restored = f.readAll();
+            f.close();
+
+            CHECK(restored.vector() == originalContents.vector());
+        }
     }
 }

@@ -42,10 +42,9 @@ if(NOT TARGET spdlog::spdlog)
 
     set_target_properties(
         spdlog
-        PROPERTIES
-        ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+        PROPERTIES ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+                   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+                   RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
     )
 endif()
 
@@ -103,4 +102,15 @@ if(NOT TARGET whereami::whereami)
         GIT_TAG e4b7ba1be0e9fd60728acbdd418bc7195cdd37e7 # master at 5/July/2021
     )
     fetchcontent_makeavailable(whereami)
+endif()
+
+# mio header-only lib (provides memory mapping for files)
+find_package(mio QUIET)
+if(NOT TARGET mio::mio)
+    fetchcontent_declare(
+        mio
+        GIT_REPOSITORY https://github.com/mandreyel/mio.git
+        GIT_TAG 8b6b7d878c89e81614d05edca7936de41ccdd2da # March 3rd 2023
+    )
+    fetchcontent_makeavailable(mio)
 endif()

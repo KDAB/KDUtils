@@ -13,6 +13,7 @@ set(SOURCES
     dir.cpp
     elapsedtimer.cpp
     file.cpp
+    file_mapper.cpp
     url.cpp
 )
 
@@ -21,6 +22,7 @@ set(HEADERS
     dir.h
     elapsedtimer.h
     file.h
+    file_mapper.h
     flags.h
     logger.h
     url.h
@@ -37,6 +39,7 @@ add_library(
 target_link_libraries(
     KDUtils
     PUBLIC spdlog::spdlog
+    PRIVATE mio::mio
 )
 
 if(ANDROID)
@@ -49,10 +52,7 @@ target_include_directories(
 )
 
 if(NOT TARGET whereami::whereami)
-    target_include_directories(
-    KDUtils
-    PRIVATE ${whereami_SOURCE_DIR}/src
-    )
+    target_include_directories(KDUtils PRIVATE ${whereami_SOURCE_DIR}/src)
     target_sources(KDUtils PRIVATE ${whereami_SOURCE_DIR}/src/whereami.c)
 else()
     target_link_libraries(KDUtils PRIVATE whereami::whereami)

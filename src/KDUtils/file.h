@@ -48,6 +48,7 @@ public:
     const std::string &path() const;
 
     std::uintmax_t size() const;
+    static std::uintmax_t size(const std::string &path);
 
 private:
     std::string m_path;
