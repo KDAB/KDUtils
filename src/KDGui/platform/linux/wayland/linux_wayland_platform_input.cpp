@@ -213,7 +213,7 @@ void LinuxWaylandPlatformInput::destroyTouch()
 
 void LinuxWaylandPlatformInput::pointerEnter(wl_pointer *pointer, uint32_t serial, wl_surface *surface, wl_fixed_t x, wl_fixed_t y)
 {
-    m_pointer.pos = { wl_fixed_from_int(x), wl_fixed_from_int(y) };
+    m_pointer.pos = { wl_fixed_to_int(x), wl_fixed_to_int(y) };
     m_pointer.lastSerial = serial;
 
     if (m_version >= WL_POINTER_FRAME_SINCE_VERSION) {
@@ -279,7 +279,7 @@ void LinuxWaylandPlatformInput::pointerLeave(wl_pointer *pointer, uint32_t seria
 
 void LinuxWaylandPlatformInput::pointerMotion(wl_pointer *pointer, uint32_t time, wl_fixed_t x, wl_fixed_t y)
 {
-    m_pointer.pos = { wl_fixed_from_int(x), wl_fixed_from_int(y) };
+    m_pointer.pos = { wl_fixed_to_int(x), wl_fixed_to_int(y) };
     if (m_version >= WL_POINTER_FRAME_SINCE_VERSION) {
         m_pointer.accumulatedEvent.pos = m_pointer.pos;
         m_pointer.accumulatedEvent.time = time;
@@ -370,7 +370,7 @@ void LinuxWaylandPlatformInput::pointerAxisDiscrete(wl_pointer *pointer, uint32_
 void LinuxWaylandPlatformInput::pointerRelativeMotionV1(zwp_relative_pointer_v1 *pointer, uint32_t utimeHi, uint32_t utimeLow,
                                                         wl_fixed_t dx, wl_fixed_t dy, wl_fixed_t dxUnaccel, wl_fixed_t dyUnaccel)
 {
-    Position pos{ wl_fixed_from_int(dx), wl_fixed_from_int(dy) };
+    Position pos{ wl_fixed_to_int(dx), wl_fixed_to_int(dy) };
     uint64_t utime = uint64_t(utimeHi) << 32 | utimeLow;
     uint32_t time = utime / 1000;
 
