@@ -117,6 +117,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     target_include_directories(KDGui PRIVATE ${XCB_INCLUDE_DIRS} ${XKB_INCLUDE_DIRS})
     target_link_libraries(KDGui PRIVATE ${XCB_LIBRARIES} ${XKB_LIBRARIES})
 
+    set(KDGUI_PLATFORM_XCB ON)
+
     find_package(
         Wayland
         COMPONENTS Client Cursor
@@ -172,6 +174,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         target_link_libraries(KDGui PRIVATE Wayland::Client Wayland::Cursor)
 
         list(APPEND HEADERS ${WAYLAND_HEADERS})
+        set(KDGUI_PLATFORM_WAYLAND ON)
     endif()
 endif()
 
@@ -179,15 +182,18 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_compile_definitions(KDGui PRIVATE PLATFORM_WIN32)
     target_compile_definitions(KDGui PRIVATE UNICODE)
     target_compile_definitions(KDGui PUBLIC _USE_MATH_DEFINES)
+    set(KDGUI_PLATFORM_WIN32 ON)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     target_compile_definitions(KDGui PRIVATE PLATFORM_MACOS)
+    set(KDGUI_PLATFORM_COCOA ON)
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     set(APP_GLUE_DIR ${ANDROID_NDK}/sources/android/native_app_glue)
     target_include_directories(KDGui PRIVATE ${APP_GLUE_DIR})
+    set(KDGUI_PLATFORM_ANDROID ON)
 endif()
 
 target_include_directories(
@@ -200,6 +206,11 @@ generate_export_header(KDGui BASE_NAME kdgui)
 configure_file(${CMAKE_CURRENT_BINARY_DIR}/kdgui_export.h ${CMAKE_BINARY_DIR}/include/KDGui/kdgui_export.h)
 install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/kdgui_export.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDGui
+)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h ${CMAKE_BINARY_DIR}/include/KDGui/config.h)
+install(
+    FILES ${CMAKE_BINARY_DIR}/include/KDGui/config.h
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDGui
 )
 
