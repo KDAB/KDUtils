@@ -16,10 +16,10 @@
 #include <KDGui/abstract_gui_platform_integration.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_event_loop.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_window.h>
-#include <KDGui/platform/linux/wayland/linux_wayland_platform_input.h>
 #include <KDFoundation/logging.h>
 #include <KDGui/kdgui_global.h>
 
+struct wl_cursor_theme;
 struct wl_display;
 struct wl_event_queue;
 struct wl_registry;
@@ -33,6 +33,7 @@ struct zxdg_decoration_manager_v1;
 namespace KDGui {
 
 class LinuxWaylandPlatformOutput;
+class LinuxWaylandPlatformInput;
 
 class KDGUI_API LinuxWaylandPlatformIntegration : public AbstractGuiPlatformIntegration
 {

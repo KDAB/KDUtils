@@ -20,6 +20,7 @@
 #include <sys/mman.h>
 #include <linux/input-event-codes.h>
 #include <wayland-cursor.h>
+#include <wayland-client-core.h>
 #include <wayland-client-protocol.h>
 #include <wayland-zwp-relative-pointer-unstable-v1-client-protocol.h>
 #include <wayland-zwp-pointer-constraints-v1-client-protocol.h>
