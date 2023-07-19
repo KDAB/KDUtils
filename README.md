@@ -1,13 +1,48 @@
 # KDUtils
 
-A set of C++ helpers and wrappers around the C++ standard library
+KDUtils is a library which provides both helpers and wrappers around the C++ STL
+and a base for cross-platform applications, similar to QtCore.
+
+Also check out [KDBindings](https://github.com/KDAB/KDBindings) for an
+implementation of properties, signals, and slots. Used heavily in KDUtils.
+
+## KDFoundation
+
+The KDFoundation namespace provides an event loop, an `EventReceiver` abstract
+class, and an `Object` type which is an event receiver that can have a parent
+`Object` and any number of children.
+
+On top of that, you get:
+
+* Event
+* FileDescriptorNotifier
+* Timer
+* EventQueue: a thread-safe stack of events
+* Postman: a way of passing events down a series of receivers
+* CoreApplication: a class that connects the EventQueue, Postman, and event loop.
+
+## KDGui
+
+KDGui provides a cross-platform windowing solution, built on top of the
+CoreApplication.
+
+You get:
+
+* Window
+* Keyboard and mouse events
+* GuiApplication
+
+## KDUtils/KDUtils
+
+This namespace is the namesake of the entire library, and contains the STL
+wrappers and helpers.
 
 You get:
 
 * ByteArray
 * Dir
-* ElapsedTimer
 * File
+* ElapsedTimer
 * Flags
 * Url
 * Logger
