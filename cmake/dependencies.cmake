@@ -83,18 +83,24 @@ if(NOT TARGET spdlog_setup::spdlog_setup)
 endif()
 
 # KDBindings library
-fetchcontent_declare(
-    KDBindings
-    GIT_REPOSITORY https://github.com/KDAB/KDBindings.git
-    GIT_TAG v1.0.3
-    USES_TERMINAL_DOWNLOAD YES USES_TERMINAL_UPDATE YES
-)
-fetchcontent_makeavailable(KDBindings)
+find_package(KDBindings QUIET)
+if(NOT TARGET KDAB::KDBindings)
+    fetchcontent_declare(
+        KDBindings
+        GIT_REPOSITORY https://github.com/KDAB/KDBindings.git
+        GIT_TAG v1.0.3
+        USES_TERMINAL_DOWNLOAD YES USES_TERMINAL_UPDATE YES
+    )
+    fetchcontent_makeavailable(KDBindings)
+endif()
 
 # whereami library
-fetchcontent_declare(
-    whereami
-    GIT_REPOSITORY https://github.com/gpakosz/whereami
-    GIT_TAG e4b7ba1be0e9fd60728acbdd418bc7195cdd37e7 # master at 5/July/2021
-)
-fetchcontent_makeavailable(whereami)
+find_package(whereami QUIET)
+if(NOT TARGET whereami::whereami)
+    fetchcontent_declare(
+        whereami
+        GIT_REPOSITORY https://github.com/gpakosz/whereami
+        GIT_TAG e4b7ba1be0e9fd60728acbdd418bc7195cdd37e7 # master at 5/July/2021
+    )
+    fetchcontent_makeavailable(whereami)
+endif()
