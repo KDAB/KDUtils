@@ -48,11 +48,15 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../> $<INSTALL_INTERFACE:include/>
 )
 
-target_include_directories(
+if(NOT TARGET whereami::whereami)
+    target_include_directories(
     KDUtils
     PRIVATE ${whereami_SOURCE_DIR}/src
-)
-target_sources(KDUtils PRIVATE ${whereami_SOURCE_DIR}/src/whereami.c)
+    )
+    target_sources(KDUtils PRIVATE ${whereami_SOURCE_DIR}/src/whereami.c)
+else()
+    target_link_libraries(KDUtils PRIVATE whereami::whereami)
+endif()
 
 set_target_properties(
     KDUtils
