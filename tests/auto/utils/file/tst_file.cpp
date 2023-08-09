@@ -227,6 +227,14 @@ TEST_SUITE("File")
         CHECK(mapper.size() == f.size());
     }
 
+    TEST_CASE("cantMapNonexistentFile")
+    {
+        File f("some_path_that_doesn_t_exist");
+        FileMapper mapper(std::move(f));
+        CHECK(mapper.map() == nullptr);
+        CHECK(!mapper.unmap(nullptr));
+    }
+
     TEST_CASE("mappedFileWriting")
     {
         std::string path(TST_DIR "tst_file.cpp");

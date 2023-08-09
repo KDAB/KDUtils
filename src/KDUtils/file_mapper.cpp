@@ -12,8 +12,6 @@
 #include <KDUtils/file_mapper.h>
 #include <spdlog/spdlog.h>
 #include <variant>
-// ensure mio does not throw
-#undef __cpp_exceptions
 #include <mio/mmap.hpp>
 
 namespace KDUtils {
@@ -27,13 +25,15 @@ struct FileMapper::Map {
 
     inline Map(bool writeable)
     {
+        // NOTE: mio's maps consist of primitive types which won't throw. but
+        // the constructors are not marked noexcept
         if (writeable)
             map = WriteMap();
         else
             map = ReadMap();
     }
 
-    [[nodiscard]] inline bool writable() const
+    [[nodiscard]] inline bool writable() const noexcept
     {
         return std::holds_alternative<WriteMap>(map);
     }
@@ -68,17 +68,15 @@ static const uint8_t *mapImpl(
         std::uintmax_t length)
 {
     std::error_code error;
-    constexpr bool writableRequested = mode & std::ios::out;
+    constexpr bool writableRequested = static_cast<bool>(mode & std::ios::out);
 
     auto warnMapped = []() {
         SPDLOG_WARN("Requested map data from a FileMapper which was already mapped.");
     };
 
     // handle possible invalid output states
-    if (output == nullptr) {
-        output = std::make_unique<FileMapper::Map>(writableRequested);
-    } else if (output->writable() != writableRequested) {
-        // we already have a map but its of the wrong type
+    if (output == nullptr || output->writable() != writableRequested) {
+        // map is nonexistent or of the wrong type
         output = std::make_unique<FileMapper::Map>(writableRequested);
     } else {
         // in this case, we already had a map in the correct mode
@@ -113,13 +111,29 @@ static const uint8_t *mapImpl(
 
 const uint8_t *FileMapper::map(std::uintmax_t offset, std::uintmax_t length) const
 {
-    // fake const here to make the API use this overload when you have a const FileMapper
-    return mapImpl<std::ios::in>(const_cast<std::unique_ptr<Map> &>(m_map), m_path, offset, length);
+    try {
+        // fake const here to make the API use this overload when you have a const FileMapper
+        return mapImpl<std::ios::in>(const_cast<std::unique_ptr<Map> &>(m_map), m_path, offset, length);
+    } catch (std::system_error &e) {
+        // thrown by the non-default constructors, which we currently don't call.
+        SPDLOG_ERROR("mio file mapping err. Error code {}: {}", e.code().value(), e.code().message());
+        return nullptr;
+    } catch (...) {
+        return nullptr;
+    }
 }
 
 uint8_t *FileMapper::map(std::uintmax_t offset, std::uintmax_t length)
 {
-    return const_cast<uint8_t *>(mapImpl<std::ios::out>(m_map, m_path, offset, length));
+    try {
+        return const_cast<uint8_t *>(mapImpl<std::ios::out>(m_map, m_path, offset, length));
+    } catch (std::system_error &e) {
+        SPDLOG_ERROR("mio file mapping err. Error code {}: {}", e.code().value(), e.code().message());
+        return nullptr;
+    } catch (...) {
+        SPDLOG_ERROR("Unknown memory mapping error");
+        return nullptr;
+    }
 }
 
 bool FileMapper::unmap(const uint8_t *mapping)
@@ -134,10 +148,20 @@ bool FileMapper::unmap(const uint8_t *mapping)
         // it just to make sure its the same as the one being passed in
         const uint8_t *existingMapping;
         if (m_map->writable()) {
-            existingMapping = map();
+            try {
+                existingMapping = map();
+            } catch (...) {
+                SPDLOG_ERROR("Unknown memory mapping error");
+                return false;
+            }
         } else {
-            uint8_t *writable = map();
-            existingMapping = writable;
+            try {
+                uint8_t *writable = map();
+                existingMapping = writable;
+            } catch (...) {
+                SPDLOG_ERROR("Unknown memory mapping error");
+                return false;
+            }
         }
 
         if (existingMapping != mapping) {
@@ -145,16 +169,25 @@ bool FileMapper::unmap(const uint8_t *mapping)
         }
     }
 
-    if (m_map->writable()) {
-        std::error_code error;
-        m_map->writableMap().sync(error);
-        if (error) {
-            return false;
+    try {
+        if (m_map->writable()) {
+            std::error_code error;
+            m_map->writableMap().sync(error);
+            if (error) {
+                return false;
+            }
+            m_map->writableMap().unmap();
+        } else {
+            m_map->readOnlyMap().unmap();
         }
-        m_map->writableMap().unmap();
-    } else {
-        m_map->readOnlyMap().unmap();
+    } catch (std::system_error &e) {
+        SPDLOG_ERROR("mio file mapping err. Error code {}: {}", e.code().value(), e.code().message());
+        return false;
+    } catch (...) {
+        SPDLOG_ERROR("Unknown memory mapping error");
+        return false;
     }
+
     return true;
 }
 
