@@ -72,7 +72,7 @@ private:
             case FileDescriptorNotifier::NotificationType::Read:
                 return events[1] == nullptr && events[2] == nullptr;
             case FileDescriptorNotifier::NotificationType::Write:
-                return events[0] == nullptr && events[3] == nullptr;
+                return events[0] == nullptr && events[2] == nullptr;
             case FileDescriptorNotifier::NotificationType::Exception:
                 return events[0] == nullptr && events[1] == nullptr;
             }
