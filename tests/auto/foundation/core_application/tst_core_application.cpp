@@ -155,6 +155,40 @@ TEST_CASE("Timer handling")
         }
         REQUIRE(timeout == oldTimeout);
     }
+
+    SUBCASE("timer restarts after timeout change")
+    {
+        using namespace std::chrono_literals;
+
+        CoreApplication app;
+        Timer timer;
+
+        // Set initial interval to 100ms
+        timer.interval = 100ms;
+        timer.running = true;
+
+        bool fired = false;
+
+        timer.timeout.connect([&] {
+            fired = true;
+        });
+
+        // After 50ms, timer shouldn't have yet fired
+        app.processEvents(50);
+        REQUIRE(fired == false);
+
+        // Reset interval, it should fire 150ms from now
+        timer.interval = 150ms;
+
+        // Advance 100ms, it should _not_ yet fire because it was
+        // restarted to 150ms even though the original timeout passed
+        app.processEvents(100);
+        REQUIRE(fired == false);
+
+        // It should fire after additional 100ms
+        app.processEvents(100);
+        REQUIRE(fired == true);
+    }
 }
 #endif
 

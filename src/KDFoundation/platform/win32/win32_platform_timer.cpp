@@ -58,8 +58,6 @@ void Win32PlatformTimer::callback(HWND hwnd, UINT uMsg, UINT_PTR timerId, DWORD 
 
 void Win32PlatformTimer::arm(std::chrono::microseconds us)
 {
-    assert(m_id == 0);
-
     auto msecs = us.count() / 1000;
     if (m_id == 0) {
         m_id = SetTimer(nullptr, 0, UINT(msecs), callback);
