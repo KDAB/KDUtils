@@ -12,6 +12,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <array>
 
 #include <KDFoundation/platform/abstract_platform_event_loop.h>
 #include <KDFoundation/kdfoundation_global.h>
@@ -46,7 +47,21 @@ public:
 private:
     std::unique_ptr<AbstractPlatformTimer> createPlatformTimerImpl(Timer *timer) override;
 
+    struct NotifierSet {
+        std::array<FileDescriptorNotifier *, 3> events{ nullptr, nullptr, nullptr };
+        bool isEmpty() const
+        {
+            return events[0] == nullptr && events[1] == nullptr && events[2] == nullptr;
+        }
+    };
+    std::unordered_map<int, NotifierSet> m_notifiers;
+
+    static LRESULT messageWindowProc(HWND, UINT, WPARAM, LPARAM);
+    void handleSocketMessage(WPARAM wParam, LPARAM lParam);
+    bool registerWithWSAAsyncSelect(int fd, const NotifierSet &notifiers);
+
     HANDLE m_wakeUpEvent;
+    HWND m_msgWindow = 0;
 };
 
 } // namespace KDFoundation
