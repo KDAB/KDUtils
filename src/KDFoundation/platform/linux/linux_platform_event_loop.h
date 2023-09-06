@@ -59,26 +59,56 @@ private:
     int m_eventfd = -1;
 
     struct NotifierSet {
-        std::array<FileDescriptorNotifier *, 3> events{ nullptr, nullptr, nullptr };
-
         bool isEmpty() const
         {
-            return events[0] == nullptr && events[1] == nullptr && events[2] == nullptr;
+            return !hasNotifier(FileDescriptorNotifier::NotificationType::Read) &&
+                    !hasNotifier(FileDescriptorNotifier::NotificationType::Write) &&
+                    !hasNotifier(FileDescriptorNotifier::NotificationType::Exception);
         }
 
-        bool wouldBeEmptyIfUnset(FileDescriptorNotifier::NotificationType type)
+        bool wouldBeEmptyIfUnset(FileDescriptorNotifier::NotificationType type) const
         {
             switch (type) {
             case FileDescriptorNotifier::NotificationType::Read:
-                return events[1] == nullptr && events[2] == nullptr;
+                return !hasNotifier(FileDescriptorNotifier::NotificationType::Write) && !hasNotifier(FileDescriptorNotifier::NotificationType::Exception);
             case FileDescriptorNotifier::NotificationType::Write:
-                return events[0] == nullptr && events[2] == nullptr;
+                return !hasNotifier(FileDescriptorNotifier::NotificationType::Read) && !hasNotifier(FileDescriptorNotifier::NotificationType::Exception);
             case FileDescriptorNotifier::NotificationType::Exception:
-                return events[0] == nullptr && events[1] == nullptr;
+                return !hasNotifier(FileDescriptorNotifier::NotificationType::Read) && !hasNotifier(FileDescriptorNotifier::NotificationType::Write);
             }
             spdlog::critical("Error in determining if notifier set is empty");
             return false;
         }
+
+        bool hasNotifier(const FileDescriptorNotifier::NotificationType type) const
+        {
+            const auto notifier = getNotifier(type);
+            return (notifier != nullptr);
+        }
+
+        FileDescriptorNotifier *getNotifier(const FileDescriptorNotifier::NotificationType type) const
+        {
+            const auto index = eventIndexByNotificationType(type);
+            return events[index];
+        }
+
+        void resetNotifier(FileDescriptorNotifier::NotificationType type)
+        {
+            setNotifier(type, nullptr);
+        }
+
+        void setNotifier(FileDescriptorNotifier::NotificationType type, FileDescriptorNotifier *fdn)
+        {
+            const auto index = eventIndexByNotificationType(type);
+            events[index] = fdn;
+        }
+
+    private:
+        int eventIndexByNotificationType(FileDescriptorNotifier::NotificationType type) const
+        {
+            return static_cast<uint8_t>(type);
+        }
+        std::array<FileDescriptorNotifier *, 3> events{ nullptr, nullptr, nullptr };
     };
     std::map<int, NotifierSet> m_notifiers;
 };

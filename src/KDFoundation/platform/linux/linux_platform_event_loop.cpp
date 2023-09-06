@@ -85,22 +85,22 @@ void LinuxPlatformEventLoop::waitForEvents(int timeout)
         // Find which notifiers for this fd should be poked
         const uint32_t eventTypes = ePollEvent.events;
 
-        if (notifierSet.events[0] &&
+        if (notifierSet.hasNotifier(FileDescriptorNotifier::NotificationType::Read) &&
             (eventTypes & EPOLLIN || eventTypes & EPOLLHUP || eventTypes & EPOLLERR)) {
             NotifierEvent ev;
-            m_postman->deliverEvent(notifierSet.events[0], &ev);
+            m_postman->deliverEvent(notifierSet.getNotifier(FileDescriptorNotifier::NotificationType::Read), &ev);
         }
 
-        if (notifierSet.events[1] &&
+        if (notifierSet.hasNotifier(FileDescriptorNotifier::NotificationType::Write) &&
             (eventTypes & EPOLLOUT || eventTypes & EPOLLHUP || eventTypes & EPOLLERR)) {
             NotifierEvent ev;
-            m_postman->deliverEvent(notifierSet.events[1], &ev);
+            m_postman->deliverEvent(notifierSet.getNotifier(FileDescriptorNotifier::NotificationType::Write), &ev);
         }
 
-        if (notifierSet.events[2] &&
+        if (notifierSet.hasNotifier(FileDescriptorNotifier::NotificationType::Exception) &&
             (eventTypes & EPOLLPRI || eventTypes & EPOLLHUP || eventTypes & EPOLLERR)) {
             NotifierEvent ev;
-            m_postman->deliverEvent(notifierSet.events[2], &ev);
+            m_postman->deliverEvent(notifierSet.getNotifier(FileDescriptorNotifier::NotificationType::Exception), &ev);
         }
     }
 }
@@ -118,13 +118,13 @@ bool LinuxPlatformEventLoop::registerNotifier(FileDescriptorNotifier *notifier)
 
     // Is this file descriptor already being watched?
     auto &notifierSet = m_notifiers[notifier->fileDescriptor()];
-    const auto eventType = static_cast<uint8_t>(notifier->type());
-    if (notifierSet.events[eventType] != nullptr)
+    const auto type = notifier->type();
+    if (notifierSet.hasNotifier(type))
         return false;
 
-    const bool result = registerFileDescriptor(notifier->fileDescriptor(), notifier->type());
+    const bool result = registerFileDescriptor(notifier->fileDescriptor(), type);
     if (result)
-        notifierSet.events[eventType] = notifier;
+        notifierSet.setNotifier(type, notifier);
     return result;
 }
 
@@ -133,11 +133,11 @@ bool LinuxPlatformEventLoop::unregisterNotifier(FileDescriptorNotifier *notifier
     if (!notifier)
         return false;
 
-    const bool result = unregisterFileDescriptor(notifier->fileDescriptor(), notifier->type());
+    const auto type = notifier->type();
+    const bool result = unregisterFileDescriptor(notifier->fileDescriptor(), type);
     if (result) {
         auto &notifierSet = m_notifiers[notifier->fileDescriptor()];
-        const auto eventType = static_cast<uint8_t>(notifier->type());
-        notifierSet.events[eventType] = nullptr;
+        notifierSet.resetNotifier(type);
         if (notifierSet.isEmpty())
             m_notifiers.erase(notifier->fileDescriptor());
     }
@@ -181,13 +181,18 @@ bool LinuxPlatformEventLoop::unregisterFileDescriptor(int fd, FileDescriptorNoti
 int LinuxPlatformEventLoop::epollEventFromFdPlusType(int fd, FileDescriptorNotifier::NotificationType type)
 {
     const auto &notifierSet = m_notifiers[fd];
+
+    const auto hasReadNotifier = notifierSet.hasNotifier(FileDescriptorNotifier::NotificationType::Read);
+    const auto hasWriteNotifier = notifierSet.hasNotifier(FileDescriptorNotifier::NotificationType::Write);
+    const auto hasExceptionNotifier = notifierSet.hasNotifier(FileDescriptorNotifier::NotificationType::Exception);
+
     switch (type) {
     case FileDescriptorNotifier::NotificationType::Read:
-        return epollEventFromNotifierTypes(true, notifierSet.events[1], notifierSet.events[2]);
+        return epollEventFromNotifierTypes(true, hasWriteNotifier, hasExceptionNotifier);
     case FileDescriptorNotifier::NotificationType::Write:
-        return epollEventFromNotifierTypes(notifierSet.events[0], true, notifierSet.events[2]);
+        return epollEventFromNotifierTypes(hasReadNotifier, true, hasExceptionNotifier);
     case FileDescriptorNotifier::NotificationType::Exception:
-        return epollEventFromNotifierTypes(notifierSet.events[0], notifierSet.events[1], true);
+        return epollEventFromNotifierTypes(hasReadNotifier, hasWriteNotifier, true);
     }
     SPDLOG_CRITICAL("Error in calculating epoll event type");
     return 0;
@@ -196,13 +201,18 @@ int LinuxPlatformEventLoop::epollEventFromFdPlusType(int fd, FileDescriptorNotif
 int LinuxPlatformEventLoop::epollEventFromFdMinusType(int fd, FileDescriptorNotifier::NotificationType type)
 {
     const auto &notifierSet = m_notifiers[fd];
+
+    const auto hasReadNotifier = notifierSet.hasNotifier(FileDescriptorNotifier::NotificationType::Read);
+    const auto hasWriteNotifier = notifierSet.hasNotifier(FileDescriptorNotifier::NotificationType::Write);
+    const auto hasExceptionNotifier = notifierSet.hasNotifier(FileDescriptorNotifier::NotificationType::Exception);
+
     switch (type) {
     case FileDescriptorNotifier::NotificationType::Read:
-        return epollEventFromNotifierTypes(false, notifierSet.events[1], notifierSet.events[2]);
+        return epollEventFromNotifierTypes(false, hasWriteNotifier, hasExceptionNotifier);
     case FileDescriptorNotifier::NotificationType::Write:
-        return epollEventFromNotifierTypes(notifierSet.events[0], false, notifierSet.events[2]);
+        return epollEventFromNotifierTypes(hasReadNotifier, false, hasExceptionNotifier);
     case FileDescriptorNotifier::NotificationType::Exception:
-        return epollEventFromNotifierTypes(notifierSet.events[0], notifierSet.events[1], false);
+        return epollEventFromNotifierTypes(hasReadNotifier, hasWriteNotifier, false);
     }
     SPDLOG_CRITICAL("Error in calculating epoll event type");
     return 0;
