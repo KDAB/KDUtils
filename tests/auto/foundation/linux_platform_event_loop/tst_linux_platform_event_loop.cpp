@@ -136,7 +136,7 @@ TEST_CASE("Register and unregister for events")
         REQUIRE(loop.registeredFileDescriptorCount() == 1);
     }
 
-    SUBCASE("can unregister a notifier")
+    SUBCASE("can unregister a notifier for read notifications")
     {
         LinuxPlatformEventLoop loop;
         auto notifier = std::make_unique<FileDescriptorNotifier>(0, FileDescriptorNotifier::NotificationType::Read);
@@ -145,6 +145,43 @@ TEST_CASE("Register and unregister for events")
 
         REQUIRE(result == true);
         REQUIRE(loop.registeredFileDescriptorCount() == 0);
+    }
+
+    SUBCASE("can re-register a notifier for read notifications")
+    {
+        LinuxPlatformEventLoop loop;
+        auto notifier = std::make_unique<FileDescriptorNotifier>(0, FileDescriptorNotifier::NotificationType::Read);
+        loop.registerNotifier(notifier.get());
+        loop.unregisterNotifier(notifier.get());
+        bool result = loop.registerNotifier(notifier.get());
+
+        REQUIRE(result == true);
+        REQUIRE(loop.registeredFileDescriptorCount() == 1);
+    }
+
+    SUBCASE("can re-register a notifier for read notifications even though file was deleted in between")
+    {
+        LinuxPlatformEventLoop loop;
+        int pipe1[2];
+        if (pipe(pipe1) == -1) {
+            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            REQUIRE(false);
+        }
+
+        auto notifier = std::make_unique<FileDescriptorNotifier>(pipe1[0], FileDescriptorNotifier::NotificationType::Read);
+
+        loop.registerNotifier(notifier.get());
+        close(pipe1[0]);
+        close(pipe1[1]);
+        loop.unregisterNotifier(notifier.get());
+        if (pipe(pipe1) == -1) {
+            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            REQUIRE(false);
+        }
+        bool result = loop.registerNotifier(notifier.get());
+
+        REQUIRE(result == true);
+        REQUIRE(loop.registeredFileDescriptorCount() == 1);
     }
 
     SUBCASE("can register multiple notifiers for read")

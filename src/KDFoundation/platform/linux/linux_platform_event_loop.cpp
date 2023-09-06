@@ -168,9 +168,14 @@ bool LinuxPlatformEventLoop::unregisterFileDescriptor(int fd, FileDescriptorNoti
     ev.data.fd = fd;
 
     const int epollOp = m_notifiers[fd].wouldBeEmptyIfUnset(type) ? EPOLL_CTL_DEL : EPOLL_CTL_MOD;
+    const auto rv = epoll_ctl(m_epollHandle, epollOp, fd, &ev);
 
-    if (epoll_ctl(m_epollHandle, epollOp, fd, &ev)) {
-        SPDLOG_ERROR("Failed to unregister file descriptor {}. Error = {}", fd, errno);
+    // In case we attempted to unregister a previously registered file descriptor
+    // while the respective file is not accessible any more (resulting in errno == EBADF),
+    // proceed as if unregistering the file descriptor was successful.
+    // This way we ensure notifiers are reset / deleted properly.
+    if (rv && (errno != EBADF)) {
+        SPDLOG_ERROR("Failed to unregister file descriptor {}. Error {}: {}.", fd, errno, strerror(errno));
         return false;
     }
 
