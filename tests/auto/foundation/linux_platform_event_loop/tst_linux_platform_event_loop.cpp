@@ -53,11 +53,75 @@ TEST_CASE("Register and unregister for events")
         REQUIRE(result == true);
     }
 
-    SUBCASE("can unregister a file descriptor")
+    SUBCASE("can unregister a file descriptor for read notifications")
     {
         LinuxPlatformEventLoop loop;
         loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
         bool result = loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
+
+        REQUIRE(result == true);
+    }
+
+    SUBCASE("can re-register a file descriptor for read notifications")
+    {
+        LinuxPlatformEventLoop loop;
+        loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
+        loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
+        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
+
+        REQUIRE(result == true);
+    }
+
+    SUBCASE("can register a file descriptor for write notifications")
+    {
+        LinuxPlatformEventLoop loop;
+        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
+
+        REQUIRE(result == true);
+    }
+
+    SUBCASE("can unregister a file descriptor for write notifications")
+    {
+        LinuxPlatformEventLoop loop;
+        loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
+        bool result = loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
+
+        REQUIRE(result == true);
+    }
+
+    SUBCASE("can re-register a file descriptor for write notifications")
+    {
+        LinuxPlatformEventLoop loop;
+        loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
+        loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
+        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
+
+        REQUIRE(result == true);
+    }
+
+    SUBCASE("can register a file descriptor for exception notifications")
+    {
+        LinuxPlatformEventLoop loop;
+        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
+
+        REQUIRE(result == true);
+    }
+
+    SUBCASE("can unregister a file descriptor for exception notifications")
+    {
+        LinuxPlatformEventLoop loop;
+        loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
+        bool result = loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
+
+        REQUIRE(result == true);
+    }
+
+    SUBCASE("can re-register a file descriptor for exception notifications")
+    {
+        LinuxPlatformEventLoop loop;
+        loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
+        loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
+        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
 
         REQUIRE(result == true);
     }
