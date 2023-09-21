@@ -129,7 +129,7 @@ target_compile_definitions(
 )
 target_link_libraries(
     KDFoundation
-    PRIVATE spdlog_setup::spdlog_setup
+    PRIVATE spdlog::spdlog
 )
 
 generate_export_header(KDFoundation BASE_NAME kdfoundation)

@@ -21,14 +21,11 @@
 #include <KDFoundation/platform/macos/macos_platform_integration.h>
 #endif
 
-#include <spdlog_setup/conf.h>
-
 #include <cassert>
 
 using namespace KDFoundation;
 
 CoreApplication *CoreApplication::ms_application = nullptr;
-bool CoreApplication::ms_loggingSetup = false;
 
 CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration)
     : Object()
@@ -36,20 +33,6 @@ CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&
 {
     assert(ms_application == nullptr);
     ms_application = this;
-
-    const char *logConfig = std::getenv("KDFOUNDATION_LOG_CONFIG");
-    if (logConfig && !ms_loggingSetup) {
-        try {
-            spdlog_setup::from_file(logConfig);
-            ms_loggingSetup = true;
-        } catch (const spdlog_setup::setup_error &e) {
-            spdlog::critical("Failed to setup logging: {}", e.what());
-            exit(1);
-        } catch (const std::exception &) {
-            spdlog::critical("Failed to setup logging");
-            exit(1);
-        }
-    }
 
     m_logger = spdlog::get("application");
     if (!m_logger) {

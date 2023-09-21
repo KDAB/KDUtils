@@ -48,39 +48,6 @@ if(NOT TARGET spdlog::spdlog)
     )
 endif()
 
-find_package(spdlog_setup QUIET)
-
-if(NOT TARGET spdlog_setup::spdlog_setup)
-    get_property(tmp GLOBAL PROPERTY PACKAGES_NOT_FOUND)
-    list(
-        FILTER
-        tmp
-        EXCLUDE
-        REGEX
-        spdlog
-    )
-    set_property(GLOBAL PROPERTY PACKAGES_NOT_FOUND ${tmp})
-
-    # Patched version of spdlog_setup which doesn't look for spdlog if not needed.
-    # Once the patch is accepted upstream, we can revert to use upstream package
-    fetchcontent_declare(
-        spdlog_setup
-        GIT_REPOSITORY https://github.com/jjcasmar/spdlog_setup.git
-        GIT_TAG bf46b966ef4b2f4aca67e7b69c64c2d2def65d94
-    )
-    set(SPDLOG_SETUP_INSTALL
-        ON
-        CACHE BOOL "Install spdlog_setup" FORCE
-    )
-    fetchcontent_makeavailable(spdlog_setup)
-    add_library(spdlog_setup::spdlog_setup ALIAS spdlog_setup)
-
-    if(UNIX)
-        target_compile_options(spdlog_setup INTERFACE -Wno-deprecated-declarations)
-        target_compile_options(spdlog_setup INTERFACE -Wno-unqualified-std-cast-call)
-    endif()
-endif()
-
 # KDBindings library
 find_package(KDBindings QUIET)
 if(NOT TARGET KDAB::KDBindings)
