@@ -8,7 +8,6 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-cmake_minimum_required(VERSION 3.0.0)
 project(KDFoundation-Tests)
 
 include_directories(./common)
