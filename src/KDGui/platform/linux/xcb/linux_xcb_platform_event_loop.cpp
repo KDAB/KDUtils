@@ -232,10 +232,24 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
             break;
         }
 
-        case XCB_ENTER_NOTIFY: {
+        case XCB_MAP_NOTIFY: {
+            const auto *mapEvent = reinterpret_cast<xcb_map_notify_event_t *>(xcbEvent);
+            SPDLOG_LOGGER_DEBUG(m_logger,
+                                "Map event for window {}",
+                                mapEvent->window);
             break;
         }
 
+        case XCB_UNMAP_NOTIFY: {
+            const auto *unmapEvent = reinterpret_cast<xcb_unmap_notify_event_t *>(xcbEvent);
+            SPDLOG_LOGGER_DEBUG(m_logger,
+                                "Unmap event for window {}",
+                                unmapEvent->window);
+            break;
+        }
+
+        case XCB_REPARENT_NOTIFY:
+        case XCB_ENTER_NOTIFY:
         case XCB_LEAVE_NOTIFY: {
             break;
         }
