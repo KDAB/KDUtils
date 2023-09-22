@@ -225,8 +225,6 @@ if(KDUTILS_CODE_COVERAGE)
     append_coverage_compiler_flags()
 endif()
 
-add_feature_info(KDGui ON "Build Library")
-
 foreach(file ${HEADERS})
     get_filename_component(dir ${file} DIRECTORY)
     install(FILES ${file} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDGui/${dir})

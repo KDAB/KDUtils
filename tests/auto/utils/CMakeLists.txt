@@ -8,7 +8,7 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-add_feature_info(KDUtils-Test ON "KDUtils Unit Tests")
+add_feature_info(KDUtils-Test ON "Build KDUtils Tests")
 
 include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 

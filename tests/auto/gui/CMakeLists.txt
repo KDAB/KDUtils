@@ -19,7 +19,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_subdirectory(linux_xcb_platform_window)
 endif()
 
-add_feature_info(KDGui-Tests ON "Build Tests")
+add_feature_info(KDGui-Tests ON "Build KDGui Tests")
 
 if(KDUTILS_CODE_COVERAGE)
     setup_target_for_coverage_gcovr_html(

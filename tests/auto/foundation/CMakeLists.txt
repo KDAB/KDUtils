@@ -50,7 +50,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     add_subdirectory(macos_platform_event_loop)
 endif()
 
-add_feature_info(KDFoundation-Tests ON "Build Tests")
+add_feature_info(KDFoundation-Tests ON "Build KDFoundation Tests")
 
 if(KDUTILS_CODE_COVERAGE)
     setup_target_for_coverage_gcovr_html(

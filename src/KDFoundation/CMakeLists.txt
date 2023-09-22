@@ -150,8 +150,6 @@ if(KDUTILS_CODE_COVERAGE)
     append_coverage_compiler_flags()
 endif()
 
-add_feature_info(KDFoundation ON "Build Library")
-
 # add_library(Core INTERFACE)
 # target_link_libraries(Core INTERFACE kdfoundation)
 foreach(file ${HEADERS})

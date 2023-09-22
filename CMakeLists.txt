@@ -63,3 +63,5 @@ if(KDUTILS_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
+
+feature_summary(WHAT PACKAGES_FOUND ENABLED_FEATURES PACKAGES_NOT_FOUND DISABLED_FEATURES INCLUDE_QUIET_PACKAGES)
