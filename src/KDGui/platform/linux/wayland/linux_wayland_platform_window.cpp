@@ -159,21 +159,21 @@ void LinuxWaylandPlatformWindow::setSize(uint32_t width, uint32_t height)
 void LinuxWaylandPlatformWindow::handleResize(uint32_t width, uint32_t height)
 {
     // Pass a resize event to the window
-    ResizeEvent ev{ width, height };
+    ResizeEvent ev{ static_cast<uint32_t>(scaleByFactor(width)), static_cast<uint32_t>(scaleByFactor(height)) };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
 void LinuxWaylandPlatformWindow::handleMousePress(uint32_t timestamp, uint8_t button,
                                                   int16_t xPos, int16_t yPos)
 {
-    MousePressEvent ev{ timestamp, button, xPos, yPos };
+    MousePressEvent ev{ timestamp, button, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
 void LinuxWaylandPlatformWindow::handleMouseRelease(uint32_t timestamp, uint8_t button,
                                                     int16_t xPos, int16_t yPos)
 {
-    MouseReleaseEvent ev{ timestamp, button, xPos, yPos };
+    MouseReleaseEvent ev{ timestamp, button, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
@@ -181,7 +181,7 @@ void LinuxWaylandPlatformWindow::handleMouseMove(uint32_t timestamp, uint8_t but
                                                  int64_t x, int64_t y)
 {
     if (m_cursorMode == CursorMode::Normal) {
-        MouseMoveEvent ev{ timestamp, button, x, y };
+        MouseMoveEvent ev{ timestamp, button, scaleByFactor(x), scaleByFactor(y) };
         CoreApplication::instance()->sendEvent(m_window, &ev);
     }
 }
@@ -288,4 +288,9 @@ void LinuxWaylandPlatformWindow::updateScaleFactor()
         }
     }
     window()->scaleFactor = factor;
+}
+
+int32_t LinuxWaylandPlatformWindow::scaleByFactor(const int32_t value) const
+{
+    return value * m_window->scaleFactor.get();
 }

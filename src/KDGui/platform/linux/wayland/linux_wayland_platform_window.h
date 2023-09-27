@@ -104,6 +104,8 @@ private:
     void setAppId();
     void updateScaleFactor();
 
+    int32_t scaleByFactor(int32_t value) const;
+
     LinuxWaylandPlatformIntegration *m_platformIntegration;
     wl_surface *m_surface{ nullptr };
     xdg_surface *m_xdgSurface{ nullptr };
