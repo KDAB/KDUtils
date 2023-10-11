@@ -16,7 +16,7 @@ include_directories(./common)
 function(add_core_test name sources)
     add_executable(${name} ${sources})
 
-    target_link_libraries(${name} PRIVATE KDUtils::KDFoundation doctest)
+    target_link_libraries(${name} PRIVATE KDUtils::KDFoundation doctest::doctest)
 
     add_test(NAME ${name} COMMAND $<TARGET_FILE:${name}>)
     set_tests_properties(${name} PROPERTIES LABELS "Foundatation")
@@ -29,7 +29,7 @@ endfunction()
 # add a benchmark with the specified name
 function(add_core_bench name sources)
     add_executable(${name} ${sources})
-    target_link_libraries(${name} PRIVATE KDUtils::KDFoundation doctest nanobench)
+    target_link_libraries(${name} PRIVATE KDUtils::KDFoundation doctest::doctest nanobench)
 
     add_test(NAME ${name} COMMAND $<TARGET_FILE:${name}>)
     set_tests_properties(${name} PROPERTIES LABELS "Foundation")
