@@ -61,7 +61,7 @@ if(NOT TARGET KDAB::KDBindings)
 endif()
 
 # whereami library
-find_package(whereami QUIET)
+find_package(Whereami QUIET)
 if(NOT TARGET whereami::whereami)
     fetchcontent_declare(
         whereami
