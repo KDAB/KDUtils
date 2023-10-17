@@ -160,7 +160,7 @@ constexpr DWORD WindowExStyle = 0;
 } // namespace
 
 Win32PlatformWindow::Win32PlatformWindow(Win32GuiPlatformIntegration *platformIntegration, Window *window)
-    : AbstractPlatformWindow(window)
+    : AbstractPlatformWindow(window, AbstractPlatformWindow::Type::Win32)
     , m_platformIntegration(platformIntegration)
     , m_handle(nullptr)
 {

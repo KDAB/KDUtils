@@ -15,3 +15,4 @@ SKIP /3rdparty/
 #skip borrowed cmake code
 SKIP /cmake/CodeCoverage.cmake
 SKIP /cmake/ECM
+SKIP /tests/auto/gui/window/tst_window.cpp

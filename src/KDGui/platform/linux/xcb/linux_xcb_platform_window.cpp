@@ -27,7 +27,7 @@ using namespace KDGui;
 LinuxXcbPlatformWindow::LinuxXcbPlatformWindow(
         LinuxXcbPlatformIntegration *platformIntegration,
         Window *window)
-    : AbstractPlatformWindow(window)
+    : AbstractPlatformWindow(window, AbstractPlatformWindow::Type::XCB)
     , m_platformIntegration{ platformIntegration }
 {
 }

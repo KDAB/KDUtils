@@ -16,9 +16,15 @@
 
 using namespace KDGui;
 
-AbstractPlatformWindow::AbstractPlatformWindow(Window *window)
+AbstractPlatformWindow::AbstractPlatformWindow(Window *window, AbstractPlatformWindow::Type type)
     : m_window{ window }
+    , m_type(type)
 {
     assert(window);
     window->title.valueChanged().connect(&AbstractPlatformWindow::setTitle, this);
+}
+
+AbstractPlatformWindow::Type AbstractPlatformWindow::type() const
+{
+    return m_type;
 }

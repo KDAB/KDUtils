@@ -12,6 +12,7 @@
 #include <KDGui/window.h>
 #include <KDFoundation/core_application.h>
 #include <KDGui/gui_application.h>
+#include <KDGui/config.h>
 
 #include <KDFoundation/logging.h>
 
@@ -68,5 +69,15 @@ TEST_CASE("Creation")
         auto w = std::make_unique<Window>();
         w->create();
         REQUIRE(w->platformWindow() != nullptr);
+#if defined(KDGUI_PLATFORM_WIN32)
+        REQUIRE(w->platformWindow()->type() == AbstractPlatformWindow::Type::Win32);
+#elif defined(KDGUI_PLATFORM_XCB) || defined(KDGUI_PLATFORM_WAYLAND)
+        const bool isXcb = w->platformWindow()->type() == AbstractPlatformWindow::Type::XCB;
+        const bool isWayland = w->platformWindow()->type() == AbstractPlatformWindow::Type::Wayland;
+        const bool isXcbOrWayland = isXcb || isWayland;
+        REQUIRE(isXcbOrWayland);
+#elif defined(KDGUI_PLATFORM_COCOA)
+        REQUIRE(w->platformWindow()->type() == AbstractPlatformWindow::Type::Cocoa);
+#endif
     }
 }

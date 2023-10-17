@@ -32,7 +32,7 @@ using namespace KDGui;
 LinuxWaylandPlatformWindow::LinuxWaylandPlatformWindow(
         LinuxWaylandPlatformIntegration *platformIntegration,
         Window *window)
-    : AbstractPlatformWindow(window)
+    : AbstractPlatformWindow(window, AbstractPlatformWindow::Type::Wayland)
     , m_platformIntegration{ platformIntegration }
 {
     CoreApplication::instance()->applicationName.valueChanged().connect([this]() {

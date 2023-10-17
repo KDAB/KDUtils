@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <KDFoundation/kdfoundation_global.h>
+#include <KDGui/kdgui_global.h>
 #include <KDGui/kdgui_keys.h>
 
 #include <string>
@@ -20,10 +20,17 @@ namespace KDGui {
 
 class Window;
 
-class AbstractPlatformWindow
+class KDGUI_API AbstractPlatformWindow
 {
 public:
-    explicit AbstractPlatformWindow(Window *window);
+    enum class Type {
+        Win32,
+        Cocoa,
+        XCB,
+        Wayland
+    };
+
+    explicit AbstractPlatformWindow(Window *window, AbstractPlatformWindow::Type type);
     virtual ~AbstractPlatformWindow() { }
 
     AbstractPlatformWindow(AbstractPlatformWindow const &other) = delete;
@@ -33,6 +40,8 @@ public:
     AbstractPlatformWindow &operator=(AbstractPlatformWindow &&other) noexcept = default;
 
     Window *window() { return m_window; }
+
+    AbstractPlatformWindow::Type type() const;
 
     virtual bool create() = 0;
     virtual bool destroy() = 0;
@@ -78,6 +87,7 @@ public:
 
 protected:
     Window *m_window;
+    AbstractPlatformWindow::Type m_type;
 };
 
 } // namespace KDGui

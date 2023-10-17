@@ -37,5 +37,6 @@ TEST_CASE("Creation")
         auto platformIntegration = std::make_unique<LinuxXcbPlatformIntegration>();
         auto platformWindow = std::make_unique<LinuxXcbPlatformWindow>(platformIntegration.get(), w.get());
         REQUIRE(platformWindow->window() == w.get());
+        REQUIRE(platformWindow->type() == AbstractPlatformWindow::Type::XCB);
     }
 }

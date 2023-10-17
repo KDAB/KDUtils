@@ -391,7 +391,7 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
 @end
 
 CocoaPlatformWindow::CocoaPlatformWindow(Window *window)
-    : AbstractPlatformWindow(window)
+    : AbstractPlatformWindow(window, AbstractPlatformWindow::Type::Cocoa)
 {
 }
 
