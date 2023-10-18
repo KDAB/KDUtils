@@ -52,7 +52,13 @@ You get:
 On Linux:
 
 ```bash
-sudo apt install libxkbcommon-dev libxcb-xkb-dev libxkbcommon-x11-dev wayland-scanner++ wayland-protocols
+sudo apt install libxkbcommon-dev libxcb-xkb-dev libxkbcommon-x11-dev wayland-scanner++ wayland-protocols libwayland-dev
+```
+
+For debug builds with code coverage:
+
+```bash
+sudo apt install gcovr
 ```
 
 ## Contact
