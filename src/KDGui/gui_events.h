@@ -42,6 +42,7 @@ public:
     }
 
     uint32_t timestamp() const { return m_timestamp; }
+    uint8_t nativeButtonId() const { return m_button; }
     MouseButton button() const { return static_cast<MouseButton>(1 << (m_button - 1)); }
     int16_t xPos() const { return m_xPos; }
     int16_t yPos() const { return m_yPos; }
