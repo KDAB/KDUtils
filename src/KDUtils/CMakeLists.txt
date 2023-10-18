@@ -26,6 +26,7 @@ set(HEADERS
     file_mapper.h
     flags.h
     logger.h
+    tailwind_colors.h
     url.h
     kdutils_global.h
 )

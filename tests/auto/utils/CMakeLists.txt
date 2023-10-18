@@ -20,6 +20,7 @@ add_subdirectory(elapsedtimer)
 add_subdirectory(flags)
 add_subdirectory(url)
 add_subdirectory(logger)
+add_subdirectory(tailwind_colors)
 
 if(KDUTILS_CODE_COVERAGE)
     include(${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
