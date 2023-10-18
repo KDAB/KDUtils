@@ -108,11 +108,11 @@ LRESULT windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         return 0;
     }
     case WM_MOUSEWHEEL: {
-        platformWindow->handleMouseWheel(GetMessageTime(), 0, HIWORD(wParam));
+        platformWindow->handleMouseWheel(GetMessageTime(), 0, GET_WHEEL_DELTA_WPARAM(wParam));
         return 0;
     }
     case WM_MOUSEHWHEEL: {
-        platformWindow->handleMouseWheel(GetMessageTime(), -HIWORD(wParam), 0);
+        platformWindow->handleMouseWheel(GetMessageTime(), -GET_WHEEL_DELTA_WPARAM(wParam), 0);
         return 0;
     }
     case WM_KEYDOWN: {
