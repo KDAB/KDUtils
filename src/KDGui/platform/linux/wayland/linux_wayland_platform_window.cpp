@@ -10,7 +10,6 @@
 */
 
 #include "linux_wayland_platform_window.h"
-#include <KDGui/gui_events.h>
 #include <KDGui/window.h>
 #include "linux_wayland_platform_integration.h"
 #include "linux_wayland_platform_output.h"
@@ -163,25 +162,25 @@ void LinuxWaylandPlatformWindow::handleResize(uint32_t width, uint32_t height)
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxWaylandPlatformWindow::handleMousePress(uint32_t timestamp, uint8_t button,
+void LinuxWaylandPlatformWindow::handleMousePress(uint32_t timestamp, MouseButtons buttons,
                                                   int16_t xPos, int16_t yPos)
 {
-    MousePressEvent ev{ timestamp, button, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
+    MousePressEvent ev{ timestamp, buttons, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxWaylandPlatformWindow::handleMouseRelease(uint32_t timestamp, uint8_t button,
+void LinuxWaylandPlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButtons buttons,
                                                     int16_t xPos, int16_t yPos)
 {
-    MouseReleaseEvent ev{ timestamp, button, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
+    MouseReleaseEvent ev{ timestamp, buttons, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxWaylandPlatformWindow::handleMouseMove(uint32_t timestamp, uint8_t button,
+void LinuxWaylandPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButtons buttons,
                                                  int64_t x, int64_t y)
 {
     if (m_cursorMode == CursorMode::Normal) {
-        MouseMoveEvent ev{ timestamp, button, scaleByFactor(x), scaleByFactor(y) };
+        MouseMoveEvent ev{ timestamp, buttons, scaleByFactor(x), scaleByFactor(y) };
         CoreApplication::instance()->sendEvent(m_window, &ev);
     }
 }
@@ -190,7 +189,7 @@ void LinuxWaylandPlatformWindow::handleMouseMoveRelative(uint32_t timestamp, int
 {
     if (m_cursorMode == CursorMode::Disabled) {
         Position pos = window()->cursorPosition.get() + Position(dx, dy);
-        MouseMoveEvent ev{ timestamp, 0, pos.x, pos.y };
+        MouseMoveEvent ev{ timestamp, MouseButton::NoButton, pos.x, pos.y };
         CoreApplication::instance()->sendEvent(m_window, &ev);
     }
 }

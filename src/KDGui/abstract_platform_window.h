@@ -13,6 +13,7 @@
 
 #include <KDGui/kdgui_global.h>
 #include <KDGui/kdgui_keys.h>
+#include <KDGui/gui_events.h>
 
 #include <string>
 
@@ -68,15 +69,15 @@ public:
     //  8 = Navigate Back, 9 = Navigate Forward
     // TODO: Wrap these up in an enum and map from the platform specific codes to our codes
     virtual void handleMousePress(
-            uint32_t timestamp, uint8_t button,
+            uint32_t timestamp, MouseButtons buttons,
             int16_t xPos, int16_t yPos) = 0;
 
     virtual void handleMouseRelease(
-            uint32_t timestamp, uint8_t button,
+            uint32_t timestamp, MouseButtons buttons,
             int16_t xPos, int16_t yPos) = 0;
 
     virtual void handleMouseMove(
-            uint32_t timestamp, uint8_t button,
+            uint32_t timestamp, MouseButtons buttons,
             int64_t xPos, int64_t yPos) = 0;
 
     virtual void handleMouseWheel(uint32_t timestamp, int32_t xDelta, int32_t yDelta) = 0;

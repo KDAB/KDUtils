@@ -13,6 +13,7 @@
 #include "linux_xcb_platform_integration.h"
 #include "linux_xkb_keyboard.h"
 #include <KDGui/window.h>
+#include <KDGui/gui_events.h>
 
 #include <KDFoundation/file_descriptor_notifier.h>
 
@@ -67,6 +68,18 @@ void LinuxXcbPlatformEventLoop::waitForEvents(int timeout)
 
 void LinuxXcbPlatformEventLoop::processXcbEvents()
 {
+    auto xcbButtonToMouseButton = [](xcb_button_t b) {
+        switch (b) {
+        case 1:
+        case 2:
+        case 3:
+            return static_cast<MouseButton>(1 << (b - 1));
+        default:
+            break;
+        }
+        return MouseButton::NoButton;
+    };
+
     const auto connection = m_platformIntegration->connection();
     while (auto xcbEvent = xcb_poll_for_event(connection)) {
         // We don't care where the event came from (server or client), so remove that
@@ -130,6 +143,8 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
             case 2:
             case 3:
             default: {
+                const MouseButton mouseButton = xcbButtonToMouseButton(button);
+
                 SPDLOG_LOGGER_DEBUG(m_logger,
                                     "Mouse press event for button {} at pos ({}, {})",
                                     button,
@@ -137,7 +152,7 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
                                     buttonEvent->event_y);
                 window->handleMousePress(
                         buttonEvent->time,
-                        button,
+                        mouseButton,
                         buttonEvent->event_x,
                         buttonEvent->event_y);
                 break;
@@ -209,7 +224,7 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
                                 buttonEvent->event_y);
             window->handleMouseRelease(
                     buttonEvent->time,
-                    buttonEvent->detail,
+                    xcbButtonToMouseButton(buttonEvent->detail),
                     buttonEvent->event_x,
                     buttonEvent->event_y);
             break;
@@ -226,7 +241,7 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
                                 mouseMoveEvent->event_y);
             window->handleMouseMove(
                     mouseMoveEvent->time,
-                    mouseMoveEvent->detail,
+                    xcbButtonToMouseButton(mouseMoveEvent->detail),
                     static_cast<int64_t>(mouseMoveEvent->event_x),
                     static_cast<int64_t>(mouseMoveEvent->event_y));
             break;

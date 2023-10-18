@@ -15,6 +15,7 @@
 #include <KDGui/platform/linux/common/linux_xkb_keyboard_map.h>
 #include <KDGui/platform/linux/common/linux_xkb.h>
 #include <KDGui/window.h>
+#include <KDGui/gui_events.h>
 
 #include <unistd.h>
 #include <sys/mman.h>
@@ -285,24 +286,24 @@ void LinuxWaylandPlatformInput::pointerMotion(wl_pointer *pointer, uint32_t time
         m_pointer.accumulatedEvent.pos = m_pointer.pos;
         m_pointer.accumulatedEvent.time = time;
     } else {
-        m_pointer.focus->handleMouseMove(time, 0, m_pointer.pos.x, m_pointer.pos.y);
+        m_pointer.focus->handleMouseMove(time, MouseButton::NoButton, m_pointer.pos.x, m_pointer.pos.y);
     }
 }
 
 void LinuxWaylandPlatformInput::pointerButton(wl_pointer *pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
 {
-    const int btn = [=]() {
+    const MouseButton btn = [=]() {
         switch (button) {
         case BTN_LEFT:
-            return 1;
+            return MouseButton::LeftButton;
         case BTN_MIDDLE:
-            return 2;
+            return MouseButton::MiddleButton;
         case BTN_RIGHT:
-            return 3;
+            return MouseButton::RightButton;
         default:
             break;
         }
-        return 0;
+        return MouseButton::NoButton;
     }();
 
     if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
@@ -341,7 +342,7 @@ void LinuxWaylandPlatformInput::pointerFrame(wl_pointer *pointer)
         ev.axis = Position(0, 0);
     }
     if (ev.pos != Position(0, 0)) {
-        m_pointer.focus->handleMouseMove(ev.time, 0, ev.pos.x, ev.pos.y);
+        m_pointer.focus->handleMouseMove(ev.time, MouseButton::NoButton, ev.pos.x, ev.pos.y);
         ev.pos = Position(0, 0);
     }
     if (ev.delta != Position(0, 0)) {
@@ -510,8 +511,8 @@ void LinuxWaylandPlatformInput::touchDown(wl_touch *touch, uint32_t serial, uint
     m_touch.points.push_back(Touch::Point{ id, Position(int64_t(wl_fixed_to_double(x)), int64_t(wl_fixed_to_double(y))) });
     m_touch.time = time;
 
-    m_touch.focus->handleMouseMove(time, 1, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
-    m_touch.focus->handleMousePress(time, 1, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
+    m_touch.focus->handleMouseMove(time, MouseButton::LeftButton, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
+    m_touch.focus->handleMousePress(time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
 }
 
 void LinuxWaylandPlatformInput::touchUp(wl_touch *touch, uint32_t serial, uint32_t time, int32_t id)
@@ -520,7 +521,7 @@ void LinuxWaylandPlatformInput::touchUp(wl_touch *touch, uint32_t serial, uint32
         return;
     }
 
-    m_touch.focus->handleMouseRelease(time, 1, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
+    m_touch.focus->handleMouseRelease(time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
     m_touch.points.clear();
 }
 
@@ -530,7 +531,7 @@ void LinuxWaylandPlatformInput::touchMotion(wl_touch *touch, uint32_t time, int3
         return;
     }
 
-    m_touch.focus->handleMouseMove(time, 1, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
+    m_touch.focus->handleMouseMove(time, MouseButton::LeftButton, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
     m_touch.time = time;
 }
 
@@ -541,7 +542,7 @@ void LinuxWaylandPlatformInput::touchFrame(wl_touch *touch)
 void LinuxWaylandPlatformInput::touchCancel(wl_touch *touch)
 {
     if (m_touch.points.size() > 0) {
-        m_touch.focus->handleMouseRelease(m_touch.time, 1, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
+        m_touch.focus->handleMouseRelease(m_touch.time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
         m_touch.points.clear();
     }
 }

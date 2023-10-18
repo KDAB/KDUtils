@@ -31,24 +31,24 @@ using MouseButtons = uint32_t;
 class MousePressEvent : public KDFoundation::Event
 {
 public:
-    explicit MousePressEvent(uint32_t timestamp, uint8_t button,
+    explicit MousePressEvent(uint32_t timestamp, MouseButtons buttons,
                              int16_t xPos, int16_t yPos)
         : KDFoundation::Event(KDFoundation::Event::Type::MousePress)
         , m_timestamp{ timestamp }
-        , m_button{ button }
+        , m_buttons{ buttons }
         , m_xPos{ xPos }
         , m_yPos{ yPos }
     {
     }
 
     uint32_t timestamp() const { return m_timestamp; }
-    MouseButton button() const { return static_cast<MouseButton>(1 << (m_button - 1)); }
+    MouseButtons buttons() const { return m_buttons; }
     int16_t xPos() const { return m_xPos; }
     int16_t yPos() const { return m_yPos; }
 
 private:
     uint32_t m_timestamp;
-    uint8_t m_button;
+    MouseButtons m_buttons;
     int16_t m_xPos;
     int16_t m_yPos;
 };
@@ -56,25 +56,24 @@ private:
 class MouseReleaseEvent : public KDFoundation::Event
 {
 public:
-    explicit MouseReleaseEvent(uint32_t timestamp, uint8_t button,
+    explicit MouseReleaseEvent(uint32_t timestamp, MouseButtons buttons,
                                int16_t xPos, int16_t yPos)
         : KDFoundation::Event(KDFoundation::Event::Type::MouseRelease)
         , m_timestamp{ timestamp }
-        , m_button{ button }
+        , m_buttons{ buttons }
         , m_xPos{ xPos }
         , m_yPos{ yPos }
     {
     }
 
     uint32_t timestamp() const { return m_timestamp; }
-    uint8_t nativeButtonId() const { return m_button; }
-    MouseButton button() const { return static_cast<MouseButton>(1 << (m_button - 1)); }
+    MouseButtons buttons() const { return m_buttons; }
     int16_t xPos() const { return m_xPos; }
     int16_t yPos() const { return m_yPos; }
 
 private:
     uint32_t m_timestamp;
-    uint8_t m_button;
+    MouseButtons m_buttons;
     int16_t m_xPos;
     int16_t m_yPos;
 };
@@ -82,25 +81,24 @@ private:
 class MouseMoveEvent : public KDFoundation::Event
 {
 public:
-    explicit MouseMoveEvent(uint32_t timestamp, uint8_t button,
+    explicit MouseMoveEvent(uint32_t timestamp, MouseButtons buttons,
                             int64_t xPos, int64_t yPos)
         : KDFoundation::Event(KDFoundation::Event::Type::MouseMove)
         , m_timestamp{ timestamp }
-        , m_button{ button }
+        , m_buttons{ buttons }
         , m_xPos{ xPos }
         , m_yPos{ yPos }
     {
     }
 
     uint32_t timestamp() const { return m_timestamp; }
-    uint8_t nativeButtonId() const { return m_button; }
-    MouseButton button() const { return static_cast<MouseButton>(1 << (m_button - 1)); }
+    MouseButtons buttons() const { return m_buttons; }
     int64_t xPos() const { return m_xPos; }
     int64_t yPos() const { return m_yPos; }
 
 private:
     uint32_t m_timestamp;
-    uint8_t m_button;
+    MouseButtons m_buttons;
     int64_t m_xPos;
     int64_t m_yPos;
 };

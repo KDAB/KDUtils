@@ -60,15 +60,15 @@ public:
     void handleResize(uint32_t width, uint32_t height) override;
 
     void handleMousePress(
-            uint32_t timestamp, uint8_t button,
+            uint32_t timestamp, MouseButtons buttons,
             int16_t xPos, int16_t yPos) override;
 
     void handleMouseRelease(
-            uint32_t timestamp, uint8_t button,
+            uint32_t timestamp, MouseButtons buttons,
             int16_t xPos, int16_t yPos) override;
 
     void handleMouseMove(
-            uint32_t timestamp, uint8_t button,
+            uint32_t timestamp, MouseButtons buttons,
             int64_t xPos, int64_t yPos) override;
 
     void handleMouseWheel(uint32_t timestamp, int32_t xDelta, int32_t yDelta) override;

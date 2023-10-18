@@ -55,12 +55,12 @@ LRESULT windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     if (!platformWindow)
         return DefWindowProc(hwnd, message, wParam, lParam);
 
-    const auto handleMousePress = [platformWindow, lParam](MouseButton button) {
-        platformWindow->handleMousePress(GetMessageTime(), button, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    const auto handleMousePress = [platformWindow, lParam](MouseButtons buttons) {
+        platformWindow->handleMousePress(GetMessageTime(), buttons, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     };
 
-    const auto handleMouseRelease = [platformWindow, lParam](MouseButton button) {
-        platformWindow->handleMouseRelease(GetMessageTime(), button, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+    const auto handleMouseRelease = [platformWindow, lParam](MouseButtons buttons) {
+        platformWindow->handleMouseRelease(GetMessageTime(), buttons, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
     };
 
     constexpr const auto ScanCodeMask = 0x1ff; // 0-7: scancode; 8: extended
@@ -104,7 +104,7 @@ LRESULT windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         // We do not process legacy mouse move events if the window is set to
         // raw mouse input
         if (!platformWindow->isRawMouseInputEnabled())
-            platformWindow->handleMouseMove(GetMessageTime(), 0, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            platformWindow->handleMouseMove(GetMessageTime(), MouseButton::NoButton, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
         return 0;
     }
     case WM_MOUSEWHEEL: {
@@ -358,19 +358,19 @@ void Win32PlatformWindow::handleResize(uint32_t width, uint32_t height)
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void Win32PlatformWindow::handleMousePress(uint32_t timestamp, uint8_t button, int16_t xPos, int16_t yPos)
+void Win32PlatformWindow::handleMousePress(uint32_t timestamp, MouseButtons buttons, int16_t xPos, int16_t yPos)
 {
-    MousePressEvent ev{ timestamp, button, xPos, yPos };
+    MousePressEvent ev{ timestamp, buttons, xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void Win32PlatformWindow::handleMouseRelease(uint32_t timestamp, uint8_t button, int16_t xPos, int16_t yPos)
+void Win32PlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButtons buttons, int16_t xPos, int16_t yPos)
 {
-    MouseReleaseEvent ev{ timestamp, button, xPos, yPos };
+    MouseReleaseEvent ev{ timestamp, buttons, xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void Win32PlatformWindow::handleMouseMove(uint32_t timestamp, uint8_t button, int64_t xPos, int64_t yPos)
+void Win32PlatformWindow::handleMouseMove(uint32_t timestamp, MouseButtons buttons, int64_t xPos, int64_t yPos)
 {
     Position pos{ xPos, yPos };
     const bool processMouseMove = pos != m_previousWarpedCursorPosition;
@@ -395,7 +395,7 @@ void Win32PlatformWindow::handleMouseMove(uint32_t timestamp, uint8_t button, in
     }
 
     if (processMouseMove) {
-        MouseMoveEvent ev{ timestamp, button, pos.x, pos.y };
+        MouseMoveEvent ev{ timestamp, buttons, pos.x, pos.y };
         CoreApplication::instance()->sendEvent(m_window, &ev);
     }
 }
