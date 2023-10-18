@@ -13,6 +13,7 @@ add_feature_info(KDUtils-Test ON "Build KDUtils Tests")
 include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 
 add_subdirectory(bytearray)
+add_subdirectory(color)
 add_subdirectory(file)
 add_subdirectory(dir)
 add_subdirectory(elapsedtimer)

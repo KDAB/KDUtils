@@ -19,6 +19,7 @@ set(SOURCES
 
 set(HEADERS
     bytearray.h
+    color.h
     dir.h
     elapsedtimer.h
     file.h
