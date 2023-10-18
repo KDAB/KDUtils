@@ -20,6 +20,13 @@
 
 namespace KDFoundation {
 
+/// @brief Get async notifications about activity on file descriptors
+///
+/// @warning On Windows, the write notification is edge triggered meaning that
+/// it will be raised only if the internal socket buffer is fully filled, not
+/// after every successful write. This means that socket should be written to
+/// until WSAEWOULDBLOCK is returned from the send-type operation running on the
+/// socket to receive next write notification.
 class KDFOUNDATION_API FileDescriptorNotifier : public Object
 {
 public:
