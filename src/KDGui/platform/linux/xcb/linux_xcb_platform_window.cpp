@@ -263,21 +263,21 @@ void LinuxXcbPlatformWindow::handleResize(uint32_t width, uint32_t height)
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxXcbPlatformWindow::handleMousePress(uint32_t timestamp, uint8_t button,
+void LinuxXcbPlatformWindow::handleMousePress(uint32_t timestamp, MouseButtons buttons,
                                               int16_t xPos, int16_t yPos)
 {
-    MousePressEvent ev{ timestamp, button, xPos, yPos };
+    MousePressEvent ev{ timestamp, buttons, xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxXcbPlatformWindow::handleMouseRelease(uint32_t timestamp, uint8_t button,
+void LinuxXcbPlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButtons buttons,
                                                 int16_t xPos, int16_t yPos)
 {
-    MouseReleaseEvent ev{ timestamp, button, xPos, yPos };
+    MouseReleaseEvent ev{ timestamp, buttons, xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxXcbPlatformWindow::handleMouseMove(uint32_t timestamp, uint8_t button,
+void LinuxXcbPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButtons buttons,
                                              int64_t xPos, int64_t yPos)
 {
     Position pos{ xPos, yPos };
@@ -304,7 +304,7 @@ void LinuxXcbPlatformWindow::handleMouseMove(uint32_t timestamp, uint8_t button,
     }
 
     if (processMouseMove) {
-        MouseMoveEvent ev{ timestamp, button, pos.x, pos.y };
+        MouseMoveEvent ev{ timestamp, buttons, pos.x, pos.y };
         CoreApplication::instance()->sendEvent(m_window, &ev);
     }
 }
