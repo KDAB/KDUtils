@@ -121,14 +121,14 @@ LinuxWaylandPlatformWindow *LinuxWaylandPlatformIntegration::createPlatformWindo
 
 void LinuxWaylandPlatformIntegration::global(wl_registry *registry, uint32_t id, const char *name, uint32_t version)
 {
-    if (std::string_view("wl_compositor") == name) {
+    if (std::string_view{ wl_compositor_interface.name } == name) {
         auto ver = std::min(4u, version);
         auto compositor = reinterpret_cast<wl_compositor *>(wl_registry_bind(registry, id, &wl_compositor_interface, ver));
         m_compositor = { compositor, ver, id };
-    } else if (std::string_view("wl_shm") == name) {
+    } else if (std::string_view{ wl_shm_interface.name } == name) {
         auto shm = reinterpret_cast<wl_shm *>(wl_registry_bind(registry, id, &wl_shm_interface, 1));
         m_shm = { shm, 1, id };
-    } else if (std::string_view("xdg_wm_base") == name) {
+    } else if (std::string_view{ xdg_wm_base_interface.name } == name) {
         auto ver = std::min(2u, version);
         auto xdgShell = reinterpret_cast<xdg_wm_base *>(wl_registry_bind(registry, id, &xdg_wm_base_interface, ver));
         m_xdgShell = { xdgShell, ver, id };
@@ -137,23 +137,23 @@ void LinuxWaylandPlatformIntegration::global(wl_registry *registry, uint32_t id,
             wrapWlCallback<&LinuxWaylandPlatformIntegration::ping>
         };
         xdg_wm_base_add_listener(xdgShell, &listener, this);
-    } else if (std::string_view("wl_seat") == name) {
+    } else if (std::string_view{ wl_seat_interface.name } == name) {
         auto ver = std::min(LinuxWaylandPlatformInput::supportedVersion, version);
         auto seat = reinterpret_cast<wl_seat *>(wl_registry_bind(registry, id, &wl_seat_interface, ver));
         m_inputs.push_back(std::make_unique<LinuxWaylandPlatformInput>(this, seat, ver, id));
-    } else if (std::string_view("wl_output") == name) {
+    } else if (std::string_view{ wl_output_interface.name } == name) {
         auto ver = std::min(LinuxWaylandPlatformOutput::supportedVersion, version);
         auto output = reinterpret_cast<wl_output *>(wl_registry_bind(registry, id, &wl_output_interface, ver));
         m_outputs.push_back(std::make_unique<LinuxWaylandPlatformOutput>(output, ver, id));
-    } else if (std::string_view("zwp_relative_pointer_manager_v1") == name) {
+    } else if (std::string_view{ zwp_relative_pointer_manager_v1_interface.name } == name) {
         auto ver = std::min(LinuxWaylandPlatformInput::relativePointerV1SupportedVersion, version);
         auto manager = reinterpret_cast<zwp_relative_pointer_manager_v1 *>(wl_registry_bind(registry, id, &zwp_relative_pointer_manager_v1_interface, ver));
         m_relativePointerV1 = { manager, ver, id };
-    } else if (std::string_view("zwp_pointer_constraints_v1") == name) {
+    } else if (std::string_view{ zwp_pointer_constraints_v1_interface.name } == name) {
         auto ver = std::min(LinuxWaylandPlatformInput::pointerConstraintsV1SupportedVersion, version);
         auto constraints = reinterpret_cast<zwp_pointer_constraints_v1 *>(wl_registry_bind(registry, id, &zwp_pointer_constraints_v1_interface, ver));
         m_pointerConstraintsV1 = { constraints, ver, id };
-    } else if (std::string_view("zxdg_decoration_manager_v1") == name) {
+    } else if (std::string_view{ zxdg_decoration_manager_v1_interface.name } == name) {
         auto decoration = reinterpret_cast<zxdg_decoration_manager_v1 *>(wl_registry_bind(registry, id, &zxdg_decoration_manager_v1_interface, 1));
         m_decorationV1 = { decoration, 1, id };
     }
