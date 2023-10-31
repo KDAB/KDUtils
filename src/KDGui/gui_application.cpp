@@ -30,8 +30,15 @@ using namespace KDGui;
 #if defined(PLATFORM_LINUX)
 static std::unique_ptr<KDGui::AbstractGuiPlatformIntegration> createLinuxIntegration()
 {
+    bool prefersXcb = false;
+
+    // TODO(doc): document this behavior
+    if (const char *preferredPlatform = std::getenv("KDGUI_PLATFORM")) {
+        prefersXcb = std::string_view{ preferredPlatform } == "xcb";
+    }
+
 #if defined(PLATFORM_WAYLAND)
-    if (LinuxWaylandPlatformIntegration::checkAvailable())
+    if (LinuxWaylandPlatformIntegration::checkAvailable() && !prefersXcb)
         return std::make_unique<LinuxWaylandPlatformIntegration>();
     else
 #endif
