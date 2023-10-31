@@ -35,6 +35,12 @@ public:
     void registerPlatformWindow(AbstractPlatformWindow *window);
     void unregisterPlatformWindow(AbstractPlatformWindow *window);
 
+    AbstractClipboard *clipboard() override
+    {
+        // TODO(android): Implement clipboard
+        return nullptr;
+    }
+
 public:
     static android_app *s_androidApp;
 

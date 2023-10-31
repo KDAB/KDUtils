@@ -18,6 +18,7 @@
 namespace KDGui {
 
 class Window;
+class AbstractClipboard;
 
 class AbstractGuiPlatformIntegration : public KDFoundation::AbstractPlatformIntegration
 {
@@ -26,6 +27,8 @@ public:
     {
         return std::unique_ptr<AbstractPlatformWindow>(this->createPlatformWindowImpl(window));
     }
+
+    virtual AbstractClipboard *clipboard() = 0;
 
 private:
     virtual AbstractPlatformWindow *createPlatformWindowImpl(Window *window) = 0;

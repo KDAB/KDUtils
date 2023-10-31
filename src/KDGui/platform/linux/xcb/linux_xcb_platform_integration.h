@@ -44,6 +44,12 @@ public:
     void unregisterWindowForEvents(xcb_window_t xcbWindow) { m_windows.erase(xcbWindow); }
     LinuxXcbPlatformWindow *window(xcb_window_t xcbWindow) { return m_windows.at(xcbWindow); }
 
+    AbstractClipboard *clipboard() override
+    {
+        // TODO(xcb): Implement clipboard
+        return nullptr;
+    }
+
 private:
     LinuxXcbPlatformEventLoop *createPlatformEventLoopImpl() override;
     LinuxXcbPlatformWindow *createPlatformWindowImpl(Window *window) override;

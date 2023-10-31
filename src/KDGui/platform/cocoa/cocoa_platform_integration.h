@@ -24,6 +24,12 @@ public:
     CocoaPlatformIntegration();
     ~CocoaPlatformIntegration() override;
 
+    AbstractClipboard *clipboard() override
+    {
+        // TODO(cocoa): Implement clipboard
+        return nullptr;
+    }
+
 private:
     KDFoundation::AbstractPlatformEventLoop *createPlatformEventLoopImpl() override;
     AbstractPlatformWindow *createPlatformWindowImpl(Window *window) override;

@@ -11,6 +11,7 @@
 set(SOURCES abstract_platform_window.cpp gui_application.cpp window.cpp)
 
 set(HEADERS
+    abstract_clipboard.h
     abstract_gui_platform_integration.h
     abstract_platform_window.h
     gui_application.h

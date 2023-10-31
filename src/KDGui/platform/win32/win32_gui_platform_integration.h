@@ -31,6 +31,12 @@ public:
 
     bool registerWindowClass(const std::wstring &className, unsigned style, WNDPROC windowProc);
 
+    AbstractClipboard *clipboard() override
+    {
+        // TODO(win32): Implement clipboard
+        return nullptr;
+    }
+
 private:
     KDFoundation::Win32PlatformEventLoop *createPlatformEventLoopImpl() override;
     Win32PlatformWindow *createPlatformWindowImpl(Window *window) override;
