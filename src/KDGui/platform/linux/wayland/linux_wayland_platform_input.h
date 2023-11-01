@@ -126,6 +126,7 @@ private:
         xkb_context *context{ nullptr };
         xkb_keymap *keymap{ nullptr };
         xkb_state *state{ nullptr };
+        uint32_t serial{ 0 };
 
         struct {
             KDFoundation::Timer timer;

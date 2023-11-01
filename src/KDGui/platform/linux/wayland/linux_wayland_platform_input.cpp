@@ -415,12 +415,14 @@ void LinuxWaylandPlatformInput::keyboardKeymap(wl_keyboard *keyboard, uint32_t f
 void LinuxWaylandPlatformInput::keyboardEnter(wl_keyboard *keyboard, uint32_t serial, wl_surface *surface, wl_array *keys)
 {
     m_keyboard.focus = LinuxWaylandPlatformWindow::fromSurface(surface);
+    m_keyboard.serial = serial;
 }
 
 void LinuxWaylandPlatformInput::keyboardLeave(wl_keyboard *keyboard, uint32_t serial, wl_surface *surface)
 {
     m_keyboard.focus = nullptr;
     m_keyboard.repeat.timer.running = false;
+    m_keyboard.serial = 0;
 }
 
 void LinuxWaylandPlatformInput::keybordKey(wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
