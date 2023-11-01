@@ -16,6 +16,7 @@
 #include <KDGui/abstract_gui_platform_integration.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_event_loop.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_window.h>
+#include <KDGui/platform/linux/wayland/linux_wayland_clipboard.h>
 #include <KDFoundation/logging.h>
 #include <KDGui/kdgui_global.h>
 
@@ -29,6 +30,7 @@ struct xdg_wm_base;
 struct zwp_relative_pointer_manager_v1;
 struct zwp_pointer_constraints_v1;
 struct zxdg_decoration_manager_v1;
+struct wl_data_device_manager;
 
 namespace KDGui {
 
@@ -50,6 +52,8 @@ public:
 
     static bool checkAvailable();
 
+    AbstractClipboard *clipboard() override;
+
     std::shared_ptr<spdlog::logger> logger() { return m_logger; }
 
     wl_display *display() const { return m_display; }
@@ -60,6 +64,7 @@ public:
     const Global<zwp_relative_pointer_manager_v1> &relativePointerManagerV1() const { return m_relativePointerV1; }
     const Global<zwp_pointer_constraints_v1> &pointerConstraintsV1() const { return m_pointerConstraintsV1; }
     const Global<zxdg_decoration_manager_v1> &xdgDecoration() const { return m_decorationV1; }
+    const Global<wl_data_device_manager> &dataDeviceManager() const { return m_dataDeviceManager; }
 
     wl_cursor_theme *cursorTheme() const { return m_cursorTheme; }
 
@@ -89,10 +94,13 @@ private:
     Global<zwp_relative_pointer_manager_v1> m_relativePointerV1;
     Global<zwp_pointer_constraints_v1> m_pointerConstraintsV1;
     Global<zxdg_decoration_manager_v1> m_decorationV1;
+    Global<wl_data_device_manager> m_dataDeviceManager;
 
     std::vector<std::unique_ptr<LinuxWaylandPlatformInput>> m_inputs;
     std::vector<std::unique_ptr<LinuxWaylandPlatformOutput>> m_outputs;
     wl_cursor_theme *m_cursorTheme{ nullptr };
+
+    std::unique_ptr<LinuxWaylandClipboard> m_clipboard;
 };
 
 template<typename F>

@@ -135,6 +135,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         target_compile_definitions(KDGui PRIVATE PLATFORM_WAYLAND)
 
         set(WAYLAND_HEADERS
+            platform/linux/wayland/linux_wayland_clipboard.h
             platform/linux/wayland/linux_wayland_platform_integration.h
             platform/linux/wayland/linux_wayland_platform_event_loop.h
             platform/linux/wayland/linux_wayland_platform_window.h
@@ -142,6 +143,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
             platform/linux/wayland/linux_wayland_platform_output.h
         )
         set(WAYLAND_SOURCES
+            platform/linux/wayland/linux_wayland_clipboard.cpp
             platform/linux/wayland/linux_wayland_platform_integration.cpp
             platform/linux/wayland/linux_wayland_platform_event_loop.cpp
             platform/linux/wayland/linux_wayland_platform_window.cpp

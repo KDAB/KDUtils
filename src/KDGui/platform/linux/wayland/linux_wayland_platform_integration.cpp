@@ -27,6 +27,7 @@
 using namespace KDGui;
 
 LinuxWaylandPlatformIntegration::LinuxWaylandPlatformIntegration()
+    : m_clipboard{ new LinuxWaylandClipboard{ this } }
 {
 }
 
@@ -109,6 +110,11 @@ bool LinuxWaylandPlatformIntegration::checkAvailable()
     return false;
 }
 
+AbstractClipboard *LinuxWaylandPlatformIntegration::clipboard()
+{
+    return m_clipboard.get();
+}
+
 LinuxWaylandPlatformEventLoop *LinuxWaylandPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new LinuxWaylandPlatformEventLoop(this);
@@ -156,6 +162,13 @@ void LinuxWaylandPlatformIntegration::global(wl_registry *registry, uint32_t id,
     } else if (std::string_view{ zxdg_decoration_manager_v1_interface.name } == name) {
         auto decoration = reinterpret_cast<zxdg_decoration_manager_v1 *>(wl_registry_bind(registry, id, &zxdg_decoration_manager_v1_interface, 1));
         m_decorationV1 = { decoration, 1, id };
+    } else if (std::string_view{ wl_data_device_manager_interface.name } == name) {
+        auto deviceManager = reinterpret_cast<wl_data_device_manager *>(wl_registry_bind(registry, id, &wl_data_device_manager_interface, 3));
+        m_dataDeviceManager = { deviceManager, 1, id };
+
+        for (auto &input : m_inputs) {
+            m_clipboard->initializeDataDevice(input->seat());
+        }
     }
 }
 
