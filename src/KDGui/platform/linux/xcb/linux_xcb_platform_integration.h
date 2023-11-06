@@ -14,6 +14,7 @@
 #include <KDGui/abstract_gui_platform_integration.h>
 #include <KDGui/platform/linux/xcb/linux_xcb_platform_event_loop.h>
 #include <KDGui/platform/linux/xcb/linux_xcb_platform_window.h>
+#include <KDGui/platform/linux/xcb/linux_xcb_clipboard.h>
 #include <KDFoundation/logging.h>
 
 #include <xcb/xcb.h>
@@ -30,6 +31,8 @@ public:
     LinuxXcbPlatformIntegration();
     ~LinuxXcbPlatformIntegration() override;
 
+    AbstractClipboard *clipboard() override;
+
     std::shared_ptr<spdlog::logger> logger() { return m_logger; }
 
     LinuxXkbKeyboard *keyboard();
@@ -44,12 +47,6 @@ public:
     void unregisterWindowForEvents(xcb_window_t xcbWindow) { m_windows.erase(xcbWindow); }
     LinuxXcbPlatformWindow *window(xcb_window_t xcbWindow) { return m_windows.at(xcbWindow); }
 
-    AbstractClipboard *clipboard() override
-    {
-        // TODO(xcb): Implement clipboard
-        return nullptr;
-    }
-
 private:
     LinuxXcbPlatformEventLoop *createPlatformEventLoopImpl() override;
     LinuxXcbPlatformWindow *createPlatformWindowImpl(Window *window) override;
@@ -62,6 +59,7 @@ private:
     xcb_screen_t *m_screen{ nullptr };
     std::unique_ptr<LinuxXkbKeyboard> m_keyboard;
     std::map<xcb_window_t, LinuxXcbPlatformWindow *> m_windows;
+    std::unique_ptr<LinuxXcbClipboard> m_clipboard;
 };
 
 } // namespace KDGui

@@ -26,6 +26,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     list(
         APPEND
         SOURCES
+        platform/linux/xcb/linux_xcb_clipboard.cpp
         platform/linux/xcb/linux_xcb_platform_event_loop.cpp
         platform/linux/xcb/linux_xcb_platform_integration.cpp
         platform/linux/xcb/linux_xcb_platform_window.cpp
@@ -36,6 +37,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     list(
         APPEND
         HEADERS
+        platform/linux/xcb/linux_xcb_clipboard.h
         platform/linux/xcb/linux_xcb_platform_event_loop.h
         platform/linux/xcb/linux_xcb_platform_integration.h
         platform/linux/xcb/linux_xcb_platform_window.h

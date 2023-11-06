@@ -38,6 +38,8 @@ LinuxXcbPlatformIntegration::LinuxXcbPlatformIntegration()
     m_screen = iter.data;
 
     dumpScreenInfo(m_screen);
+
+    m_clipboard = std::make_unique<LinuxXcbClipboard>(this);
 }
 
 LinuxXcbPlatformIntegration::~LinuxXcbPlatformIntegration()
@@ -47,6 +49,11 @@ LinuxXcbPlatformIntegration::~LinuxXcbPlatformIntegration()
         SPDLOG_LOGGER_DEBUG(m_logger, "Destroyed xcb_connection");
     else
         SPDLOG_DEBUG("Destroyed xcb_connection");
+}
+
+AbstractClipboard *LinuxXcbPlatformIntegration::clipboard()
+{
+    return m_clipboard.get();
 }
 
 LinuxXkbKeyboard *LinuxXcbPlatformIntegration::keyboard()
