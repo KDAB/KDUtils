@@ -48,6 +48,7 @@ public:
     ~LinuxWaylandPlatformInput();
 
     uint32_t seatId() const { return m_seatId; }
+    wl_seat *seat() const { return m_seat; }
 
     void destroyRelativePointerV1();
     void destroyPointerConstraintsV1();
