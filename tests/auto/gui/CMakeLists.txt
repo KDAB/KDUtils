@@ -12,6 +12,7 @@ project(KDGui-Tests)
 
 include_directories(../KDFoundation/common)
 
+add_subdirectory(position)
 add_subdirectory(window)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
