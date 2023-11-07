@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include <KDGui/kdgui_global.h>
 
 namespace KDGui {
@@ -25,7 +27,7 @@ public:
         : x(_x), y(_y) { }
 
     bool operator==(const Position &other) const { return x == other.x && y == other.y; }
-    bool operator!=(const Position &other) const { return x != other.x && y != other.y; }
+    bool operator!=(const Position &other) const { return !(*this == other); }
     Position &operator+=(const Position &other)
     {
         x += other.x;
