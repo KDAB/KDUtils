@@ -464,5 +464,5 @@ void Win32PlatformWindow::processRawInput(HRAWINPUT rawInput)
         pos.y = m_previousCursorPosition.y + m_rawInputData->data.mouse.lLastY;
         SPDLOG_LOGGER_TRACE(m_logger, "RawInput (Relative): delta = {}, {}", pos.x, pos.y);
     }
-    handleMouseMove(GetMessageTime(), 0, pos.x, pos.y);
+    handleMouseMove(GetMessageTime(), NoButton, pos.x, pos.y);
 }

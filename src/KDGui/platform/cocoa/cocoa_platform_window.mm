@@ -252,7 +252,7 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
 
 @interface KDGuiView : NSView {
     CocoaPlatformWindow *m_platformWindow;
-    int m_mouseButtons;
+    MouseButtons m_mouseButtons;
 }
 
 - (instancetype)initWithPlatformWindow:(CocoaPlatformWindow *)platformWindow;
@@ -314,7 +314,7 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
 {
     const NSPoint pos = [self localPosition:[event locationInWindow]];
     m_platformWindow->handleMouseRelease([self timeStamp:event], LeftButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
-    m_mouseButtons &= ~LeftButton;
+    m_mouseButtons.setFlag(LeftButton, false);
 }
 
 - (void)mouseMoved:(NSEvent *)event
@@ -341,7 +341,7 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
 {
     const NSPoint pos = [self localPosition:[event locationInWindow]];
     m_platformWindow->handleMouseRelease([self timeStamp:event], RightButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
-    m_mouseButtons &= ~RightButton;
+    m_mouseButtons.setFlag(RightButton, false);
 }
 
 - (void)otherMouseDown:(NSEvent *)event
@@ -370,7 +370,7 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
         return;
     const NSPoint pos = [self localPosition:[event locationInWindow]];
     m_platformWindow->handleMousePress([self timeStamp:event], MiddleButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
-    m_mouseButtons &= ~MiddleButton;
+    m_mouseButtons.setFlag(MiddleButton, false);
 }
 
 - (void)scrollWheel:(NSEvent *)event

@@ -13,6 +13,7 @@
 
 #include <KDFoundation/event.h>
 #include <KDGui/kdgui_keys.h>
+#include <KDUtils/flags.h>
 
 #include <string>
 
@@ -24,9 +25,7 @@ enum MouseButton {
     MiddleButton = 0x00000002,
     RightButton = 0x00000004
 };
-// TODO: Need a ype-safe flags class. See e.g.
-// https://stackoverflow.com/a/4226975
-using MouseButtons = uint32_t;
+using MouseButtons = KDUtils::Flags<MouseButton>;
 
 class MousePressEvent : public KDFoundation::Event
 {
@@ -183,3 +182,5 @@ private:
 };
 
 } // namespace KDGui
+
+OPERATORS_FOR_FLAGS(KDGui::MouseButtons)
