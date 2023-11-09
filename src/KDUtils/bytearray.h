@@ -13,7 +13,7 @@
 #define KDUTILS_BYTEARRAY_H
 
 #include <vector>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 #include <KDUtils/kdutils_export.h>

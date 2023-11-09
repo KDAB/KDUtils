@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <thread>
+#include <algorithm>
 #include <KDFoundation/config.h>
 
 namespace KDFoundation {

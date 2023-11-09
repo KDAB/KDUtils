@@ -12,6 +12,7 @@
 #pragma once
 
 #include <functional>
+#include <cstdint>
 
 namespace KDFoundation {
 
