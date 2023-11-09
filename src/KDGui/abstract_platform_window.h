@@ -62,12 +62,6 @@ public:
     virtual void setSize(uint32_t width, uint32_t height) = 0;
     virtual void handleResize(uint32_t width, uint32_t height) = 0;
 
-    // Buttons:
-    //  1 = Left, 2 = Middle, 3 = Right,
-    //  4 = Mouse Wheel Up, 5 = Mouse Wheel Down,
-    //  6 = Horiz Mouse Wheel Up, 7 = Horiz Mouse Wheel Down,
-    //  8 = Navigate Back, 9 = Navigate Forward
-    // TODO: Wrap these up in an enum and map from the platform specific codes to our codes
     virtual void handleMousePress(
             uint32_t timestamp, MouseButtons buttons,
             int16_t xPos, int16_t yPos) = 0;
