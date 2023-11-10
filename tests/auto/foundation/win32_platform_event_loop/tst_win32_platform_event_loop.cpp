@@ -95,7 +95,8 @@ TEST_CASE("Wait for events")
 
     SUBCASE("can watch a win32 socket")
     {
-        const short port = 1337;
+
+        short boundPort = 0;
         WSAData wsaData;
 
         Win32PlatformEventLoop loop;
@@ -112,21 +113,30 @@ TEST_CASE("Wait for events")
         std::condition_variable cond;
         bool ready = false;
 
-        auto serverFunction = [&mutex, &cond, &ready, &dataToSend, &port]() {
+        auto serverFunction = [&mutex, &cond, &ready, &dataToSend, &boundPort]() {
             SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
             if (serverSocket == INVALID_SOCKET) {
                 spdlog::error("Cannot create server socket");
             }
             sockaddr_in ad;
             ad.sin_family = AF_INET;
-            ad.sin_port = htons(port);
             ad.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
             int ret = 0;
-            ret = bind(serverSocket, reinterpret_cast<sockaddr *>(&ad), sizeof(ad));
-            if (ret == SOCKET_ERROR) {
-                spdlog::error("Bind error");
+            const short startPort = 1337;
+            short foundPort = 0;
+            // Try 10 ports so that the tests running in parallel don't step on each others toes
+            for (int i = 0; i < 10; ++i) {
+                ad.sin_port = htons(startPort + i);
+                ret = bind(serverSocket, reinterpret_cast<sockaddr *>(&ad), sizeof(ad));
+                if (ret == 0) {
+                    foundPort = startPort + i;
+                    break;
+                }
             }
+
+            if (foundPort == 0)
+                return;
 
             ret = listen(serverSocket, SOMAXCONN);
             if (ret == SOCKET_ERROR) {
@@ -137,6 +147,7 @@ TEST_CASE("Wait for events")
             {
                 std::lock_guard lk(mutex);
                 ready = true;
+                boundPort = foundPort;
                 cond.notify_all();
             }
 
@@ -158,6 +169,8 @@ TEST_CASE("Wait for events")
             std::unique_lock lk(mutex);
             cond.wait(lk, [&]() { return ready == true; });
         }
+
+        REQUIRE_MESSAGE(boundPort != 0, "Server couldn't bind");
 
         SOCKET clientSock = INVALID_SOCKET;
         clientSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -190,7 +203,7 @@ TEST_CASE("Wait for events")
 
         sockaddr_in add;
         add.sin_family = AF_INET;
-        add.sin_port = htons(port);
+        add.sin_port = htons(boundPort);
         add.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
         // We don't check for success here because it intentionally returns an error. We're calling
@@ -204,7 +217,7 @@ TEST_CASE("Wait for events")
 
         REQUIRE(unregisteredCalls == 0);
         REQUIRE(writeTriggered == 2);
-        REQUIRE(dataReceived == dataToSend);
+        REQUIRE_MESSAGE(dataReceived == dataToSend, "Data sent doesn't match the data received");
 
         closesocket(clientSock);
         WSACleanup();
