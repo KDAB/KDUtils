@@ -1,3 +1,7 @@
 .cache/
 build/*
 CMakeUserPresets.json
+
+.vs/
+.vscode/
+.idea/
