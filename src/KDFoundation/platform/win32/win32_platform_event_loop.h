@@ -58,7 +58,7 @@ private:
 
     static LRESULT messageWindowProc(HWND, UINT, WPARAM, LPARAM);
     void handleSocketMessage(WPARAM wParam, LPARAM lParam);
-    bool registerWithWSAAsyncSelect(int fd, const NotifierSet &notifiers);
+    bool registerWithWSAAsyncSelect(int fd, const NotifierSet &notifiers) const;
 
     HANDLE m_wakeUpEvent;
     HWND m_msgWindow = 0;
