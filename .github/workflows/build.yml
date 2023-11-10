@@ -30,14 +30,19 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
-      - name: Create build directory
-        run: mkdir build
-
       - name: Install ninja-build tool
         uses: turtlesec-no/get-ninja@main
 
       - name: Make sure MSVC is found when Ninja generator is in use
         uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update -qq
+          sudo apt install -y libxkbcommon-dev libxcb-xkb-dev \
+          libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
+          libwayland-dev xvfb
 
       - name: Configure project
         run: >
@@ -49,9 +54,13 @@ jobs:
       - name: Build Project
         run: cmake --build ./build
 
-      - name: Run tests
-        if: ${{ matrix.build_type == 'Debug' }}
+      - name: Run tests on Windows/macOS
+        if: ${{ matrix.build_type == 'Debug' && runner.os != 'Linux' }}
         run: ctest --test-dir ./build -C ${{ matrix.build_type }} --output-on-failure
+
+      - name: Run tests on Linux
+        if: ${{ matrix.build_type == 'Debug' && runner.os == 'Linux' }}
+        run: xvfb-run ctest --test-dir ./build -C ${{ matrix.build_type }} --output-on-failure
 
       - name: Read tests log when it fails
         uses: andstor/file-reader-action@v1
