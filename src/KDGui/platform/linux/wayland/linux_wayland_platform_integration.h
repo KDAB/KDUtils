@@ -68,12 +68,6 @@ public:
 
     wl_cursor_theme *cursorTheme() const { return m_cursorTheme; }
 
-    AbstractClipboard *clipboard() override
-    {
-        // TODO(wayland): Implement clipboard
-        return nullptr;
-    }
-
 private:
     LinuxWaylandPlatformEventLoop *createPlatformEventLoopImpl() override;
     LinuxWaylandPlatformWindow *createPlatformWindowImpl(Window *window) override;
