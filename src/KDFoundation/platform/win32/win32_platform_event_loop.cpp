@@ -223,7 +223,7 @@ void Win32PlatformEventLoop::handleSocketMessage(WPARAM wparam, LPARAM lparam)
     }
 }
 
-bool KDFoundation::Win32PlatformEventLoop::registerWithWSAAsyncSelect(int fd, const NotifierSet &notifiers) const {
+bool KDFoundation::Win32PlatformEventLoop::registerWithWSAAsyncSelect(int fd, const NotifierSet &notifiers) const
 {
     auto typeToWsaEvents = [](FileDescriptorNotifier::NotificationType type) {
         switch (type) {
