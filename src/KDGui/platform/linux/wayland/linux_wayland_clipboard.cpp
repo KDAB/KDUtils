@@ -45,7 +45,10 @@ std::string LinuxWaylandClipboard::text()
     // The second fd is for writing (used by the data source, so we close it immediately.)
     // The first fd is used for reading back the data.
     std::array<int, 2> fds;
-    pipe(fds.data());
+    if (pipe(fds.data()) < 0) {
+        SPDLOG_LOGGER_ERROR(m_integration->logger(), "Failed to create pipe for clipboard!");
+        return "";
+    }
     wl_data_offer_receive(m_dataOffer, "text/plain", fds[1]);
     close(fds[1]);
 
