@@ -221,9 +221,9 @@ void Window::resizeEvent(ResizeEvent *ev)
 void Window::mousePressEvent(MousePressEvent *ev)
 {
     SPDLOG_LOGGER_DEBUG(m_logger,
-                        "{}() button = {} at pos = ({}, {})",
+                        "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
-                        ev->button(),
+                        ev->buttons(),
                         ev->xPos(),
                         ev->yPos());
 }
@@ -231,9 +231,9 @@ void Window::mousePressEvent(MousePressEvent *ev)
 void Window::mouseReleaseEvent(MouseReleaseEvent *ev)
 {
     SPDLOG_LOGGER_DEBUG(m_logger,
-                        "{}() button = {} at pos = ({}, {})",
+                        "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
-                        ev->button(),
+                        ev->buttons(),
                         ev->xPos(),
                         ev->yPos());
 }
@@ -241,9 +241,9 @@ void Window::mouseReleaseEvent(MouseReleaseEvent *ev)
 void Window::mouseMoveEvent(MouseMoveEvent *ev)
 {
     SPDLOG_LOGGER_DEBUG(m_logger,
-                        "{}() button = {} at pos = ({}, {})",
+                        "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
-                        ev->button(),
+                        ev->buttons(),
                         ev->xPos(),
                         ev->yPos());
 
