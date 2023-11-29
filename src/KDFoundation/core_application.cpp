@@ -36,7 +36,7 @@ CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&
 
     m_logger = spdlog::get("application");
     if (!m_logger) {
-        m_logger = createLogger("application");
+        m_logger = KDUtils::Logger::logger("application");
         m_logger->set_level(spdlog::level::info);
     }
 

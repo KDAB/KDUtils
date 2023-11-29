@@ -9,6 +9,7 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 
+// TODO: Remove once downstream libs are ported to use KDUtils::Logger
 #pragma once
 
 #include <spdlog/spdlog.h>

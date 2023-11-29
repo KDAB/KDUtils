@@ -13,7 +13,7 @@
 
 #include <KDGui/kdgui_keys.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <xkbcommon/xkbcommon.h>
 #include <xcb/xcb.h>

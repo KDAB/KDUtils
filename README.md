@@ -14,12 +14,12 @@ class, and an `Object` type which is an event receiver that can have a parent
 
 On top of that, you get:
 
-* Event
-* FileDescriptorNotifier
-* Timer
-* EventQueue: a thread-safe stack of events
-* Postman: a way of passing events down a series of receivers
-* CoreApplication: a class that connects the EventQueue, Postman, and event loop.
+- Event
+- FileDescriptorNotifier
+- Timer
+- EventQueue: a thread-safe stack of events
+- Postman: a way of passing events down a series of receivers
+- CoreApplication: a class that connects the EventQueue, Postman, and event loop.
 
 ## KDGui
 
@@ -28,9 +28,9 @@ CoreApplication.
 
 You get:
 
-* Window
-* Keyboard and mouse events
-* GuiApplication
+- Window
+- Keyboard and mouse events
+- GuiApplication
 
 ## KDUtils/KDUtils
 
@@ -39,13 +39,13 @@ wrappers and helpers.
 
 You get:
 
-* ByteArray
-* Dir
-* File
-* ElapsedTimer
-* Flags
-* Url
-* Logger
+- ByteArray
+- Dir
+- File
+- ElapsedTimer
+- Flags
+- Url
+- Logging factory helper
 
 ## Building
 
@@ -63,8 +63,8 @@ sudo apt install gcovr
 
 ## Contact
 
-* Visit us on GitHub: <https://github.com/KDAB/KDUtils>
-* Email info@kdab.com for questions about copyright, licensing or commercial support.
+- Visit us on GitHub: <https://github.com/KDAB/KDUtils>
+- Email info@kdab.com for questions about copyright, licensing or commercial support.
 
 ## Licensing
 
@@ -97,6 +97,6 @@ Please visit <https://www.kdab.com> to meet the people who write code like this.
 
 Stay up-to-date with KDAB product announcements:
 
-* [KDAB Newsletter](https://news.kdab.com)
-* [KDAB Blogs](https://www.kdab.com/category/blogs)
-* [KDAB on Twitter](https://twitter.com/KDABQt)
+- [KDAB Newsletter](https://news.kdab.com)
+- [KDAB Blogs](https://www.kdab.com/category/blogs)
+- [KDAB on Twitter](https://twitter.com/KDABQt)

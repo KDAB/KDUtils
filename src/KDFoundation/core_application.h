@@ -12,10 +12,11 @@
 #pragma once
 
 #include <KDFoundation/kdfoundation_global.h>
-#include <KDFoundation/logging.h>
 #include <KDFoundation/object.h>
 #include <KDFoundation/event_queue.h>
 #include <KDFoundation/platform/abstract_platform_integration.h>
+
+#include <KDUtils/logging.h>
 
 #include <kdbindings/property.h>
 

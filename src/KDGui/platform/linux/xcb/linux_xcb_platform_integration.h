@@ -15,7 +15,8 @@
 #include <KDGui/platform/linux/xcb/linux_xcb_platform_event_loop.h>
 #include <KDGui/platform/linux/xcb/linux_xcb_platform_window.h>
 #include <KDGui/platform/linux/xcb/linux_xcb_clipboard.h>
-#include <KDFoundation/logging.h>
+
+#include <KDUtils/logging.h>
 
 #include <xcb/xcb.h>
 

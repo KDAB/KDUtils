@@ -13,9 +13,10 @@
 
 #include <KDFoundation/object.h>
 #include <KDFoundation/kdfoundation_global.h>
-#include <KDFoundation/logging.h>
 #include <KDGui/kdgui_global.h>
 #include <KDGui/position.h>
+
+#include <KDUtils/logging.h>
 
 #include <kdbindings/property.h>
 

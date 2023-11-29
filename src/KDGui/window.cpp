@@ -24,7 +24,7 @@ Window::Window()
 {
     m_logger = spdlog::get("window");
     if (!m_logger) {
-        m_logger = createLogger("window");
+        m_logger = KDUtils::Logger::logger("window");
         m_logger->set_level(spdlog::level::info);
     }
 

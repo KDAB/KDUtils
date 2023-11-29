@@ -17,8 +17,9 @@
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_event_loop.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_window.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_clipboard.h>
-#include <KDFoundation/logging.h>
 #include <KDGui/kdgui_global.h>
+
+#include <KDUtils/logging.h>
 
 struct wl_cursor_theme;
 struct wl_display;
