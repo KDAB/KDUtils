@@ -14,14 +14,13 @@
 #include <cstdint>
 #include <string>
 
-#include <wayland-client-core.h>
-
 #include <KDGui/abstract_clipboard.h>
 
 struct wl_surface;
 struct wl_seat;
 struct wl_data_device;
 struct wl_data_offer;
+using wl_fixed_t = int32_t;
 
 namespace KDGui {
 

@@ -15,7 +15,6 @@
 #include <string>
 #include <vector>
 
-#include <wayland-client-core.h>
 #include <xkbcommon/xkbcommon.h>
 
 #include <KDUtils/elapsedtimer.h>
@@ -23,6 +22,7 @@
 #include <KDGui/kdgui_keys.h>
 #include <KDGui/position.h>
 
+struct wl_array;
 struct wl_seat;
 struct wl_surface;
 struct wl_pointer;
@@ -31,6 +31,7 @@ struct wl_touch;
 struct wl_cursor_theme;
 struct zwp_relative_pointer_v1;
 struct zwp_locked_pointer_v1;
+using wl_fixed_t = int32_t;
 
 namespace KDGui {
 
