@@ -44,6 +44,9 @@ LinuxXcbPlatformIntegration::LinuxXcbPlatformIntegration()
 
 LinuxXcbPlatformIntegration::~LinuxXcbPlatformIntegration()
 {
+    // Destroy Clipboard while connection is still valid
+    m_clipboard.reset();
+
     xcb_disconnect(m_connection);
     if (m_logger)
         SPDLOG_LOGGER_DEBUG(m_logger, "Destroyed xcb_connection");
