@@ -18,13 +18,19 @@ std::shared_ptr<spdlog::logger> Logger::logger(const std::string &name)
 {
     std::shared_ptr<spdlog::logger> logger;
     if (ms_loggerFactory) {
+        // Use the factory set by the application which should check
+        // its own spdlog registry first before creating a new logger.
         logger = ms_loggerFactory(name);
     } else {
+        // No factory set, use the spdlog registry from KDUtils
+        logger = spdlog::get(name);
+        if (!logger) {
 #if defined(ANDROID)
-        logger = spdlog::android_logger_mt(name, name);
+            logger = spdlog::android_logger_mt(name, name);
 #else
-        logger = spdlog::stdout_color_mt(name);
+            logger = spdlog::stdout_color_mt(name);
 #endif
+        }
     }
     return logger;
 }
