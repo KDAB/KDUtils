@@ -73,7 +73,7 @@ CoreApplication::~CoreApplication()
     ms_application = nullptr;
 }
 
-void CoreApplication::postEvent(Object *target, std::unique_ptr<Event> &&event)
+void CoreApplication::postEvent(EventReceiver *target, std::unique_ptr<Event> &&event)
 {
     assert(target != nullptr);
     assert(event->type() != Event::Type::Invalid);
@@ -81,7 +81,7 @@ void CoreApplication::postEvent(Object *target, std::unique_ptr<Event> &&event)
     m_platformEventLoop->wakeUp();
 }
 
-void CoreApplication::sendEvent(Object *target, Event *event)
+void CoreApplication::sendEvent(EventReceiver *target, Event *event)
 {
     SPDLOG_LOGGER_TRACE(m_logger, "{}()", __FUNCTION__);
     m_postman->deliverEvent(target, event);
@@ -142,5 +142,5 @@ void CoreApplication::event(EventReceiver *target, Event *event)
         event->setAccepted(true);
     }
 
-    Object::event(target, event);
+    EventReceiver::event(target, event);
 }

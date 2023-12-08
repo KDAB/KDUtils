@@ -16,7 +16,7 @@
 
 using namespace KDFoundation;
 
-void Postman::deliverEvent(Object *target, Event *event)
+void Postman::deliverEvent(EventReceiver *target, Event *event)
 {
     // Give the registered event filters first chance to handle the event
     for (const auto &filter : m_filters) {

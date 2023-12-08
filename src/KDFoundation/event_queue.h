@@ -33,7 +33,7 @@ public:
         m_events.push(std::move(event));
     }
 
-    void push(Object *target, std::unique_ptr<Event> &&event)
+    void push(EventReceiver *target, std::unique_ptr<Event> &&event)
     {
         auto ev = std::make_unique<PostedEvent>(target, std::forward<std::unique_ptr<Event>>(event));
         push(std::move(ev));

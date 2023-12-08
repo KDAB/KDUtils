@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "KDFoundation/event_receiver.h"
 #include <KDFoundation/kdfoundation_global.h>
 
 #include <vector>
@@ -23,7 +24,7 @@ class Object;
 class KDFOUNDATION_API Postman
 {
 public:
-    void deliverEvent(Object *target, Event *event);
+    void deliverEvent(EventReceiver *target, Event *event);
 
     void addFilter(Object *filter);
     void removeFilter(Object *filter);

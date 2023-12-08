@@ -45,10 +45,10 @@ public:
 
     Postman *postman() { return m_postman.get(); }
 
-    void postEvent(Object *target, std::unique_ptr<Event> &&event);
+    void postEvent(EventReceiver *target, std::unique_ptr<Event> &&event);
     EventQueue::size_type eventQueueSize() const { return m_eventQueue.size(); }
 
-    void sendEvent(Object *target, Event *event);
+    void sendEvent(EventReceiver *target, Event *event);
 
     void processEvents(int timeout = 0);
 

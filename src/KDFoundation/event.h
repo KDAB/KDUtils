@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "KDFoundation/event_receiver.h"
 #include <KDFoundation/kdfoundation_global.h>
 
 #include <cstdint>
@@ -81,18 +82,18 @@ class Object;
 class KDFOUNDATION_API PostedEvent : public Event
 {
 public:
-    PostedEvent(Object *target, std::unique_ptr<Event> &&wrappedEvent)
+    PostedEvent(EventReceiver *target, std::unique_ptr<Event> &&wrappedEvent)
         : Event(Event::Type::PostedEvent)
         , m_target{ target }
         , m_wrappedEvent{ std::move(wrappedEvent) }
     {
     }
 
-    Object *target() const { return m_target; }
+    EventReceiver *target() const { return m_target; }
     Event *wrappedEvent() const { return m_wrappedEvent.get(); }
 
 private:
-    Object *m_target;
+    EventReceiver *m_target;
     std::unique_ptr<Event> m_wrappedEvent;
 };
 
