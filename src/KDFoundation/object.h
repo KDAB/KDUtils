@@ -97,6 +97,7 @@ public:
     KDBindings::Signal<Object *, Object *> parentChanged;
     KDBindings::Signal<Object *, Object *> childAdded;
     KDBindings::Signal<Object *, Object *> childRemoved;
+    KDBindings::Signal<Object *> destroyed;
 
 protected:
     virtual void timerEvent(TimerEvent *ev);

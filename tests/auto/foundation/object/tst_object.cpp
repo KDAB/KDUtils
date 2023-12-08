@@ -290,6 +290,14 @@ TEST_CASE("Object destruction")
             REQUIRE(expectedDestructionOrder[i] == destructionOrder[i]);
         }
     }
+
+    SUBCASE("destroyed signal is emitted on object destruction")
+    {
+        auto obj = new Object();
+        SignalSpy objectDestroyedSpy(obj->destroyed);
+        delete obj;
+        REQUIRE(objectDestroyedSpy.count() == 1);
+    }
 }
 
 TEST_CASE("Event delivery")

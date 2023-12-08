@@ -25,6 +25,8 @@ Object::Object()
 
 Object::~Object()
 {
+    destroyed.emit(this);
+
     // Destroy the children in LIFO to be more like the stack
     while (!m_children.empty()) {
         childRemoved.emit(this, m_children.back().get());
