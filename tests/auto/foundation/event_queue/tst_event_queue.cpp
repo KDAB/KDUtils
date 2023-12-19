@@ -51,6 +51,19 @@ public:
     int m_y;
 };
 
+void populateEventQueueWithNEvents(EventQueue &eventQueue, int n, std::vector<PayloadEvent *> &events, std::vector<std::unique_ptr<Object>> &targets)
+{
+    for (int i = 0; i < n; ++i) {
+        auto ev = std::make_unique<PayloadEvent>(n + 1, 10 * (n + 1));
+        events.push_back(ev.get());
+        auto obj = std::make_unique<Object>();
+        Object *target = obj.get();
+        targets.push_back(std::move(obj));
+
+        eventQueue.push(target, std::move(ev));
+    }
+}
+
 TEST_CASE("Single-threaded use")
 {
     SUBCASE("can push a posted event")
@@ -89,21 +102,89 @@ TEST_CASE("Single-threaded use")
         std::vector<std::unique_ptr<Object>> targets;
         const int n = 10;
 
-        for (int i = 0; i < n; ++i) {
-            auto ev = std::make_unique<PayloadEvent>(n + 1, 10 * (n + 1));
-            events.push_back(ev.get());
-            auto obj = std::make_unique<Object>();
-            Object *target = obj.get();
-            targets.push_back(std::move(obj));
-
-            eventQueue.push(target, std::move(ev));
-        }
+        populateEventQueueWithNEvents(eventQueue, n, events, targets);
 
         REQUIRE(eventQueue.size() == n);
         for (int i = 0; i < n; ++i) {
             auto postedEvent = eventQueue.tryPop();
             REQUIRE(postedEvent != std::unique_ptr<PostedEvent>());
             REQUIRE(eventQueue.size() == n - i - 1);
+            REQUIRE(postedEvent->target() == targets[i].get());
+            REQUIRE(postedEvent->wrappedEvent() == events[i]);
+        }
+
+        REQUIRE(eventQueue.size() == 0);
+        REQUIRE(eventQueue.isEmpty());
+    }
+
+    SUBCASE("no event is removed when removeAllEventsTargeting() is called with EventReceiver that does not match any event")
+    {
+        EventQueue eventQueue;
+        std::vector<PayloadEvent *> events;
+        std::vector<std::unique_ptr<Object>> targets;
+        const int n = 10;
+
+        populateEventQueueWithNEvents(eventQueue, n, events, targets);
+
+        auto obj = std::make_unique<Object>();
+        Object *target = obj.get();
+        eventQueue.removeAllEventsTargeting(*target);
+
+        REQUIRE(eventQueue.size() == n);
+    }
+
+    SUBCASE("can push multiple events, remove one event and then pop them in the correct order")
+    {
+        EventQueue eventQueue;
+        std::vector<PayloadEvent *> events;
+        std::vector<std::unique_ptr<Object>> targets;
+        int n = 10;
+
+        populateEventQueueWithNEvents(eventQueue, n, events, targets);
+
+        const auto idx = 5;
+        eventQueue.removeAllEventsTargeting(*targets.at(idx));
+        REQUIRE(eventQueue.size() == (n - 1));
+
+        events.erase(events.begin() + idx);
+        targets.erase(targets.begin() + idx);
+
+        n -= 1;
+        for (int i = 0; i < n; ++i) {
+            auto postedEvent = eventQueue.tryPop();
+            REQUIRE(postedEvent != std::unique_ptr<PostedEvent>());
+            REQUIRE(eventQueue.size() == (n - i - 1));
+            REQUIRE(postedEvent->target() == targets[i].get());
+            REQUIRE(postedEvent->wrappedEvent() == events[i]);
+        }
+
+        REQUIRE(eventQueue.size() == 0);
+        REQUIRE(eventQueue.isEmpty());
+    }
+
+    SUBCASE("can push multiple events, remove two events and then pop them in the correct order")
+    {
+        EventQueue eventQueue;
+        std::vector<PayloadEvent *> events;
+        std::vector<std::unique_ptr<Object>> targets;
+        int n = 10;
+
+        populateEventQueueWithNEvents(eventQueue, n, events, targets);
+
+        eventQueue.removeAllEventsTargeting(*targets.front());
+        eventQueue.removeAllEventsTargeting(*targets.back());
+        REQUIRE(eventQueue.size() == (n - 2));
+
+        events.erase(events.begin());
+        targets.erase(targets.begin());
+        events.erase(events.end() - 1);
+        targets.erase(targets.end() - 1);
+
+        n -= 2;
+        for (int i = 0; i < n; ++i) {
+            auto postedEvent = eventQueue.tryPop();
+            REQUIRE(postedEvent != std::unique_ptr<PostedEvent>());
+            REQUIRE(eventQueue.size() == (n - i - 1));
             REQUIRE(postedEvent->target() == targets[i].get());
             REQUIRE(postedEvent->wrappedEvent() == events[i]);
         }
