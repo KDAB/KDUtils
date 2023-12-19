@@ -67,6 +67,10 @@ CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&
 
 CoreApplication::~CoreApplication()
 {
+    // Process pending events in case CoreApplication::quit() was not called before
+    // and immediately return after processing events (timeout = 0).
+    processEvents(0);
+
     // Destroy the event loop and platform integration before removing the app instance
     m_platformEventLoop = std::unique_ptr<AbstractPlatformEventLoop>();
     m_platformIntegration = std::unique_ptr<AbstractPlatformIntegration>();
@@ -90,17 +94,12 @@ void CoreApplication::sendEvent(EventReceiver *target, Event *event)
 void CoreApplication::processEvents(int timeout)
 {
     // Deliver any events that have already been posted
-    const auto eventCount = m_eventQueue.size();
-    int eventIndex{ 0 };
-    do {
-        auto postedEvent = m_eventQueue.tryPop();
-        if (!postedEvent)
-            break;
+    while (auto postedEvent = m_eventQueue.tryPop()) {
+        const auto target = postedEvent->target();
+        const auto ev = postedEvent->wrappedEvent();
 
-        auto target = postedEvent->target();
-        auto ev = postedEvent->wrappedEvent();
         m_postman->deliverEvent(target, ev);
-    } while (++eventIndex < eventCount);
+    }
 
     // Poll/wait for new events
     if (!m_platformEventLoop)

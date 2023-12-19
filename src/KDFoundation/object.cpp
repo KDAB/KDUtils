@@ -10,6 +10,7 @@
 */
 
 #include "object.h"
+#include "core_application.h"
 #include "event.h"
 
 #include <cassert>
@@ -21,6 +22,22 @@ Object::Object()
     : EventReceiver()
     , m_parent{ nullptr }
 {
+}
+
+void Object::deleteLater()
+{
+    if (CoreApplication::instance() == nullptr) {
+        SPDLOG_ERROR("No CoreApplication object to schedule deferred deletion of object with.");
+        return;
+    }
+
+    if (CoreApplication::instance() == this) {
+        SPDLOG_ERROR("Object::deleteLater() was called on CoreApplication. This is not supported and will be ignored.");
+        return;
+    }
+
+    auto ev = std::make_unique<DeferredDeleteEvent>();
+    CoreApplication::instance()->postEvent(this, std::move(ev));
 }
 
 Object::~Object()
@@ -40,6 +57,11 @@ void Object::event(EventReceiver *target, Event *ev)
         return;
 
     switch (ev->type()) {
+    case Event::Type::DeferredDelete: {
+        // delete object and immediately return from event handler
+        delete this;
+        return;
+    }
     case Event::Type::Timer: {
         timerEvent(static_cast<TimerEvent *>(ev));
         break;

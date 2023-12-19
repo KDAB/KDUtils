@@ -12,6 +12,7 @@ find_package(Threads)
 
 set(SOURCES
     core_application.cpp
+    event_receiver.cpp
     event.cpp
     file_descriptor_notifier.cpp
     object.cpp

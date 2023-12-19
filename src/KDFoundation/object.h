@@ -89,6 +89,8 @@ public:
         return takenChild;
     }
 
+    void deleteLater();
+
     void setObjectName(const std::string &objectName) { m_objectName = objectName; }
     std::string objectName() const { return m_objectName; }
 

@@ -20,7 +20,7 @@ class Event;
 class KDFOUNDATION_API EventReceiver
 {
 public:
-    virtual ~EventReceiver() noexcept { }
+    virtual ~EventReceiver() noexcept;
 
     virtual void event(EventReceiver *target, Event *ev){};
 };

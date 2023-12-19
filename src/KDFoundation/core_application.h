@@ -46,6 +46,7 @@ public:
     Postman *postman() { return m_postman.get(); }
 
     void postEvent(EventReceiver *target, std::unique_ptr<Event> &&event);
+    void removeAllEventsTargeting(EventReceiver &evReceiver) { m_eventQueue.removeAllEventsTargeting(evReceiver); }
     EventQueue::size_type eventQueueSize() const { return m_eventQueue.size(); }
 
     void sendEvent(EventReceiver *target, Event *event);

@@ -9,6 +9,7 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 
+#include "KDFoundation/core_application.h"
 #include <KDFoundation/object.h>
 #include <KDFoundation/event.h>
 #include <KDFoundation/kdfoundation_global.h>
@@ -296,6 +297,62 @@ TEST_CASE("Object destruction")
         auto obj = new Object();
         SignalSpy objectDestroyedSpy(obj->destroyed);
         delete obj;
+        REQUIRE(objectDestroyedSpy.count() == 1);
+    }
+}
+
+TEST_CASE("Deferred object destruction")
+{
+
+    SUBCASE("can call deleteLater on object with no CoreApplication instantiated")
+    {
+        auto obj = new Object();
+        obj->deleteLater();
+    }
+
+    SUBCASE("can call deleteLater on object with CoreApplication instantiated")
+    {
+        CoreApplication app;
+        auto obj = new Object();
+        obj->deleteLater();
+    }
+
+    SUBCASE("can call deleteLater multiple times without crash when control returns to event loop")
+    {
+        CoreApplication app;
+        auto obj = new Object();
+
+        SignalSpy objectDestroyedSpy(obj->destroyed);
+        obj->deleteLater();
+        obj->deleteLater();
+        obj->deleteLater();
+
+        app.processEvents();
+    }
+
+    SUBCASE("object is deleted when control returns to event loop")
+    {
+        CoreApplication app;
+        auto obj = new Object();
+
+        SignalSpy objectDestroyedSpy(obj->destroyed);
+        obj->deleteLater();
+
+        REQUIRE(objectDestroyedSpy.count() == 0);
+        app.processEvents();
+        REQUIRE(objectDestroyedSpy.count() == 1);
+    }
+
+    SUBCASE("object is deleted when CoreApplication is deleted before control returns to event loop")
+    {
+        auto *app = new CoreApplication();
+        auto obj = new Object();
+
+        SignalSpy objectDestroyedSpy(obj->destroyed);
+        obj->deleteLater();
+
+        REQUIRE(objectDestroyedSpy.count() == 0);
+        delete app;
         REQUIRE(objectDestroyedSpy.count() == 1);
     }
 }

@@ -115,6 +115,18 @@ TEST_CASE("Event handling")
         REQUIRE(obj->userEventDelivered() == true);
         REQUIRE(app.eventQueueSize() == 0);
     }
+
+    SUBCASE("don't send pending events for deleted objects")
+    {
+        CoreApplication app;
+        auto ev = std::make_unique<PayloadEvent>(5, 6);
+        auto obj = new EventObject(5, 6);
+        app.postEvent(obj, std::move(ev));
+
+        delete obj;
+
+        app.processEvents();
+    }
 }
 
 #ifndef KD_PLATFORM_MACOS

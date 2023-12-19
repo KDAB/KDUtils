@@ -38,6 +38,7 @@ public:
         KeyRelease = 12,
         TextInput = 13,
         Update = 14,
+        DeferredDelete = 15,
 
         UserType = 4096
     };
@@ -148,6 +149,15 @@ class KDFOUNDATION_API UpdateEvent : public Event
 public:
     UpdateEvent()
         : Event(Event::Type::Update)
+    {
+    }
+};
+
+class KDFOUNDATION_API DeferredDeleteEvent : public Event
+{
+public:
+    DeferredDeleteEvent()
+        : Event(Event::Type::DeferredDelete)
     {
     }
 };
