@@ -1,6 +1,6 @@
 # This file is part of KDUtils.
 #
-# SPDX-FileCopyrightText: 2021-2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+# SPDX-FileCopyrightText: 2021-2024 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
 # Author: Paul Lemire <paul.lemire@kdab.com>
 #
 # SPDX-License-Identifier: MIT
@@ -40,6 +40,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 cmake_policy(SET CMP0090 NEW) # Stop export(PACKAGE) from modifying the system-wide cmake package system
 cmake_policy(SET CMP0117 NEW) # Do not add /GR to CMAKE_CXX_FLAGS
 
+option(KDUTILS_BUILD_EXAMPLES "Build examples" ON)
+
 include(FeatureSummary)
 include(CMakeDependentOption)
 include(cmake/dependencies.cmake)
@@ -58,6 +60,10 @@ endif()
 add_subdirectory(src/KDUtils)
 add_subdirectory(src/KDFoundation)
 add_subdirectory(src/KDGui)
+
+if(KDUTILS_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
 
 if(KDUTILS_BUILD_TESTS)
     enable_testing()
