@@ -170,7 +170,9 @@ void Window::event(EventReceiver *target, Event *ev)
     }
 
     case Event::Type::MouseMove: {
-        mouseMoveEvent(static_cast<MouseMoveEvent *>(ev));
+        auto *mouseEvent = static_cast<MouseMoveEvent *>(ev);
+        cursorPosition = Position(mouseEvent->xPos(), mouseEvent->yPos());
+        mouseMoveEvent(mouseEvent);
         break;
     }
 
@@ -246,8 +248,6 @@ void Window::mouseMoveEvent(MouseMoveEvent *ev)
                         ev->buttons(),
                         ev->xPos(),
                         ev->yPos());
-
-    cursorPosition = Position(ev->xPos(), ev->yPos());
 }
 
 void Window::mouseWheelEvent(MouseWheelEvent *ev)
