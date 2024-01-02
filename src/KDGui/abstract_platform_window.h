@@ -58,21 +58,24 @@ public:
     virtual void enableRawMouseInput() = 0;
     virtual void disableRawMouseInput() = 0;
 
+    virtual void grabMouse() = 0;
+    virtual void releaseMouse() = 0;
+
     virtual void setTitle(const std::string &title) = 0;
 
     virtual void setSize(uint32_t width, uint32_t height) = 0;
     virtual void handleResize(uint32_t width, uint32_t height) = 0;
 
     virtual void handleMousePress(
-            uint32_t timestamp, MouseButtons buttons,
+            uint32_t timestamp, MouseButton button,
             int16_t xPos, int16_t yPos) = 0;
 
     virtual void handleMouseRelease(
-            uint32_t timestamp, MouseButtons buttons,
+            uint32_t timestamp, MouseButton button,
             int16_t xPos, int16_t yPos) = 0;
 
     virtual void handleMouseMove(
-            uint32_t timestamp, MouseButtons buttons,
+            uint32_t timestamp, MouseButton button,
             int64_t xPos, int64_t yPos) = 0;
 
     virtual void handleMouseWheel(uint32_t timestamp, int32_t xDelta, int32_t yDelta) = 0;

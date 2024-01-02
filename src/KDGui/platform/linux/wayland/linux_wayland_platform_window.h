@@ -58,21 +58,24 @@ public:
     void enableRawMouseInput() override;
     void disableRawMouseInput() override;
 
+    void grabMouse() override;
+    void releaseMouse() override;
+
     void setTitle(const std::string &title) override;
 
     void setSize(uint32_t width, uint32_t height) override;
     void handleResize(uint32_t width, uint32_t height) override;
 
     void handleMousePress(
-            uint32_t timestamp, MouseButtons buttons,
+            uint32_t timestamp, MouseButton button,
             int16_t xPos, int16_t yPos) override;
 
     void handleMouseRelease(
-            uint32_t timestamp, MouseButtons buttons,
+            uint32_t timestamp, MouseButton button,
             int16_t xPos, int16_t yPos) override;
 
     void handleMouseMove(
-            uint32_t timestamp, MouseButtons buttons,
+            uint32_t timestamp, MouseButton button,
             int64_t xPos, int64_t yPos) override;
     void handleMouseMoveRelative(uint32_t timestamp, int64_t dx, int64_t dy);
 
@@ -110,6 +113,7 @@ private:
     xdg_surface *m_xdgSurface{ nullptr };
     xdg_toplevel *m_toplevel{ nullptr };
     CursorMode m_cursorMode{ CursorMode::Normal };
+    MouseButtons m_mouseButtons{ MouseButton::NoButton };
     std::vector<LinuxWaylandPlatformOutput *> m_enteredOutputs;
 };
 

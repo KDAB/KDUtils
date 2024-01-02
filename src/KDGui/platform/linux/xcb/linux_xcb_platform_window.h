@@ -51,21 +51,24 @@ public:
     void enableRawMouseInput() override;
     void disableRawMouseInput() override;
 
+    void grabMouse() override;
+    void releaseMouse() override;
+
     void setTitle(const std::string &title) override;
 
     void setSize(uint32_t width, uint32_t height) override;
     void handleResize(uint32_t width, uint32_t height) override;
 
     void handleMousePress(
-            uint32_t timestamp, MouseButtons buttons,
+            uint32_t timestamp, MouseButton button,
             int16_t xPos, int16_t yPos) override;
 
     void handleMouseRelease(
-            uint32_t timestamp, MouseButtons buttons,
+            uint32_t timestamp, MouseButton button,
             int16_t xPos, int16_t yPos) override;
 
     void handleMouseMove(
-            uint32_t timestamp, MouseButtons buttons,
+            uint32_t timestamp, MouseButton button,
             int64_t xPos, int64_t yPos) override;
 
     void handleMouseWheel(uint32_t timestamp, int32_t xDelta, int32_t yDelta) override;
@@ -91,6 +94,7 @@ private:
     Position m_cursorRestorePosition{ 0, 0 };
     Position m_previousCursorPosition{ 0, 0 };
     Position m_previousWarpedCursorPosition{ 0, 0 };
+    MouseButtons m_mouseButtons{ MouseButton::NoButton };
 };
 
 } // namespace KDGui

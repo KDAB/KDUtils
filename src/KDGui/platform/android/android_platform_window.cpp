@@ -78,21 +78,23 @@ void AndroidPlatformWindow::handleResize(uint32_t width, uint32_t height)
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void AndroidPlatformWindow::handleMousePress(uint32_t timestamp, KDGui::MouseButtons buttons, int16_t xPos, int16_t yPos)
+void AndroidPlatformWindow::handleMousePress(uint32_t timestamp, MouseButton button, int16_t xPos, int16_t yPos)
 {
-    MousePressEvent ev{ timestamp, buttons, xPos, yPos };
+    m_mouseButtons.setFlag(button);
+    MousePressEvent ev{ timestamp, button, m_mouseButtons, xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void AndroidPlatformWindow::handleMouseRelease(uint32_t timestamp, KDGui::MouseButtons buttons, int16_t xPos, int16_t yPos)
+void AndroidPlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButton button, int16_t xPos, int16_t yPos)
 {
-    MouseReleaseEvent ev{ timestamp, buttons, xPos, yPos };
+    m_mouseButtons.setFlag(button, false);
+    MouseReleaseEvent ev{ timestamp, button, m_mouseButtons, xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void AndroidPlatformWindow::handleMouseMove(uint32_t timestamp, KDGui::MouseButtons buttons, int64_t xPos, int64_t yPos)
+void AndroidPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButton /* button */, int64_t xPos, int64_t yPos)
 {
-    MouseMoveEvent ev{ timestamp, buttons, xPos, yPos };
+    MouseMoveEvent ev{ timestamp, m_mouseButtons, xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 

@@ -30,10 +30,11 @@ using MouseButtons = KDUtils::Flags<MouseButton>;
 class MousePressEvent : public KDFoundation::Event
 {
 public:
-    explicit MousePressEvent(uint32_t timestamp, MouseButtons buttons,
-                             int16_t xPos, int16_t yPos)
+    explicit MousePressEvent(uint32_t timestamp, MouseButton button,
+                             MouseButtons buttons, int16_t xPos, int16_t yPos)
         : KDFoundation::Event(KDFoundation::Event::Type::MousePress)
         , m_timestamp{ timestamp }
+        , m_button{ button }
         , m_buttons{ buttons }
         , m_xPos{ xPos }
         , m_yPos{ yPos }
@@ -41,12 +42,16 @@ public:
     }
 
     uint32_t timestamp() const { return m_timestamp; }
+    /// @brief Button that was pressed
+    MouseButton button() const { return m_button; }
+    /// @brief Flags with all the buttons that are currently pressed
     MouseButtons buttons() const { return m_buttons; }
     int16_t xPos() const { return m_xPos; }
     int16_t yPos() const { return m_yPos; }
 
 private:
     uint32_t m_timestamp;
+    MouseButton m_button;
     MouseButtons m_buttons;
     int16_t m_xPos;
     int16_t m_yPos;
@@ -55,10 +60,11 @@ private:
 class MouseReleaseEvent : public KDFoundation::Event
 {
 public:
-    explicit MouseReleaseEvent(uint32_t timestamp, MouseButtons buttons,
-                               int16_t xPos, int16_t yPos)
+    explicit MouseReleaseEvent(uint32_t timestamp, MouseButton button,
+                               MouseButtons buttons, int16_t xPos, int16_t yPos)
         : KDFoundation::Event(KDFoundation::Event::Type::MouseRelease)
         , m_timestamp{ timestamp }
+        , m_button{ button }
         , m_buttons{ buttons }
         , m_xPos{ xPos }
         , m_yPos{ yPos }
@@ -66,12 +72,18 @@ public:
     }
 
     uint32_t timestamp() const { return m_timestamp; }
+    /// @brief Button that was released
+    MouseButton button() const { return m_button; }
+    /// @brief Flags with all the buttons that are currently pressed
+    ///
+    /// The button for which this release was triggered will be set to false here.
     MouseButtons buttons() const { return m_buttons; }
     int16_t xPos() const { return m_xPos; }
     int16_t yPos() const { return m_yPos; }
 
 private:
     uint32_t m_timestamp;
+    MouseButton m_button;
     MouseButtons m_buttons;
     int16_t m_xPos;
     int16_t m_yPos;
@@ -91,6 +103,7 @@ public:
     }
 
     uint32_t timestamp() const { return m_timestamp; }
+    /// @brief Flags with all the buttons that are currently pressed
     MouseButtons buttons() const { return m_buttons; }
     int64_t xPos() const { return m_xPos; }
     int64_t yPos() const { return m_yPos; }

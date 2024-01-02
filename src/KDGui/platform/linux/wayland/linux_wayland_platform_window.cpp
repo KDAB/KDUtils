@@ -143,6 +143,14 @@ void LinuxWaylandPlatformWindow::disableRawMouseInput()
 {
 }
 
+void LinuxWaylandPlatformWindow::grabMouse()
+{
+}
+
+void LinuxWaylandPlatformWindow::releaseMouse()
+{
+}
+
 void LinuxWaylandPlatformWindow::setTitle(const std::string &title)
 {
     xdg_toplevel_set_title(m_toplevel, title.c_str());
@@ -162,25 +170,27 @@ void LinuxWaylandPlatformWindow::handleResize(uint32_t width, uint32_t height)
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxWaylandPlatformWindow::handleMousePress(uint32_t timestamp, MouseButtons buttons,
+void LinuxWaylandPlatformWindow::handleMousePress(uint32_t timestamp, MouseButton button,
                                                   int16_t xPos, int16_t yPos)
 {
-    MousePressEvent ev{ timestamp, buttons, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
+    m_mouseButtons.setFlag(button);
+    MousePressEvent ev{ timestamp, button, m_mouseButtons, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxWaylandPlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButtons buttons,
+void LinuxWaylandPlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButton button,
                                                     int16_t xPos, int16_t yPos)
 {
-    MouseReleaseEvent ev{ timestamp, buttons, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
+    m_mouseButtons.setFlag(button, false);
+    MouseReleaseEvent ev{ timestamp, button, m_mouseButtons, static_cast<int16_t>(scaleByFactor(xPos)), static_cast<int16_t>(scaleByFactor(yPos)) };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxWaylandPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButtons buttons,
+void LinuxWaylandPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButton /* button */,
                                                  int64_t x, int64_t y)
 {
     if (m_cursorMode == CursorMode::Normal) {
-        MouseMoveEvent ev{ timestamp, buttons, scaleByFactor(x), scaleByFactor(y) };
+        MouseMoveEvent ev{ timestamp, m_mouseButtons, scaleByFactor(x), scaleByFactor(y) };
         CoreApplication::instance()->sendEvent(m_window, &ev);
     }
 }

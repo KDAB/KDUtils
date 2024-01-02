@@ -223,6 +223,16 @@ void LinuxXcbPlatformWindow::disableRawMouseInput()
     // TODO: Implement me!
 }
 
+void LinuxXcbPlatformWindow::grabMouse()
+{
+    // TODO: Implement
+}
+
+void LinuxXcbPlatformWindow::releaseMouse()
+{
+    // TODO: Implement
+}
+
 void LinuxXcbPlatformWindow::setTitle(const std::string &title)
 {
     if (!m_xcbWindow)
@@ -263,21 +273,23 @@ void LinuxXcbPlatformWindow::handleResize(uint32_t width, uint32_t height)
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxXcbPlatformWindow::handleMousePress(uint32_t timestamp, MouseButtons buttons,
+void LinuxXcbPlatformWindow::handleMousePress(uint32_t timestamp, MouseButton button,
                                               int16_t xPos, int16_t yPos)
 {
-    MousePressEvent ev{ timestamp, buttons, xPos, yPos };
+    m_mouseButtons.setFlag(button);
+    MousePressEvent ev{ timestamp, button, m_mouseButtons, xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxXcbPlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButtons buttons,
+void LinuxXcbPlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButton button,
                                                 int16_t xPos, int16_t yPos)
 {
-    MouseReleaseEvent ev{ timestamp, buttons, xPos, yPos };
+    m_mouseButtons.setFlag(button, false);
+    MouseReleaseEvent ev{ timestamp, button, m_mouseButtons, xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxXcbPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButtons buttons,
+void LinuxXcbPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButton /* button */,
                                              int64_t xPos, int64_t yPos)
 {
     Position pos{ xPos, yPos };
@@ -304,7 +316,7 @@ void LinuxXcbPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButtons bu
     }
 
     if (processMouseMove) {
-        MouseMoveEvent ev{ timestamp, buttons, pos.x, pos.y };
+        MouseMoveEvent ev{ timestamp, m_mouseButtons, pos.x, pos.y };
         CoreApplication::instance()->sendEvent(m_window, &ev);
     }
 }

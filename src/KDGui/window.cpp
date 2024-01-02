@@ -225,7 +225,7 @@ void Window::mousePressEvent(MousePressEvent *ev)
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
-                        ev->buttons(),
+                        ev->buttons().toInt(),
                         ev->xPos(),
                         ev->yPos());
 }
@@ -235,7 +235,7 @@ void Window::mouseReleaseEvent(MouseReleaseEvent *ev)
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
-                        ev->buttons(),
+                        ev->buttons().toInt(),
                         ev->xPos(),
                         ev->yPos());
 }
@@ -245,7 +245,7 @@ void Window::mouseMoveEvent(MouseMoveEvent *ev)
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
-                        ev->buttons(),
+                        ev->buttons().toInt(),
                         ev->xPos(),
                         ev->yPos());
 }

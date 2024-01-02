@@ -256,6 +256,7 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
     MouseButtons m_mouseButtons;
 }
 
+@property (nonatomic, readwrite) MouseButtons m_mouseButtons;
 - (instancetype)initWithPlatformWindow:(CocoaPlatformWindow *)platformWindow;
 - (NSPoint)localPosition:(NSPoint)eventLocation;
 @end
@@ -266,10 +267,12 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
     self = [super init];
     if (self != nil) {
         m_platformWindow = platformWindow;
-        m_mouseButtons = NoButton;
+        m_mouseButtons = MouseButton::NoButton;
     }
     return self;
 }
+
+@synthesize m_mouseButtons;
 
 - (NSPoint)localPosition:(NSPoint)eventLocation
 {
@@ -301,8 +304,8 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
 - (void)mouseDown:(NSEvent *)event
 {
     const NSPoint pos = [self localPosition:[event locationInWindow]];
+    m_mouseButtons.setFlag(LeftButton);
     m_platformWindow->handleMousePress([self timeStamp:event], LeftButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
-    m_mouseButtons |= LeftButton;
 }
 
 - (void)mouseDragged:(NSEvent *)event
@@ -314,35 +317,35 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
 - (void)mouseUp:(NSEvent *)event
 {
     const NSPoint pos = [self localPosition:[event locationInWindow]];
-    m_platformWindow->handleMouseRelease([self timeStamp:event], LeftButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
     m_mouseButtons.setFlag(LeftButton, false);
+    m_platformWindow->handleMouseRelease([self timeStamp:event], LeftButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
 }
 
 - (void)mouseMoved:(NSEvent *)event
 {
     const NSPoint pos = [self localPosition:[event locationInWindow]];
-    m_platformWindow->handleMouseMove([self timeStamp:event], m_mouseButtons, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
+    m_platformWindow->handleMouseMove([self timeStamp:event], NoButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
 }
 
 - (void)rightMouseDown:(NSEvent *)event
 {
     const NSPoint pos = [self localPosition:[event locationInWindow]];
+    m_mouseButtons.setFlag(RightButton);
     m_platformWindow->handleMousePress([self timeStamp:event], RightButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
-    m_mouseButtons |= RightButton;
     [super rightMouseDown:event];
 }
 
 - (void)rightMouseDragged:(NSEvent *)event
 {
     const NSPoint pos = [self localPosition:[event locationInWindow]];
-    m_platformWindow->handleMouseMove([self timeStamp:event], RightButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
+    m_platformWindow->handleMouseMove([self timeStamp:event], NoButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
 }
 
 - (void)rightMouseUp:(NSEvent *)event
 {
     const NSPoint pos = [self localPosition:[event locationInWindow]];
-    m_platformWindow->handleMouseRelease([self timeStamp:event], RightButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
     m_mouseButtons.setFlag(RightButton, false);
+    m_platformWindow->handleMouseRelease([self timeStamp:event], RightButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
 }
 
 - (void)otherMouseDown:(NSEvent *)event
@@ -351,8 +354,8 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
     if ((b & 4) == 0) // 1 is LeftButton, 2 is RightButton, 4 is MiddleButton, others ignored
         return;
     const NSPoint pos = [self localPosition:[event locationInWindow]];
+    m_mouseButtons.setFlag(MiddleButton);
     m_platformWindow->handleMousePress([self timeStamp:event], MiddleButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
-    m_mouseButtons |= MiddleButton;
 }
 
 - (void)otherMouseDragged:(NSEvent *)event
@@ -361,7 +364,7 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
     if ((b & 4) == 0)
         return;
     const NSPoint pos = [self localPosition:[event locationInWindow]];
-    m_platformWindow->handleMouseMove([self timeStamp:event], m_mouseButtons, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
+    m_platformWindow->handleMouseMove([self timeStamp:event], NoButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
 }
 
 - (void)otherMouseUp:(NSEvent *)event
@@ -370,8 +373,8 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
     if ((b & 4) == 0)
         return;
     const NSPoint pos = [self localPosition:[event locationInWindow]];
-    m_platformWindow->handleMousePress([self timeStamp:event], MiddleButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
     m_mouseButtons.setFlag(MiddleButton, false);
+    m_platformWindow->handleMouseRelease([self timeStamp:event], MiddleButton, static_cast<int16_t>(pos.x), static_cast<int16_t>(pos.y));
 }
 
 - (void)scrollWheel:(NSEvent *)event
@@ -488,6 +491,16 @@ void CocoaPlatformWindow::disableRawMouseInput()
     // TODO: Implement me!
 }
 
+void CocoaPlatformWindow::grabMouse()
+{
+    // Not implementable on Cocoa
+}
+
+void CocoaPlatformWindow::releaseMouse()
+{
+    // Not implementable on Cocoa
+}
+
 void CocoaPlatformWindow::setTitle(const std::string &title)
 {
     @autoreleasepool {
@@ -506,21 +519,21 @@ void CocoaPlatformWindow::handleResize(uint32_t width, uint32_t height)
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void CocoaPlatformWindow::handleMousePress(uint32_t timestamp, MouseButtons buttons, int16_t xPos, int16_t yPos)
+void CocoaPlatformWindow::handleMousePress(uint32_t timestamp, MouseButton button, int16_t xPos, int16_t yPos)
 {
-    MousePressEvent ev{ timestamp, buttons, xPos, yPos };
+    MousePressEvent ev{ timestamp, button, [m_view m_mouseButtons], xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void CocoaPlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButtons buttons, int16_t xPos, int16_t yPos)
+void CocoaPlatformWindow::handleMouseRelease(uint32_t timestamp, MouseButton button, int16_t xPos, int16_t yPos)
 {
-    MouseReleaseEvent ev{ timestamp, buttons, xPos, yPos };
+    MouseReleaseEvent ev{ timestamp, button, [m_view m_mouseButtons], xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void CocoaPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButtons buttons, int64_t xPos, int64_t yPos)
+void CocoaPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButton /* button */, int64_t xPos, int64_t yPos)
 {
-    MouseMoveEvent ev{ timestamp, buttons, xPos, yPos };
+    MouseMoveEvent ev{ timestamp, [m_view m_mouseButtons], xPos, yPos };
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
