@@ -18,7 +18,7 @@ class ExampleWindow : public KDGui::Window
     {
         spdlog::info("{}() buttons = {} at pos = ({}, {})",
                      __FUNCTION__,
-                     ev->buttons(),
+                     ev->buttons().toInt(),
                      ev->xPos(),
                      ev->yPos());
     }
@@ -27,7 +27,7 @@ class ExampleWindow : public KDGui::Window
     {
         spdlog::info("{}() buttons = {} at pos = ({}, {})",
                      __FUNCTION__,
-                     ev->buttons(),
+                     ev->buttons().toInt(),
                      ev->xPos(),
                      ev->yPos());
     }
@@ -36,7 +36,7 @@ class ExampleWindow : public KDGui::Window
     {
         spdlog::info("{}() buttons = {} at pos = ({}, {})",
                      __FUNCTION__,
-                     ev->buttons(),
+                     ev->buttons().toInt(),
                      ev->xPos(),
                      ev->yPos());
     }
