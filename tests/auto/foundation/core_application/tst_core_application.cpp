@@ -85,7 +85,7 @@ TEST_CASE("Creation")
     SUBCASE("Can access one and only instance via instance function")
     {
         REQUIRE(CoreApplication::instance() == nullptr);
-        CoreApplication *app = new CoreApplication;
+        auto *app = new CoreApplication;
         REQUIRE(CoreApplication::instance() == app);
         delete app;
         REQUIRE(CoreApplication::instance() == nullptr);
