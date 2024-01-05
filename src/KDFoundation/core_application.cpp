@@ -141,5 +141,5 @@ void CoreApplication::event(EventReceiver *target, Event *event)
         event->setAccepted(true);
     }
 
-    EventReceiver::event(target, event);
+    Object::event(target, event);
 }
