@@ -220,7 +220,6 @@ TEST_SUITE("File")
     {
         std::string path(TST_DIR "tst_file.cpp");
         File f(path);
-        size_t fileSize = f.size();
         auto mapper = FileMapper(File(path));
         mapper.map(); // just map it so there is a mapping to query the size of
 
