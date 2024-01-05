@@ -21,8 +21,8 @@ using namespace KDGui;
 
 Window::Window()
     : Object()
+    , m_logger(spdlog::get("window"))
 {
-    m_logger = spdlog::get("window");
     if (!m_logger) {
         m_logger = KDUtils::Logger::logger("window");
         m_logger->set_level(spdlog::level::info);
