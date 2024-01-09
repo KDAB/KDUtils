@@ -11,10 +11,10 @@
 
 #include "linux_wayland_platform_integration.h"
 
-#include <KDFoundation/logging.h>
 #include <KDFoundation/core_application.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_input.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_output.h>
+#include <KDUtils/logging.h>
 
 #include <wayland-client-core.h>
 #include <wayland-cursor.h>

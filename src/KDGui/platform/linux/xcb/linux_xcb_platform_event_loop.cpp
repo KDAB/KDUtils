@@ -17,7 +17,7 @@
 
 #include <KDFoundation/file_descriptor_notifier.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <xcb/xcb.h>
 

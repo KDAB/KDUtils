@@ -13,7 +13,7 @@
 
 #include <KDFoundation/platform/win32/win32_platform_event_loop.h>
 #include <KDGui/abstract_gui_platform_integration.h>
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include "win32_platform_window.h"
 

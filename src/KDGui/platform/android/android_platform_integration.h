@@ -12,8 +12,8 @@
 #pragma once
 
 #include <KDGui/abstract_gui_platform_integration.h>
-#include <KDFoundation/logging.h>
 #include <KDGui/kdgui_global.h>
+#include <KDUtils/logging.h>
 
 #include <unordered_set>
 

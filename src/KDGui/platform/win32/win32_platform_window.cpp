@@ -12,7 +12,7 @@
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/event.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <KDGui/platform/win32/win32_platform_window.h>
 #include <KDGui/window.h>

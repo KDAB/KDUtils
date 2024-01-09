@@ -16,7 +16,8 @@
 
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/event.h>
-#include <KDFoundation/logging.h>
+
+#include <KDUtils/logging.h>
 
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/CAMetalLayer.h>

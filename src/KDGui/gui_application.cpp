@@ -23,7 +23,7 @@
 #include <KDGui/platform/android/android_platform_integration.h>
 #endif
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 using namespace KDGui;
 

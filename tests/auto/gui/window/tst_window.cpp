@@ -14,7 +14,7 @@
 #include <KDGui/gui_application.h>
 #include <KDGui/config.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>

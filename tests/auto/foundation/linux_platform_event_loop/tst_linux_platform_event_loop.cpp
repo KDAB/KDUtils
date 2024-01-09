@@ -14,7 +14,7 @@
 #include <KDFoundation/object.h>
 #include <KDFoundation/postman.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <chrono>
 #include <condition_variable>

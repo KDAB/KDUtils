@@ -13,7 +13,7 @@
 #include <KDGui/platform/linux/xcb/linux_xcb_platform_integration.h>
 #include <KDGui/window.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>

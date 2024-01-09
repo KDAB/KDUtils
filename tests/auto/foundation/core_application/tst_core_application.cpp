@@ -12,7 +12,7 @@
 #include <KDFoundation/config.h>
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/timer.h>
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <condition_variable>
 #include <mutex>

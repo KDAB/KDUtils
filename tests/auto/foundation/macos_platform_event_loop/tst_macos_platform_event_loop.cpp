@@ -15,7 +15,7 @@
 #include <KDFoundation/platform/macos/macos_platform_event_loop.h>
 #include <KDFoundation/object.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <chrono>
 #include <condition_variable>

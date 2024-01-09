@@ -14,7 +14,7 @@
 #include <KDFoundation/platform/abstract_platform_event_loop.h>
 #include <KDFoundation/file_descriptor_notifier.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <array>
 #include <cstdint>

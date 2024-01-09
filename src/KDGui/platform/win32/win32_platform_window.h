@@ -13,7 +13,7 @@
 
 #include <KDGui/abstract_platform_window.h>
 #include <KDGui/position.h>
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <windows.h>
 

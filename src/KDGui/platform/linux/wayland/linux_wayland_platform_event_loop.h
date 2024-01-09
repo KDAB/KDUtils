@@ -13,7 +13,7 @@
 
 #include <KDFoundation/platform/linux/linux_platform_event_loop.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <memory>
 

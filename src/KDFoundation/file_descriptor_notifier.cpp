@@ -13,7 +13,7 @@
 #include <KDFoundation/platform/abstract_platform_event_loop.h>
 #include <KDFoundation/core_application.h>
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #include <cassert>
 

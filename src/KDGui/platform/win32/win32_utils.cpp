@@ -11,7 +11,7 @@
 
 #include "win32_utils.h"
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 namespace KDGui {
 

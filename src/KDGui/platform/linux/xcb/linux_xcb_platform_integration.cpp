@@ -12,7 +12,7 @@
 #include "linux_xcb_platform_integration.h"
 #include "linux_xkb_keyboard.h"
 
-#include <KDFoundation/logging.h>
+#include <KDUtils/logging.h>
 
 #define explicit i_am_not_really_using_explicit
 #include <xcb/xkb.h>
