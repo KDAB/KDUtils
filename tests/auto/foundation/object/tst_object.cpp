@@ -115,7 +115,7 @@ TEST_CASE("Object construction")
     {
         // GIVEN
         auto parent = std::make_unique<Object>();
-        SignalSpy childAddedSpy(parent->childAdded);
+        SignalSpy<Object *, Object *> childAddedSpy(parent->childAdded);
 
         // THEN
         REQUIRE(childAddedSpy.count() == 0);
@@ -128,6 +128,8 @@ TEST_CASE("Object construction")
         REQUIRE(child->parent() == parent.get());
         REQUIRE(parent->children().size() == 1);
         REQUIRE(childAddedSpy.count() == 1);
+        REQUIRE(std::get<0>(childAddedSpy.args()) == parent.get());
+        REQUIRE(std::get<1>(childAddedSpy.args()) == child);
     }
 
     SUBCASE("can create a subclass of Object taking an argument")
@@ -144,7 +146,7 @@ TEST_CASE("Object construction")
     {
         // GIVEN
         auto parent = std::make_unique<Object>();
-        SignalSpy childAddedSpy(parent->childAdded);
+        SignalSpy<Object *, Object *> childAddedSpy(parent->childAdded);
 
         // THEN
         REQUIRE(childAddedSpy.count() == 0);
@@ -158,6 +160,8 @@ TEST_CASE("Object construction")
         REQUIRE(parent->children().size() == 1);
         REQUIRE(child->value() == 42);
         REQUIRE(childAddedSpy.count() == 1);
+        REQUIRE(std::get<0>(childAddedSpy.args()) == parent.get());
+        REQUIRE(std::get<1>(childAddedSpy.args()) == child);
     }
 }
 
@@ -168,8 +172,8 @@ TEST_CASE("Parenting")
         // GIVEN
         auto parent = std::make_unique<Object>();
         auto child = std::make_unique<Object>();
-        SignalSpy childAddedSpy(parent->childAdded);
-        SignalSpy childParentChangedSpy(child->parentChanged);
+        SignalSpy<Object *, Object *> childAddedSpy(parent->childAdded);
+        SignalSpy<Object *, Object *> childParentChangedSpy(child->parentChanged);
 
         // THEN
         REQUIRE(childAddedSpy.count() == 0);
@@ -183,7 +187,11 @@ TEST_CASE("Parenting")
         REQUIRE(adoptedChild->parent() == parent.get());
         REQUIRE(parent->children().size() == 1);
         REQUIRE(childAddedSpy.count() == 1);
+        REQUIRE(std::get<0>(childAddedSpy.args()) == parent.get());
+        REQUIRE(std::get<1>(childAddedSpy.args()) == adoptedChild);
         REQUIRE(childParentChangedSpy.count() == 1);
+        REQUIRE(std::get<0>(childParentChangedSpy.args()) == adoptedChild);
+        REQUIRE(std::get<1>(childParentChangedSpy.args()) == parent.get());
     }
 
     SUBCASE("can reparent a child")
@@ -192,9 +200,9 @@ TEST_CASE("Parenting")
         auto oldParent = std::make_unique<Object>();
         auto child = oldParent->createChild<Object>();
         auto newParent = std::make_unique<Object>();
-        SignalSpy childAddedSpy(newParent->childAdded);
-        SignalSpy childRemovedSpy(oldParent->childRemoved);
-        SignalSpy childParentChangedSpy(child->parentChanged);
+        SignalSpy<Object *, Object *> childAddedSpy(newParent->childAdded);
+        SignalSpy<Object *, Object *> childRemovedSpy(oldParent->childRemoved);
+        SignalSpy<Object *, Object *> childParentChangedSpy(child->parentChanged);
 
         // THEN
         REQUIRE(childAddedSpy.count() == 0);
@@ -206,11 +214,17 @@ TEST_CASE("Parenting")
 
         // THEN
         REQUIRE(childParentChangedSpy.count() == 2); // set to null when taken and then set to newParent when added as a child
+        REQUIRE(std::get<0>(childParentChangedSpy.args()) == child);
+        REQUIRE(std::get<1>(childParentChangedSpy.args()) == newParent.get());
         REQUIRE(oldParent->children().empty() == true);
         REQUIRE(newParent->children().size() == 1);
         REQUIRE(child->parent() == newParent.get());
         REQUIRE(childAddedSpy.count() == 1);
+        REQUIRE(std::get<0>(childAddedSpy.args()) == newParent.get());
+        REQUIRE(std::get<1>(childAddedSpy.args()) == child);
         REQUIRE(childRemovedSpy.count() == 1);
+        REQUIRE(std::get<0>(childRemovedSpy.args()) == oldParent.get());
+        REQUIRE(std::get<1>(childRemovedSpy.args()) == child);
     }
 
     SUBCASE("parent can have many children")
@@ -295,9 +309,10 @@ TEST_CASE("Object destruction")
     SUBCASE("destroyed signal is emitted on object destruction")
     {
         auto obj = new Object();
-        SignalSpy objectDestroyedSpy(obj->destroyed);
+        SignalSpy<Object *> objectDestroyedSpy(obj->destroyed);
         delete obj;
         REQUIRE(objectDestroyedSpy.count() == 1);
+        REQUIRE(std::get<0>(objectDestroyedSpy.args()) == obj);
     }
 }
 
@@ -322,7 +337,6 @@ TEST_CASE("Deferred object destruction")
         CoreApplication app;
         auto obj = new Object();
 
-        SignalSpy objectDestroyedSpy(obj->destroyed);
         obj->deleteLater();
         obj->deleteLater();
         obj->deleteLater();
@@ -335,12 +349,13 @@ TEST_CASE("Deferred object destruction")
         CoreApplication app;
         auto obj = new Object();
 
-        SignalSpy objectDestroyedSpy(obj->destroyed);
+        SignalSpy<Object *> objectDestroyedSpy(obj->destroyed);
         obj->deleteLater();
 
         REQUIRE(objectDestroyedSpy.count() == 0);
         app.processEvents();
         REQUIRE(objectDestroyedSpy.count() == 1);
+        REQUIRE(std::get<0>(objectDestroyedSpy.args()) == obj);
     }
 
     SUBCASE("object is deleted when CoreApplication is deleted before control returns to event loop")
@@ -348,12 +363,13 @@ TEST_CASE("Deferred object destruction")
         auto *app = new CoreApplication();
         auto obj = new Object();
 
-        SignalSpy objectDestroyedSpy(obj->destroyed);
+        SignalSpy<Object *> objectDestroyedSpy(obj->destroyed);
         obj->deleteLater();
 
         REQUIRE(objectDestroyedSpy.count() == 0);
         delete app;
         REQUIRE(objectDestroyedSpy.count() == 1);
+        REQUIRE(std::get<0>(objectDestroyedSpy.args()) == obj);
     }
 }
 

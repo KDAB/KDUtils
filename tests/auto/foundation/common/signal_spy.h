@@ -14,14 +14,18 @@
 #include <KDFoundation/kdfoundation_global.h>
 #include <chrono>
 #include <thread>
+#include <tuple>
 
+template<typename... Args>
 class SignalSpy
 {
 public:
     template<typename Signal>
     explicit SignalSpy(Signal &s)
     {
-        s.connect(&SignalSpy::callback, this);
+        s.connect([this](Args... args) {
+            callback(args...);
+        });
     }
 
     bool isValid() const
@@ -29,8 +33,14 @@ public:
         return true;
     }
 
+    std::tuple<Args...> &args()
+    {
+        return m_args;
+    }
+
     void clear()
     {
+        m_args = {};
         m_count = 0;
     }
 
@@ -56,10 +66,12 @@ public:
     }
 
 private:
-    void callback()
+    void callback(Args... args)
     {
+        m_args = std::make_tuple(args...);
         ++m_count;
     }
 
     uint32_t m_count = 0;
+    std::tuple<Args...> m_args;
 };
