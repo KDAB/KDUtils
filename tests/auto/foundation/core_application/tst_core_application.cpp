@@ -12,6 +12,7 @@
 #include <KDFoundation/config.h>
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/timer.h>
+#include <KDFoundation/event.h>
 #include <KDUtils/logging.h>
 
 #include <condition_variable>
@@ -74,6 +75,37 @@ private:
     bool m_userEventDelivered = false;
 };
 
+class RecursiveEventPosterObject : public Object
+{
+public:
+    RecursiveEventPosterObject()
+        : Object()
+    {
+    }
+
+    size_t eventsProcessed() const { return m_eventsProcessed; }
+
+    void requestUpdate()
+    {
+        CoreApplication::instance()->postEvent(this, std::make_unique<UpdateEvent>());
+    }
+
+protected:
+    void event(EventReceiver *target, Event *ev) override
+    {
+        if (target == this && ev->type() == Event::Type::Update) {
+            ++m_eventsProcessed;
+            ev->setAccepted(true);
+            requestUpdate();
+        }
+
+        Object::event(target, ev);
+    }
+
+private:
+    size_t m_eventsProcessed{ 0 };
+};
+
 TEST_CASE("Creation")
 {
     SUBCASE("default construction")
@@ -126,6 +158,33 @@ TEST_CASE("Event handling")
         delete obj;
 
         app.processEvents();
+    }
+
+    SUBCASE("don't end up in infinite loop")
+    {
+        // GIVEN
+        CoreApplication app;
+        auto obj = std::make_unique<RecursiveEventPosterObject>();
+
+        // WHEN
+        obj->requestUpdate();
+        app.processEvents();
+
+        // THEN
+        CHECK(obj->eventsProcessed() == 1);
+
+        // WHEN
+        app.processEvents();
+
+        // THEN
+        CHECK(obj->eventsProcessed() == 2);
+
+        // WHEN
+        for (size_t i = 0; i < 10; ++i)
+            app.processEvents();
+
+        // THEN
+        CHECK(obj->eventsProcessed() == 12);
     }
 }
 

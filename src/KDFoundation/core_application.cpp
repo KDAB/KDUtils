@@ -94,7 +94,10 @@ void CoreApplication::sendEvent(EventReceiver *target, Event *event)
 void CoreApplication::processEvents(int timeout)
 {
     // Deliver any events that have already been posted
-    while (auto postedEvent = m_eventQueue.tryPop()) {
+    for (size_t eventIndex = 0, eventCount = m_eventQueue.size(); eventIndex < eventCount; ++eventIndex) {
+        auto postedEvent = m_eventQueue.tryPop();
+        if (!postedEvent)
+            break;
         const auto target = postedEvent->target();
         const auto ev = postedEvent->wrappedEvent();
 
