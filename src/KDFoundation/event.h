@@ -51,6 +51,7 @@ public:
         , m_systemEvent{ false }
         , m_accepted{ false }
         , m_postedToEventQueue{ false }
+        , m_reserved{ 0 }
     {
     }
 
