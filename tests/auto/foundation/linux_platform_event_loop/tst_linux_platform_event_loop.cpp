@@ -164,7 +164,7 @@ TEST_CASE("Register and unregister for events")
         LinuxPlatformEventLoop loop;
         int pipe1[2];
         if (pipe(pipe1) == -1) {
-            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
 
@@ -175,7 +175,7 @@ TEST_CASE("Register and unregister for events")
         close(pipe1[1]);
         loop.unregisterNotifier(notifier.get());
         if (pipe(pipe1) == -1) {
-            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
         bool result = loop.registerNotifier(notifier.get());
@@ -191,15 +191,15 @@ TEST_CASE("Register and unregister for events")
         int pipe2[2];
         int pipe3[2];
         if (pipe(pipe1) == -1) {
-            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
         if (pipe(pipe2) == -1) {
-            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
         if (pipe(pipe3) == -1) {
-            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
 
@@ -227,7 +227,7 @@ TEST_CASE("Register and unregister for events")
         LinuxPlatformEventLoop loop;
         int pipe1[2];
         if (pipe(pipe1) == -1) {
-            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
 
@@ -249,7 +249,7 @@ TEST_CASE("Register and unregister for events")
         LinuxPlatformEventLoop loop;
         int pipe1[2];
         if (pipe(pipe1) == -1) {
-            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
 
@@ -293,7 +293,7 @@ TEST_CASE("Wait for events")
         LinuxPlatformEventLoop loop;
         int pipe1[2];
         if (pipe(pipe1) == -1) {
-            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
 
@@ -306,10 +306,10 @@ TEST_CASE("Wait for events")
         std::condition_variable cond;
         bool ready = false;
         auto writeToPipe = [&mutex, &cond, &ready](int fd) {
-            spdlog::info("Launched helper thread");
+            SPDLOG_INFO("Launched helper thread");
             std::unique_lock lock(mutex);
             cond.wait(lock, [&ready] { return ready == true; });
-            spdlog::info("Thread going to sleep before writing to pipe");
+            SPDLOG_INFO("Thread going to sleep before writing to pipe");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
@@ -320,7 +320,7 @@ TEST_CASE("Wait for events")
 
         // Kick the thread off to fire an event in 1s then wait for up to 10s for an event
         {
-            spdlog::info("Waking up helper thread");
+            SPDLOG_INFO("Waking up helper thread");
             std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
@@ -331,7 +331,7 @@ TEST_CASE("Wait for events")
         const auto endTime = std::chrono::steady_clock::now();
 
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-        spdlog::info("elapsedTime = {}", elapsedTime);
+        SPDLOG_INFO("elapsedTime = {}", elapsedTime);
         REQUIRE(elapsedTime < 10000);
 
         // Be nice!
@@ -347,10 +347,10 @@ TEST_CASE("Wait for events")
         std::condition_variable cond;
         bool ready = false;
         auto callWakeUp = [&mutex, &cond, &ready, &loop]() {
-            spdlog::info("Launched helper thread");
+            SPDLOG_INFO("Launched helper thread");
             std::unique_lock lock(mutex);
             cond.wait(lock, [&ready] { return ready == true; });
-            spdlog::info("Thread going to sleep before writing to pipe");
+            SPDLOG_INFO("Thread going to sleep before writing to pipe");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             loop.wakeUp();
@@ -359,7 +359,7 @@ TEST_CASE("Wait for events")
 
         // Kick the thread off to fire an event in 1s then wait for up to 10s for an event
         {
-            spdlog::info("Waking up helper thread");
+            SPDLOG_INFO("Waking up helper thread");
             std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
@@ -370,7 +370,7 @@ TEST_CASE("Wait for events")
         const auto endTime = std::chrono::steady_clock::now();
 
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-        spdlog::info("elapsedTime = {}", elapsedTime);
+        SPDLOG_INFO("elapsedTime = {}", elapsedTime);
         REQUIRE(elapsedTime < 10000);
 
         // Be nice!
@@ -389,7 +389,7 @@ TEST_CASE("Notifies about events")
         loop.setPostman(postman.get());
         int pipe1[2];
         if (pipe(pipe1) == -1) {
-            spdlog::debug("Failed to create pipe. errno = {}", errno);
+            SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
 
@@ -397,7 +397,7 @@ TEST_CASE("Notifies about events")
         auto notifier1 = std::make_unique<FileDescriptorNotifier>(pipe1[0], FileDescriptorNotifier::NotificationType::Read);
         bool notified = false;
         notifier1->triggered.connect([&notified](const int &) {
-            spdlog::info("Notifier has been triggered");
+            SPDLOG_INFO("Notifier has been triggered");
             notified = true;
         });
         loop.registerNotifier(notifier1.get());
@@ -407,10 +407,10 @@ TEST_CASE("Notifies about events")
         std::condition_variable cond;
         bool ready = false;
         auto writeToPipe = [&mutex, &cond, &ready](int fd) {
-            spdlog::info("Launched helper thread");
+            SPDLOG_INFO("Launched helper thread");
             std::unique_lock lock(mutex);
             cond.wait(lock, [&ready] { return ready == true; });
-            spdlog::info("Thread going to sleep before writing to pipe");
+            SPDLOG_INFO("Thread going to sleep before writing to pipe");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
@@ -421,7 +421,7 @@ TEST_CASE("Notifies about events")
 
         // Kick the thread off to fire an event in 1s then wait for up to 10s for an event
         {
-            spdlog::info("Waking up helper thread");
+            SPDLOG_INFO("Waking up helper thread");
             std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
@@ -432,7 +432,7 @@ TEST_CASE("Notifies about events")
         const auto endTime = std::chrono::steady_clock::now();
 
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-        spdlog::info("elapsedTime = {}", elapsedTime);
+        SPDLOG_INFO("elapsedTime = {}", elapsedTime);
         REQUIRE(elapsedTime < 10000);
         REQUIRE(notified == true);
 

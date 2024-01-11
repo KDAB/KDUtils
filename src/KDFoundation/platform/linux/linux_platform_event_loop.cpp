@@ -71,7 +71,7 @@ void LinuxPlatformEventLoop::waitForEvents(int timeout)
 
     // Let interested parties know if something happened.
     if (!m_postman) {
-        spdlog::warn("No postman set. Cannot deliver events");
+        SPDLOG_WARN("No postman set. Cannot deliver events");
         return;
     }
 

@@ -76,7 +76,7 @@ private:
             case FileDescriptorNotifier::NotificationType::Exception:
                 return !hasNotifier(FileDescriptorNotifier::NotificationType::Read) && !hasNotifier(FileDescriptorNotifier::NotificationType::Write);
             }
-            spdlog::critical("Error in determining if notifier set is empty");
+            SPDLOG_CRITICAL("Error in determining if notifier set is empty");
             return false;
         }
 

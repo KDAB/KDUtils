@@ -32,13 +32,13 @@ std::wstring utf8StringToWide(std::string_view source)
 {
     const auto count = MultiByteToWideChar(CP_UTF8, 0, source.data(), static_cast<int>(source.size()), nullptr, 0);
     if (!count) {
-        spdlog::warn("Failed to convert string from UTF-8");
+        SPDLOG_WARN("Failed to convert string from UTF-8");
         return {};
     }
 
     std::wstring result(count, 0);
     if (!MultiByteToWideChar(CP_UTF8, 0, source.data(), static_cast<int>(source.size()), result.data(), count)) {
-        spdlog::warn("Failed to convert string from UTF-8");
+        SPDLOG_WARN("Failed to convert string from UTF-8");
         return {};
     }
 
@@ -49,13 +49,13 @@ std::string wideStringToUtf8(std::wstring_view source)
 {
     const auto count = WideCharToMultiByte(CP_UTF8, 0, source.data(), static_cast<int>(source.size()), nullptr, 0, nullptr, nullptr);
     if (!count) {
-        spdlog::warn("Failed to convert string to UTF-8");
+        SPDLOG_WARN("Failed to convert string to UTF-8");
         return {};
     }
 
     std::string result(count, 0);
     if (!WideCharToMultiByte(CP_UTF8, 0, source.data(), static_cast<int>(source.size()), result.data(), count, nullptr, nullptr)) {
-        spdlog::warn("Failed to convert string to UTF-8");
+        SPDLOG_WARN("Failed to convert string to UTF-8");
         return {};
     }
 

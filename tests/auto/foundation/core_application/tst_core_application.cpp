@@ -216,31 +216,31 @@ TEST_CASE("Main event loop")
         std::condition_variable cond;
         bool ready = false;
         auto quitTheApp = [&mutex, &cond, &ready, &app]() {
-            spdlog::info("Launched worker thread");
+            SPDLOG_INFO("Launched worker thread");
             std::unique_lock lock(mutex);
             cond.wait(lock, [&ready] { return ready == true; });
-            spdlog::info("Worker thread going to sleep before quitting the app event loop");
+            SPDLOG_INFO("Worker thread going to sleep before quitting the app event loop");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            spdlog::info("Worker thread requesting the app to quit");
+            SPDLOG_INFO("Worker thread requesting the app to quit");
             app.quit();
         };
         std::thread t1(quitTheApp);
 
         {
-            spdlog::info("Waking up helper thread");
+            SPDLOG_INFO("Waking up helper thread");
             std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
         }
 
         const auto startTime = std::chrono::steady_clock::now();
-        spdlog::info("Main thread entering event loop");
+        SPDLOG_INFO("Main thread entering event loop");
         app.exec();
         const auto endTime = std::chrono::steady_clock::now();
 
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-        spdlog::info("elapsedTime = {}", elapsedTime);
+        SPDLOG_INFO("elapsedTime = {}", elapsedTime);
         REQUIRE(elapsedTime < 1000);
 
         t1.join();

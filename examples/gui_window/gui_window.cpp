@@ -16,47 +16,47 @@ class ExampleWindow : public KDGui::Window
 {
     void mouseMoveEvent(KDGui::MouseMoveEvent *ev) override
     {
-        spdlog::info("{}() buttons = {} at pos = ({}, {})",
-                     __FUNCTION__,
-                     ev->buttons().toInt(),
-                     ev->xPos(),
-                     ev->yPos());
+        SPDLOG_INFO("{}() buttons = {} at pos = ({}, {})",
+                    __FUNCTION__,
+                    ev->buttons().toInt(),
+                    ev->xPos(),
+                    ev->yPos());
     }
 
     void mousePressEvent(KDGui::MousePressEvent *ev) override
     {
-        spdlog::info("{}() buttons = {} at pos = ({}, {})",
-                     __FUNCTION__,
-                     ev->buttons().toInt(),
-                     ev->xPos(),
-                     ev->yPos());
+        SPDLOG_INFO("{}() buttons = {} at pos = ({}, {})",
+                    __FUNCTION__,
+                    ev->buttons().toInt(),
+                    ev->xPos(),
+                    ev->yPos());
     }
 
     void mouseReleaseEvent(KDGui::MouseReleaseEvent *ev) override
     {
-        spdlog::info("{}() buttons = {} at pos = ({}, {})",
-                     __FUNCTION__,
-                     ev->buttons().toInt(),
-                     ev->xPos(),
-                     ev->yPos());
+        SPDLOG_INFO("{}() buttons = {} at pos = ({}, {})",
+                    __FUNCTION__,
+                    ev->buttons().toInt(),
+                    ev->xPos(),
+                    ev->yPos());
     }
 
     void mouseWheelEvent(KDGui::MouseWheelEvent *ev) override
     {
-        spdlog::info("{}() xDelta = {} yDelta = {}",
-                     __FUNCTION__,
-                     ev->xDelta(),
-                     ev->yDelta());
+        SPDLOG_INFO("{}() xDelta = {} yDelta = {}",
+                    __FUNCTION__,
+                    ev->xDelta(),
+                    ev->yDelta());
     }
 
     void keyPressEvent(KDGui::KeyPressEvent *ev) override
     {
-        spdlog::info("{}() key = {}", __FUNCTION__, ev->key());
+        SPDLOG_INFO("{}() key = {}", __FUNCTION__, ev->key());
     }
 
     void keyReleaseEvent(KDGui::KeyReleaseEvent *ev) override
     {
-        spdlog::info("{}() key = {}", __FUNCTION__, ev->key());
+        SPDLOG_INFO("{}() key = {}", __FUNCTION__, ev->key());
     }
 };
 

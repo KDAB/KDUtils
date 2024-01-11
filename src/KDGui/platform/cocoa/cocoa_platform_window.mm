@@ -410,7 +410,7 @@ bool CocoaPlatformWindow::create()
                                                        backing:NSBackingStoreBuffered
                                                          defer:NO];
         if (m_nativeWindow == nil) {
-            spdlog::critical("Failed to create native window");
+            SPDLOG_CRITICAL("Failed to create native window");
             return false;
         }
 

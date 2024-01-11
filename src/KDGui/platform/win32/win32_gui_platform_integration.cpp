@@ -66,7 +66,7 @@ bool Win32GuiPlatformIntegration::registerWindowClass(const std::wstring &classN
 
     const auto atom = RegisterClassEx(&wc);
     if (!atom) {
-        spdlog::critical("Failed to register window class: {}", windowsErrorMessage(GetLastError()));
+        SPDLOG_CRITICAL("Failed to register window class: {}", windowsErrorMessage(GetLastError()));
     }
 
     m_windowClasses.insert(className);
@@ -80,7 +80,7 @@ void Win32GuiPlatformIntegration::unregisterWindowClasses()
 
     for (const auto &name : m_windowClasses) {
         if (!UnregisterClass(name.c_str(), appInstance)) {
-            spdlog::critical("Failed to unregister class: {}", windowsErrorMessage(GetLastError()));
+            SPDLOG_CRITICAL("Failed to unregister class: {}", windowsErrorMessage(GetLastError()));
         }
     }
 

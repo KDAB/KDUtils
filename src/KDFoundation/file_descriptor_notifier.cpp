@@ -31,7 +31,7 @@ FileDescriptorNotifier::FileDescriptorNotifier(int fd, NotificationType type)
     // Get hold of the event loop from the application
     auto app = CoreApplication::instance();
     if (!app) {
-        spdlog::warn("No application object exists yet. The notifier for fd {} will not be registered", m_fd);
+        SPDLOG_WARN("No application object exists yet. The notifier for fd {} will not be registered", m_fd);
         return;
     }
 
@@ -44,7 +44,7 @@ FileDescriptorNotifier::~FileDescriptorNotifier()
 {
     auto app = CoreApplication::instance();
     if (!app) {
-        spdlog::warn("No application object exists yet we still have a notifier for fd {} alive", m_fd);
+        SPDLOG_WARN("No application object exists yet we still have a notifier for fd {} alive", m_fd);
         return;
     }
 

@@ -63,10 +63,10 @@ TEST_CASE("Wait for events")
         std::condition_variable cond;
         bool ready = false;
         auto callWakeUp = [&mutex, &cond, &ready, &loop]() {
-            spdlog::info("Launched helper thread");
+            SPDLOG_INFO("Launched helper thread");
             std::unique_lock lock(mutex);
             cond.wait(lock, [&ready] { return ready == true; });
-            spdlog::info("Thread going to sleep before waking up event loop");
+            SPDLOG_INFO("Thread going to sleep before waking up event loop");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             loop.wakeUp();
@@ -75,7 +75,7 @@ TEST_CASE("Wait for events")
 
         // Kick the thread off
         {
-            spdlog::info("Waking up helper thread");
+            SPDLOG_INFO("Waking up helper thread");
             std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
@@ -86,7 +86,7 @@ TEST_CASE("Wait for events")
         const auto endTime = std::chrono::steady_clock::now();
 
         auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
-        spdlog::info("elapsedTime = {}", elapsedTime);
+        SPDLOG_INFO("elapsedTime = {}", elapsedTime);
         REQUIRE(elapsedTime < 10000);
 
         // Be nice!

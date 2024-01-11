@@ -43,7 +43,7 @@ Win32PlatformEventLoop::Win32PlatformEventLoop()
 {
     m_wakeUpEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
     if (!m_wakeUpEvent)
-        spdlog::critical("Failed to create wake up event");
+        SPDLOG_CRITICAL("Failed to create wake up event");
 
     WNDCLASS wc = {};
     wc.lpfnWndProc = messageWindowProc;
@@ -51,7 +51,7 @@ Win32PlatformEventLoop::Win32PlatformEventLoop()
 
     ATOM atom = RegisterClass(&wc);
     if (!atom)
-        spdlog::critical("Failed to register message window class");
+        SPDLOG_CRITICAL("Failed to register message window class");
 
     // The GetLastError() returns error code 6 ("The handle is invalid") here but
     // the created message window is fine and works anyway. It's like that even
@@ -65,7 +65,7 @@ Win32PlatformEventLoop::Win32PlatformEventLoop()
             0);
 
     if (!m_msgWindow)
-        spdlog::critical("Failed to create window for socket events");
+        SPDLOG_CRITICAL("Failed to create window for socket events");
     SetWindowLongPtr(m_msgWindow, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 }
 
@@ -76,7 +76,7 @@ Win32PlatformEventLoop::~Win32PlatformEventLoop()
     if (m_msgWindow)
         DestroyWindow(m_msgWindow);
     if (!UnregisterClass(s_msgWindowClassName, GetModuleHandle(0)))
-        spdlog::warn("Failed to unregister message window class");
+        SPDLOG_WARN("Failed to unregister message window class");
 }
 
 void Win32PlatformEventLoop::waitForEvents(int timeout)
@@ -116,7 +116,7 @@ void Win32PlatformEventLoop::wakeUp()
 {
     if (m_wakeUpEvent) {
         if (!SetEvent(m_wakeUpEvent))
-            spdlog::critical("Failed to signal wake up event");
+            SPDLOG_CRITICAL("Failed to signal wake up event");
     }
 }
 
@@ -126,7 +126,7 @@ bool Win32PlatformEventLoop::registerNotifier(FileDescriptorNotifier *notifier)
         return false;
 
     if (notifier->fileDescriptor() < 0) {
-        spdlog::warn("Attempting to register invalid notifier socket = {}", notifier->fileDescriptor());
+        SPDLOG_WARN("Attempting to register invalid notifier socket = {}", notifier->fileDescriptor());
         return false;
     }
 
@@ -187,12 +187,12 @@ void Win32PlatformEventLoop::handleSocketMessage(WPARAM wparam, LPARAM lparam)
     const int op = WSAGETSELECTEVENT(lparam);
 
     if (err) {
-        spdlog::warn("Error when receiving message on socket {}, Err = {}", sockId, err);
+        SPDLOG_WARN("Error when receiving message on socket {}, Err = {}", sockId, err);
         return;
     }
 
     if (!m_postman) {
-        spdlog::warn("No postman set. Cannot deliver events");
+        SPDLOG_WARN("No postman set. Cannot deliver events");
         return;
     }
 
@@ -251,7 +251,7 @@ bool KDFoundation::Win32PlatformEventLoop::registerWithWSAAsyncSelect(int fd, co
 
     const int result = WSAAsyncSelect(fd, m_msgWindow, WM_KD_SOCKETEVENT, eventsToSubscribe);
     if (result != 0) {
-        spdlog::error("Failed to register notifier for socket = {}. Error = {}", fd, result);
+        SPDLOG_ERROR("Failed to register notifier for socket = {}. Error = {}", fd, result);
         return false;
     }
 
