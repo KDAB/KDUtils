@@ -220,6 +220,7 @@ ByteArray ByteArray::toBase64() const
         break;
 
     case 0:
+    default: // silence clang-tidy
         break;
     }
 
@@ -253,7 +254,7 @@ int8_t *getInverseB64Table()
         for (uint8_t i = 0; i < 255; ++i)
             table[i] = getInverseFromB64(i);
     }
-    return &table[0];
+    return table.data();
 }
 
 } // namespace
