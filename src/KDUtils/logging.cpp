@@ -35,7 +35,7 @@ std::shared_ptr<spdlog::logger> Logger::logger(const std::string &name)
     return logger;
 }
 
-void Logger::setLoggerFactory(LoggerFactoryFunction factory)
+void Logger::setLoggerFactory(const LoggerFactoryFunction &factory)
 {
     ms_loggerFactory = factory;
 }

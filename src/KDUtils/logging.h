@@ -26,7 +26,7 @@ public:
 
     using LoggerFactoryFunction = std::function<std::shared_ptr<spdlog::logger>(const std::string &)>;
 
-    static void setLoggerFactory(LoggerFactoryFunction factory);
+    static void setLoggerFactory(const LoggerFactoryFunction &factory);
     static LoggerFactoryFunction loggerFactory();
 
 private:
