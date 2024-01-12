@@ -51,12 +51,12 @@ class ExampleWindow : public KDGui::Window
 
     void keyPressEvent(KDGui::KeyPressEvent *ev) override
     {
-        SPDLOG_INFO("{}() key = {}", __FUNCTION__, ev->key());
+        SPDLOG_INFO("{}() key = {}", __FUNCTION__, static_cast<int>(ev->key()));
     }
 
     void keyReleaseEvent(KDGui::KeyReleaseEvent *ev) override
     {
-        SPDLOG_INFO("{}() key = {}", __FUNCTION__, ev->key());
+        SPDLOG_INFO("{}() key = {}", __FUNCTION__, static_cast<int>(ev->key()));
     }
 };
 
