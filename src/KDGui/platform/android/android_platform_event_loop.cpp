@@ -18,6 +18,8 @@
 #include <KDFoundation/file_descriptor_notifier.h>
 #include <KDFoundation/postman.h>
 
+#include <android/log.h>
+
 #include "android_platform_integration.h"
 
 using namespace KDFoundation;

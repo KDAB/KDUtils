@@ -9,7 +9,9 @@
 */
 
 #include "logging.h"
-
+#if defined(ANDROID)
+#include <spdlog/sinks/android_sink.h>
+#endif
 namespace KDUtils {
 
 Logger::LoggerFactoryFunction Logger::ms_loggerFactory = {};

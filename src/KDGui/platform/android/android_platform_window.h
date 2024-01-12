@@ -48,9 +48,9 @@ public:
     void setSize(uint32_t width, uint32_t height) final;
 
     void handleResize(uint32_t width, uint32_t height) final;
-    void handleMousePress(uint32_t timestamp, uint8_t button, int16_t xPos, int16_t yPos) final;
-    void handleMouseRelease(uint32_t timestamp, uint8_t button, int16_t xPos, int16_t yPos) final;
-    void handleMouseMove(uint32_t timestamp, uint8_t button, int64_t xPos, int64_t yPos) final;
+    void handleMousePress(uint32_t timestamp, MouseButtons buttons, int16_t xPos, int16_t yPos) final;
+    void handleMouseRelease(uint32_t timestamp, MouseButtons buttons, int16_t xPos, int16_t yPos) final;
+    void handleMouseMove(uint32_t timestamp, MouseButtons buttons, int64_t xPos, int64_t yPos) final;
     void handleMouseWheel(uint32_t timestamp, int32_t xDelta, int32_t yDelta) final;
     void handleKeyPress(uint32_t timestamp, uint8_t nativeKeyCode, Key key, KeyboardModifiers modifiers) final;
     void handleKeyRelease(uint32_t timestamp, uint8_t nativeKeyCode, Key key, KeyboardModifiers modifiers) final;

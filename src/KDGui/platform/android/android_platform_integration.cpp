@@ -21,6 +21,8 @@
 #include "android_platform_event_loop.h"
 #include "android_platform_window.h"
 
+#include <android/log.h>
+
 namespace KDGui {
 
 android_app *KDGui::AndroidPlatformIntegration::s_androidApp = nullptr;
@@ -37,7 +39,7 @@ AbstractPlatformWindow *AndroidPlatformIntegration::createPlatformWindowImpl(Win
 
 AndroidPlatformIntegration::AndroidPlatformIntegration()
 {
-    KDUtils::File::setAssetManager(s_androidApp->activity->assetManager);
+    KDUtils::setAssetManager(s_androidApp->activity->assetManager);
 }
 
 void AndroidPlatformIntegration::handleWindowResize()

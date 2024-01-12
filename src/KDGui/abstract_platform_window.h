@@ -28,7 +28,8 @@ public:
         Win32,
         Cocoa,
         XCB,
-        Wayland
+        Wayland,
+        Android
     };
 
     explicit AbstractPlatformWindow(Window *window, AbstractPlatformWindow::Type type);
