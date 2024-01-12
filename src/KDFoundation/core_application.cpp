@@ -39,6 +39,7 @@ CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&
         m_logger = KDUtils::Logger::logger("application");
         m_logger->set_level(spdlog::level::info);
     }
+    spdlog::set_default_logger(m_logger);
 
     // Helps with debugging setup on remote hosts
     if (const char *display = std::getenv("DISPLAY"))
