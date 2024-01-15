@@ -34,6 +34,9 @@ if(NOT TARGET spdlog::spdlog)
         FetchContent_MakeAvailable(fmt)
     endif()
     set(SPDLOG_FMT_EXTERNAL_HO ON)
+    # with this spdlog is included as a system library and won't e.g. trigger
+    # linter warnings
+    set(SPDLOG_SYSTEM_INCLUDES ON)
 
     get_property(tmp GLOBAL PROPERTY PACKAGES_NOT_FOUND)
     list(
