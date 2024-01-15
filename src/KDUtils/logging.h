@@ -22,9 +22,9 @@ namespace KDUtils {
 class KDUTILS_EXPORT Logger
 {
 public:
-    static std::shared_ptr<spdlog::logger> logger(const std::string &name);
+    static std::shared_ptr<spdlog::logger> logger(const std::string &name, spdlog::level::level_enum defaultLevel = spdlog::level::warn);
 
-    using LoggerFactoryFunction = std::function<std::shared_ptr<spdlog::logger>(const std::string &)>;
+    using LoggerFactoryFunction = std::function<std::shared_ptr<spdlog::logger>(const std::string &, spdlog::level::level_enum)>;
 
     static void setLoggerFactory(const LoggerFactoryFunction &factory);
     static LoggerFactoryFunction loggerFactory();

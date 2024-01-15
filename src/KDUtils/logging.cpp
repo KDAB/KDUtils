@@ -16,13 +16,13 @@ namespace KDUtils {
 
 Logger::LoggerFactoryFunction Logger::ms_loggerFactory = {};
 
-std::shared_ptr<spdlog::logger> Logger::logger(const std::string &name)
+std::shared_ptr<spdlog::logger> Logger::logger(const std::string &name, spdlog::level::level_enum defaultLevel)
 {
     std::shared_ptr<spdlog::logger> logger;
     if (ms_loggerFactory) {
         // Use the factory set by the application which should check
         // its own spdlog registry first before creating a new logger.
-        logger = ms_loggerFactory(name);
+        logger = ms_loggerFactory(name, defaultLevel);
     } else {
         // No factory set, use the spdlog registry from KDUtils
         logger = spdlog::get(name);
@@ -32,6 +32,7 @@ std::shared_ptr<spdlog::logger> Logger::logger(const std::string &name)
 #else
             logger = spdlog::stdout_color_mt(name);
 #endif
+            logger->set_level(defaultLevel);
         }
     }
     return logger;
