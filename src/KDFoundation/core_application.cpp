@@ -29,17 +29,14 @@ CoreApplication *CoreApplication::ms_application = nullptr;
 
 CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration)
     : Object()
+    , m_defaultLogger{ KDUtils::Logger::logger("default_log", spdlog::level::info) }
     , m_platformIntegration{ std::move(platformIntegration) }
+    , m_logger{ KDUtils::Logger::logger("core_application") }
 {
     assert(ms_application == nullptr);
     ms_application = this;
 
-    m_logger = spdlog::get("application");
-    if (!m_logger) {
-        m_logger = KDUtils::Logger::logger("application");
-        m_logger->set_level(spdlog::level::info);
-    }
-    spdlog::set_default_logger(m_logger);
+    spdlog::set_default_logger(m_defaultLogger);
 
     // Helps with debugging setup on remote hosts
     if (const char *display = std::getenv("DISPLAY"))

@@ -59,8 +59,7 @@ public:
     AbstractPlatformIntegration *platformIntegration();
 
     static CoreApplication *ms_application;
-    static bool ms_loggingSetup;
-    std::shared_ptr<spdlog::logger> m_logger;
+    std::shared_ptr<spdlog::logger> m_defaultLogger;
 
 private:
     void init();
@@ -71,6 +70,7 @@ private:
     std::unique_ptr<AbstractPlatformIntegration> m_platformIntegration;
     std::unique_ptr<AbstractPlatformEventLoop> m_platformEventLoop;
     std::unique_ptr<Postman> m_postman;
+    std::shared_ptr<spdlog::logger> m_logger;
 };
 
 } // namespace KDFoundation
