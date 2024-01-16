@@ -57,6 +57,10 @@ int32_t AndroidPlatformEventLoop::androidHandleInputEvent(android_app *app, AInp
             const auto finish = env->GetMethodID(env->GetObjectClass(app->activity->clazz), "finish", "()V");
             env->CallVoidMethod(app->activity->clazz, finish, 0);
             return 1; // prevent default handler
+        } else {
+            auto platformIntegration = reinterpret_cast<AndroidPlatformEventLoop *>(AndroidPlatformIntegration::s_androidApp->userData)->androidPlatformIntegration();
+            platformIntegration->handleKeyEvent(AKeyEvent_getAction(event), AKeyEvent_getKeyCode(event), AKeyEvent_getMetaState(event), AKeyEvent_getEventTime(event));
+            return 0;
         }
         break;
     // TODO IMPLEMENT ME

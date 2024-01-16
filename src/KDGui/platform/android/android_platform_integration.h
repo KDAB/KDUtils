@@ -34,6 +34,7 @@ public:
     void handleWindowResize();
     void registerPlatformWindow(AbstractPlatformWindow *window);
     void unregisterPlatformWindow(AbstractPlatformWindow *window);
+    void handleKeyEvent(int32_t action, int32_t code, int32_t meta, int64_t time);
 
     AbstractClipboard *clipboard() override
     {

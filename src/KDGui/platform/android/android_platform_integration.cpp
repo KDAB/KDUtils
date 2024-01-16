@@ -20,6 +20,7 @@
 
 #include "android_platform_event_loop.h"
 #include "android_platform_window.h"
+#include "android_keyboard_map.h"
 
 #include <android/log.h>
 
@@ -53,6 +54,23 @@ void AndroidPlatformIntegration::handleWindowResize()
         }
     }
 }
+void AndroidPlatformIntegration::handleKeyEvent(int32_t action, int32_t code, int32_t meta, int64_t time)
+{
+    auto key = androidKeyCodeToKey(code);
+    auto modifiers = androidKeyMetaToModifiers(meta);
+
+    if (action == AKEY_EVENT_ACTION_DOWN) {
+        for (auto *platformWindow : m_windows) {
+            platformWindow->handleKeyPress(static_cast<uint32_t>(time), static_cast<uint8_t>(code), key, modifiers);
+        }
+
+    } else if (action == AKEY_EVENT_ACTION_UP) {
+        for (auto *platformWindow : m_windows) {
+            platformWindow->handleKeyRelease(static_cast<uint32_t>(time), static_cast<uint8_t>(code), key, modifiers);
+        }
+    }
+}
+
 void AndroidPlatformIntegration::registerPlatformWindow(AbstractPlatformWindow *window)
 {
     m_windows.insert(window);
