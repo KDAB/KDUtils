@@ -65,6 +65,10 @@ void AndroidPlatformWindow::enableRawMouseInput() { }
 
 void AndroidPlatformWindow::disableRawMouseInput() { }
 
+void AndroidPlatformWindow::grabMouse() { }
+
+void AndroidPlatformWindow::releaseMouse() { }
+
 void AndroidPlatformWindow::setTitle(const std::string &title)
 {
     m_title = title;
