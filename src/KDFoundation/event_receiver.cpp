@@ -1,7 +1,7 @@
 /*
   This file is part of KDUtils.
 
-  SPDX-FileCopyrightText: 2018-2024 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+  SPDX-FileCopyrightText: 2018 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
   Author: Marco Thaller <marco.thaller@kdab.com>
 
   SPDX-License-Identifier: MIT

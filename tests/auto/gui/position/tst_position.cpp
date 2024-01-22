@@ -1,12 +1,12 @@
 /*
-    This file is part of KDUtils.
+  This file is part of KDUtils.
 
-    SPDX-FileCopyrightText: 2021-2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
-    Author: Joshua Goins <joshua.goins@kdab.com>
+  SPDX-FileCopyrightText: 2021 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+  Author: Joshua Goins <joshua.goins@kdab.com>
 
-    SPDX-License-Identifier: MIT
+  SPDX-License-Identifier: MIT
 
-    Contact KDAB at <info@kdab.com> for commercial licensing options.
+  Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 
 #include <KDGui/position.h>

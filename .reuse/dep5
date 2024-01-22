@@ -5,17 +5,17 @@ Source: https://github.com/KDAB/KDUtils
 
 #misc source code
 Files: CMakePresets.json CMakeUserPresets-example.json
-Copyright: 2018-2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+Copyright: Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
 License: MIT
 
 #misc documentation
 Files: ChangeLog README.md
-Copyright: 2018-2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+Copyright: Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
 License: MIT
 
 #misc config files
 Files: .pre-commit-config.yaml .codespellrc .krazy .cmake-format .clang-format .clang-tidy .gitignore .gitreview .mdlrc .mdlrc.rb appveyor.yml
-Copyright: 2018-2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+Copyright: Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
 License: BSD-3-Clause
 
 #3rdparty
