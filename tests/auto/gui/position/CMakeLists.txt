@@ -1,7 +1,7 @@
 # This file is part of KDUtils.
 #
 # SPDX-FileCopyrightText: 2021-2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
-# Author: Joshua Goins <josh@redstrate.com>
+# Author: Joshua Goins <joshua.goins@kdab.com>
 #
 # SPDX-License-Identifier: MIT
 #
