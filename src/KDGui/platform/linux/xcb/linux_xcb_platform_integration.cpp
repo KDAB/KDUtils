@@ -70,12 +70,7 @@ LinuxXcbPlatformEventLoop *LinuxXcbPlatformIntegration::createPlatformEventLoopI
 {
     // We ensure that the logger has been created here rather than in the ctor so that
     // the central logging configuration in CoreApplication has had a chance to execute.
-    m_logger = spdlog::get("xcb");
-    if (!m_logger) {
-        m_logger = KDUtils::Logger::logger("xcb");
-        m_logger->set_level(spdlog::level::info);
-    }
-
+    m_logger = KDUtils::Logger::logger("xcb", spdlog::level::info);
     return new LinuxXcbPlatformEventLoop(this);
 }
 

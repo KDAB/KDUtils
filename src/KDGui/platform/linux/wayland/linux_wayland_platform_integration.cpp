@@ -47,11 +47,7 @@ LinuxWaylandPlatformIntegration::~LinuxWaylandPlatformIntegration()
 
 void LinuxWaylandPlatformIntegration::init()
 {
-    m_logger = spdlog::get("wayland");
-    if (!m_logger) {
-        m_logger = KDUtils::Logger::logger("wayland");
-        m_logger->set_level(spdlog::level::info);
-    }
+    m_logger = KDUtils::Logger::logger("wayland", spdlog::level::info);
 
     SPDLOG_LOGGER_INFO(m_logger, "Wayland display is: {}", getenv("WAYLAND_DISPLAY"));
 

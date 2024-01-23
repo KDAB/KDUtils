@@ -25,11 +25,7 @@ using namespace KDGui;
 LinuxXkbKeyboard::LinuxXkbKeyboard(LinuxXcbPlatformIntegration *platformIntegration)
     : m_platformIntegration{ platformIntegration }
 {
-    m_logger = spdlog::get("xkeyboard");
-    if (!m_logger) {
-        m_logger = KDUtils::Logger::logger("xkeyboard");
-        m_logger->set_level(spdlog::level::trace);
-    }
+    m_logger = KDUtils::Logger::logger("xkeyboard", spdlog::level::trace);
 
     // Query the core keyboard device id
     m_deviceId = xkb_x11_get_core_keyboard_device_id(m_platformIntegration->connection());

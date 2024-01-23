@@ -33,11 +33,7 @@ Win32PlatformEventLoop *Win32GuiPlatformIntegration::createPlatformEventLoopImpl
 {
     // We ensure that the logger has been created here rather than in the ctor so that
     // the central logging configuration in CoreApplication has had a chance to execute.
-    m_logger = spdlog::get("win32");
-    if (!m_logger) {
-        m_logger = spdlog::stdout_color_mt("win32");
-        m_logger->set_level(spdlog::level::info);
-    }
+    m_logger = KDUtils::Logger::logger("win32", spdlog::level::info);
 
     return new Win32PlatformEventLoop();
 }
