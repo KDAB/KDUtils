@@ -66,6 +66,14 @@ LinuxXkbKeyboard *LinuxXcbPlatformIntegration::keyboard()
     return m_keyboard.get();
 }
 
+LinuxXcbPlatformWindow *LinuxXcbPlatformIntegration::window(xcb_window_t xcbWindow) const
+{
+    auto it = m_windows.find(xcbWindow);
+    if (it == m_windows.end())
+        return nullptr;
+    return it->second;
+}
+
 LinuxXcbPlatformEventLoop *LinuxXcbPlatformIntegration::createPlatformEventLoopImpl()
 {
     // We ensure that the logger has been created here rather than in the ctor so that

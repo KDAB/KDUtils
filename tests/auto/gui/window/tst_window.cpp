@@ -80,4 +80,23 @@ TEST_CASE("Creation")
         REQUIRE(w->platformWindow()->type() == AbstractPlatformWindow::Type::Cocoa);
 #endif
     }
+
+    SUBCASE("doesn't crash if Window destroyed with pending platform events")
+    {
+        // GIVEN
+        GuiApplication app;
+        auto window = std::make_unique<Window>();
+        window->width = 512;
+        window->height = 512;
+        window->create();
+
+        REQUIRE(window->platformWindow() != nullptr);
+
+        // WHEN -> Trigger a resize (this should trigger platform events, at least it does for XCB)
+        window->width = 256;
+        window->height = 256;
+
+        // THEN -> Shouldn't crash if platform backend is trying to deliver resize events on app exit
+        // to window that is now destroyed
+    }
 }

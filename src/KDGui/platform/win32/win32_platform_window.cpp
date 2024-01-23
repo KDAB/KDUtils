@@ -169,7 +169,6 @@ Win32PlatformWindow::Win32PlatformWindow(Win32GuiPlatformIntegration *platformIn
 
 Win32PlatformWindow::~Win32PlatformWindow()
 {
-    destroy();
     delete m_rawInputData;
     m_rawInputData = nullptr;
     m_rawInputDataSize = 0;

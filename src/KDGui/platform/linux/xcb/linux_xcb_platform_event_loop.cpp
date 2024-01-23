@@ -114,8 +114,10 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
             const auto w = configureEvent->width;
             const auto h = configureEvent->height;
             auto window = m_platformIntegration->window(configureEvent->window);
-            SPDLOG_LOGGER_DEBUG(m_logger, "{}: Resize of window to {} x {}", xcbEvent->sequence, w, h);
-            window->handleResize(w, h);
+            if (window) {
+                SPDLOG_LOGGER_DEBUG(m_logger, "{}: Resize of window to {} x {}", xcbEvent->sequence, w, h);
+                window->handleResize(w, h);
+            }
             break;
         }
 
@@ -136,6 +138,8 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
         case XCB_BUTTON_PRESS: {
             const auto buttonEvent = reinterpret_cast<xcb_button_press_event_t *>(xcbEvent);
             auto window = m_platformIntegration->window(buttonEvent->event);
+            if (window == nullptr)
+                break;
             auto button = buttonEvent->detail;
 
             switch (button) {
@@ -217,6 +221,8 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
         case XCB_BUTTON_RELEASE: {
             const auto buttonEvent = reinterpret_cast<xcb_button_release_event_t *>(xcbEvent);
             auto window = m_platformIntegration->window(buttonEvent->event);
+            if (window == nullptr)
+                break;
             SPDLOG_LOGGER_DEBUG(m_logger,
                                 "Mouse release event for button {} at pos ({}, {})",
                                 buttonEvent->detail,
@@ -233,6 +239,8 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
         case XCB_MOTION_NOTIFY: {
             const auto mouseMoveEvent = reinterpret_cast<xcb_motion_notify_event_t *>(xcbEvent);
             auto window = m_platformIntegration->window(mouseMoveEvent->event);
+            if (window == nullptr)
+                break;
             SPDLOG_LOGGER_DEBUG(m_logger,
                                 "{}: Mouse move event for button {} at pos ({}, {})",
                                 xcbEvent->sequence,

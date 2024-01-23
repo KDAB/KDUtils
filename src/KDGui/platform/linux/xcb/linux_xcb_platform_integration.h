@@ -46,7 +46,7 @@ public:
         m_windows.insert({ xcbWindow, window });
     }
     void unregisterWindowForEvents(xcb_window_t xcbWindow) { m_windows.erase(xcbWindow); }
-    LinuxXcbPlatformWindow *window(xcb_window_t xcbWindow) { return m_windows.at(xcbWindow); }
+    LinuxXcbPlatformWindow *window(xcb_window_t xcbWindow) const;
 
 private:
     LinuxXcbPlatformEventLoop *createPlatformEventLoopImpl() override;

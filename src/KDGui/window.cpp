@@ -33,7 +33,11 @@ Window::Window()
     rawMouseInputEnabled.valueChanged().connect(&Window::onRawMouseInputEnabledChanged, this);
 }
 
-Window::~Window() = default;
+Window::~Window()
+{
+    if (m_platformWindow)
+        destroy();
+}
 
 Window::Window(Window &&other) noexcept = default;
 Window &Window::operator=(Window &&other) noexcept = default;
@@ -80,6 +84,7 @@ void Window::destroy()
         return;
 
     m_platformWindow->destroy();
+    m_platformWindow = nullptr;
 }
 
 void Window::registerEventReceiver(Object *receiver)
