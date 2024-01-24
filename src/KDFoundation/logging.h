@@ -12,6 +12,8 @@
 // TODO: Remove once downstream libs are ported to use KDUtils::Logger
 #pragma once
 
+#warning "This header is deprecated, logging.h is now under <KDUtils/logging.h>"
+
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
