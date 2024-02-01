@@ -56,7 +56,7 @@ private:
     };
     std::unordered_map<int, NotifierSet> m_notifiers;
 
-    static LRESULT messageWindowProc(HWND, UINT, WPARAM, LPARAM);
+    static LRESULT CALLBACK messageWindowProc(HWND, UINT, WPARAM, LPARAM);
     void handleSocketMessage(WPARAM wParam, LPARAM lParam);
     bool registerWithWSAAsyncSelect(int fd, const NotifierSet &notifiers) const;
 
