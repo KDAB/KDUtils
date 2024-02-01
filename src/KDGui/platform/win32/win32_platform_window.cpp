@@ -49,7 +49,7 @@ KeyboardModifiers getKeyboardModifiers()
     return modifiers;
 }
 
-LRESULT windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     auto *platformWindow = reinterpret_cast<Win32PlatformWindow *>(GetProp(hwnd, KDGuiPlatformWindowProperty));
     if (!platformWindow)

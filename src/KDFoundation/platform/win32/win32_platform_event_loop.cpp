@@ -27,7 +27,7 @@ enum {
     WM_KD_SOCKETEVENT = WM_USER,
 };
 
-LRESULT Win32PlatformEventLoop::messageWindowProc(HWND hwnd, UINT msgId, WPARAM wp, LPARAM lp)
+LRESULT CALLBACK Win32PlatformEventLoop::messageWindowProc(HWND hwnd, UINT msgId, WPARAM wp, LPARAM lp)
 {
     auto *loop = reinterpret_cast<Win32PlatformEventLoop *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
