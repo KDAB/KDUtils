@@ -74,7 +74,14 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     )
     set_source_files_properties(core_application.cpp PROPERTIES COMPILE_DEFINITIONS _CRT_SECURE_NO_WARNINGS)
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    list(APPEND SOURCES platform/macos/macos_platform_event_loop.mm platform/macos/macos_platform_integration.mm)
+    list(
+        APPEND
+        SOURCES
+        platform/macos/macos_platform_event_loop.mm
+        platform/macos/macos_platform_event_loop.h
+        platform/macos/macos_platform_integration.mm
+        platform/macos/macos_platform_integration.h
+    )
 endif()
 
 add_library(
@@ -90,10 +97,6 @@ target_link_libraries(
     PUBLIC KDUtils::KDUtils KDAB::KDBindings
 )
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    target_link_libraries(KDFoundation PUBLIC "-framework Cocoa" "-framework QuartzCore")
-endif()
-
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     target_compile_definitions(KDFoundation PRIVATE PLATFORM_ANDROID)
     set(PLATFORM_NAME "PLATFORM_ANDROID")
@@ -106,6 +109,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(KDFoundation PRIVATE ws2_32)
     set(PLATFORM_NAME "PLATFORM_WIN32")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    target_link_libraries(KDFoundation PUBLIC "-framework Cocoa" "-framework QuartzCore")
     target_compile_definitions(KDFoundation PRIVATE PLATFORM_MACOS)
     set(PLATFORM_NAME "PLATFORM_MACOS")
 endif()

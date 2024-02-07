@@ -11,10 +11,11 @@
 
 #include "cocoa_platform_integration_impl.h"
 #include "cocoa_platform_window.h"
-
 #include <KDFoundation/platform/macos/macos_platform_event_loop.h>
 
 #import <Cocoa/Cocoa.h>
+
+#include <KDFoundation/core_application.h>
 
 using namespace KDGui;
 
@@ -30,9 +31,10 @@ static void createMenuBar()
 
     id appMenu = [[NSMenu alloc] init];
     [appMenuItem setSubmenu:appMenu];
-    [appMenu addItemWithTitle:[NSString stringWithFormat:@"Quit %@", appName]
-                       action:@selector(terminate:)
-                keyEquivalent:@"q"];
+    auto quitItem = [appMenu addItemWithTitle:[NSString stringWithFormat:@"Quit %@", appName]
+                                       action:@selector(terminate:)
+                                keyEquivalent:@"q"];
+    quitItem.target = [NSApplication sharedApplication];
 }
 
 @interface KDGuiApplicationDelegate : NSObject <NSApplicationDelegate>
@@ -54,7 +56,7 @@ static void createMenuBar()
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
 {
-    // TODO: close all windows gracefully
+    KDFoundation::CoreApplication::instance()->quit();
     return NSTerminateCancel;
 }
 @end
