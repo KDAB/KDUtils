@@ -18,6 +18,7 @@ add_subdirectory(file)
 add_subdirectory(dir)
 add_subdirectory(elapsedtimer)
 add_subdirectory(flags)
+add_subdirectory(signal)
 add_subdirectory(url)
 add_subdirectory(tailwind_colors)
 
