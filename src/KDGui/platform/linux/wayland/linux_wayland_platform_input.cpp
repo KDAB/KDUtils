@@ -224,18 +224,19 @@ void LinuxWaylandPlatformInput::pointerEnter(wl_pointer * /*pointer*/, uint32_t 
     m_pointer.lastSerial = serial;
 
     if (m_version >= WL_POINTER_FRAME_SINCE_VERSION) {
-        m_pointer.accumulatedEvent.focus = LinuxWaylandPlatformWindow::fromSurface(surface);
+        m_pointer.accumulatedEvent.focus = surface;
         m_pointer.accumulatedEvent.focusChange = true;
     } else {
-        m_pointer.focus = LinuxWaylandPlatformWindow::fromSurface(surface);
-        std::ignore = m_pointer.focus->cursorChanged.connect(&LinuxWaylandPlatformInput::setCursor, this);
+        m_pointer.focus = surface;
+        if (auto *window = m_integration->window(surface))
+            std::ignore = window->cursorChanged.connect(&LinuxWaylandPlatformInput::setCursor, this);
         setCursor();
     }
 }
 
 void LinuxWaylandPlatformInput::setCursor()
 {
-    if (m_pointer.focus->window()->cursorEnabled.get()) {
+    if (auto *window = m_integration->window(m_pointer.focus); window && window->window()->cursorEnabled.get()) {
         pointerUnlock();
 
         // TODO support other cursors
@@ -266,7 +267,7 @@ void LinuxWaylandPlatformInput::pointerUnlock()
 void LinuxWaylandPlatformInput::pointerLock()
 {
     if (auto constraints = m_integration->pointerConstraintsV1().object; constraints && !m_pointer.lockedPointerV1) {
-        m_pointer.lockedPointerV1 = zwp_pointer_constraints_v1_lock_pointer(constraints, m_pointer.focus->surface(),
+        m_pointer.lockedPointerV1 = zwp_pointer_constraints_v1_lock_pointer(constraints, m_pointer.focus,
                                                                             m_pointer.pointer, nullptr,
                                                                             ZWP_POINTER_CONSTRAINTS_V1_LIFETIME_PERSISTENT);
     }
@@ -278,7 +279,8 @@ void LinuxWaylandPlatformInput::pointerLeave(wl_pointer * /*pointer*/, uint32_t 
         m_pointer.accumulatedEvent.focus = nullptr;
         m_pointer.accumulatedEvent.focusChange = true;
     } else {
-        m_pointer.focus->cursorChanged.disconnectAll();
+        if (auto *window = m_integration->window(m_pointer.focus))
+            window->cursorChanged.disconnectAll();
         m_pointer.focus = nullptr;
     }
     m_pointer.lastSerial = serial;
@@ -291,7 +293,8 @@ void LinuxWaylandPlatformInput::pointerMotion(wl_pointer * /*pointer*/, uint32_t
         m_pointer.accumulatedEvent.pos = m_pointer.pos;
         m_pointer.accumulatedEvent.time = time;
     } else {
-        m_pointer.focus->handleMouseMove(time, MouseButton::NoButton, m_pointer.pos.x, m_pointer.pos.y);
+        if (auto *window = m_integration->window(m_pointer.focus))
+            window->handleMouseMove(time, MouseButton::NoButton, m_pointer.pos.x, m_pointer.pos.y);
     }
 }
 
@@ -311,10 +314,12 @@ void LinuxWaylandPlatformInput::pointerButton(wl_pointer * /*pointer*/, uint32_t
         return MouseButton::NoButton;
     }();
 
-    if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
-        m_pointer.focus->handleMousePress(time, btn, int16_t(m_pointer.pos.x), int16_t(m_pointer.pos.y));
-    } else {
-        m_pointer.focus->handleMouseRelease(time, btn, int16_t(m_pointer.pos.x), int16_t(m_pointer.pos.y));
+    if (auto *window = m_integration->window(m_pointer.focus)) {
+        if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
+            window->handleMousePress(time, btn, int16_t(m_pointer.pos.x), int16_t(m_pointer.pos.y));
+        } else {
+            window->handleMouseRelease(time, btn, int16_t(m_pointer.pos.x), int16_t(m_pointer.pos.y));
+        }
     }
     m_pointer.lastSerial = serial;
 }
@@ -329,34 +334,41 @@ void LinuxWaylandPlatformInput::pointerAxis(wl_pointer * /*pointer*/, uint32_t t
         m_pointer.accumulatedEvent.axis += Position(xDelta, yDelta);
         m_pointer.accumulatedEvent.time = time;
     } else {
-        m_pointer.focus->handleMouseWheel(time, xDelta, yDelta);
+        if (auto *window = m_integration->window(m_pointer.focus))
+            window->handleMouseWheel(time, xDelta, yDelta);
     }
 }
 
 void LinuxWaylandPlatformInput::pointerFrame(wl_pointer * /*pointer*/)
 {
     auto &ev = m_pointer.accumulatedEvent;
+    auto *window = m_integration->window(ev.focus);
     if (ev.focusChange && ev.focus) {
         m_pointer.focus = ev.focus;
-        std::ignore = m_pointer.focus->cursorChanged.connect(&LinuxWaylandPlatformInput::setCursor, this);
+        if (window)
+            std::ignore = window->cursorChanged.connect(&LinuxWaylandPlatformInput::setCursor, this);
         setCursor();
     }
 
     if (ev.axis != Position(0, 0)) {
-        m_pointer.focus->handleMouseWheel(ev.time, int32_t(ev.axis.x), int32_t(ev.axis.y));
+        if (window)
+            window->handleMouseWheel(ev.time, int32_t(ev.axis.x), int32_t(ev.axis.y));
         ev.axis = Position(0, 0);
     }
     if (ev.pos != Position(0, 0)) {
-        m_pointer.focus->handleMouseMove(ev.time, MouseButton::NoButton, ev.pos.x, ev.pos.y);
+        if (window)
+            window->handleMouseMove(ev.time, MouseButton::NoButton, ev.pos.x, ev.pos.y);
         ev.pos = Position(0, 0);
     }
     if (ev.delta != Position(0, 0)) {
-        m_pointer.focus->handleMouseMoveRelative(ev.time, ev.delta.x, ev.delta.y);
+        if (window)
+            window->handleMouseMoveRelative(ev.time, ev.delta.x, ev.delta.y);
         ev.delta = {};
     }
 
     if (ev.focusChange && !ev.focus) {
-        m_pointer.focus->cursorChanged.disconnectAll();
+        if (window)
+            window->cursorChanged.disconnectAll();
         m_pointer.focus = nullptr;
     }
     ev.focusChange = false;
@@ -385,7 +397,8 @@ void LinuxWaylandPlatformInput::pointerRelativeMotionV1(zwp_relative_pointer_v1 
         m_pointer.accumulatedEvent.delta = pos;
         m_pointer.accumulatedEvent.time = time;
     } else {
-        m_pointer.focus->handleMouseMoveRelative(time, pos.x, pos.y);
+        if (auto *window = m_integration->window(m_pointer.focus))
+            window->handleMouseMoveRelative(time, pos.x, pos.y);
     }
 }
 
@@ -419,7 +432,7 @@ void LinuxWaylandPlatformInput::keyboardKeymap(wl_keyboard * /*keyboard*/, uint3
 
 void LinuxWaylandPlatformInput::keyboardEnter(wl_keyboard * /*keyboard*/, uint32_t serial, wl_surface *surface, wl_array * /*keys*/)
 {
-    m_keyboard.focus = LinuxWaylandPlatformWindow::fromSurface(surface);
+    m_keyboard.focus = surface;
     m_keyboard.serial = serial;
 }
 
@@ -460,8 +473,10 @@ void LinuxWaylandPlatformInput::keybordKey(wl_keyboard * /*keyboard*/, uint32_t 
         // Get the modifier state
         const auto modifiers = xkb::modifierState(m_keyboard.state);
 
-        // NOLINTNEXTLINE(readability-suspicious-call-argument)
-        m_keyboard.focus->handleKeyRelease(time, keycode, skey, modifiers);
+        if (auto *window = m_integration->window(m_keyboard.focus)) {
+            // NOLINTNEXTLINE(readability-suspicious-call-argument)
+            window->handleKeyRelease(time, keycode, skey, modifiers);
+        }
         m_keyboard.repeat.timer.running = false;
     }
 }
@@ -496,15 +511,19 @@ void LinuxWaylandPlatformInput::keyboardSendKeyPress(uint32_t time, bool isRepea
     // Get the modifier state
     const auto modifiers = xkb::modifierState(m_keyboard.state);
 
+    auto *window = m_integration->window(m_keyboard.focus);
+    if (!window)
+        return;
+
     if (isRepeat) {
-        m_keyboard.focus->handleKeyRelease(time, m_keyboard.repeat.code, m_keyboard.repeat.key, modifiers);
+        window->handleKeyRelease(time, m_keyboard.repeat.code, m_keyboard.repeat.key, modifiers);
     }
 
     // Generate a key press event
-    m_keyboard.focus->handleKeyPress(time, m_keyboard.repeat.code, m_keyboard.repeat.key, modifiers);
+    window->handleKeyPress(time, m_keyboard.repeat.code, m_keyboard.repeat.key, modifiers);
 
     if (strlen(m_keyboard.repeat.text) > 0) {
-        m_keyboard.focus->handleTextInput(m_keyboard.repeat.text);
+        window->handleTextInput(m_keyboard.repeat.text);
     }
 }
 
@@ -516,12 +535,14 @@ void LinuxWaylandPlatformInput::touchDown(wl_touch * /*touch*/, uint32_t /*seria
         return;
     }
 
-    m_touch.focus = LinuxWaylandPlatformWindow::fromSurface(surface);
+    m_touch.focus = surface;
     m_touch.points.push_back(Touch::Point{ id, Position(int64_t(wl_fixed_to_double(x)), int64_t(wl_fixed_to_double(y))) });
     m_touch.time = time;
 
-    m_touch.focus->handleMouseMove(time, MouseButton::LeftButton, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
-    m_touch.focus->handleMousePress(time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
+    if (auto *window = m_integration->window(surface)) {
+        window->handleMouseMove(time, MouseButton::LeftButton, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
+        window->handleMousePress(time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
+    }
 }
 
 void LinuxWaylandPlatformInput::touchUp(wl_touch * /*touch*/, uint32_t /*serial*/, uint32_t time, int32_t id)
@@ -530,7 +551,8 @@ void LinuxWaylandPlatformInput::touchUp(wl_touch * /*touch*/, uint32_t /*serial*
         return;
     }
 
-    m_touch.focus->handleMouseRelease(time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
+    if (auto *window = m_integration->window(m_keyboard.focus))
+        window->handleMouseRelease(time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
     m_touch.points.clear();
 }
 
@@ -540,7 +562,8 @@ void LinuxWaylandPlatformInput::touchMotion(wl_touch * /*touch*/, uint32_t time,
         return;
     }
 
-    m_touch.focus->handleMouseMove(time, MouseButton::LeftButton, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
+    if (auto *window = m_integration->window(m_keyboard.focus))
+        window->handleMouseMove(time, MouseButton::LeftButton, m_touch.points[0].pos.x, m_touch.points[0].pos.y);
     m_touch.time = time;
 }
 
@@ -551,7 +574,8 @@ void LinuxWaylandPlatformInput::touchFrame(wl_touch *touch)
 void LinuxWaylandPlatformInput::touchCancel(wl_touch * /*touch*/)
 {
     if (!m_touch.points.empty()) {
-        m_touch.focus->handleMouseRelease(m_touch.time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
+        if (auto *window = m_integration->window(m_keyboard.focus))
+            window->handleMouseRelease(m_touch.time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
         m_touch.points.clear();
     }
 }

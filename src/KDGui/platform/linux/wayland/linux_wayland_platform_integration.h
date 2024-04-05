@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <unordered_map>
 #include <vector>
 
 #include <KDGui/abstract_gui_platform_integration.h>
@@ -69,6 +70,13 @@ public:
 
     wl_cursor_theme *cursorTheme() const { return m_cursorTheme; }
 
+    void registerWindowForEvents(wl_surface *surface, LinuxWaylandPlatformWindow *window)
+    {
+        m_windows.insert({ surface, window });
+    }
+    void unregisterWindowForEvents(wl_surface *surface) { m_windows.erase(surface); }
+    LinuxWaylandPlatformWindow *window(wl_surface *surface) const;
+
 private:
     LinuxWaylandPlatformEventLoop *createPlatformEventLoopImpl() override;
     LinuxWaylandPlatformWindow *createPlatformWindowImpl(Window *window) override;
@@ -91,6 +99,7 @@ private:
     Global<zxdg_decoration_manager_v1> m_decorationV1;
     Global<wl_data_device_manager> m_dataDeviceManager;
 
+    std::unordered_map<wl_surface *, LinuxWaylandPlatformWindow *> m_windows;
     std::vector<std::unique_ptr<LinuxWaylandPlatformInput>> m_inputs;
     std::vector<std::unique_ptr<LinuxWaylandPlatformOutput>> m_outputs;
     wl_cursor_theme *m_cursorTheme{ nullptr };

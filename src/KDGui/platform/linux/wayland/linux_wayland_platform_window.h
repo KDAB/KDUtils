@@ -41,7 +41,6 @@ public:
     LinuxWaylandPlatformWindow(LinuxWaylandPlatformWindow &&other) noexcept = default;
     LinuxWaylandPlatformWindow &operator=(LinuxWaylandPlatformWindow &&other) noexcept = default;
 
-    static LinuxWaylandPlatformWindow *fromSurface(wl_surface *surface);
     inline wl_surface *surface() const { return m_surface; }
     wl_display *display() const;
 
