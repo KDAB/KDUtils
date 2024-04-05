@@ -109,21 +109,21 @@ private:
         zwp_relative_pointer_v1 *relativePointerV1{ nullptr };
         zwp_locked_pointer_v1 *lockedPointerV1{ nullptr };
         wl_surface *cursorSurface{ nullptr };
-        LinuxWaylandPlatformWindow *focus{ nullptr };
+        wl_surface *focus{ nullptr };
         Position pos{ 0, 0 };
         struct AccumulatedPointerEvent {
             uint32_t time{ 0 };
             Position axis{ 0, 0 };
             Position pos{ 0, 0 };
             Position delta{ 0, 0 };
-            LinuxWaylandPlatformWindow *focus{ nullptr };
+            wl_surface *focus{ nullptr };
             int focusChange : 1;
         } accumulatedEvent;
     } m_pointer;
 
     struct Keyboard {
         wl_keyboard *keyboard{ nullptr };
-        LinuxWaylandPlatformWindow *focus{ nullptr };
+        wl_surface *focus{ nullptr };
         xkb_context *context{ nullptr };
         xkb_keymap *keymap{ nullptr };
         xkb_state *state{ nullptr };
@@ -143,7 +143,7 @@ private:
 
     struct Touch {
         wl_touch *touch{ nullptr };
-        LinuxWaylandPlatformWindow *focus{ nullptr };
+        wl_surface *focus{ nullptr };
         uint32_t time{ 0 };
         struct Point {
             int32_t id;

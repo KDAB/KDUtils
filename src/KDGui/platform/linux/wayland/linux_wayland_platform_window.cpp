@@ -47,13 +47,6 @@ LinuxWaylandPlatformWindow::LinuxWaylandPlatformWindow(
     });
 }
 
-LinuxWaylandPlatformWindow *LinuxWaylandPlatformWindow::fromSurface(wl_surface *surface)
-{
-    auto w = static_cast<LinuxWaylandPlatformWindow *>(wl_surface_get_user_data(surface));
-    assert(w);
-    return w;
-}
-
 wl_display *LinuxWaylandPlatformWindow::display() const
 {
     return m_platformIntegration->display();
@@ -65,6 +58,7 @@ bool LinuxWaylandPlatformWindow::create()
         return true;
 
     m_surface = wl_compositor_create_surface(m_platformIntegration->compositor().object);
+    m_platformIntegration->registerWindowForEvents(m_surface, this);
     static const wl_surface_listener listener = {
         wrapWlCallback<&LinuxWaylandPlatformWindow::enter>,
         wrapWlCallback<&LinuxWaylandPlatformWindow::leave>
@@ -81,6 +75,8 @@ bool LinuxWaylandPlatformWindow::destroy()
     if (m_surface) {
         wl_surface_destroy(m_surface);
     }
+    m_platformIntegration->unregisterWindowForEvents(m_surface);
+    m_surface = nullptr;
     return true;
 }
 

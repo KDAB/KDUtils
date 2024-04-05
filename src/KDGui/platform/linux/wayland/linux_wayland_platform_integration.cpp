@@ -113,6 +113,14 @@ AbstractClipboard *LinuxWaylandPlatformIntegration::clipboard()
     return m_clipboard.get();
 }
 
+LinuxWaylandPlatformWindow *LinuxWaylandPlatformIntegration::window(wl_surface *surface) const
+{
+    const auto it = m_windows.find(surface);
+    if (it == m_windows.end())
+        return nullptr;
+    return it->second;
+}
+
 LinuxWaylandPlatformEventLoop *LinuxWaylandPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new LinuxWaylandPlatformEventLoop(this);
