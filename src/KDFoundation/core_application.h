@@ -19,7 +19,6 @@
 #include <KDUtils/logging.h>
 
 #include <kdbindings/property.h>
-#include <kdbindings/connection_evaluator.h>
 
 #include <memory>
 #include <optional>
@@ -73,7 +72,6 @@ private:
     std::unique_ptr<AbstractPlatformEventLoop> m_platformEventLoop;
     std::unique_ptr<Postman> m_postman;
     std::shared_ptr<spdlog::logger> m_logger;
-    std::shared_ptr<KDBindings::ConnectionEvaluator> m_evaluator;
 };
 
 } // namespace KDFoundation

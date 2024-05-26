@@ -16,6 +16,8 @@
 #include <KDFoundation/kdfoundation_global.h>
 #include <KDFoundation/platform/abstract_platform_timer.h>
 
+#include <kdbindings/connection_evaluator.h>
+
 namespace KDFoundation {
 
 class Postman;
@@ -47,11 +49,19 @@ public:
     {
         return createPlatformTimerImpl(timer);
     }
+    std::shared_ptr<KDBindings::ConnectionEvaluator> connectionEvaluator()
+    {
+        if (!m_connectionEvaluator) {
+            m_connectionEvaluator = std::make_shared<KDBindings::ConnectionEvaluator>();
+        }
+        return m_connectionEvaluator;
+    }
 
 protected:
     virtual std::unique_ptr<AbstractPlatformTimer> createPlatformTimerImpl(Timer *timer) = 0;
 
     Postman *m_postman{ nullptr };
+    std::shared_ptr<KDBindings::ConnectionEvaluator> m_connectionEvaluator{ nullptr };
 };
 
 } // namespace KDFoundation

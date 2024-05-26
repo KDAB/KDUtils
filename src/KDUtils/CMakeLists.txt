@@ -30,7 +30,6 @@ set(HEADERS
     tailwind_colors.h
     url.h
     kdutils_global.h
-    signal.h
 )
 
 add_library(

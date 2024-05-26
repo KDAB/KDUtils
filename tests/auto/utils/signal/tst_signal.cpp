@@ -1,5 +1,7 @@
-#include <KDUtils/signal.h>
 #include <KDFoundation/core_application.h>
+
+#include <kdbindings/signal.h>
+
 #include <thread>
 
 using namespace KDUtils;
@@ -14,17 +16,17 @@ TEST_SUITE("Signal")
         int val = 4;
 
         auto *appInstance = new KDFoundation::CoreApplication;
-        KDUtils::Signal<int> signal1;
-        KDUtils::Signal<int> signal2;
+        KDBindings::Signal<int> signal1;
+        KDBindings::Signal<int> signal2;
 
         std::thread thread1([&] {
-            signal1.connect(appInstance->connectionEvaluator(), [&val](int value) {
+            signal1.connectDeferred(appInstance->connectionEvaluator(), [&val](int value) {
                 val += value;
             });
         });
 
         std::thread thread2([&] {
-            signal2.connect(appInstance->connectionEvaluator(), [&val](int value) {
+            signal2.connectDeferred(appInstance->connectionEvaluator(), [&val](int value) {
                 val += value;
             });
         });
@@ -44,17 +46,17 @@ TEST_SUITE("Signal")
     TEST_CASE("Emit Multiple Signals with Evaluator")
     {
         auto *appInstance = new KDFoundation::CoreApplication;
-        KDUtils::Signal<int> signal1;
-        KDUtils::Signal<int> signal2;
+        KDBindings::Signal<int> signal1;
+        KDBindings::Signal<int> signal2;
 
         int val1 = 4;
         int val2 = 4;
 
-        signal1.connect(appInstance->connectionEvaluator(), [&val1](int value) {
+        signal1.connectDeferred(appInstance->connectionEvaluator(), [&val1](int value) {
             val1 += value;
         });
 
-        signal2.connect(appInstance->connectionEvaluator(), [&val2](int value) {
+        signal2.connectDeferred(appInstance->connectionEvaluator(), [&val2](int value) {
             val2 += value;
         });
 
@@ -81,10 +83,10 @@ TEST_SUITE("Signal")
     TEST_CASE("Connect, Emit, Disconnect, and Evaluate")
     {
         auto *appInstance = new KDFoundation::CoreApplication;
-        KDUtils::Signal<int> signal;
+        KDBindings::Signal<int> signal;
         int val = 4;
 
-        auto connection = signal.connect(appInstance->connectionEvaluator(), [&val](int value) {
+        auto connection = signal.connectDeferred(appInstance->connectionEvaluator(), [&val](int value) {
             val += value;
         });
 

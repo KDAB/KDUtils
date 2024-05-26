@@ -32,7 +32,6 @@ CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&
     , m_defaultLogger{ KDUtils::Logger::logger("default_log", spdlog::level::info) }
     , m_platformIntegration{ std::move(platformIntegration) }
     , m_logger{ KDUtils::Logger::logger("core_application") }
-    , m_evaluator(std::make_shared<KDBindings::ConnectionEvaluator>())
 {
     assert(ms_application == nullptr);
     ms_application = this;
@@ -78,7 +77,7 @@ CoreApplication::~CoreApplication()
 
 std::shared_ptr<KDBindings::ConnectionEvaluator> CoreApplication::connectionEvaluator()
 {
-    return m_evaluator;
+    return eventLoop()->connectionEvaluator();
 }
 
 void CoreApplication::postEvent(EventReceiver *target, std::unique_ptr<Event> &&event)
