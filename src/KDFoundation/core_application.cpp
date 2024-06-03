@@ -75,6 +75,11 @@ CoreApplication::~CoreApplication()
     ms_application = nullptr;
 }
 
+std::shared_ptr<KDBindings::ConnectionEvaluator> CoreApplication::connectionEvaluator()
+{
+    return eventLoop()->connectionEvaluator();
+}
+
 void CoreApplication::postEvent(EventReceiver *target, std::unique_ptr<Event> &&event)
 {
     assert(target != nullptr);

@@ -56,6 +56,7 @@ public:
     int exec();
     void quit();
 
+    std::shared_ptr<KDBindings::ConnectionEvaluator> connectionEvaluator();
     AbstractPlatformIntegration *platformIntegration();
 
     static CoreApplication *ms_application;
