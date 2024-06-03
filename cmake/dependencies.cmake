@@ -16,7 +16,7 @@ message(STATUS "Looking for KDUtils dependencies")
 # spdlog needs to be installed. If already exists in the prefix,
 # we don't want to override it, so first we try to find it.
 # If we don't find it, then we fetch it and install it
-find_package(spdlog 1.13.0 QUIET)
+find_package(spdlog 1.14.1 QUIET)
 
 if(NOT TARGET spdlog::spdlog)
     # We need to use external fmt because the one bundled with spldog 1.x throws
@@ -24,7 +24,7 @@ if(NOT TARGET spdlog::spdlog)
     # See https://github.com/gabime/spdlog/issues/2912
     # TODO(spdlog2): external fmt can possibly be removed once splog 2.x is used
     # which bundles newer fmt version
-    find_package(fmt 10.1.1 QUIET)
+    find_package(fmt 10.2.1 QUIET)
     if(NOT TARGET fmt)
         FetchContent_Declare(
             fmt
@@ -51,7 +51,7 @@ if(NOT TARGET spdlog::spdlog)
     FetchContent_Declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG 7c02e204c92545f869e2f04edaab1f19fe8b19fd # v1.13.0
+        GIT_TAG 27cb4c76708608465c413f6d0e6b8d99a4d84302 # v1.14.1
     )
     set(SPDLOG_INSTALL
         ON
