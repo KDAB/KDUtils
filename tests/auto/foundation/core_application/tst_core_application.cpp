@@ -188,7 +188,6 @@ TEST_CASE("Event handling")
     }
 }
 
-#ifndef KD_PLATFORM_MACOS
 TEST_CASE("Timer handling")
 {
     SUBCASE("timer fires correctly")
@@ -261,7 +260,6 @@ TEST_CASE("Timer handling")
         REQUIRE(fired == true);
     }
 }
-#endif
 
 TEST_CASE("Main event loop")
 {

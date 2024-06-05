@@ -13,8 +13,12 @@
 
 #include <KDFoundation/platform/abstract_platform_event_loop.h>
 #include <KDFoundation/kdfoundation_global.h>
+#include <unordered_map>
 
 namespace KDFoundation {
+
+class MacOSPlatformTimer;
+class NSTimerWrapper;
 
 class KDFOUNDATION_API MacOSPlatformEventLoop : public AbstractPlatformEventLoop
 {
@@ -34,6 +38,8 @@ public:
     bool unregisterNotifier(FileDescriptorNotifier *notifier) override;
 
     static void postEmptyEvent();
+
+    std::unordered_map<void *, MacOSPlatformTimer *> timerMap;
 
 private:
     std::unique_ptr<AbstractPlatformTimer> createPlatformTimerImpl(Timer *timer) override;
