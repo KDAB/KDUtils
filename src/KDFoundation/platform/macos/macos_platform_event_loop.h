@@ -18,7 +18,6 @@
 namespace KDFoundation {
 
 class MacOSPlatformTimer;
-class NSTimerWrapper;
 
 class KDFOUNDATION_API MacOSPlatformEventLoop : public AbstractPlatformEventLoop
 {
