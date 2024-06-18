@@ -25,7 +25,7 @@ class Timer;
 class KDFOUNDATION_API MacOSPlatformTimer : public AbstractPlatformTimer
 {
 public:
-    MacOSPlatformTimer(Timer *timer);
+    explicit MacOSPlatformTimer(Timer *timer);
     ~MacOSPlatformTimer() override;
 
 private:

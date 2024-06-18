@@ -11,8 +11,6 @@
 
 #include "macos_platform_timer.h"
 #include "macos_platform_event_loop.h"
-
-#include <AppKit/AppKit.h>
 #include <Foundation/Foundation.h>
 #include <algorithm>
 #include <cassert>
@@ -20,7 +18,6 @@
 #include <cstddef>
 #include <type_traits>
 #include <unistd.h>
-
 #include "KDFoundation/core_application.h"
 #include "KDFoundation/timer.h"
 #include "KDFoundation/platform/macos/macos_platform_event_loop.h"
@@ -35,9 +32,6 @@ inline MacOSPlatformEventLoop *eventLoop()
 MacOSPlatformTimer::MacOSPlatformTimer(Timer *timer)
     : m_handler{ timer }, cfTimer{ nullptr }
 {
-    @autoreleasepool {
-        [NSApplication sharedApplication];
-    }
     timer->running.valueChanged().connect([this, timer](bool running) {
         if (running) {
             arm(timer->interval.get());

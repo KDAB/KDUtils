@@ -12,11 +12,10 @@
 #include "macos_platform_event_loop.h"
 #include "macos_platform_timer.h"
 #import <Foundation/Foundation.h>
-#include <unordered_map>
-#include <memory>
 #import <AppKit/AppKit.h>
-
 #include <limits>
+#include <memory>
+
 constexpr auto KDFoundationCocoaEventSubTypeWakeup = std::numeric_limits<short>::max();
 
 namespace KDFoundation {
