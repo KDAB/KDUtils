@@ -188,7 +188,7 @@ TEST_CASE("Event handling")
     }
 }
 
-TEST_CASE("Timer handling")
+TEST_CASE("Timer handling" * doctest::timeout(120))
 {
     SUBCASE("timer fires correctly")
     {
