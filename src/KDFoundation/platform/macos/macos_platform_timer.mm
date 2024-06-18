@@ -12,25 +12,18 @@
 #include "macos_platform_timer.h"
 #include "macos_platform_event_loop.h"
 
+#include <AppKit/AppKit.h>
 #include <Foundation/Foundation.h>
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <cstddef>
 #include <type_traits>
 #include <unistd.h>
-#import <AppKit/AppKit.h>
 
 #include "KDFoundation/core_application.h"
 #include "KDFoundation/timer.h"
 #include "KDFoundation/platform/macos/macos_platform_event_loop.h"
-
-namespace KDFoundation {
-
-class NSTimerWrapper
-{
-    NSTimer *timer;
-};
-} // namespace KDFoundation
 
 using namespace KDFoundation;
 
@@ -40,14 +33,11 @@ inline MacOSPlatformEventLoop *eventLoop()
 }
 
 MacOSPlatformTimer::MacOSPlatformTimer(Timer *timer)
-    : m_handler{ timer }, highResTimer{ nullptr }
+    : m_handler{ timer }, cfTimer{ nullptr }
 {
-
     @autoreleasepool {
-        // make sure there's a NSApp
         [NSApplication sharedApplication];
     }
-
     timer->running.valueChanged().connect([this, timer](bool running) {
         if (running) {
             arm(timer->interval.get());
@@ -67,50 +57,49 @@ MacOSPlatformTimer::~MacOSPlatformTimer()
     disarm();
 }
 
-void MacOSPlatformTimer::timerFired(void *context)
+void MacOSPlatformTimer::timerFired(CFRunLoopTimerRef timer, void *info)
 {
-    @autoreleasepool {
-        MacOSPlatformEventLoop *ev = eventLoop();
-        dispatch_source_t caller = (dispatch_source_t)context;
-        if (auto it = ev->timerMap.find(caller); it != ev->timerMap.end()) {
-            it->second->m_handler->timeout.emit();
-        }
+    MacOSPlatformEventLoop *ev = eventLoop();
+    void *key = timer;
+    if (auto it = ev->timerMap.find(key); it != ev->timerMap.end()) {
+        SPDLOG_DEBUG("fired ->");
+        it->second->m_handler->timeout.emit();
     }
 }
 
 void MacOSPlatformTimer::arm(std::chrono::microseconds us)
 {
-  @autoreleasepool {
+    if (cfTimer) {
+        disarm();
+    }
 
-      if (highResTimer) {
-          disarm();
-      }
-      const auto interval = std::chrono::duration_cast<std::chrono::nanoseconds>(us).count();
-      dispatch_queue_main_t mainQueue = dispatch_get_main_queue();
-      highResTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, mainQueue);
-      dispatch_source_set_timer(highResTimer,
-                                dispatch_time(DISPATCH_TIME_NOW, interval),
-                                interval,
-                                0);
-      dispatch_source_set_event_handler_f(highResTimer, timerFired);
-      dispatch_set_context(highResTimer, highResTimer);
-      dispatch_resume(highResTimer);
+    CFTimeInterval interval = std::chrono::duration_cast<std::chrono::duration<double>>(us).count();
+    CFRunLoopTimerContext timerContext = { 0, NULL, NULL, NULL, NULL };
+    CFAbsoluteTime fireDate = CFAbsoluteTimeGetCurrent() + interval;
+    // Create the timer
+    cfTimer = CFRunLoopTimerCreate(
+            kCFAllocatorDefault, // Allocator
+            fireDate, // Fire time
+            interval, // Interval
+            0, // Flags
+            0, // Order
+            timerFired, // Callback function
+            &timerContext // Timer context
+    );
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), cfTimer, kCFRunLoopCommonModes);
 
-      if (highResTimer) {
-          void *key = reinterpret_cast<void *>(highResTimer);
-          eventLoop()->timerMap[key] = this;
-      }
-  }
+    if (cfTimer) {
+        void *key = reinterpret_cast<void *>(cfTimer);
+        eventLoop()->timerMap[key] = this;
+    }
 }
 
 void MacOSPlatformTimer::disarm()
 {
-    @autoreleasepool {
-        if (highResTimer) {
-            void *key = reinterpret_cast<void *>(highResTimer);
-            eventLoop()->timerMap.erase(key);
-            dispatch_source_cancel(highResTimer);
-            highResTimer = nullptr;
-        }
+    if (cfTimer) {
+        void *key = reinterpret_cast<void *>(cfTimer);
+        eventLoop()->timerMap.erase(key);
+        CFRelease(cfTimer);
+        cfTimer = nullptr;
     }
 }

@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <Foundation/Foundation.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 #include <chrono>
 
@@ -31,9 +31,9 @@ public:
 private:
     void arm(std::chrono::microseconds us);
     void disarm();
-    static void timerFired(void *context);
+    static void timerFired(CFRunLoopTimerRef timer, void *info);
     Timer *m_handler;
-    dispatch_source_t highResTimer;
+    CFRunLoopTimerRef cfTimer;
 };
 
 } // namespace KDFoundation
