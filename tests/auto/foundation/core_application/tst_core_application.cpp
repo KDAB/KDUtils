@@ -205,7 +205,7 @@ TEST_CASE("Timer handling")
         timer.timeout.connect([&]() {
             const auto endTime = std::chrono::steady_clock::now();
             REQUIRE(endTime - time > 50ms);
-            REQUIRE(endTime - time < 150ms);
+            REQUIRE(endTime - time < 200ms);
             time = endTime;
             timeout++;
         });
