@@ -62,7 +62,6 @@ void MacOSPlatformTimer::timerFired(CFRunLoopTimerRef timer, void *info)
     MacOSPlatformEventLoop *ev = eventLoop();
     void *key = timer;
     if (auto it = ev->timerMap.find(key); it != ev->timerMap.end()) {
-        SPDLOG_DEBUG("fired ->");
         it->second->m_handler->timeout.emit();
     }
 }
