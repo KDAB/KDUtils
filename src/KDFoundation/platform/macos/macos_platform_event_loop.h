@@ -38,10 +38,11 @@ public:
 
     static void postEmptyEvent();
 
-    std::unordered_map<void *, MacOSPlatformTimer *> timerMap;
-
 private:
     std::unique_ptr<AbstractPlatformTimer> createPlatformTimerImpl(Timer *timer) override;
+
+    std::unordered_map<void *, MacOSPlatformTimer *> timerMap;
+    friend class MacOSPlatformTimer;
 };
 
 } // namespace KDFoundation
