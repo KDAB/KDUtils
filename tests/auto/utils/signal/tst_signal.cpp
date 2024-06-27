@@ -15,18 +15,18 @@ TEST_SUITE("Signal")
     {
         int val = 4;
 
-        auto *appInstance = new KDFoundation::CoreApplication;
+        KDFoundation::CoreApplication app;
         KDBindings::Signal<int> signal1;
         KDBindings::Signal<int> signal2;
 
         std::thread thread1([&] {
-            signal1.connectDeferred(appInstance->connectionEvaluator(), [&val](int value) {
+            signal1.connectDeferred(app.connectionEvaluator(), [&val](int value) {
                 val += value;
             });
         });
 
         std::thread thread2([&] {
-            signal2.connectDeferred(appInstance->connectionEvaluator(), [&val](int value) {
+            signal2.connectDeferred(app.connectionEvaluator(), [&val](int value) {
                 val += value;
             });
         });
@@ -38,25 +38,25 @@ TEST_SUITE("Signal")
         signal2.emit(3);
         CHECK(val == 4); // val not changing immediately after emit
 
-        appInstance->connectionEvaluator()->evaluateDeferredConnections();
+        app.connectionEvaluator()->evaluateDeferredConnections();
 
         CHECK(val == 9);
     }
 
     TEST_CASE("Emit Multiple Signals with Evaluator")
     {
-        auto *appInstance = new KDFoundation::CoreApplication;
+        KDFoundation::CoreApplication app;
         KDBindings::Signal<int> signal1;
         KDBindings::Signal<int> signal2;
 
         int val1 = 4;
         int val2 = 4;
 
-        signal1.connectDeferred(appInstance->connectionEvaluator(), [&val1](int value) {
+        signal1.connectDeferred(app.connectionEvaluator(), [&val1](int value) {
             val1 += value;
         });
 
-        signal2.connectDeferred(appInstance->connectionEvaluator(), [&val2](int value) {
+        signal2.connectDeferred(app.connectionEvaluator(), [&val2](int value) {
             val2 += value;
         });
 
@@ -74,7 +74,7 @@ TEST_SUITE("Signal")
         CHECK(val1 == 4);
         CHECK(val2 == 4);
 
-        appInstance->connectionEvaluator()->evaluateDeferredConnections();
+        app.connectionEvaluator()->evaluateDeferredConnections();
 
         CHECK(val1 == 6);
         CHECK(val2 == 7);
@@ -82,11 +82,11 @@ TEST_SUITE("Signal")
 
     TEST_CASE("Connect, Emit, Disconnect, and Evaluate")
     {
-        auto *appInstance = new KDFoundation::CoreApplication;
+        KDFoundation::CoreApplication app;
         KDBindings::Signal<int> signal;
         int val = 4;
 
-        auto connection = signal.connectDeferred(appInstance->connectionEvaluator(), [&val](int value) {
+        auto connection = signal.connectDeferred(app.connectionEvaluator(), [&val](int value) {
             val += value;
         });
 
@@ -97,7 +97,7 @@ TEST_SUITE("Signal")
 
         connection.disconnect();
 
-        appInstance->connectionEvaluator()->evaluateDeferredConnections();
+        app.connectionEvaluator()->evaluateDeferredConnections();
 
         CHECK(val == 4);
     }
