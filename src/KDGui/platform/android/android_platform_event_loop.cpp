@@ -84,7 +84,7 @@ AndroidPlatformEventLoop::AndroidPlatformEventLoop(AndroidPlatformIntegration *a
     m_androidPlatformInitegration = androidPlatformInitegration;
 }
 
-void AndroidPlatformEventLoop::waitForEvents(int timeout)
+void AndroidPlatformEventLoop::waitForEventsImpl(int timeout)
 {
     android_poll_source *source;
     if (ALooper_pollAll(timeout, nullptr, nullptr, (void **)&source) >= 0) {

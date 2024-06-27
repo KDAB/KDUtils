@@ -51,13 +51,13 @@ LinuxXcbPlatformEventLoop::~LinuxXcbPlatformEventLoop()
 {
 }
 
-void LinuxXcbPlatformEventLoop::waitForEvents(int timeout)
+void LinuxXcbPlatformEventLoop::waitForEventsImpl(int timeout)
 {
     // Process any xcb events already waiting for us
     processXcbEvents();
 
     // Call the base class to do the actual multiplexing
-    LinuxPlatformEventLoop::waitForEvents(timeout);
+    LinuxPlatformEventLoop::waitForEventsImpl(timeout);
 
     // Now we are awake again, check to see if we have any xcb events to process
     if (!m_xcbEventsPending)

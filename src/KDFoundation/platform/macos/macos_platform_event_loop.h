@@ -27,7 +27,6 @@ public:
     MacOSPlatformEventLoop(MacOSPlatformEventLoop &&other) = delete;
     MacOSPlatformEventLoop &operator=(MacOSPlatformEventLoop &&other) = delete;
 
-    void waitForEvents(int timeout) override;
     void wakeUp() override;
 
     bool registerNotifier(FileDescriptorNotifier *notifier) override;
@@ -36,6 +35,7 @@ public:
     static void postEmptyEvent();
 
 private:
+    void waitForEventsImpl(int timeout) override;
     std::unique_ptr<AbstractPlatformTimer> createPlatformTimerImpl(Timer *timer) override;
 };
 

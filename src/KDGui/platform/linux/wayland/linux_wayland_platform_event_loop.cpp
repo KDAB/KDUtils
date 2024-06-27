@@ -35,7 +35,7 @@ LinuxWaylandPlatformEventLoop::~LinuxWaylandPlatformEventLoop()
 {
 }
 
-void LinuxWaylandPlatformEventLoop::waitForEvents(int timeout)
+void LinuxWaylandPlatformEventLoop::waitForEventsImpl(int timeout)
 {
     auto dpy = m_platformIntegration->display();
     auto queue = m_platformIntegration->queue();
@@ -46,7 +46,7 @@ void LinuxWaylandPlatformEventLoop::waitForEvents(int timeout)
     }
 
     // Call the base class to do the actual multiplexing
-    LinuxPlatformEventLoop::waitForEvents(timeout);
+    LinuxPlatformEventLoop::waitForEventsImpl(timeout);
 
     int fd = wl_display_get_fd(dpy);
     if (epollEventFromFdPlusType(fd, FileDescriptorNotifier::NotificationType::Read)) {

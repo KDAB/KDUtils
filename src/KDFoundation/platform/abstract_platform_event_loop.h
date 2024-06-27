@@ -28,7 +28,8 @@ class Timer;
 class KDFOUNDATION_API AbstractPlatformEventLoop
 {
 public:
-    virtual ~AbstractPlatformEventLoop() { }
+    AbstractPlatformEventLoop();
+    virtual ~AbstractPlatformEventLoop();
 
     void setPostman(Postman *postman) { m_postman = postman; }
     Postman *postman() { return m_postman; }
@@ -37,7 +38,7 @@ public:
     // -1 means wait forever
     // 0 means do not wait (i.e. poll)
     // +ve number, wait for up to timeout msecs
-    virtual void waitForEvents(int timeout) = 0;
+    void waitForEvents(int timeout);
 
     // Kick the event loop out of waiting
     virtual void wakeUp() = 0;
@@ -56,9 +57,10 @@ public:
 
 protected:
     virtual std::unique_ptr<AbstractPlatformTimer> createPlatformTimerImpl(Timer *timer) = 0;
+    virtual void waitForEventsImpl(int timeout) = 0;
 
     Postman *m_postman{ nullptr };
-    std::shared_ptr<KDBindings::ConnectionEvaluator> m_connectionEvaluator{ new KDBindings::ConnectionEvaluator };
+    std::shared_ptr<KDBindings::ConnectionEvaluator> m_connectionEvaluator;
 };
 
 } // namespace KDFoundation

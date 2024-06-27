@@ -35,8 +35,6 @@ public:
     Win32PlatformEventLoop(Win32PlatformEventLoop &&other) = delete;
     Win32PlatformEventLoop &operator=(Win32PlatformEventLoop &&other) = delete;
 
-    void waitForEvents(int timeout) override;
-
     void wakeUp() override;
 
     bool registerNotifier(FileDescriptorNotifier *notifier) override;
@@ -45,6 +43,7 @@ public:
     std::unordered_map<uintptr_t, Win32PlatformTimer *> timers;
 
 private:
+    void waitForEventsImpl(int timeout) override;
     std::unique_ptr<AbstractPlatformTimer> createPlatformTimerImpl(Timer *timer) override;
 
     struct NotifierSet {

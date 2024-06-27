@@ -61,7 +61,7 @@ LinuxPlatformEventLoop::~LinuxPlatformEventLoop()
         SPDLOG_CRITICAL("Failed to cleanup epoll");
 }
 
-void LinuxPlatformEventLoop::waitForEvents(int timeout)
+void LinuxPlatformEventLoop::waitForEventsImpl(int timeout)
 {
     const int maxEventCount = 16;
     epoll_event events[maxEventCount];

@@ -36,12 +36,6 @@ class KDGUI_API AndroidPlatformEventLoop : public KDFoundation::AbstractPlatform
 public:
     AndroidPlatformEventLoop(AndroidPlatformIntegration *androidPlatformInitegration);
 
-    // timeout in msecs
-    // -1 means wait forever
-    // 0 means do not wait (i.e. poll)
-    // +ve number, wait for up to timeout msecs
-    void waitForEvents(int timeout) override;
-
     // Kick the event loop out of waiting
     void wakeUp() override;
 
@@ -52,6 +46,7 @@ public:
     AndroidPlatformIntegration *androidPlatformIntegration();
 
 protected:
+    void waitForEventsImpl(int timeout) override;
     std::unique_ptr<KDFoundation::AbstractPlatformTimer> createPlatformTimerImpl(KDFoundation::Timer *timer) final;
 
 private:

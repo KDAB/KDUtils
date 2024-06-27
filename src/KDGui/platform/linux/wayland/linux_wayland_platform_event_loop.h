@@ -28,7 +28,7 @@ public:
     ~LinuxWaylandPlatformEventLoop();
 
     void init();
-    void waitForEvents(int timeout) override;
+    void waitForEventsImpl(int timeout) override;
 
 private:
     std::shared_ptr<spdlog::logger> m_logger;

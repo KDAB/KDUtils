@@ -79,7 +79,7 @@ Win32PlatformEventLoop::~Win32PlatformEventLoop()
         SPDLOG_WARN("Failed to unregister message window class");
 }
 
-void Win32PlatformEventLoop::waitForEvents(int timeout)
+void Win32PlatformEventLoop::waitForEventsImpl(int timeout)
 {
     MSG msg;
     bool hasMessage = PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
