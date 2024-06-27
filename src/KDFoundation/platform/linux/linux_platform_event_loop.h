@@ -35,7 +35,6 @@ public:
     LinuxPlatformEventLoop(LinuxPlatformEventLoop &&other) = delete;
     LinuxPlatformEventLoop &operator=(LinuxPlatformEventLoop &&other) = delete;
 
-    void waitForEvents(int timeout) override;
     void wakeUp() override;
 
     bool registerNotifier(FileDescriptorNotifier *notifier) override;
@@ -51,6 +50,9 @@ public:
     int epollEventFromFdPlusType(int fd, FileDescriptorNotifier::NotificationType type);
     int epollEventFromFdMinusType(int fd, FileDescriptorNotifier::NotificationType type);
     int epollEventFromNotifierTypes(bool read, bool write, bool exception);
+
+protected:
+    void waitForEventsImpl(int timeout) override;
 
 private:
     std::unique_ptr<AbstractPlatformTimer> createPlatformTimerImpl(Timer *timer) override;

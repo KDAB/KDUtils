@@ -32,7 +32,7 @@ public:
     explicit LinuxXcbPlatformEventLoop(LinuxXcbPlatformIntegration *platformIntegration);
     ~LinuxXcbPlatformEventLoop();
 
-    void waitForEvents(int timeout) override;
+    void waitForEventsImpl(int timeout) override;
 
 private:
     void processXcbEvents();

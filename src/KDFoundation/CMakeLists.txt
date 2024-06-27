@@ -18,6 +18,7 @@ set(SOURCES
     object.cpp
     postman.cpp
     timer.cpp
+    platform/abstract_platform_event_loop.cpp
 )
 
 set(HEADERS

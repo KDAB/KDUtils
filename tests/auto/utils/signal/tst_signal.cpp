@@ -49,9 +49,37 @@ TEST_SUITE("Signal")
         signal2.emit(3);
         CHECK(val == 4); // val not changing immediately after emit
 
-        app.connectionEvaluator()->evaluateDeferredConnections();
+        app.processEvents();
 
         CHECK(val == 9);
+    }
+
+    TEST_CASE("Emit from another thread")
+    {
+        KDFoundation::CoreApplication app;
+        int mainThreadCounter = 0;
+        int secondaryThreadCounter = 0;
+        KDBindings::Signal<> signal;
+
+        std::thread t1([&] {
+            auto conn = signal.connectDeferred(app.connectionEvaluator(), [&] {
+                ++mainThreadCounter;
+            });
+            conn = signal.connect([&] {
+                ++secondaryThreadCounter;
+            });
+            signal.emit();
+            assert(secondaryThreadCounter == 1);
+        });
+
+        t1.join();
+
+        REQUIRE(secondaryThreadCounter == 1);
+        REQUIRE(mainThreadCounter == 0);
+
+        app.processEvents();
+
+        REQUIRE(mainThreadCounter == 1);
     }
 
     TEST_CASE("Emit Multiple Signals with Evaluator")
@@ -85,7 +113,7 @@ TEST_SUITE("Signal")
         CHECK(val1 == 4);
         CHECK(val2 == 4);
 
-        app.connectionEvaluator()->evaluateDeferredConnections();
+        app.processEvents();
 
         CHECK(val1 == 6);
         CHECK(val2 == 7);
@@ -108,7 +136,7 @@ TEST_SUITE("Signal")
 
         connection.disconnect();
 
-        app.connectionEvaluator()->evaluateDeferredConnections();
+        app.processEvents();
 
         CHECK(val == 4);
     }

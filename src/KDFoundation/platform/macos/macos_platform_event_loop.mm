@@ -29,7 +29,7 @@ MacOSPlatformEventLoop::MacOSPlatformEventLoop()
 
 MacOSPlatformEventLoop::~MacOSPlatformEventLoop() = default;
 
-void MacOSPlatformEventLoop::waitForEvents(int timeout)
+void MacOSPlatformEventLoop::waitForEventsImpl(int timeout)
 {
     @autoreleasepool {
         NSDate *expiration = [timeout] {
