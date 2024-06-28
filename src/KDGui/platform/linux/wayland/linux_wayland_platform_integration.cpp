@@ -180,13 +180,13 @@ void LinuxWaylandPlatformIntegration::globalRemove(wl_registry *registry, uint32
 
     if (id == m_compositor.id) {
         SPDLOG_LOGGER_CRITICAL(m_logger, "The Wayland server removed the wl_compositor global! Aborting.");
-        throw std::runtime_error("The Wayland server removed the wl_compositor globa!");
+        throw std::runtime_error("The Wayland server removed the wl_compositor global!");
     } else if (id == m_xdgShell.id) {
         SPDLOG_LOGGER_CRITICAL(m_logger, "The Wayland server removed the xdg_wm_base global! Aborting.");
-        throw std::runtime_error("The Wayland server removed the xdg_wm_base globa!");
+        throw std::runtime_error("The Wayland server removed the xdg_wm_base global!");
     } else if (id == m_shm.id) {
         SPDLOG_LOGGER_CRITICAL(m_logger, "The Wayland server removed the wl_shm global! Aborting.");
-        throw std::runtime_error("The Wayland server removed the wl_shm globa!");
+        throw std::runtime_error("The Wayland server removed the wl_shm global!");
     } else if (auto it = findSeat(id); it != m_inputs.end()) {
         m_inputs.erase(it);
     } else if (auto it = findOutput(id); it != m_outputs.end()) {
