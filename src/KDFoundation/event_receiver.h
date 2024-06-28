@@ -22,7 +22,7 @@ class KDFOUNDATION_API EventReceiver
 public:
     virtual ~EventReceiver() noexcept;
 
-    virtual void event(EventReceiver *target, Event *ev){};
+    virtual void event(EventReceiver *target, Event *ev) {};
 };
 
 } // namespace KDFoundation
