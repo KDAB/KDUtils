@@ -51,9 +51,6 @@ public:
     }
     std::shared_ptr<KDBindings::ConnectionEvaluator> connectionEvaluator()
     {
-        if (!m_connectionEvaluator) {
-            m_connectionEvaluator = std::make_shared<KDBindings::ConnectionEvaluator>();
-        }
         return m_connectionEvaluator;
     }
 
@@ -61,7 +58,7 @@ protected:
     virtual std::unique_ptr<AbstractPlatformTimer> createPlatformTimerImpl(Timer *timer) = 0;
 
     Postman *m_postman{ nullptr };
-    std::shared_ptr<KDBindings::ConnectionEvaluator> m_connectionEvaluator{ nullptr };
+    std::shared_ptr<KDBindings::ConnectionEvaluator> m_connectionEvaluator{ new KDBindings::ConnectionEvaluator };
 };
 
 } // namespace KDFoundation
