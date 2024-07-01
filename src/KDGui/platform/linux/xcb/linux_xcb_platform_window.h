@@ -24,7 +24,7 @@ class LinuxXcbPlatformIntegration;
 class KDGUI_API LinuxXcbPlatformWindow : public AbstractPlatformWindow
 {
 public:
-    explicit LinuxXcbPlatformWindow(LinuxXcbPlatformIntegration *platformIntegraton,
+    explicit LinuxXcbPlatformWindow(LinuxXcbPlatformIntegration *platformIntegration,
                                     Window *window);
 
     LinuxXcbPlatformWindow() = delete;

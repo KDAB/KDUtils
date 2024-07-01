@@ -55,7 +55,7 @@ public:
     void destroyPointerConstraintsV1();
 
 private:
-    void capabilities(wl_seat *seaat, uint32_t caps);
+    void capabilities(wl_seat *seat, uint32_t caps);
     void name(wl_seat *seat, const char *name);
 
     void initPointer();
