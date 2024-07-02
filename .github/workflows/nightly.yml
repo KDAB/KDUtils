@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+# SPDX-FileCopyrightText: 2024 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -10,31 +10,44 @@ on:
   workflow_dispatch:
 
 env:
-  CC: "/usr/bin/clang"
-  CXX: "/usr/bin/clang++"
+  CC: "clang"
+  CXX: "clang++"
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - name: Ubuntu
+            os: ubuntu-24.04
+            # Specify executable name on Linux to have control over the version.
+            # Sadly, on Linux these per-version executables aren't there.
+            tidy-executable: clang-tidy-18
+          - name: Windows
+            os: windows-2022
+            tidy-executble: clang-tidy
 
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
 
       - name: Install ninja-build tool
-        uses: aseprite/get-ninja@main
+        if: runner.os == 'Windows'
+        uses: turtlesec-no/get-ninja@main
 
       - name: Install linux dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt update -qq
           sudo apt install -y libxkbcommon-dev libxcb-xkb-dev \
           libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
-          libwayland-dev xvfb
+          libwayland-dev xvfb ninja-build
 
       - name: Configure project
         run: >
-          cmake -S . -B ./build -G Ninja -DKDUTILS_BUILD_TESTS=True -DCMAKE_CXX_CLANG_TIDY="clang-tidy-18" \
+          cmake -S . -B build -G Ninja -DKDUTILS_BUILD_TESTS=True -DCMAKE_CXX_CLANG_TIDY="${{matrix.tidy-executable}}" \
           -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Project
-        run: cmake --build ./build
+        run: cmake --build build
