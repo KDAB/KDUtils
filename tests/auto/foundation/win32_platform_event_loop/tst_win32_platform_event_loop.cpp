@@ -116,7 +116,7 @@ TEST_CASE("Wait for events")
         auto serverFunction = [&mutex, &cond, &ready, &dataToSend, &boundPort]() {
             SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
             if (serverSocket == INVALID_SOCKET) {
-                spdlog::error("Cannot create server socket");
+                SPDLOG_ERROR("Cannot create server socket");
             }
             sockaddr_in ad;
             ad.sin_family = AF_INET;
@@ -138,9 +138,11 @@ TEST_CASE("Wait for events")
             if (foundPort == 0)
                 return;
 
+            SPDLOG_INFO("server: listening on port {}", foundPort);
+
             ret = listen(serverSocket, SOMAXCONN);
             if (ret == SOCKET_ERROR) {
-                spdlog::error("Listen error");
+                SPDLOG_ERROR("Listen error: {}", WSAGetLastError());
             }
 
             // Send info to the client that we're ready
@@ -156,9 +158,14 @@ TEST_CASE("Wait for events")
 
             if (clientSocket != INVALID_SOCKET) {
                 ret = send(clientSocket, dataToSend.c_str(), dataToSend.size() + 1, 0);
+                if (ret != SOCKET_ERROR) {
+                    SPDLOG_INFO("Server sent {} bytes", ret);
+                } else {
+                    SPDLOG_ERROR("Error while sending data: {}", WSAGetLastError());
+                }
                 closesocket(clientSocket);
             } else {
-                spdlog::error("invalid socket from accept");
+                SPDLOG_ERROR("invalid socket from accept");
             }
         };
         // Start the server
@@ -189,6 +196,8 @@ TEST_CASE("Wait for events")
         readNotifier.triggered.connect([&dataReceived](int fd) {
             char buf[128] = {};
             recv(fd, buf, 128, 0);
+            const int recvSize = recv(fd, buf, 128, 0);
+            SPDLOG_INFO("socket test: received {} bytes from the server", recvSize);
             dataReceived = std::string(buf);
         });
         loop.registerNotifier(&readNotifier);
