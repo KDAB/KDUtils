@@ -28,7 +28,6 @@ jobs:
             os: windows-2022
             tidy-executble: clang-tidy
       fail-fast: false
-    continue-on-error: true
 
     steps:
       - name: Checkout sources
@@ -62,6 +61,15 @@ jobs:
             echo "::error title=clang-tidy failed::See job log for details"
             exit 1
           }
+
+  cppcheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install Cppcheck
+        run: sudo apt update -qq && sudo apt install -y cppcheck
 
       - name: Run Cppcheck
         if: runner.os == 'Linux'
