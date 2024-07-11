@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: 2023 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+#
+# SPDX-License-Identifier: MIT
+
+name: Nightly
+
+on:
+  schedule:
+    - cron: '37 21 * * *'
+  workflow_dispatch:
+
+env:
+  CC: "/usr/bin/clang"
+  CXX: "/usr/bin/clang++"
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install ninja-build tool
+        uses: aseprite/get-ninja@main
+
+      - name: Install linux dependencies
+        run: |
+          sudo apt update -qq
+          sudo apt install -y libxkbcommon-dev libxcb-xkb-dev \
+          libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
+          libwayland-dev xvfb
+
+      - name: Configure project
+        run: >
+          cmake -S . -B ./build -G Ninja -DKDUTILS_BUILD_TESTS=True -DCMAKE_CXX_CLANG_TIDY="clang-tidy-18" \
+          -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Project
+        run: cmake --build ./build
