@@ -27,6 +27,7 @@ jobs:
           - name: Windows
             os: windows-2022
             tidy-executble: clang-tidy
+      fail-fast: false
     continue-on-error: true
 
     steps:
