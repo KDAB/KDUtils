@@ -42,12 +42,21 @@ jobs:
           sudo apt update -qq
           sudo apt install -y libxkbcommon-dev libxcb-xkb-dev \
           libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
-          libwayland-dev xvfb ninja-build
+          libwayland-dev xvfb ninja-build cppcheck
 
       - name: Configure project
         run: >
-          cmake -S . -B build -G Ninja -DKDUTILS_BUILD_TESTS=True -DCMAKE_CXX_CLANG_TIDY="${{matrix.tidy-executable}}" \
+          cmake -S . -B build -G Ninja -DKDUTILS_BUILD_TESTS=True
+          -DCMAKE_CXX_CLANG_TIDY="${{matrix.tidy-executable}}" \
           -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Project
-        run: cmake --build build
+        shell: pwsh
+        run: |
+          cmake --build build | Tee-Object -File log.txt
+          $numWarnings = (Get-Content log.txt | Select-String "warning:").Length
+
+          if($numWarnings -gt 0) {
+            echo "::error title=clang-tidy failed::See job log for details"
+            exit 1
+          }
