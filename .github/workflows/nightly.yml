@@ -14,7 +14,7 @@ env:
   CXX: "clang++"
 
 jobs:
-  build:
+  clang-tidy:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
