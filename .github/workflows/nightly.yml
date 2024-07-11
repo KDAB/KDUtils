@@ -27,6 +27,7 @@ jobs:
           - name: Windows
             os: windows-2022
             tidy-executble: clang-tidy
+    continue-on-error: true
 
     steps:
       - name: Checkout sources
@@ -58,5 +59,19 @@ jobs:
 
           if($numWarnings -gt 0) {
             echo "::error title=clang-tidy failed::See job log for details"
+            exit 1
+          }
+
+      - name: Run Cppcheck
+        if: runner.os == 'Linux'
+        shell: pwsh
+        run: >
+          cppcheck --quiet --language=c++ --force --inline-suppr
+          --enable=warning,performance,portability,information
+          --disable=missingInclude  --check-level=exhaustive
+          -i build --library=std.cfg --error-exitcode=42 .
+
+          if($LASTEXITCODE -eq 42) {
+            echo "::error title=Cppcheck failed::See job log for details"
             exit 1
           }
