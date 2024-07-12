@@ -62,7 +62,6 @@ private:
     static int32_t androidHandleInputEvent(struct android_app *app, AInputEvent *event);
 
 private:
-    int m_events;
     std::unordered_map<int, NotifierSet> m_notifiers;
     AndroidPlatformIntegration *m_androidPlatformInitegration;
 };
