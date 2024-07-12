@@ -21,8 +21,8 @@ using namespace KDGui;
 
 Window::Window()
     : Object()
+    , m_logger{ KDUtils::Logger::logger("window", spdlog::level::info) }
 {
-    m_logger = KDUtils::Logger::logger("window", spdlog::level::info);
 
     visible.valueChanged().connect(&Window::onVisibleChanged, this);
     m_resizeConnectionIds = {
