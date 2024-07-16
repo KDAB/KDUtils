@@ -10,7 +10,6 @@
 */
 
 #include <KDFoundation/platform/abstract_platform_event_loop.h>
-#include "abstract_platform_event_loop.h"
 
 namespace KDFoundation {
 
