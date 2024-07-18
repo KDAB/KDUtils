@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-name: Nightly
+name: Linters
 
 on:
   schedule:
@@ -26,7 +26,7 @@ jobs:
             tidy-executable: clang-tidy-18
           - name: Windows
             os: windows-2022
-            tidy-executble: clang-tidy
+            tidy-executable: clang-tidy
       fail-fast: false
 
     steps:
