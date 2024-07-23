@@ -119,6 +119,7 @@ TEST_SUITE("ByteArray")
         // THEN
         const std::vector<uint8_t> expectedData{ 2, 2, 2, 2 };
         CHECK(b2.vector() == expectedData);
+        // NOLINTNEXTLINE(bugprone-use-after-move, clang-analyzer-cplusplus.Move)
         CHECK(b.vector() == std::vector<uint8_t>());
     }
 
