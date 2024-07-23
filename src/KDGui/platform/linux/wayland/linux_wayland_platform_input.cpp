@@ -505,7 +505,7 @@ void LinuxWaylandPlatformInput::touchDown(wl_touch *touch, uint32_t serial, uint
                                           wl_surface *surface, int32_t id, wl_fixed_t x, wl_fixed_t y)
 {
     // We don't support touch yet, so just use the first touch point as mouse input
-    if (m_touch.points.size() > 0) {
+    if (!m_touch.points.empty()) {
         return;
     }
 
@@ -543,7 +543,7 @@ void LinuxWaylandPlatformInput::touchFrame(wl_touch *touch)
 
 void LinuxWaylandPlatformInput::touchCancel(wl_touch *touch)
 {
-    if (m_touch.points.size() > 0) {
+    if (!m_touch.points.empty()) {
         m_touch.focus->handleMouseRelease(m_touch.time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
         m_touch.points.clear();
     }
