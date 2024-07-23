@@ -206,6 +206,7 @@ void LinuxWaylandPlatformIntegration::globalRemove(wl_registry *registry, uint32
     }
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void LinuxWaylandPlatformIntegration::ping(xdg_wm_base *xdgShell, uint32_t serial)
 {
     xdg_wm_base_pong(xdgShell, serial);

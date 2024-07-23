@@ -49,7 +49,7 @@ public:
 
     int epollEventFromFdPlusType(int fd, FileDescriptorNotifier::NotificationType type);
     int epollEventFromFdMinusType(int fd, FileDescriptorNotifier::NotificationType type);
-    int epollEventFromNotifierTypes(bool read, bool write, bool exception);
+    static int epollEventFromNotifierTypes(bool read, bool write, bool exception);
 
 protected:
     void waitForEventsImpl(int timeout) override;

@@ -248,6 +248,7 @@ void LinuxWaylandPlatformWindow::leave(wl_surface *surface, wl_output *output)
     updateScaleFactor();
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static)
 void LinuxWaylandPlatformWindow::configure(xdg_surface *xdgSurface, uint32_t serial)
 {
     xdg_surface_ack_configure(xdgSurface, serial);

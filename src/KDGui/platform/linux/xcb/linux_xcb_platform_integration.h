@@ -53,7 +53,7 @@ private:
     LinuxXcbPlatformWindow *createPlatformWindowImpl(Window *window) override;
 
     bool initializeXkbExtension();
-    void dumpScreenInfo(xcb_screen_t *screen);
+    static void dumpScreenInfo(xcb_screen_t *screen);
 
     std::shared_ptr<spdlog::logger> m_logger;
     xcb_connection_t *m_connection{ nullptr };
