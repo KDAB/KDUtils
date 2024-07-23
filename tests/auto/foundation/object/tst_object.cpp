@@ -41,7 +41,7 @@ public:
     {
     }
 
-    ~IntObject()
+    ~IntObject() // NOLINT(bugprone-exception-escape)
     {
         aboutToBeDestroyed.emit(m_value);
     }
