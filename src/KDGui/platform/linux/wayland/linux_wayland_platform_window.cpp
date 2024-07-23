@@ -271,8 +271,8 @@ void LinuxWaylandPlatformWindow::close(xdg_toplevel * /*toplevel*/)
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void LinuxWaylandPlatformWindow::configureBounds(xdg_toplevel * /*toplevel*/, int32_t width, int32_t height)
 {
-    int32_t w = int32_t(window()->width());
-    int32_t h = int32_t(window()->height());
+    auto w = int32_t(window()->width());
+    auto h = int32_t(window()->height());
     if (width != 0 && width < w) {
         w = width;
     }
@@ -295,7 +295,7 @@ void LinuxWaylandPlatformWindow::updateScaleFactor()
     // use the highest scale factor of all the outputs this window is visible on
     float factor = 1;
     for (auto *output : m_enteredOutputs) {
-        const float outputScaleFactor = float(output->scaleFactor());
+        const auto outputScaleFactor = float(output->scaleFactor());
         if (outputScaleFactor > factor) {
             factor = outputScaleFactor;
         }
