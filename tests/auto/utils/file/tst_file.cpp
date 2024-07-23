@@ -33,14 +33,14 @@ TEST_SUITE("File")
     {
         {
             // GIVEN
-            File f("some_path_that_doesn_t_exist");
+            const File f("some_path_that_doesn_t_exist");
 
             // THEN
             CHECK(!f.exists());
         }
         {
             // GIVEN
-            File f(TST_DIR "tst_file.cpp");
+            const File f(TST_DIR "tst_file.cpp");
 
             // THEN
             CHECK(f.exists());
@@ -51,14 +51,14 @@ TEST_SUITE("File")
     {
         {
             // GIVEN
-            File f("some_path_that_doesn_t_exist");
+            const File f("some_path_that_doesn_t_exist");
 
             // THEN
             CHECK(f.size() == std::uintmax_t(-1));
         }
         {
             // GIVEN
-            File f(TST_DIR "tst_file.cpp");
+            const File f(TST_DIR "tst_file.cpp");
             const auto expectedSize = std::filesystem::file_size(std::filesystem::path(TST_DIR).append("tst_file.cpp"));
 
             // THEN
@@ -69,7 +69,7 @@ TEST_SUITE("File")
     TEST_CASE("checkFileName")
     {
         // GIVEN
-        File f(TST_DIR "tst_file.cpp");
+        const File f(TST_DIR "tst_file.cpp");
 
         // THEN
         CHECK(f.fileName() == "tst_file.cpp");
@@ -156,7 +156,7 @@ TEST_SUITE("File")
     TEST_CASE("checkByteArrayAndMappingAreIdentical")
     {
         ByteArray copied;
-        std::string path(TST_DIR "tst_file.cpp");
+        const std::string path(TST_DIR "tst_file.cpp");
         File f(path);
 
         // copy bytes into memory
@@ -177,7 +177,7 @@ TEST_SUITE("File")
 
     TEST_CASE("checkMappingDoesNotModify")
     {
-        std::string path(TST_DIR "tst_file.cpp");
+        const std::string path(TST_DIR "tst_file.cpp");
         ByteArray readBefore;
         ByteArray readMapped;
         ByteArray readWriteMapped;
@@ -218,8 +218,8 @@ TEST_SUITE("File")
 
     TEST_CASE("checkFileSizeMatchWithMapping")
     {
-        std::string path(TST_DIR "tst_file.cpp");
-        File f(path);
+        const std::string path(TST_DIR "tst_file.cpp");
+        const File f(path);
         auto mapper = FileMapper(File(path));
         mapper.map(); // just map it so there is a mapping to query the size of
 
@@ -236,7 +236,7 @@ TEST_SUITE("File")
 
     TEST_CASE("mappedFileWriting")
     {
-        std::string path(TST_DIR "tst_file.cpp");
+        const std::string path(TST_DIR "tst_file.cpp");
         ByteArray copiedContents;
         ByteArray originalContents; // copy for restoring file state at the end
         {
@@ -276,7 +276,7 @@ TEST_SUITE("File")
         // make sure restore went correctly
         {
             f.open(std::ios::in | std::ios::binary);
-            ByteArray restored = f.readAll();
+            const ByteArray restored = f.readAll();
             f.close();
 
             CHECK(restored.vector() == originalContents.vector());

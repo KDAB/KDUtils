@@ -233,7 +233,7 @@ TEST_CASE("Parenting")
         // GIVEN
         auto parent = std::make_unique<Object>();
         std::vector<Object *> children;
-        SignalSpy childAddedSpy(parent->childAdded);
+        const SignalSpy childAddedSpy(parent->childAdded);
 
         // THEN
         REQUIRE(childAddedSpy.count() == 0);
@@ -280,7 +280,7 @@ TEST_CASE("Object destruction")
     {
         // GIVEN
         auto parent = new Object();
-        SignalSpy childRemovedSpy(parent->childRemoved);
+        const SignalSpy childRemovedSpy(parent->childRemoved);
 
         std::vector<int> destructionOrder;
         auto onAboutToBeDestroyed = [&destructionOrder](const int &value) {
@@ -328,7 +328,7 @@ TEST_CASE("Deferred object destruction")
 
     SUBCASE("can call deleteLater on object with CoreApplication instantiated")
     {
-        CoreApplication app;
+        const CoreApplication app;
         auto obj = new Object();
         obj->deleteLater();
     }

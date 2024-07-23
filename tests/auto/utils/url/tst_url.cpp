@@ -45,7 +45,7 @@ TEST_SUITE("Url")
     {
         {
             // GIVEN
-            KC::Url url;
+            const KC::Url url;
 
             // THEN
             CHECK(url.isEmpty());
@@ -53,7 +53,7 @@ TEST_SUITE("Url")
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:file.txt"));
+            const KC::Url url(StringLiteral("file:file.txt"));
 
             // THEN
             CHECK(!url.isEmpty());
@@ -65,28 +65,28 @@ TEST_SUITE("Url")
     {
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:file.txt"));
+            const KC::Url url(StringLiteral("file:file.txt"));
 
             // THEN
             CHECK(url.toLocalFile() == StringLiteral("file.txt"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:/home/bruce_w/file.txt"));
+            const KC::Url url(StringLiteral("file:/home/bruce_w/file.txt"));
 
             // THEN
             CHECK(url.toLocalFile() == StringLiteral("/home/bruce_w/file.txt"));
         }
         {
             // GIVEN -> No scheme
-            KC::Url url(StringLiteral("file.txt"));
+            const KC::Url url(StringLiteral("file.txt"));
 
             // THEN
             CHECK(url.toLocalFile() == StringLiteral(""));
         }
         {
             // GIVEN -> No file: scheme
-            KC::Url url(StringLiteral("http:file.txt"));
+            const KC::Url url(StringLiteral("http:file.txt"));
 
             // THEN
             CHECK(url.toLocalFile() == StringLiteral(""));
@@ -118,7 +118,7 @@ TEST_SUITE("Url")
         }
         {
             // GIVEN
-            KC::Url url = KC::Url::fromLocalFile(StringLiteral("C:/users/bruce_w/file.txt"));
+            const KC::Url url = KC::Url::fromLocalFile(StringLiteral("C:/users/bruce_w/file.txt"));
 
             // THEN
             CHECK(url == KC::Url(StringLiteral("file:///C:/users/bruce_w/file.txt")));
@@ -129,49 +129,49 @@ TEST_SUITE("Url")
     {
         {
             // GIVEN
-            KC::Url url(StringLiteral("http://www.msn.fr/"));
+            const KC::Url url(StringLiteral("http://www.msn.fr/"));
 
             // THEN
             CHECK(url.scheme() == StringLiteral("http"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:///myfile.txt"));
+            const KC::Url url(StringLiteral("file:///myfile.txt"));
 
             // THEN
             CHECK(url.scheme() == StringLiteral("file"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:///home/bruce_w/myfile.txt"));
+            const KC::Url url(StringLiteral("file:///home/bruce_w/myfile.txt"));
 
             // THEN
             CHECK(url.scheme() == StringLiteral("file"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:myfile.txt"));
+            const KC::Url url(StringLiteral("file:myfile.txt"));
 
             // THEN
             CHECK(url.scheme() == StringLiteral("file"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral(":/myfile.txt"));
+            const KC::Url url(StringLiteral(":/myfile.txt"));
 
             // THEN
             CHECK(url.scheme() == StringLiteral(""));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("myfile.txt"));
+            const KC::Url url(StringLiteral("myfile.txt"));
 
             // THEN
             CHECK(url.scheme() == StringLiteral(""));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("C:/users/bruce_w/my_file.txt"));
+            const KC::Url url(StringLiteral("C:/users/bruce_w/my_file.txt"));
 
             // THEN
             CHECK(url.scheme() == StringLiteral(""));
@@ -182,49 +182,49 @@ TEST_SUITE("Url")
     {
         {
             // GIVEN
-            KC::Url url(StringLiteral("http://www.msn.fr/"));
+            const KC::Url url(StringLiteral("http://www.msn.fr/"));
 
             // THEN
             CHECK(url.path() == StringLiteral("www.msn.fr/"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:///myfile.txt"));
+            const KC::Url url(StringLiteral("file:///myfile.txt"));
 
             // THEN
             CHECK(url.path() == StringLiteral("/"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file://myfile.txt"));
+            const KC::Url url(StringLiteral("file://myfile.txt"));
 
             // THEN
             CHECK(url.path() == StringLiteral(""));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:myfile.txt"));
+            const KC::Url url(StringLiteral("file:myfile.txt"));
 
             // THEN
             CHECK(url.path() == StringLiteral(""));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral(":/myfile.txt"));
+            const KC::Url url(StringLiteral(":/myfile.txt"));
 
             // THEN
             CHECK(url.path() == StringLiteral("/"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("myfile.txt"));
+            const KC::Url url(StringLiteral("myfile.txt"));
 
             // THEN
             CHECK(url.path() == StringLiteral(""));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("C:/users/bruce_w/my_file.txt"));
+            const KC::Url url(StringLiteral("C:/users/bruce_w/my_file.txt"));
 
             // THEN
             CHECK(url.path() == StringLiteral("C:/users/bruce_w/"));
@@ -235,49 +235,49 @@ TEST_SUITE("Url")
     {
         {
             // GIVEN
-            KC::Url url(StringLiteral("http://www.msn.fr/"));
+            const KC::Url url(StringLiteral("http://www.msn.fr/"));
 
             // THEN
             CHECK(url.fileName() == StringLiteral(""));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:///myfile.txt"));
+            const KC::Url url(StringLiteral("file:///myfile.txt"));
 
             // THEN
             CHECK(url.fileName() == StringLiteral("myfile.txt"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file://myfile.txt"));
+            const KC::Url url(StringLiteral("file://myfile.txt"));
 
             // THEN
             CHECK(url.fileName() == StringLiteral("myfile.txt"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("file:myfile.txt"));
+            const KC::Url url(StringLiteral("file:myfile.txt"));
 
             // THEN
             CHECK(url.fileName() == StringLiteral("myfile.txt"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral(":/myfile.txt"));
+            const KC::Url url(StringLiteral(":/myfile.txt"));
 
             // THEN
             CHECK(url.fileName() == StringLiteral("myfile.txt"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("myfile.txt"));
+            const KC::Url url(StringLiteral("myfile.txt"));
 
             // THEN
             CHECK(url.fileName() == StringLiteral("myfile.txt"));
         }
         {
             // GIVEN
-            KC::Url url(StringLiteral("myfile.txt/"));
+            const KC::Url url(StringLiteral("myfile.txt/"));
 
             // THEN
             CHECK(url.fileName() == StringLiteral(""));

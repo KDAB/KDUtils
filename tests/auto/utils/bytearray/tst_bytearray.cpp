@@ -33,7 +33,7 @@ TEST_SUITE("ByteArray")
     TEST_CASE("checkEmptyCtor")
     {
         // GIVEN
-        ByteArray b;
+        const ByteArray b;
 
         // THEN
         CHECK(b.size() == size_t(0));
@@ -43,14 +43,14 @@ TEST_SUITE("ByteArray")
     {
         // GIVEN
         const char *s = "test";
-        ByteArray b(s);
+        const ByteArray b(s);
 
         // THEN
         CHECK(b.size() == size_t(4));
         CHECK(std::strncmp(s, reinterpret_cast<const char *>(b.constData()), 4) == 0);
 
         // WHEN
-        ByteArray b2(s, 2);
+        const ByteArray b2(s, 2);
 
         // THEN
         CHECK(b2.size() == size_t(2));
@@ -61,7 +61,7 @@ TEST_SUITE("ByteArray")
     {
         // GIVEN
         std::vector<uint8_t> rawData = { 0, 1, 3, 2 };
-        ByteArray b(rawData);
+        const ByteArray b(rawData);
 
         // THEN
         CHECK(b.size() == size_t(4));
@@ -71,7 +71,7 @@ TEST_SUITE("ByteArray")
     TEST_CASE("checkSizeAndValueCtor")
     {
         // GIVEN
-        ByteArray b(4, 2);
+        const ByteArray b(4, 2);
 
         // THEN
         CHECK(b.size() == size_t(4));
@@ -92,8 +92,8 @@ TEST_SUITE("ByteArray")
     TEST_CASE("checkMoveCtor")
     {
         // GIVEN
-        ByteArray b(4, 2);
-        ByteArray b2(b);
+        const ByteArray b(4, 2);
+        const ByteArray b2(b);
 
         // THEN
         const std::vector<uint8_t> expectedData{ 2, 2, 2, 2 };
@@ -114,7 +114,7 @@ TEST_SUITE("ByteArray")
     {
         // GIVEN
         ByteArray b(4, 2);
-        ByteArray b2 = std::move(b);
+        const ByteArray b2 = std::move(b);
 
         // THEN
         const std::vector<uint8_t> expectedData{ 2, 2, 2, 2 };
@@ -125,7 +125,7 @@ TEST_SUITE("ByteArray")
     TEST_CASE("checkSize")
     {
         // GIVEN
-        ByteArray b(4, 2);
+        const ByteArray b(4, 2);
 
         // THEN
         CHECK(b.size() == size_t(4));
@@ -172,7 +172,7 @@ TEST_SUITE("ByteArray")
     {
         // GIVEN
         const char *s = "test";
-        ByteArray b(s);
+        const ByteArray b(s);
 
         // THEN
         CHECK(b.constData()[0] == 't');
@@ -357,7 +357,7 @@ TEST_SUITE("ByteArray")
     {
         {
             // GIVEN
-            ByteArray t("");
+            const ByteArray t("");
 
             // WHEN
             const ByteArray b64 = t.toBase64();
@@ -367,7 +367,7 @@ TEST_SUITE("ByteArray")
         }
         {
             // GIVEN
-            ByteArray t("f");
+            const ByteArray t("f");
 
             // WHEN
             const ByteArray b64 = t.toBase64();
@@ -377,7 +377,7 @@ TEST_SUITE("ByteArray")
         }
         {
             // GIVEN
-            ByteArray t("fo");
+            const ByteArray t("fo");
 
             // WHEN
             const ByteArray b64 = t.toBase64();
@@ -387,7 +387,7 @@ TEST_SUITE("ByteArray")
         }
         {
             // GIVEN
-            ByteArray t("foo");
+            const ByteArray t("foo");
 
             // WHEN
             const ByteArray b64 = t.toBase64();
@@ -401,7 +401,7 @@ TEST_SUITE("ByteArray")
     {
         {
             // GIVEN
-            ByteArray b64("");
+            const ByteArray b64("");
 
             // WHEN
             const ByteArray t = ByteArray::fromBase64(b64);
@@ -411,7 +411,7 @@ TEST_SUITE("ByteArray")
         }
         {
             // GIVEN
-            ByteArray b64("Zg==");
+            const ByteArray b64("Zg==");
 
             // WHEN
             const ByteArray t = ByteArray::fromBase64(b64);
@@ -421,7 +421,7 @@ TEST_SUITE("ByteArray")
         }
         {
             // GIVEN
-            ByteArray b64("Zm8=");
+            const ByteArray b64("Zm8=");
 
             // WHEN
             const ByteArray t = ByteArray::fromBase64(b64);
@@ -431,7 +431,7 @@ TEST_SUITE("ByteArray")
         }
         {
             // GIVEN
-            ByteArray b64("Zm9v");
+            const ByteArray b64("Zm9v");
 
             // WHEN
             const ByteArray t = ByteArray::fromBase64(b64);

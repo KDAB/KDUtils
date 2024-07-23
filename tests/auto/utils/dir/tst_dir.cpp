@@ -33,14 +33,14 @@ TEST_SUITE("Dir")
     {
         {
             // GIVEN
-            Dir d("some_path_that_doesn_t_exist");
+            const Dir d("some_path_that_doesn_t_exist");
 
             // THEN
             CHECK(!d.exists());
         }
         {
             // GIVEN
-            Dir d(TST_DIR);
+            const Dir d(TST_DIR);
 
             // THEN
             CHECK(d.exists());
@@ -50,7 +50,7 @@ TEST_SUITE("Dir")
     TEST_CASE("checkDirName")
     {
         // GIVEN
-        Dir d(TST_DIR);
+        const Dir d(TST_DIR);
 
         // THEN
         CHECK(d.dirName() == "bin");
@@ -59,7 +59,7 @@ TEST_SUITE("Dir")
     TEST_CASE("checkAbsoluteFilePath")
     {
         // GIVEN
-        Dir d(TST_DIR);
+        const Dir d(TST_DIR);
 
         // WHEN
         const std::string fileName = "some_file.txt";
@@ -126,7 +126,7 @@ TEST_SUITE("Dir")
     TEST_CASE("checkStripTrailingSeparator")
     {
         // GIVEN
-        Dir d(TST_DIR "/");
+        const Dir d(TST_DIR "/");
 
         // THEN
         CHECK(d.path() == TST_DIR);

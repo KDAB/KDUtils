@@ -111,7 +111,7 @@ TEST_CASE("Creation")
 {
     SUBCASE("default construction")
     {
-        CoreApplication app;
+        const CoreApplication app;
         REQUIRE(CoreApplication::instance() != nullptr);
     }
 
@@ -289,7 +289,7 @@ TEST_CASE("Main event loop")
 
         {
             SPDLOG_INFO("Waking up helper thread");
-            std::unique_lock lock(mutex);
+            const std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
         }

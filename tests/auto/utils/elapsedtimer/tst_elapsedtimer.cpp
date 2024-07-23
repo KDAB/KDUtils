@@ -34,7 +34,7 @@ TEST_SUITE("ElaspedTimer")
     TEST_CASE("checkAutoStarts")
     {
         // GIVEN
-        ElapsedTimer t;
+        const ElapsedTimer t;
 
         // WHEN
         std::this_thread::sleep_for(500ms);
