@@ -115,6 +115,7 @@ private:
     CursorMode m_cursorMode{ CursorMode::Normal };
     MouseButtons m_mouseButtons{ MouseButton::NoButton };
     std::vector<LinuxWaylandPlatformOutput *> m_enteredOutputs;
+    KDBindings::ScopedConnection m_scaleChangedConnection;
 };
 
 } // namespace KDGui

@@ -26,6 +26,8 @@
 #include <wayland-zwp-relative-pointer-unstable-v1-client-protocol.h>
 #include <wayland-zwp-pointer-constraints-v1-client-protocol.h>
 
+#include <tuple>
+
 using namespace KDGui;
 
 LinuxWaylandPlatformInput::LinuxWaylandPlatformInput(LinuxWaylandPlatformIntegration *integration,
@@ -41,7 +43,7 @@ LinuxWaylandPlatformInput::LinuxWaylandPlatformInput(LinuxWaylandPlatformIntegra
     };
     wl_seat_add_listener(seat, &listener, this);
 
-    m_keyboard.repeat.timer.timeout.connect(&LinuxWaylandPlatformInput::keyboardRepeatKey, this);
+    std::ignore = m_keyboard.repeat.timer.timeout.connect(&LinuxWaylandPlatformInput::keyboardRepeatKey, this);
 }
 
 LinuxWaylandPlatformInput::~LinuxWaylandPlatformInput()
@@ -223,7 +225,7 @@ void LinuxWaylandPlatformInput::pointerEnter(wl_pointer *pointer, uint32_t seria
         m_pointer.accumulatedEvent.focusChange = true;
     } else {
         m_pointer.focus = LinuxWaylandPlatformWindow::fromSurface(surface);
-        m_pointer.focus->cursorChanged.connect(&LinuxWaylandPlatformInput::setCursor, this);
+        std::ignore = m_pointer.focus->cursorChanged.connect(&LinuxWaylandPlatformInput::setCursor, this);
         setCursor();
     }
 }
@@ -333,7 +335,7 @@ void LinuxWaylandPlatformInput::pointerFrame(wl_pointer *pointer)
     auto &ev = m_pointer.accumulatedEvent;
     if (ev.focusChange && ev.focus) {
         m_pointer.focus = ev.focus;
-        m_pointer.focus->cursorChanged.connect(&LinuxWaylandPlatformInput::setCursor, this);
+        std::ignore = m_pointer.focus->cursorChanged.connect(&LinuxWaylandPlatformInput::setCursor, this);
         setCursor();
     }
 

@@ -12,6 +12,8 @@
 #include <KDGui/window.h>
 #include <KDGui/gui_events.h>
 
+#include <tuple>
+
 class ExampleWindow : public KDGui::Window
 {
     void mouseMoveEvent(KDGui::MouseMoveEvent *ev) override
@@ -68,7 +70,7 @@ int main()
     w.title = "KDGui window example";
     w.visible = true;
 
-    w.visible.valueChanged().connect([&app](bool visible) {
+    std::ignore = w.visible.valueChanged().connect([&app](bool visible) {
         if (!visible) {
             app.quit();
         }

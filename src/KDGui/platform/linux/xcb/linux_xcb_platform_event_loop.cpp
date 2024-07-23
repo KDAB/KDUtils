@@ -21,6 +21,8 @@
 
 #include <xcb/xcb.h>
 
+#include <tuple>
+
 using namespace KDFoundation;
 using namespace KDGui;
 
@@ -39,7 +41,7 @@ LinuxXcbPlatformEventLoop::LinuxXcbPlatformEventLoop(LinuxXcbPlatformIntegration
     auto xcbfd = xcb_get_file_descriptor(connection);
     SPDLOG_LOGGER_DEBUG(m_logger, "Registering xcb fd {} with event loop", xcbfd);
     m_xcbNotifier = std::make_unique<FileDescriptorNotifier>(xcbfd, FileDescriptorNotifier::NotificationType::Read);
-    m_xcbNotifier->triggered.connect([this](const int &) {
+    std::ignore = m_xcbNotifier->triggered.connect([this](const int &) {
         this->m_xcbEventsPending = true;
     });
 

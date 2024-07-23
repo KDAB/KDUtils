@@ -24,6 +24,7 @@
 
 #include <array>
 #include <cassert>
+#include <tuple>
 
 using namespace KDFoundation;
 using namespace KDGui;
@@ -34,12 +35,12 @@ LinuxWaylandPlatformWindow::LinuxWaylandPlatformWindow(
     : AbstractPlatformWindow(window, AbstractPlatformWindow::Type::Wayland)
     , m_platformIntegration{ platformIntegration }
 {
-    CoreApplication::instance()->applicationName.valueChanged().connect([this]() {
+    std::ignore = CoreApplication::instance()->applicationName.valueChanged().connect([this]() {
         if (m_toplevel) {
             setAppId();
         }
     });
-    window->scaleFactor.valueChanged().connect([this](float value) {
+    m_scaleChangedConnection = window->scaleFactor.valueChanged().connect([this](float value) {
         if (m_surface) {
             wl_surface_set_buffer_scale(m_surface, int32_t(value));
         }

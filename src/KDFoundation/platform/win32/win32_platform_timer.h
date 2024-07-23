@@ -13,6 +13,7 @@
 
 #include <chrono>
 #include <windows.h>
+#include <kdbindings/signal.h>
 #undef max
 
 #include <KDFoundation/platform/abstract_platform_timer.h>
@@ -33,6 +34,8 @@ private:
     static void callback(HWND hwnd, UINT uMsg, UINT_PTR timerId, DWORD dwTime);
 
     Timer *m_timer;
+    KDBindings::ScopedConnection m_timerRunningConnection;
+    KDBindings::ScopedConnection m_timerIntervalConnection;
     uintptr_t m_id{ 0 };
 };
 

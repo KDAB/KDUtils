@@ -21,7 +21,7 @@ AbstractPlatformWindow::AbstractPlatformWindow(Window *window, AbstractPlatformW
     , m_type(type)
 {
     assert(window);
-    window->title.valueChanged().connect(&AbstractPlatformWindow::setTitle, this);
+    m_titleChangedConnection = window->title.valueChanged().connect(&AbstractPlatformWindow::setTitle, this);
 }
 
 AbstractPlatformWindow::Type AbstractPlatformWindow::type() const

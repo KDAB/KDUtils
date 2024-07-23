@@ -19,6 +19,7 @@
 
 #include <numeric>
 #include <string>
+#include <tuple>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
@@ -288,7 +289,7 @@ TEST_CASE("Object destruction")
 
         for (int i = 0; i < 10; ++i) {
             auto child = parent->createChild<IntObject>(i);
-            child->aboutToBeDestroyed.connect(onAboutToBeDestroyed);
+            std::ignore = child->aboutToBeDestroyed.connect(onAboutToBeDestroyed);
         }
         // THEN
         REQUIRE(childRemovedSpy.count() == 0);

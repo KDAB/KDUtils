@@ -27,14 +27,14 @@ inline Win32PlatformEventLoop *eventLoop()
 Win32PlatformTimer::Win32PlatformTimer(Timer *timer)
     : m_timer(timer)
 {
-    timer->running.valueChanged().connect([this, timer](bool running) {
+    m_timerRunningConnection = timer->running.valueChanged().connect([this, timer](bool running) {
         if (running) {
             arm(timer->interval.get());
         } else {
             disarm();
         }
     });
-    timer->interval.valueChanged().connect([this, timer]() {
+    m_timerIntervalConnection = timer->interval.valueChanged().connect([this, timer]() {
         if (timer->running.get()) {
             arm(timer->interval.get());
         }

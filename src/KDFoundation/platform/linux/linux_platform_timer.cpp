@@ -23,21 +23,21 @@ using namespace KDFoundation;
 LinuxPlatformTimer::LinuxPlatformTimer(Timer *timer)
     : m_notifier(timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC), FileDescriptorNotifier::NotificationType::Read)
 {
-    m_notifier.triggered.connect([this, timer]() {
+    m_notifierConnection = m_notifier.triggered.connect([this, timer]() {
         char buf[8];
         const auto bytes = read(m_notifier.fileDescriptor(), buf, 8);
         KD_UNUSED(bytes);
         timer->timeout.emit();
     });
 
-    timer->running.valueChanged().connect([this, timer](bool running) {
+    m_timerRunningConnection = timer->running.valueChanged().connect([this, timer](bool running) {
         if (running) {
             arm(timer->interval.get());
         } else {
             disarm();
         }
     });
-    timer->interval.valueChanged().connect([this, timer]() {
+    m_timerIntervalConnection = timer->interval.valueChanged().connect([this, timer]() {
         if (timer->running.get()) {
             arm(timer->interval.get());
         }
