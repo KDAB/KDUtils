@@ -60,8 +60,9 @@ FileMapper::FileMapper(File &&file)
 // a default deleter without knowing the size of the type.
 FileMapper::~FileMapper() = default;
 
+namespace {
 template<std::ios::openmode mode>
-static const uint8_t *mapImpl(
+const uint8_t *mapImpl(
         std::unique_ptr<FileMapper::Map> &output,
         const std::string &path,
         std::uintmax_t offset,
@@ -108,6 +109,7 @@ static const uint8_t *mapImpl(
         return output->readOnlyMap().data();
     }
 }
+} // namespace
 
 const uint8_t *FileMapper::map(std::uintmax_t offset, std::uintmax_t length) const
 {
