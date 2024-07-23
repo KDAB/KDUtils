@@ -403,7 +403,7 @@ void LinuxWaylandPlatformInput::keyboardKeymap(wl_keyboard * /*keyboard*/, uint3
         return;
     }
 
-    char *map = static_cast<char *>(mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0));
+    char *map = static_cast<char *>(mmap(nullptr, size, PROT_READ, MAP_PRIVATE, fd, 0));
     if (!map) {
         SPDLOG_LOGGER_ERROR(m_integration->logger(), "mmapping the keymap fd failed!");
         close(fd);
