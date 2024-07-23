@@ -32,6 +32,7 @@ if(NOT TARGET spdlog::spdlog)
             GIT_TAG e69e5f977d458f2650bb346dadf2ad30c5320281 # 10.2.1
         )
         FetchContent_MakeAvailable(fmt)
+        set_target_properties(fmt PROPERTIES CXX_CLANG_TIDY "")
     endif()
     set(SPDLOG_FMT_EXTERNAL_HO ON)
     # with this spdlog is included as a system library and won't e.g. trigger
