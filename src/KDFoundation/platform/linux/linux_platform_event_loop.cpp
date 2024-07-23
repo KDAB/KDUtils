@@ -9,6 +9,10 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 
+#if !defined(_GNU_SOURCE)
+#error "Project must be compiled with _GNU_SOURCE define for GNU variant of strerror_r"
+#endif
+
 #include <KDFoundation/platform/linux/linux_platform_event_loop.h>
 #include <KDFoundation/platform/linux/linux_platform_timer.h>
 #include <KDFoundation/event.h>
@@ -16,6 +20,9 @@
 
 #include <unistd.h>
 #include <sys/eventfd.h>
+
+#include <array>
+#include <cstring>
 
 using namespace KDFoundation;
 
@@ -174,7 +181,8 @@ bool LinuxPlatformEventLoop::unregisterFileDescriptor(int fd, FileDescriptorNoti
     // proceed as if unregistering the file descriptor was successful.
     // This way we ensure notifiers are reset / deleted properly.
     if (rv && (errno != EBADF)) {
-        SPDLOG_ERROR("Failed to unregister file descriptor {}. Error {}: {}.", fd, errno, strerror(errno));
+        std::array<char, 64> buf;
+        SPDLOG_ERROR("Failed to unregister file descriptor {}. Error {}: {}.", fd, errno, strerror_r(errno, buf.data(), buf.size()));
         return false;
     }
 

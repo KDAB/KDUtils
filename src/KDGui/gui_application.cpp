@@ -33,7 +33,7 @@ static std::unique_ptr<KDGui::AbstractGuiPlatformIntegration> createLinuxIntegra
     bool prefersXcb = false;
 
     // TODO(doc): document this behavior
-    if (const char *preferredPlatform = std::getenv("KDGUI_PLATFORM")) {
+    if (const char *preferredPlatform = std::getenv("KDGUI_PLATFORM")) { //NOLINT(concurrency-mt-unsafe)
         prefersXcb = std::string_view{ preferredPlatform } == "xcb";
     }
 
