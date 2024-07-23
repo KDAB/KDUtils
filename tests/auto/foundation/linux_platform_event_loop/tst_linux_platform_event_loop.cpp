@@ -163,8 +163,8 @@ TEST_CASE("Register and unregister for events")
     SUBCASE("can re-register a notifier for read notifications even though file was deleted in between")
     {
         LinuxPlatformEventLoop loop;
-        int pipe1[2];
-        if (pipe(pipe1) == -1) {
+        std::array<int, 2> pipe1;
+        if (pipe(pipe1.data()) == -1) {
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
@@ -175,7 +175,7 @@ TEST_CASE("Register and unregister for events")
         close(pipe1[0]);
         close(pipe1[1]);
         loop.unregisterNotifier(notifier.get());
-        if (pipe(pipe1) == -1) {
+        if (pipe(pipe1.data()) == -1) {
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
@@ -188,18 +188,18 @@ TEST_CASE("Register and unregister for events")
     SUBCASE("can register multiple notifiers for read")
     {
         LinuxPlatformEventLoop loop;
-        int pipe1[2];
-        int pipe2[2];
-        int pipe3[2];
-        if (pipe(pipe1) == -1) {
+        std::array<int, 2> pipe1;
+        std::array<int, 2> pipe2;
+        std::array<int, 2> pipe3;
+        if (pipe(pipe1.data()) == -1) {
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
-        if (pipe(pipe2) == -1) {
+        if (pipe(pipe2.data()) == -1) {
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
-        if (pipe(pipe3) == -1) {
+        if (pipe(pipe3.data()) == -1) {
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
@@ -226,8 +226,8 @@ TEST_CASE("Register and unregister for events")
     SUBCASE("can register same fd for multiple events")
     {
         LinuxPlatformEventLoop loop;
-        int pipe1[2];
-        if (pipe(pipe1) == -1) {
+        std::array<int, 2> pipe1;
+        if (pipe(pipe1.data()) == -1) {
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
@@ -248,8 +248,8 @@ TEST_CASE("Register and unregister for events")
     SUBCASE("can register same fd for multiple events then unregister")
     {
         LinuxPlatformEventLoop loop;
-        int pipe1[2];
-        if (pipe(pipe1) == -1) {
+        std::array<int, 2> pipe1;
+        if (pipe(pipe1.data()) == -1) {
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
@@ -292,8 +292,8 @@ TEST_CASE("Wait for events")
     SUBCASE("can wait until an event occurs on a watched fd")
     {
         LinuxPlatformEventLoop loop;
-        int pipe1[2];
-        if (pipe(pipe1) == -1) {
+        std::array<int, 2> pipe1;
+        if (pipe(pipe1.data()) == -1) {
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
@@ -388,8 +388,8 @@ TEST_CASE("Notifies about events")
         LinuxPlatformEventLoop loop;
         auto postman = std::make_unique<Postman>();
         loop.setPostman(postman.get());
-        int pipe1[2];
-        if (pipe(pipe1) == -1) {
+        std::array<int, 2> pipe1;
+        if (pipe(pipe1.data()) == -1) {
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
