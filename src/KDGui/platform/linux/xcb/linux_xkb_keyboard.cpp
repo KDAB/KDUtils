@@ -20,6 +20,8 @@
 #include <xcb/xkb.h>
 #undef explicit
 
+#include <array>
+
 using namespace KDGui;
 
 LinuxXkbKeyboard::LinuxXkbKeyboard(LinuxXcbPlatformIntegration *platformIntegration)
@@ -131,9 +133,9 @@ void LinuxXkbKeyboard::handleKeyPress(xcb_key_press_event_t *ev)
     // Update the xkb state
     (void)xkb_state_update_key(m_state.get(), keycode, XKB_KEY_DOWN);
 
-    char s[16];
-    xkb_keysym_get_name(keysym, s, sizeof(s));
-    SPDLOG_LOGGER_TRACE(m_logger, "keysym: {} => name: {}", keysym, s);
+    std::array<char, 16> s;
+    xkb_keysym_get_name(keysym, s.data(), s.size());
+    SPDLOG_LOGGER_TRACE(m_logger, "keysym: {} => name: {}", keysym, s.data());
 
     // Lookup the KDGui key enum
     auto key = xkb::keysymToKey(keysym);
@@ -145,9 +147,9 @@ void LinuxXkbKeyboard::handleKeyPress(xcb_key_press_event_t *ev)
     window->handleKeyPress(ev->time, ev->detail, key, modifiers);
 
     // Get the unicode characters
-    xkb_state_key_get_utf8(m_state.get(), keycode, s, sizeof(s));
-    if (strlen(s) > 0)
-        window->handleTextInput(s);
+    xkb_state_key_get_utf8(m_state.get(), keycode, s.data(), s.size());
+    if (strlen(s.data()) > 0)
+        window->handleTextInput(s.data());
 }
 
 void LinuxXkbKeyboard::handleKeyRelease(xcb_key_release_event_t *ev)
@@ -162,9 +164,9 @@ void LinuxXkbKeyboard::handleKeyRelease(xcb_key_release_event_t *ev)
     // Update the xkb state
     (void)xkb_state_update_key(m_state.get(), keycode, XKB_KEY_UP);
 
-    char s[16];
-    xkb_keysym_get_name(keysym, s, sizeof(s));
-    SPDLOG_LOGGER_TRACE(m_logger, "keysym: {} => name: {}", keysym, s);
+    std::array<char, 16> s;
+    xkb_keysym_get_name(keysym, s.data(), s.size());
+    SPDLOG_LOGGER_TRACE(m_logger, "keysym: {} => name: {}", keysym, s.data());
 
     // Lookup the KDGui key enum
     auto key = xkb::keysymToKey(keysym);

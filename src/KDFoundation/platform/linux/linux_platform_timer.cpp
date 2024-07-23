@@ -11,12 +11,15 @@
 
 #include <KDFoundation/platform/linux/linux_platform_timer.h>
 
-#include <unistd.h>
-#include <sys/timerfd.h>
-
 #include "KDFoundation/core_application.h"
 #include "KDFoundation/timer.h"
 #include "KDFoundation/platform/linux/linux_platform_event_loop.h"
+
+#include <unistd.h>
+#include <sys/timerfd.h>
+
+#include <array>
+#include <tuple>
 
 using namespace KDFoundation;
 
@@ -24,9 +27,8 @@ LinuxPlatformTimer::LinuxPlatformTimer(Timer *timer)
     : m_notifier(timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC), FileDescriptorNotifier::NotificationType::Read)
 {
     m_notifierConnection = m_notifier.triggered.connect([this, timer]() {
-        char buf[8];
-        const auto bytes = read(m_notifier.fileDescriptor(), buf, 8);
-        KD_UNUSED(bytes);
+        std::array<char, 8> buf;
+        std::ignore = read(m_notifier.fileDescriptor(), buf.data(), buf.size());
         timer->timeout.emit();
     });
 
