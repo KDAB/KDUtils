@@ -18,6 +18,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <thread>
+#include <tuple>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
@@ -203,7 +204,7 @@ TEST_CASE("Timer handling")
         int timeout = 0;
         auto startTime = std::chrono::steady_clock::now();
         auto time = startTime;
-        timer.timeout.connect([&]() {
+        std::ignore = timer.timeout.connect([&]() {
             const auto endTime = std::chrono::steady_clock::now();
             REQUIRE(endTime - time > 50ms);
             REQUIRE(endTime - time < 150ms);
@@ -240,7 +241,7 @@ TEST_CASE("Timer handling")
 
         bool fired = false;
 
-        timer.timeout.connect([&] {
+        std::ignore = timer.timeout.connect([&] {
             fired = true;
         });
 

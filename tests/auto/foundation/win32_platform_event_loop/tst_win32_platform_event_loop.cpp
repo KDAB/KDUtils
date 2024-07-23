@@ -25,6 +25,7 @@
 #include <numeric>
 #include <string>
 #include <thread>
+#include <tuple>
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -185,7 +186,7 @@ TEST_CASE("Wait for events")
         // A notifier for testing deregistration
         int unregisteredCalls = 0;
         FileDescriptorNotifier unregistered(clientSock, FileDescriptorNotifier::NotificationType::Read);
-        unregistered.triggered.connect([&unregisteredCalls] {
+        std::ignore = unregistered.triggered.connect([&unregisteredCalls] {
             unregisteredCalls++;
         });
         loop.registerNotifier(&unregistered);
@@ -193,7 +194,7 @@ TEST_CASE("Wait for events")
 
         // Set up read notifier to receive the data
         FileDescriptorNotifier readNotifier(clientSock, FileDescriptorNotifier::NotificationType::Read);
-        readNotifier.triggered.connect([&dataReceived](int fd) {
+        std::ignore = readNotifier.triggered.connect([&dataReceived](int fd) {
             char buf[128] = {};
             recv(fd, buf, 128, 0);
             const int recvSize = recv(fd, buf, 128, 0);
@@ -205,7 +206,7 @@ TEST_CASE("Wait for events")
         // A notifier for testing Write notification type
         FileDescriptorNotifier writeNotifier(clientSock, FileDescriptorNotifier::NotificationType::Write);
         int writeTriggered = 0;
-        writeNotifier.triggered.connect([&writeTriggered]() {
+        std::ignore = writeNotifier.triggered.connect([&writeTriggered]() {
             writeTriggered++;
         });
         loop.registerNotifier(&writeNotifier);

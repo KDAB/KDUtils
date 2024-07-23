@@ -13,6 +13,8 @@
 
 #include <chrono>
 
+#include <kdbindings/signal.h>
+
 #include <KDFoundation/platform/abstract_platform_timer.h>
 #include <KDFoundation/file_descriptor_notifier.h>
 
@@ -35,6 +37,9 @@ private:
         int fd;
     } m_fdCloser;
     FileDescriptorNotifier m_notifier;
+    KDBindings::ScopedConnection m_notifierConnection;
+    KDBindings::ScopedConnection m_timerRunningConnection;
+    KDBindings::ScopedConnection m_timerIntervalConnection;
 };
 
 } // namespace KDFoundation

@@ -16,6 +16,8 @@
 #include <KDFoundation/platform/abstract_platform_integration.h>
 #include <KDFoundation/event.h>
 
+#include <tuple>
+
 using namespace KDFoundation;
 using namespace KDGui;
 
@@ -24,13 +26,13 @@ Window::Window()
     , m_logger{ KDUtils::Logger::logger("window", spdlog::level::info) }
 {
 
-    visible.valueChanged().connect(&Window::onVisibleChanged, this);
+    std::ignore = visible.valueChanged().connect(&Window::onVisibleChanged, this);
     m_resizeConnectionIds = {
         width.valueChanged().connect(&Window::onSizeChanged, this),
         height.valueChanged().connect(&Window::onSizeChanged, this)
     };
-    cursorEnabled.valueChanged().connect(&Window::onCursorEnabledChanged, this);
-    rawMouseInputEnabled.valueChanged().connect(&Window::onRawMouseInputEnabledChanged, this);
+    std::ignore = cursorEnabled.valueChanged().connect(&Window::onCursorEnabledChanged, this);
+    std::ignore = rawMouseInputEnabled.valueChanged().connect(&Window::onRawMouseInputEnabledChanged, this);
 }
 
 Window::~Window()

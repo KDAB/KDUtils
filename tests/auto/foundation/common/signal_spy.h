@@ -23,7 +23,7 @@ public:
     template<typename Signal>
     explicit SignalSpy(Signal &s)
     {
-        s.connect([this](Args... args) {
+        m_connection = s.connect([this](Args... args) {
             callback(args...);
         });
     }
@@ -74,4 +74,5 @@ private:
 
     uint32_t m_count = 0;
     std::tuple<Args...> m_args;
+    KDBindings::ScopedConnection m_connection;
 };

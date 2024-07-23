@@ -15,6 +15,8 @@
 #include <KDGui/kdgui_keys.h>
 #include <KDGui/gui_events.h>
 
+#include <kdbindings/signal.h>
+
 #include <string>
 
 namespace KDGui {
@@ -86,6 +88,7 @@ public:
 
 protected:
     Window *m_window;
+    KDBindings::ScopedConnection m_titleChangedConnection;
     AbstractPlatformWindow::Type m_type;
 };
 

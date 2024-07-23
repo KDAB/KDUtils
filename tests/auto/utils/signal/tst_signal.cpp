@@ -14,6 +14,7 @@
 #include <kdbindings/signal.h>
 
 #include <thread>
+#include <tuple>
 
 using namespace KDUtils;
 
@@ -31,13 +32,13 @@ TEST_SUITE("Signal")
         KDBindings::Signal<int> signal2;
 
         std::thread thread1([&] {
-            signal1.connectDeferred(app.connectionEvaluator(), [&val](int value) {
+            std::ignore = signal1.connectDeferred(app.connectionEvaluator(), [&val](int value) {
                 val += value;
             });
         });
 
         std::thread thread2([&] {
-            signal2.connectDeferred(app.connectionEvaluator(), [&val](int value) {
+            std::ignore = signal2.connectDeferred(app.connectionEvaluator(), [&val](int value) {
                 val += value;
             });
         });
@@ -91,11 +92,11 @@ TEST_SUITE("Signal")
         int val1 = 4;
         int val2 = 4;
 
-        signal1.connectDeferred(app.connectionEvaluator(), [&val1](int value) {
+        std::ignore = signal1.connectDeferred(app.connectionEvaluator(), [&val1](int value) {
             val1 += value;
         });
 
-        signal2.connectDeferred(app.connectionEvaluator(), [&val2](int value) {
+        std::ignore = signal2.connectDeferred(app.connectionEvaluator(), [&val2](int value) {
             val2 += value;
         });
 
