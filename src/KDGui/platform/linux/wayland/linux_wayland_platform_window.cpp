@@ -300,7 +300,8 @@ void LinuxWaylandPlatformWindow::updateScaleFactor()
     window()->scaleFactor = factor;
 }
 
-int32_t LinuxWaylandPlatformWindow::scaleByFactor(const int32_t value) const
+template<typename T>
+T LinuxWaylandPlatformWindow::scaleByFactor(T value) const
 {
-    return value * m_window->scaleFactor.get();
+    return value * m_window->scaleFactor.get(); // NOLINT(bugprone-narrowing-conversions)
 }
