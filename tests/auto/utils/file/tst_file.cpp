@@ -248,7 +248,7 @@ TEST_SUITE("File")
             // perform identical write to both
             std::string intro = "hello, I am the new start to this file\n";
             CHECK(intro.size() < mapper.size()); // no overwrite
-            std::memcpy(mapping, intro.data(), intro.size());
+            std::memcpy(mapping, intro.data(), intro.size()); // NOLINT(bugprone-not-null-terminated-result)
             std::memcpy(copiedContents.data(), intro.data(), intro.size());
         }
 
