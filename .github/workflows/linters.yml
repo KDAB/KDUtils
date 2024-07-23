@@ -49,7 +49,7 @@ jobs:
         run: >
           cmake -S . -B build -G Ninja -DKDUTILS_BUILD_TESTS=True
           -DCMAKE_CXX_CLANG_TIDY="${{matrix.tidy-executable}}" \
-          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_BUILD_TYPE=Release -DKDUTILS_BUILD_TESTS=ON
 
       - name: Build Project
         shell: pwsh
