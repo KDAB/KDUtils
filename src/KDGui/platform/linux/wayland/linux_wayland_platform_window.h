@@ -30,7 +30,7 @@ class LinuxWaylandPlatformOutput;
 class KDGUI_API LinuxWaylandPlatformWindow : public AbstractPlatformWindow
 {
 public:
-    explicit LinuxWaylandPlatformWindow(LinuxWaylandPlatformIntegration *platformIntegraton,
+    explicit LinuxWaylandPlatformWindow(LinuxWaylandPlatformIntegration *platformIntegration,
                                         Window *window);
 
     LinuxWaylandPlatformWindow() = delete;
