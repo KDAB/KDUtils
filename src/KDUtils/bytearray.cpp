@@ -83,7 +83,7 @@ ByteArray ByteArray::mid(size_t pos, size_t len) const
     if (len == 0)
         len = size() - pos;
     len = std::min(len, size());
-    return ByteArray({ m_data.begin() + pos, m_data.begin() + int64_t(pos + len) });
+    return ByteArray({ m_data.begin() + int64_t(pos), m_data.begin() + int64_t(pos + len) });
 }
 
 ByteArray ByteArray::left(size_t left) const
@@ -105,7 +105,7 @@ ByteArray &ByteArray::remove(size_t pos, size_t len)
     if (pos >= size())
         return *this;
     len = std::min(size() - pos, len);
-    m_data.erase(m_data.begin() + pos, m_data.begin() + int64_t(pos + len));
+    m_data.erase(m_data.begin() + int64_t(pos), m_data.begin() + int64_t(pos + len));
     return *this;
 }
 

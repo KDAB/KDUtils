@@ -106,7 +106,8 @@ private:
     void setAppId();
     void updateScaleFactor();
 
-    int32_t scaleByFactor(int32_t value) const;
+    template<typename T>
+    T scaleByFactor(T value) const;
 
     LinuxWaylandPlatformIntegration *m_platformIntegration;
     wl_surface *m_surface{ nullptr };
