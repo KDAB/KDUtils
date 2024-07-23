@@ -62,7 +62,7 @@ class ExampleWindow : public KDGui::Window
     }
 };
 
-int main()
+int main() // NOLINT(bugprone-exception-escape)
 {
     KDGui::GuiApplication app;
 
