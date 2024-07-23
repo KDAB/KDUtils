@@ -24,6 +24,8 @@
 #include <wayland-zwp-pointer-constraints-v1-client-protocol.h>
 #include <wayland-xdg-decoration-unstable-v1-client-protocol.h>
 
+#include <cstdlib>
+
 using namespace KDGui;
 
 LinuxWaylandPlatformIntegration::LinuxWaylandPlatformIntegration()
@@ -49,7 +51,7 @@ void LinuxWaylandPlatformIntegration::init()
 {
     m_logger = KDUtils::Logger::logger("wayland", spdlog::level::info);
 
-    SPDLOG_LOGGER_INFO(m_logger, "Wayland display is: {}", getenv("WAYLAND_DISPLAY"));
+    SPDLOG_LOGGER_INFO(m_logger, "Wayland display is: {}", std::getenv("WAYLAND_DISPLAY")); // NOLINT(concurrency-mt-unsafe)
 
     m_display = wl_display_connect(nullptr);
     if (!m_display) {

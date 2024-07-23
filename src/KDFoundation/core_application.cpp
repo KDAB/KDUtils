@@ -38,7 +38,7 @@ CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&
     spdlog::set_default_logger(m_defaultLogger);
 
     // Helps with debugging setup on remote hosts
-    if (const char *display = std::getenv("DISPLAY"))
+    if (const char *display = std::getenv("DISPLAY")) // NOLINT(concurrency-mt-unsafe)
         SPDLOG_LOGGER_INFO(m_logger, "DISPLAY={}", display);
 
     // Create a default postman object
