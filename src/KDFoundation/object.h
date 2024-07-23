@@ -29,6 +29,9 @@ class KDFOUNDATION_API Object : public EventReceiver
 {
 public:
     Object();
+    /// @warning This destructor emits #destroyed signal and #childRemoved for each child. If any of
+    /// the slots connected to these signals throws (which is UB in KDBindings anyway) the exception
+    /// will be eaten and error will be logged.
     virtual ~Object();
 
     // Not copyable
