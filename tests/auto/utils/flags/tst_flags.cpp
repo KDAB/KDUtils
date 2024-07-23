@@ -13,6 +13,7 @@
 
 using namespace KDUtils;
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum Enum {
     A = (1 << 0),
     B = (1 << 1),
@@ -30,6 +31,7 @@ TEST_SUITE("Flags")
 
     TEST_CASE("checkStorageType")
     {
+        // NOLINTBEGIN(performance-enum-size)
         // GIVEN
         enum StandardEnum {
             A_SE = 0,
@@ -42,6 +44,7 @@ TEST_SUITE("Flags")
         enum ClassUIntEnum : unsigned int {
             A_CUE = 0,
         };
+        // NOLINTEND(performance-enum-size)
 
         // THEN
         CHECK(std::is_signed<Flags<StandardEnum>::FlagsInt>() == std::is_signed<std::underlying_type<StandardEnum>::type>());
