@@ -74,7 +74,8 @@ if(NOT TARGET KDAB::KDBindings)
     fetchcontent_declare(
         KDBindings
         GIT_REPOSITORY https://github.com/KDAB/KDBindings.git
-        GIT_TAG 4c4d36489b60a3ae5ce17a3dc0b6b7cbf43a9afa # v1.1.0-beta.2
+        GIT_TAG aab1cfd289296972ef32124f749e3b565b634535 # main as of 2024-07-17, needed for noexcept
+                                                         # in destructors
         USES_TERMINAL_DOWNLOAD YES USES_TERMINAL_UPDATE YES
     )
     fetchcontent_makeavailable(KDBindings)
