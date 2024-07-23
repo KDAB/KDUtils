@@ -93,7 +93,7 @@ TEST_SUITE("ByteArray")
     {
         // GIVEN
         const ByteArray b(4, 2);
-        const ByteArray b2(b);
+        const ByteArray b2(b); // NOLINT(performance-unnecessary-copy-initialization)
 
         // THEN
         const std::vector<uint8_t> expectedData{ 2, 2, 2, 2 };
