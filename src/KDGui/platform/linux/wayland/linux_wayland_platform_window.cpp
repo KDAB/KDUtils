@@ -199,7 +199,7 @@ void LinuxWaylandPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButton
 void LinuxWaylandPlatformWindow::handleMouseMoveRelative(uint32_t timestamp, int64_t dx, int64_t dy)
 {
     if (m_cursorMode == CursorMode::Disabled) {
-        Position pos = window()->cursorPosition.get() + Position(dx, dy);
+        const Position pos = window()->cursorPosition.get() + Position(dx, dy);
         MouseMoveEvent ev{ timestamp, MouseButton::NoButton, pos.x, pos.y };
         CoreApplication::instance()->sendEvent(m_window, &ev);
     }

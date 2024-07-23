@@ -210,12 +210,12 @@ void Window::resizeEvent(ResizeEvent *ev)
                         ev->height());
     // Block internal connection to onSizeChanged() to avoid a loop
     {
-        KDBindings::ConnectionBlocker widthBlocker{ m_resizeConnectionIds[0] };
+        const KDBindings::ConnectionBlocker widthBlocker{ m_resizeConnectionIds[0] };
         width = ev->width();
     }
 
     {
-        KDBindings::ConnectionBlocker heightBlocker{ m_resizeConnectionIds[1] };
+        const KDBindings::ConnectionBlocker heightBlocker{ m_resizeConnectionIds[1] };
         height = ev->height();
     }
 

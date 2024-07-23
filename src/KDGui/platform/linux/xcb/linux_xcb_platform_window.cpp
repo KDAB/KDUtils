@@ -41,8 +41,8 @@ bool LinuxXcbPlatformWindow::create()
     const auto screen = m_platformIntegration->screen();
 
     m_xcbWindow = xcb_generate_id(connection);
-    uint32_t mask = XCB_CW_EVENT_MASK;
-    uint32_t values[1] = {
+    const uint32_t mask = XCB_CW_EVENT_MASK;
+    const uint32_t values[1] = {
         XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS |
         XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_POINTER_MOTION |
         XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
@@ -77,10 +77,10 @@ bool LinuxXcbPlatformWindow::create()
     // Register for the WM_DELETE_WINDOW client message events. This prevents the
     // server from disconnecting us when a top-level window is closed. Allows us to
     // just unmap the window gracefully.
-    xcb_intern_atom_cookie_t cookie = xcb_intern_atom(connection, 1, 12, "WM_PROTOCOLS");
-    xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(connection, cookie, nullptr);
-    xcb_intern_atom_cookie_t cookie2 = xcb_intern_atom(connection, 0, 16, "WM_DELETE_WINDOW");
-    xcb_intern_atom_reply_t *reply2 = xcb_intern_atom_reply(connection, cookie2, nullptr);
+    const xcb_intern_atom_cookie_t cookie = xcb_intern_atom(connection, 1, 12, "WM_PROTOCOLS");
+    const xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(connection, cookie, nullptr);
+    const xcb_intern_atom_cookie_t cookie2 = xcb_intern_atom(connection, 0, 16, "WM_DELETE_WINDOW");
+    const xcb_intern_atom_reply_t *reply2 = xcb_intern_atom_reply(connection, cookie2, nullptr);
     m_closeAtom = reply2->atom;
     xcb_change_property(
             connection,
@@ -97,7 +97,7 @@ bool LinuxXcbPlatformWindow::create()
     m_platformIntegration->registerWindowForEvents(m_xcbWindow, this);
 
     // Create a hidden cursor from an unset 1x1 pixmap
-    xcb_pixmap_t pixmap = xcb_generate_id(connection);
+    const xcb_pixmap_t pixmap = xcb_generate_id(connection);
     m_hiddenCursor = xcb_generate_id(connection);
     xcb_create_pixmap(connection, 1, pixmap, screen->root, 1, 1);
     xcb_create_cursor(connection, m_hiddenCursor, pixmap, pixmap,
