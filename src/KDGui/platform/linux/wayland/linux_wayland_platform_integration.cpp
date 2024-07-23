@@ -170,7 +170,7 @@ void LinuxWaylandPlatformIntegration::global(wl_registry *registry, uint32_t id,
     }
 }
 
-void LinuxWaylandPlatformIntegration::globalRemove(wl_registry *registry, uint32_t id)
+void LinuxWaylandPlatformIntegration::globalRemove(wl_registry * /*registry*/, uint32_t id)
 {
     auto findSeat = [this](uint32_t id) {
         return std::find_if(m_inputs.begin(), m_inputs.end(), [id](const auto &input) { return input->seatId() == id; });

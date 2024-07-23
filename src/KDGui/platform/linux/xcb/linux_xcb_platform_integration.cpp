@@ -122,6 +122,7 @@ bool LinuxXcbPlatformIntegration::initializeXkbExtension()
 
 void LinuxXcbPlatformIntegration::dumpScreenInfo(xcb_screen_t *screen)
 {
+    KD_UNUSED(screen); // for release builds, debug log isn't compiled in
     SPDLOG_DEBUG("Information about screen {}", screen->root);
     SPDLOG_DEBUG("  width.........: {}", screen->width_in_pixels);
     SPDLOG_DEBUG("  height........: {}", screen->height_in_pixels);

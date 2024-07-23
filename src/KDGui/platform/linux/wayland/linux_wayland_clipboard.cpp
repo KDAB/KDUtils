@@ -81,7 +81,7 @@ LinuxWaylandClipboard::LinuxWaylandClipboard(KDGui::LinuxWaylandPlatformIntegrat
 }
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-void LinuxWaylandClipboard::dataOffer(wl_data_device *data_device, wl_data_offer *offer)
+void LinuxWaylandClipboard::dataOffer(wl_data_device * /*data_device*/, wl_data_offer *offer)
 {
     m_dataOffer = offer;
 }
