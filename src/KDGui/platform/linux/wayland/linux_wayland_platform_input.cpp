@@ -30,6 +30,9 @@
 
 using namespace KDGui;
 
+// Wayland requires lots of callbacks that trip this check so turn it off for the entire file
+// NOLINTBEGIN(bugprone-easily-swappable-parameters)
+
 LinuxWaylandPlatformInput::LinuxWaylandPlatformInput(LinuxWaylandPlatformIntegration *integration,
                                                      wl_seat *seat, uint32_t version, uint32_t id)
     : m_integration(integration)
@@ -457,6 +460,7 @@ void LinuxWaylandPlatformInput::keybordKey(wl_keyboard *keyboard, uint32_t seria
         // Get the modifier state
         const auto modifiers = xkb::modifierState(m_keyboard.state);
 
+        // NOLINTNEXTLINE(readability-suspicious-call-argument)
         m_keyboard.focus->handleKeyRelease(time, keycode, skey, modifiers);
         m_keyboard.repeat.timer.running = false;
     }
@@ -558,3 +562,4 @@ void LinuxWaylandPlatformInput::touchShape(wl_touch *touch, int32_t id, wl_fixed
 void LinuxWaylandPlatformInput::touchOrientation(wl_touch *touch, int32_t id, wl_fixed_t orientation)
 {
 }
+// NOLINTEND(bugprone-easily-swappable-parameters)

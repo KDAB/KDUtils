@@ -80,19 +80,23 @@ LinuxWaylandClipboard::LinuxWaylandClipboard(KDGui::LinuxWaylandPlatformIntegrat
 {
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void LinuxWaylandClipboard::dataOffer(wl_data_device *data_device, wl_data_offer *offer)
 {
     m_dataOffer = offer;
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void LinuxWaylandClipboard::dragEnter(wl_data_device *wl_data_device, uint32_t serial, wl_surface *surface, wl_fixed_t x, wl_fixed_t y, wl_data_offer *id)
 {
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void LinuxWaylandClipboard::dragLeave(wl_data_device *wl_data_device)
 {
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void LinuxWaylandClipboard::dragMotion(wl_data_device *wl_data_device, uint32_t time, wl_fixed_t x, wl_fixed_t y)
 {
 }

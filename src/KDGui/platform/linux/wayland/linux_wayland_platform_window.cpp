@@ -196,6 +196,7 @@ void LinuxWaylandPlatformWindow::handleMouseMove(uint32_t timestamp, MouseButton
     }
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void LinuxWaylandPlatformWindow::handleMouseMoveRelative(uint32_t timestamp, int64_t dx, int64_t dy)
 {
     if (m_cursorMode == CursorMode::Disabled) {
@@ -267,6 +268,7 @@ void LinuxWaylandPlatformWindow::close(xdg_toplevel *toplevel)
     window()->visible = false;
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void LinuxWaylandPlatformWindow::configureBounds(xdg_toplevel *toplevel, int32_t width, int32_t height)
 {
     int32_t w = int32_t(window()->width());
