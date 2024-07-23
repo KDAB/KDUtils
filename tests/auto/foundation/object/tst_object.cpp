@@ -37,8 +37,7 @@ class IntObject : public Object
 {
 public:
     IntObject(int value)
-        : Object()
-        , m_value{ value }
+        : m_value{ value }
     {
     }
 
@@ -59,7 +58,6 @@ class CountedObject : public Object
 {
 public:
     CountedObject()
-        : Object()
     {
         ++ms_objectCount;
     }
