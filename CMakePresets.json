@@ -83,7 +83,8 @@
             ],
             "binaryDir": "${sourceDir}/build/Release-clangtidy",
             "cacheVariables": {
-                "CMAKE_CXX_CLANG_TIDY": "clang-tidy"
+                "CMAKE_CXX_CLANG_TIDY": "clang-tidy",
+                "KDUTILS_BUILD_TESTS": "ON"
             }
         },
         {
