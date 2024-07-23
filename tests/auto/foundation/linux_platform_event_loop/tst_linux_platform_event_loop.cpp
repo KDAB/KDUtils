@@ -309,7 +309,7 @@ TEST_CASE("Wait for events")
         auto writeToPipe = [&mutex, &cond, &ready](int fd) {
             SPDLOG_INFO("Launched helper thread");
             std::unique_lock lock(mutex);
-            cond.wait(lock, [&ready] { return ready == true; });
+            cond.wait(lock, [&ready] { return ready; });
             SPDLOG_INFO("Thread going to sleep before writing to pipe");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
@@ -350,7 +350,7 @@ TEST_CASE("Wait for events")
         auto callWakeUp = [&mutex, &cond, &ready, &loop]() {
             SPDLOG_INFO("Launched helper thread");
             std::unique_lock lock(mutex);
-            cond.wait(lock, [&ready] { return ready == true; });
+            cond.wait(lock, [&ready] { return ready; });
             SPDLOG_INFO("Thread going to sleep before writing to pipe");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -410,7 +410,7 @@ TEST_CASE("Notifies about events")
         auto writeToPipe = [&mutex, &cond, &ready](int fd) {
             SPDLOG_INFO("Launched helper thread");
             std::unique_lock lock(mutex);
-            cond.wait(lock, [&ready] { return ready == true; });
+            cond.wait(lock, [&ready] { return ready; });
             SPDLOG_INFO("Thread going to sleep before writing to pipe");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(300));

@@ -276,7 +276,7 @@ TEST_CASE("Main event loop")
         auto quitTheApp = [&mutex, &cond, &ready, &app]() {
             SPDLOG_INFO("Launched worker thread");
             std::unique_lock lock(mutex);
-            cond.wait(lock, [&ready] { return ready == true; });
+            cond.wait(lock, [&ready] { return ready; });
             SPDLOG_INFO("Worker thread going to sleep before quitting the app event loop");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
