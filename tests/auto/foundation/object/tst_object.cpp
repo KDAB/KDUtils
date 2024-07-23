@@ -311,7 +311,11 @@ TEST_CASE("Object destruction")
         SignalSpy<Object *> objectDestroyedSpy(obj->destroyed);
         delete obj;
         REQUIRE(objectDestroyedSpy.count() == 1);
-        REQUIRE(std::get<0>(objectDestroyedSpy.args()) == obj);
+
+        // Don't do comparison in doctest's REQUIRE as it tries to stringify the value of
+        // obj which trips the use-after-free clang-tidy check
+        const bool ptrEqual = obj == std::get<0>(objectDestroyedSpy.args());
+        REQUIRE(ptrEqual);
     }
 }
 
