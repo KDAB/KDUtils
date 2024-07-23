@@ -29,9 +29,14 @@ else()
     list(APPEND CMAKE_MODULE_PATH ${doctest_SOURCE_DIR}/scripts/cmake)
 
     target_include_directories(
-        doctest INTERFACE $<BUILD_INTERFACE:${doctest_SOURCE_DIR}/doctest>
-                          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/KDUtils/doctest>
+        doctest SYSTEM INTERFACE $<BUILD_INTERFACE:${doctest_SOURCE_DIR}/doctest>
+                                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/KDUtils/doctest>
     )
+
+    # Copy all include directories to SYSTEM property so we don't get warnings from doctest
+    #TODO(cmake >=3.25): remove these two lines and add SYSTEM to doctest's FetchContent_Declare
+    get_target_property(DOCTEST_IID doctest INTERFACE_INCLUDE_DIRECTORIES)
+    set_target_properties(doctest PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${DOCTEST_IID}")
 
     if(APPLE)
         target_compile_options(doctest INTERFACE -Wno-deprecated-declarations)
