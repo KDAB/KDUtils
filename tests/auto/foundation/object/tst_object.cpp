@@ -79,12 +79,12 @@ public:
     bool m_timerEventDelivered = false;
 
 protected:
-    void timerEvent(TimerEvent *ev) override
+    void timerEvent(TimerEvent * /*ev*/) override
     {
         m_timerEventDelivered = true;
     }
 
-    void userEvent(Event *ev) override
+    void userEvent(Event * /*ev*/) override
     {
         m_userEventDelivered = true;
     }
