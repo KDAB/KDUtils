@@ -466,6 +466,7 @@ void LinuxWaylandPlatformInput::keybordKey(wl_keyboard * /*keyboard*/, uint32_t 
     }
 }
 
+// NOLINTNEXTLINE(readability-make-member-function-const)
 void LinuxWaylandPlatformInput::keyboardModifiers(wl_keyboard * /*keyboard*/, uint32_t /*serial*/, uint32_t depressed,
                                                   uint32_t latched, uint32_t locked, uint32_t group)
 {
