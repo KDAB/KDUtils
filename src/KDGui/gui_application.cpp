@@ -35,7 +35,7 @@ std::unique_ptr<KDGui::AbstractGuiPlatformIntegration> createLinuxIntegration()
 
     // TODO(doc): document this behavior
     if (const char *preferredPlatform = std::getenv("KDGUI_PLATFORM")) { // NOLINT(concurrency-mt-unsafe)
-        prefersXcb = std::string_view{ preferredPlatform } == "xcb";
+        prefersXcb = std::string_view{ preferredPlatform } == "xcb"; // NOLINT(clang-analyzer-deadcode.DeadStores)
     }
 
 #if defined(PLATFORM_WAYLAND)
