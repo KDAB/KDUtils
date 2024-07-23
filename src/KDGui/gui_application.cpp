@@ -27,13 +27,14 @@
 
 using namespace KDGui;
 
+namespace {
 #if defined(PLATFORM_LINUX)
-static std::unique_ptr<KDGui::AbstractGuiPlatformIntegration> createLinuxIntegration()
+std::unique_ptr<KDGui::AbstractGuiPlatformIntegration> createLinuxIntegration()
 {
     bool prefersXcb = false;
 
     // TODO(doc): document this behavior
-    if (const char *preferredPlatform = std::getenv("KDGUI_PLATFORM")) { //NOLINT(concurrency-mt-unsafe)
+    if (const char *preferredPlatform = std::getenv("KDGUI_PLATFORM")) { // NOLINT(concurrency-mt-unsafe)
         prefersXcb = std::string_view{ preferredPlatform } == "xcb";
     }
 
@@ -46,7 +47,7 @@ static std::unique_ptr<KDGui::AbstractGuiPlatformIntegration> createLinuxIntegra
 }
 #endif
 
-static std::unique_ptr<AbstractGuiPlatformIntegration> createPlatformIntegration()
+std::unique_ptr<AbstractGuiPlatformIntegration> createPlatformIntegration()
 {
 #if defined(ANDROID)
     return std::make_unique<AndroidPlatformIntegration>();
@@ -59,6 +60,7 @@ static std::unique_ptr<AbstractGuiPlatformIntegration> createPlatformIntegration
 #endif
     return {};
 }
+} // namespace
 
 GuiApplication::GuiApplication(std::unique_ptr<AbstractGuiPlatformIntegration> &&platformIntegration)
     : CoreApplication(platformIntegration ? std::move(platformIntegration) : createPlatformIntegration())
