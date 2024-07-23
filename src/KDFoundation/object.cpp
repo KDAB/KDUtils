@@ -42,11 +42,23 @@ void Object::deleteLater()
 
 Object::~Object()
 {
-    destroyed.emit(this);
+    try {
+        destroyed.emit(this);
+    } catch (...) {
+        SPDLOG_ERROR("Exception caught in ~Object({}) during Object::destroyed emission. Ignoring.",
+                     objectName());
+    }
 
     // Destroy the children in LIFO to be more like the stack
     while (!m_children.empty()) {
-        childRemoved.emit(this, m_children.back().get());
+        Object *child = m_children.back().get();
+        try {
+            childRemoved.emit(this, child);
+        } catch (...) {
+            SPDLOG_ERROR("Exception thrown in ~Object on Object::childRemoved ({}) for child object {}. Ignoring.",
+                         objectName(),
+                         child->objectName());
+        }
         m_children.pop_back();
     }
 }
