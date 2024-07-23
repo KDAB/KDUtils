@@ -230,7 +230,7 @@ void LinuxWaylandPlatformWindow::handleTextInput(const std::string &str)
     CoreApplication::instance()->sendEvent(m_window, &ev);
 }
 
-void LinuxWaylandPlatformWindow::enter(wl_surface *surface, wl_output *output)
+void LinuxWaylandPlatformWindow::enter(wl_surface * /*surface*/, wl_output *output)
 {
     auto o = LinuxWaylandPlatformOutput::fromOutput(output);
     m_enteredOutputs.push_back(o);
@@ -238,7 +238,7 @@ void LinuxWaylandPlatformWindow::enter(wl_surface *surface, wl_output *output)
     updateScaleFactor();
 }
 
-void LinuxWaylandPlatformWindow::leave(wl_surface *surface, wl_output *output)
+void LinuxWaylandPlatformWindow::leave(wl_surface * /*surface*/, wl_output *output)
 {
     auto o = LinuxWaylandPlatformOutput::fromOutput(output);
     auto it = std::find(m_enteredOutputs.begin(), m_enteredOutputs.end(), o);
@@ -255,21 +255,21 @@ void LinuxWaylandPlatformWindow::configure(xdg_surface *xdgSurface, uint32_t ser
     xdg_surface_ack_configure(xdgSurface, serial);
 }
 
-void LinuxWaylandPlatformWindow::configureToplevel(xdg_toplevel *toplevel, int32_t width, int32_t height, wl_array *states)
+void LinuxWaylandPlatformWindow::configureToplevel(xdg_toplevel * /*toplevel*/, int32_t width, int32_t height, wl_array * /*states*/)
 {
     if (width != 0 && height != 0) {
         handleResize(width, height);
     }
 }
 
-void LinuxWaylandPlatformWindow::close(xdg_toplevel *toplevel)
+void LinuxWaylandPlatformWindow::close(xdg_toplevel * /*toplevel*/)
 {
     SPDLOG_LOGGER_DEBUG(m_platformIntegration->logger(), "Window closed by user");
     window()->visible = false;
 }
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-void LinuxWaylandPlatformWindow::configureBounds(xdg_toplevel *toplevel, int32_t width, int32_t height)
+void LinuxWaylandPlatformWindow::configureBounds(xdg_toplevel * /*toplevel*/, int32_t width, int32_t height)
 {
     int32_t w = int32_t(window()->width());
     int32_t h = int32_t(window()->height());

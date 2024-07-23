@@ -84,7 +84,7 @@ void LinuxWaylandPlatformInput::destroyPointerConstraintsV1()
     }
 }
 
-void LinuxWaylandPlatformInput::capabilities(wl_seat *seat, uint32_t caps)
+void LinuxWaylandPlatformInput::capabilities(wl_seat * /*seat*/, uint32_t caps)
 {
     const bool hasPointer = caps & WL_SEAT_CAPABILITY_POINTER;
     if (hasPointer && !m_pointer.pointer) {
@@ -108,7 +108,7 @@ void LinuxWaylandPlatformInput::capabilities(wl_seat *seat, uint32_t caps)
     }
 }
 
-void LinuxWaylandPlatformInput::name(wl_seat *seat, const char *name)
+void LinuxWaylandPlatformInput::name(wl_seat * /*seat*/, const char *name)
 {
     m_name = name;
 }
@@ -218,7 +218,7 @@ void LinuxWaylandPlatformInput::destroyTouch()
     m_touch.touch = nullptr;
 }
 
-void LinuxWaylandPlatformInput::pointerEnter(wl_pointer *pointer, uint32_t serial, wl_surface *surface, wl_fixed_t x, wl_fixed_t y)
+void LinuxWaylandPlatformInput::pointerEnter(wl_pointer * /*pointer*/, uint32_t serial, wl_surface *surface, wl_fixed_t x, wl_fixed_t y)
 {
     m_pointer.pos = { wl_fixed_to_int(x), wl_fixed_to_int(y) };
     m_pointer.lastSerial = serial;
@@ -272,7 +272,7 @@ void LinuxWaylandPlatformInput::pointerLock()
     }
 }
 
-void LinuxWaylandPlatformInput::pointerLeave(wl_pointer *pointer, uint32_t serial, wl_surface *surface)
+void LinuxWaylandPlatformInput::pointerLeave(wl_pointer * /*pointer*/, uint32_t serial, wl_surface * /*surface*/)
 {
     if (m_version >= WL_POINTER_FRAME_SINCE_VERSION) {
         m_pointer.accumulatedEvent.focus = nullptr;
@@ -284,7 +284,7 @@ void LinuxWaylandPlatformInput::pointerLeave(wl_pointer *pointer, uint32_t seria
     m_pointer.lastSerial = serial;
 }
 
-void LinuxWaylandPlatformInput::pointerMotion(wl_pointer *pointer, uint32_t time, wl_fixed_t x, wl_fixed_t y)
+void LinuxWaylandPlatformInput::pointerMotion(wl_pointer * /*pointer*/, uint32_t time, wl_fixed_t x, wl_fixed_t y)
 {
     m_pointer.pos = { wl_fixed_to_int(x), wl_fixed_to_int(y) };
     if (m_version >= WL_POINTER_FRAME_SINCE_VERSION) {
@@ -295,7 +295,7 @@ void LinuxWaylandPlatformInput::pointerMotion(wl_pointer *pointer, uint32_t time
     }
 }
 
-void LinuxWaylandPlatformInput::pointerButton(wl_pointer *pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
+void LinuxWaylandPlatformInput::pointerButton(wl_pointer * /*pointer*/, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
 {
     const MouseButton btn = [=]() {
         switch (button) {
@@ -319,7 +319,7 @@ void LinuxWaylandPlatformInput::pointerButton(wl_pointer *pointer, uint32_t seri
     m_pointer.lastSerial = serial;
 }
 
-void LinuxWaylandPlatformInput::pointerAxis(wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value)
+void LinuxWaylandPlatformInput::pointerAxis(wl_pointer * /*pointer*/, uint32_t time, uint32_t axis, wl_fixed_t value)
 {
     const double delta = -wl_fixed_to_double(value);
     const int32_t xDelta = axis == WL_POINTER_AXIS_HORIZONTAL_SCROLL ? int32_t(delta) : 0;
@@ -333,7 +333,7 @@ void LinuxWaylandPlatformInput::pointerAxis(wl_pointer *pointer, uint32_t time, 
     }
 }
 
-void LinuxWaylandPlatformInput::pointerFrame(wl_pointer *pointer)
+void LinuxWaylandPlatformInput::pointerFrame(wl_pointer * /*pointer*/)
 {
     auto &ev = m_pointer.accumulatedEvent;
     if (ev.focusChange && ev.focus) {
@@ -374,8 +374,8 @@ void LinuxWaylandPlatformInput::pointerAxisDiscrete(wl_pointer *pointer, uint32_
 {
 }
 
-void LinuxWaylandPlatformInput::pointerRelativeMotionV1(zwp_relative_pointer_v1 *pointer, uint32_t utimeHi, uint32_t utimeLow,
-                                                        wl_fixed_t dx, wl_fixed_t dy, wl_fixed_t dxUnaccel, wl_fixed_t dyUnaccel)
+void LinuxWaylandPlatformInput::pointerRelativeMotionV1(zwp_relative_pointer_v1 * /*pointer*/, uint32_t utimeHi, uint32_t utimeLow,
+                                                        wl_fixed_t dx, wl_fixed_t dy, wl_fixed_t /*dxUnaccel*/, wl_fixed_t /*dyUnaccel*/)
 {
     const Position pos{ wl_fixed_to_int(dx), wl_fixed_to_int(dy) };
     const uint64_t utime = uint64_t(utimeHi) << 32 | utimeLow;
@@ -389,7 +389,7 @@ void LinuxWaylandPlatformInput::pointerRelativeMotionV1(zwp_relative_pointer_v1 
     }
 }
 
-void LinuxWaylandPlatformInput::keyboardKeymap(wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size)
+void LinuxWaylandPlatformInput::keyboardKeymap(wl_keyboard * /*keyboard*/, uint32_t format, int fd, uint32_t size)
 {
     if (m_keyboard.keymap) {
         xkb_state_unref(m_keyboard.state);
@@ -417,20 +417,20 @@ void LinuxWaylandPlatformInput::keyboardKeymap(wl_keyboard *keyboard, uint32_t f
     m_keyboard.state = xkb_state_new(m_keyboard.keymap);
 }
 
-void LinuxWaylandPlatformInput::keyboardEnter(wl_keyboard *keyboard, uint32_t serial, wl_surface *surface, wl_array *keys)
+void LinuxWaylandPlatformInput::keyboardEnter(wl_keyboard * /*keyboard*/, uint32_t serial, wl_surface *surface, wl_array * /*keys*/)
 {
     m_keyboard.focus = LinuxWaylandPlatformWindow::fromSurface(surface);
     m_keyboard.serial = serial;
 }
 
-void LinuxWaylandPlatformInput::keyboardLeave(wl_keyboard *keyboard, uint32_t serial, wl_surface *surface)
+void LinuxWaylandPlatformInput::keyboardLeave(wl_keyboard * /*keyboard*/, uint32_t /*serial*/, wl_surface * /*surface*/)
 {
     m_keyboard.focus = nullptr;
     m_keyboard.repeat.timer.running = false;
     m_keyboard.serial = 0;
 }
 
-void LinuxWaylandPlatformInput::keybordKey(wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+void LinuxWaylandPlatformInput::keybordKey(wl_keyboard * /*keyboard*/, uint32_t /*serial*/, uint32_t time, uint32_t key, uint32_t state)
 {
     if (!m_keyboard.state) {
         return;
@@ -466,7 +466,7 @@ void LinuxWaylandPlatformInput::keybordKey(wl_keyboard *keyboard, uint32_t seria
     }
 }
 
-void LinuxWaylandPlatformInput::keyboardModifiers(wl_keyboard *keyboard, uint32_t serial, uint32_t depressed,
+void LinuxWaylandPlatformInput::keyboardModifiers(wl_keyboard * /*keyboard*/, uint32_t /*serial*/, uint32_t depressed,
                                                   uint32_t latched, uint32_t locked, uint32_t group)
 {
     if (m_keyboard.state) {
@@ -474,7 +474,7 @@ void LinuxWaylandPlatformInput::keyboardModifiers(wl_keyboard *keyboard, uint32_
     }
 }
 
-void LinuxWaylandPlatformInput::keyboardRepeatInfo(wl_keyboard *keyboard, int32_t rate, int32_t delay)
+void LinuxWaylandPlatformInput::keyboardRepeatInfo(wl_keyboard * /*keyboard*/, int32_t rate, int32_t delay)
 {
     m_keyboard.repeat.delay = delay;
     m_keyboard.repeat.rate = 1000 / rate;
@@ -507,7 +507,7 @@ void LinuxWaylandPlatformInput::keyboardSendKeyPress(uint32_t time, bool isRepea
     }
 }
 
-void LinuxWaylandPlatformInput::touchDown(wl_touch *touch, uint32_t serial, uint32_t time,
+void LinuxWaylandPlatformInput::touchDown(wl_touch * /*touch*/, uint32_t /*serial*/, uint32_t time,
                                           wl_surface *surface, int32_t id, wl_fixed_t x, wl_fixed_t y)
 {
     // We don't support touch yet, so just use the first touch point as mouse input
@@ -523,7 +523,7 @@ void LinuxWaylandPlatformInput::touchDown(wl_touch *touch, uint32_t serial, uint
     m_touch.focus->handleMousePress(time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));
 }
 
-void LinuxWaylandPlatformInput::touchUp(wl_touch *touch, uint32_t serial, uint32_t time, int32_t id)
+void LinuxWaylandPlatformInput::touchUp(wl_touch * /*touch*/, uint32_t /*serial*/, uint32_t time, int32_t id)
 {
     if (id != m_touch.points[0].id) {
         return;
@@ -533,7 +533,7 @@ void LinuxWaylandPlatformInput::touchUp(wl_touch *touch, uint32_t serial, uint32
     m_touch.points.clear();
 }
 
-void LinuxWaylandPlatformInput::touchMotion(wl_touch *touch, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y)
+void LinuxWaylandPlatformInput::touchMotion(wl_touch * /*touch*/, uint32_t time, int32_t id, wl_fixed_t /*x*/, wl_fixed_t /*y*/)
 {
     if (id != m_touch.points[0].id) {
         return;
@@ -547,7 +547,7 @@ void LinuxWaylandPlatformInput::touchFrame(wl_touch *touch)
 {
 }
 
-void LinuxWaylandPlatformInput::touchCancel(wl_touch *touch)
+void LinuxWaylandPlatformInput::touchCancel(wl_touch * /*touch*/)
 {
     if (!m_touch.points.empty()) {
         m_touch.focus->handleMouseRelease(m_touch.time, MouseButton::LeftButton, int16_t(m_touch.points[0].pos.x), int16_t(m_touch.points[0].pos.y));

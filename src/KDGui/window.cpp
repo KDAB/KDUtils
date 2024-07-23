@@ -224,6 +224,7 @@ void Window::resizeEvent(ResizeEvent *ev)
 
 void Window::mousePressEvent(MousePressEvent *ev)
 {
+    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
@@ -234,6 +235,7 @@ void Window::mousePressEvent(MousePressEvent *ev)
 
 void Window::mouseReleaseEvent(MouseReleaseEvent *ev)
 {
+    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
@@ -244,6 +246,7 @@ void Window::mouseReleaseEvent(MouseReleaseEvent *ev)
 
 void Window::mouseMoveEvent(MouseMoveEvent *ev)
 {
+    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
@@ -254,6 +257,7 @@ void Window::mouseMoveEvent(MouseMoveEvent *ev)
 
 void Window::mouseWheelEvent(MouseWheelEvent *ev)
 {
+    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() xDelta = {} yDelta = {}",
                         __FUNCTION__,
@@ -263,10 +267,12 @@ void Window::mouseWheelEvent(MouseWheelEvent *ev)
 
 void Window::keyPressEvent(KeyPressEvent *ev)
 {
+    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger, "{}() key = {}", __FUNCTION__, ev->key());
 }
 
 void Window::keyReleaseEvent(KeyReleaseEvent *ev)
 {
+    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger, "{}() key = {}", __FUNCTION__, ev->key());
 }

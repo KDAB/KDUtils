@@ -46,8 +46,8 @@ LinuxWaylandPlatformOutput *LinuxWaylandPlatformOutput::fromOutput(wl_output *ou
 }
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-void LinuxWaylandPlatformOutput::geometry(wl_output *output, int32_t x, int32_t y, int32_t physicalWidth, int32_t physicalHeight,
-                                          int32_t subpixel, const char *make, const char *model, int32_t transform)
+void LinuxWaylandPlatformOutput::geometry(wl_output * /*output*/, int32_t /*x*/, int32_t /*y*/, int32_t /*physicalWidth*/, int32_t /*physicalHeight*/,
+                                          int32_t /*subpixel*/, const char *make, const char *model, int32_t /*transform*/)
 {
     m_make = make;
     m_model = model;
@@ -62,7 +62,7 @@ void LinuxWaylandPlatformOutput::done(wl_output *output)
 {
 }
 
-void LinuxWaylandPlatformOutput::scale(wl_output *output, int32_t factor)
+void LinuxWaylandPlatformOutput::scale(wl_output * /*output*/, int32_t factor)
 {
     m_scaleFactor = factor;
 }
