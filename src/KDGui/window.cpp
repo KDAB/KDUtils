@@ -22,8 +22,7 @@ using namespace KDFoundation;
 using namespace KDGui;
 
 Window::Window()
-    : Object()
-    , m_logger{ KDUtils::Logger::logger("window", spdlog::level::info) }
+    : m_logger{ KDUtils::Logger::logger("window", spdlog::level::info) }
 {
 
     std::ignore = visible.valueChanged().connect(&Window::onVisibleChanged, this);

@@ -27,8 +27,7 @@ using namespace KDFoundation;
 using namespace KDGui;
 
 LinuxXcbPlatformEventLoop::LinuxXcbPlatformEventLoop(LinuxXcbPlatformIntegration *platformIntegration)
-    : LinuxPlatformEventLoop()
-    , m_platformIntegration{ platformIntegration }
+    : m_platformIntegration{ platformIntegration }
 {
     m_logger = m_platformIntegration->logger();
 

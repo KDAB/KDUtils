@@ -20,7 +20,6 @@
 using namespace KDFoundation;
 
 LinuxPlatformEventLoop::LinuxPlatformEventLoop()
-    : AbstractPlatformEventLoop()
 {
     // We use epoll to multiplex as it has much better performance than
     // select or poll.

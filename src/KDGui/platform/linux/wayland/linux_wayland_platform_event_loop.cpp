@@ -18,8 +18,7 @@ using namespace KDGui;
 using namespace KDFoundation;
 
 LinuxWaylandPlatformEventLoop::LinuxWaylandPlatformEventLoop(LinuxWaylandPlatformIntegration *platformIntegration)
-    : LinuxPlatformEventLoop()
-    , m_platformIntegration{ platformIntegration }
+    : m_platformIntegration{ platformIntegration }
 {
 }
 
