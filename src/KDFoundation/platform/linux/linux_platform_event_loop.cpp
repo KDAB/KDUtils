@@ -70,9 +70,9 @@ LinuxPlatformEventLoop::~LinuxPlatformEventLoop()
 void LinuxPlatformEventLoop::waitForEventsImpl(int timeout)
 {
     const int maxEventCount = 16;
-    epoll_event events[maxEventCount];
+    std::array<epoll_event, maxEventCount> events;
 
-    const int eventCount = epoll_wait(m_epollHandle, events, maxEventCount, timeout);
+    const int eventCount = epoll_wait(m_epollHandle, events.data(), events.size(), timeout);
     SPDLOG_DEBUG("epoll_wait() returned {} events within {} msecs", eventCount, timeout);
 
     // Let interested parties know if something happened.
