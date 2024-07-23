@@ -50,8 +50,7 @@ class EventObject : public Object
 {
 public:
     EventObject(int expectedX, int expectedY)
-        : Object()
-        , m_expectedX{ expectedX }
+        : m_expectedX{ expectedX }
         , m_expectedY{ expectedY }
     {
     }
@@ -80,7 +79,6 @@ class RecursiveEventPosterObject : public Object
 {
 public:
     RecursiveEventPosterObject()
-        : Object()
     {
     }
 
