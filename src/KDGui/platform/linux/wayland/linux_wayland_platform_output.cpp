@@ -16,6 +16,7 @@
 
 using namespace KDGui;
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 LinuxWaylandPlatformOutput::LinuxWaylandPlatformOutput(wl_output *output, uint32_t version, uint32_t id)
     : m_output(output)
     , m_version(version)
@@ -44,6 +45,7 @@ LinuxWaylandPlatformOutput *LinuxWaylandPlatformOutput::fromOutput(wl_output *ou
     return static_cast<LinuxWaylandPlatformOutput *>(wl_output_get_user_data(output));
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void LinuxWaylandPlatformOutput::geometry(wl_output *output, int32_t x, int32_t y, int32_t physicalWidth, int32_t physicalHeight,
                                           int32_t subpixel, const char *make, const char *model, int32_t transform)
 {
@@ -51,6 +53,7 @@ void LinuxWaylandPlatformOutput::geometry(wl_output *output, int32_t x, int32_t 
     m_model = model;
 }
 
+// NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
 void LinuxWaylandPlatformOutput::mode(wl_output *output, uint32_t flags, int32_t width, int32_t height, int32_t refreshRate)
 {
 }
