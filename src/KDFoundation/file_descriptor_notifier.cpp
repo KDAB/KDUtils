@@ -20,8 +20,7 @@
 using namespace KDFoundation;
 
 FileDescriptorNotifier::FileDescriptorNotifier(int fd, NotificationType type)
-    : Object()
-    , m_fd{ fd }
+    : m_fd{ fd }
     , m_type{ type }
 {
     assert(m_fd >= 0);

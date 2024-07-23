@@ -28,8 +28,7 @@ using namespace KDFoundation;
 CoreApplication *CoreApplication::ms_application = nullptr;
 
 CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration)
-    : Object()
-    , m_defaultLogger{ KDUtils::Logger::logger("default_log", spdlog::level::info) }
+    : m_defaultLogger{ KDUtils::Logger::logger("default_log", spdlog::level::info) }
     , m_platformIntegration{ std::move(platformIntegration) }
     , m_logger{ KDUtils::Logger::logger("core_application") }
 {
