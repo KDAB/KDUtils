@@ -61,7 +61,7 @@ void LinuxPlatformTimer::arm(std::chrono::microseconds us)
     timespec time;
     time.tv_sec = us.count() / 1'000'000;
     time.tv_nsec = (us.count() - time.tv_sec * 1'000'000) * 1000;
-    itimerspec spec = {
+    const itimerspec spec = {
         .it_interval = time,
         .it_value = time
     };
@@ -70,8 +70,8 @@ void LinuxPlatformTimer::arm(std::chrono::microseconds us)
 
 void LinuxPlatformTimer::disarm()
 {
-    timespec time = { 0, 0 };
-    itimerspec spec = {
+    const timespec time = { 0, 0 };
+    const itimerspec spec = {
         .it_interval = time,
         .it_value = time
     };

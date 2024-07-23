@@ -26,7 +26,7 @@ void LinuxWaylandPlatformEventLoop::init()
 {
     m_logger = m_platformIntegration->logger();
 
-    int fd = wl_display_get_fd(m_platformIntegration->display());
+    const int fd = wl_display_get_fd(m_platformIntegration->display());
     registerFileDescriptor(fd, FileDescriptorNotifier::NotificationType::Read);
 }
 
@@ -47,7 +47,7 @@ void LinuxWaylandPlatformEventLoop::waitForEventsImpl(int timeout)
     // Call the base class to do the actual multiplexing
     LinuxPlatformEventLoop::waitForEventsImpl(timeout);
 
-    int fd = wl_display_get_fd(dpy);
+    const int fd = wl_display_get_fd(dpy);
     if (epollEventFromFdPlusType(fd, FileDescriptorNotifier::NotificationType::Read)) {
         wl_display_read_events(dpy);
         wl_display_dispatch_queue_pending(dpy, queue);

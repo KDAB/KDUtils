@@ -152,7 +152,7 @@ void File::write(const ByteArray &data)
 
 std::string File::fileName() const
 {
-    std::filesystem::path p(m_path);
+    const std::filesystem::path p(m_path);
     return p.filename().u8string();
 }
 

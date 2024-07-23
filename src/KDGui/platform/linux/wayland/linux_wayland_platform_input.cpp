@@ -374,9 +374,9 @@ void LinuxWaylandPlatformInput::pointerAxisDiscrete(wl_pointer *pointer, uint32_
 void LinuxWaylandPlatformInput::pointerRelativeMotionV1(zwp_relative_pointer_v1 *pointer, uint32_t utimeHi, uint32_t utimeLow,
                                                         wl_fixed_t dx, wl_fixed_t dy, wl_fixed_t dxUnaccel, wl_fixed_t dyUnaccel)
 {
-    Position pos{ wl_fixed_to_int(dx), wl_fixed_to_int(dy) };
-    uint64_t utime = uint64_t(utimeHi) << 32 | utimeLow;
-    uint32_t time = utime / 1000;
+    const Position pos{ wl_fixed_to_int(dx), wl_fixed_to_int(dy) };
+    const uint64_t utime = uint64_t(utimeHi) << 32 | utimeLow;
+    const uint32_t time = utime / 1000;
 
     if (m_version >= WL_POINTER_FRAME_SINCE_VERSION) {
         m_pointer.accumulatedEvent.delta = pos;
