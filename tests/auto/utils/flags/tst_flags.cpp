@@ -47,9 +47,9 @@ TEST_SUITE("Flags")
         // NOLINTEND(performance-enum-size)
 
         // THEN
-        CHECK(std::is_signed<Flags<StandardEnum>::FlagsInt>() == std::is_signed<std::underlying_type<StandardEnum>::type>());
-        CHECK(std::is_signed<Flags<ClassIntEnum>::FlagsInt>() == std::is_signed<std::underlying_type<ClassIntEnum>::type>());
-        CHECK(std::is_signed<Flags<ClassUIntEnum>::FlagsInt>() == std::is_signed<std::underlying_type<ClassUIntEnum>::type>());
+        CHECK(std::is_signed<Flags<StandardEnum>::FlagsInt>() == std::is_signed<std::underlying_type_t<StandardEnum>>());
+        CHECK(std::is_signed<Flags<ClassIntEnum>::FlagsInt>() == std::is_signed<std::underlying_type_t<ClassIntEnum>>());
+        CHECK(std::is_signed<Flags<ClassUIntEnum>::FlagsInt>() == std::is_signed<std::underlying_type_t<ClassUIntEnum>>());
     }
 
     TEST_CASE("checkConstructors")
