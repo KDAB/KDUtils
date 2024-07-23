@@ -21,9 +21,9 @@ using WriteMap = mio::basic_mmap<mio::access_mode::write, uint8_t>;
 struct FileMapper::Map {
     std::variant<ReadMap, WriteMap> map;
 
-    inline ~Map() {};
+    ~Map() {};
 
-    inline Map(bool writeable)
+    Map(bool writeable)
     {
         // NOTE: mio's maps consist of primitive types which won't throw. but
         // the constructors are not marked noexcept
@@ -33,17 +33,17 @@ struct FileMapper::Map {
             map = ReadMap();
     }
 
-    [[nodiscard]] inline bool writable() const noexcept
+    [[nodiscard]] bool writable() const noexcept
     {
         return std::holds_alternative<WriteMap>(map);
     }
 
-    inline WriteMap &writableMap()
+    WriteMap &writableMap()
     {
         return std::get<WriteMap>(map);
     }
 
-    inline ReadMap &readOnlyMap()
+    ReadMap &readOnlyMap()
     {
         return std::get<ReadMap>(map);
     }
