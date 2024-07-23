@@ -91,7 +91,7 @@ TEST_SUITE("Flags")
     TEST_CASE("checkOperatorBool")
     {
         // GIVEN
-        Flags<Enum> a;
+        const Flags<Enum> a;
         Flags<Enum> b(A);
 
         // THEN
@@ -104,7 +104,7 @@ TEST_SUITE("Flags")
         // GIVEN
         Flags<Enum> a;
         Flags<Enum> b(A);
-        Flags<Enum> c(A);
+        const Flags<Enum> c(A);
 
         // WHEN
         a &= b;
@@ -128,9 +128,9 @@ TEST_SUITE("Flags")
     TEST_CASE("checkOperatorAnd")
     {
         // GIVEN
-        Flags<Enum> a;
-        Flags<Enum> b(A);
-        Flags<Enum> c(A);
+        const Flags<Enum> a;
+        const Flags<Enum> b(A);
+        const Flags<Enum> c(A);
 
         // WHEN
         const Flags<Enum> aAndB = a & b;
@@ -180,7 +180,7 @@ TEST_SUITE("Flags")
     TEST_CASE("checkOperatorOr")
     {
         // GIVEN
-        Flags<Enum> a;
+        const Flags<Enum> a;
         Flags<Enum> b(A);
         Flags<Enum> c(A);
 
@@ -228,7 +228,7 @@ TEST_SUITE("Flags")
     TEST_CASE("checkOperatorXOr")
     {
         // GIVEN
-        Flags<Enum> a;
+        const Flags<Enum> a;
         Flags<Enum> b(A);
         Flags<Enum> c(A);
 
@@ -351,8 +351,8 @@ TEST_SUITE("Flags")
     TEST_CASE("checkExplicitBool")
     {
         // GIVEN
-        Flags<Enum> a;
-        Flags<Enum> b(B);
+        const Flags<Enum> a;
+        const Flags<Enum> b(B);
 
         // THEN
         CHECK(!a);

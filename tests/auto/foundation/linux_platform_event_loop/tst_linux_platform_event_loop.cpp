@@ -315,14 +315,14 @@ TEST_CASE("Wait for events")
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
             int n = 42;
-            int written = write(fd, &n, sizeof(n));
+            std::ignore = write(fd, &n, sizeof(n));
         };
         std::thread t1(writeToPipe, pipe1[1]);
 
         // Kick the thread off to fire an event in 1s then wait for up to 10s for an event
         {
             SPDLOG_INFO("Waking up helper thread");
-            std::unique_lock lock(mutex);
+            const std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
         }
@@ -361,7 +361,7 @@ TEST_CASE("Wait for events")
         // Kick the thread off to fire an event in 1s then wait for up to 10s for an event
         {
             SPDLOG_INFO("Waking up helper thread");
-            std::unique_lock lock(mutex);
+            const std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
         }
@@ -416,14 +416,14 @@ TEST_CASE("Notifies about events")
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
             int n = 42;
-            int written = write(fd, &n, sizeof(n));
+            std::ignore = write(fd, &n, sizeof(n));
         };
         std::thread t1(writeToPipe, pipe1[1]);
 
         // Kick the thread off to fire an event in 1s then wait for up to 10s for an event
         {
             SPDLOG_INFO("Waking up helper thread");
-            std::unique_lock lock(mutex);
+            const std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
         }

@@ -37,7 +37,7 @@ TEST_CASE("Creation")
         // Just used to load the logging configuration from file once up front.
         // This prevents e.g. Window from creating its own logger which then causes
         // CoreApplication ctor to fail in later tests.
-        CoreApplication app;
+        const CoreApplication app;
     }
 
     SUBCASE("can create a window")
@@ -57,7 +57,7 @@ TEST_CASE("Creation")
 
     SUBCASE("creating a platform window with a core app fails")
     {
-        CoreApplication app;
+        const CoreApplication app;
         auto w = std::make_unique<Window>();
         w->create();
         REQUIRE(w->platformWindow() == nullptr);
@@ -65,7 +65,7 @@ TEST_CASE("Creation")
 
     SUBCASE("creating a platform window with a gui app succeeds")
     {
-        GuiApplication app;
+        const GuiApplication app;
         auto w = std::make_unique<Window>();
         w->create();
         REQUIRE(w->platformWindow() != nullptr);
@@ -84,7 +84,7 @@ TEST_CASE("Creation")
     SUBCASE("doesn't crash if Window destroyed with pending platform events")
     {
         // GIVEN
-        GuiApplication app;
+        const GuiApplication app;
         auto window = std::make_unique<Window>();
         window->width = 512;
         window->height = 512;
