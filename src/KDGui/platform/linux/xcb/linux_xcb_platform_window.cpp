@@ -106,7 +106,7 @@ bool LinuxXcbPlatformWindow::create()
                       0, 0, 0, 0);
     xcb_free_pixmap(connection, pixmap);
 
-    if (window()->cursorEnabled.get() == false)
+    if (!window()->cursorEnabled.get())
         disableCursor();
 
     xcb_flush(connection);
