@@ -12,7 +12,7 @@
 #include <KDUtils/file_mapper.h>
 #include <spdlog/spdlog.h>
 #include <variant>
-#include <mio/mmap.hpp>
+#include <mio/mmap.hpp> // NOLINT(misc-header-include-cycle)
 
 namespace KDUtils {
 using ReadMap = mio::basic_mmap<mio::access_mode::read, uint8_t>;
