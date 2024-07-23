@@ -90,6 +90,7 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
         switch (eventType) {
         case XCB_EXPOSE: {
             const auto *expose = reinterpret_cast<xcb_expose_event_t *>(xcbEvent);
+            KD_UNUSED(expose); // Silence unused warning in Release build
             SPDLOG_LOGGER_DEBUG(m_logger,
                                 "{}: Window {} exposed. Region to be redrawn at location ({}, {}), with dimension ({}, {})",
                                 xcbEvent->sequence, expose->window, expose->x, expose->y, expose->width, expose->height);
@@ -257,6 +258,7 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
 
         case XCB_MAP_NOTIFY: {
             const auto *mapEvent = reinterpret_cast<xcb_map_notify_event_t *>(xcbEvent);
+            KD_UNUSED(mapEvent); // Silence unused warning in Release build
             SPDLOG_LOGGER_DEBUG(m_logger,
                                 "Map event for window {}",
                                 mapEvent->window);
@@ -265,6 +267,7 @@ void LinuxXcbPlatformEventLoop::processXcbEvents()
 
         case XCB_UNMAP_NOTIFY: {
             const auto *unmapEvent = reinterpret_cast<xcb_unmap_notify_event_t *>(xcbEvent);
+            KD_UNUSED(unmapEvent); // Silence unused warning in Release build
             SPDLOG_LOGGER_DEBUG(m_logger,
                                 "Unmap event for window {}",
                                 unmapEvent->window);
