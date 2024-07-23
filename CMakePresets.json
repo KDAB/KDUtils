@@ -76,6 +76,17 @@
             }
         },
         {
+            "name": "release-clangtidy",
+            "displayName": "Release with clang-tidy",
+            "inherits": [
+                "release"
+            ],
+            "binaryDir": "${sourceDir}/build/Release-clangtidy",
+            "cacheVariables": {
+                "CMAKE_CXX_CLANG_TIDY": "clang-tidy"
+            }
+        },
+        {
             "name": "profile",
             "displayName": "Profile",
             "inherits": [
