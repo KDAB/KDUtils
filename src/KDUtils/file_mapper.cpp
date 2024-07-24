@@ -21,7 +21,7 @@ using WriteMap = mio::basic_mmap<mio::access_mode::write, uint8_t>;
 struct FileMapper::Map {
     std::variant<ReadMap, WriteMap> map;
 
-    ~Map() {};
+    ~Map() { }
 
     Map(bool writeable)
     {
