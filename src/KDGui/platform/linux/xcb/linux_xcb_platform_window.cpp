@@ -42,8 +42,7 @@ bool LinuxXcbPlatformWindow::create()
 
     m_xcbWindow = xcb_generate_id(connection);
     const uint32_t mask = XCB_CW_EVENT_MASK;
-    // NOLINTNEXTLINE(modernize-avoid-c-arrays)
-    const uint32_t values[1] = {
+    const std::array<uint32_t, 1> values = {
         XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS |
         XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_POINTER_MOTION |
         XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
@@ -62,7 +61,7 @@ bool LinuxXcbPlatformWindow::create()
             XCB_WINDOW_CLASS_INPUT_OUTPUT, /* class               */
             screen->root_visual, /* visual              */
             mask,
-            values);
+            values.data());
 
     const auto title = m_window->title.get();
     xcb_change_property(
@@ -170,8 +169,8 @@ void LinuxXcbPlatformWindow::disableCursor()
 
     // Hide the cursor
     const auto connection = m_platformIntegration->connection();
-    uint32_t values[] = { m_hiddenCursor }; // NOLINT(modernize-avoid-c-arrays)
-    xcb_change_window_attributes(connection, m_xcbWindow, XCB_CURSOR, &values);
+    const std::array<uint32_t, 1> values = { m_hiddenCursor };
+    xcb_change_window_attributes(connection, m_xcbWindow, XCB_CURSOR, values.data());
 
     // Move cursor to centre of the window
     const auto windowSize = queryWindowSize();
@@ -209,8 +208,8 @@ void LinuxXcbPlatformWindow::enableCursor()
                      int16_t(m_cursorRestorePosition.x), int16_t(m_cursorRestorePosition.y));
 
     // Reset the default cursor (inherit from parent window)
-    uint32_t values[] = { 0 }; // NOLINT(modernize-avoid-c-arrays)
-    xcb_change_window_attributes(connection, m_xcbWindow, XCB_CURSOR, &values);
+    const std::array<uint32_t, 1> values = { 0 };
+    xcb_change_window_attributes(connection, m_xcbWindow, XCB_CURSOR, values.data());
     xcb_flush(connection);
 }
 
