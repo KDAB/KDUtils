@@ -190,7 +190,16 @@ void LinuxWaylandPlatformInput::destroyKeyboard()
     }
     m_keyboard.keyboard = nullptr;
     m_keyboard.focus = nullptr;
-    m_keyboard.repeat.timer.running = false;
+    // This function is called from the destructor and assignment of the
+    // timer may technically throw so we get clang-tidy warning. We fully
+    // control the timer (it's private) so it shouldn't happen but let's
+    // hedge against future changes.
+    try {
+        m_keyboard.repeat.timer.running = false;
+    } catch (...) {
+        SPDLOG_LOGGER_ERROR(m_integration->logger(),
+                            "Exception thrown while stopping the keyboard repeat timer, this should never happen.");
+    }
 }
 
 void LinuxWaylandPlatformInput::initTouch()
