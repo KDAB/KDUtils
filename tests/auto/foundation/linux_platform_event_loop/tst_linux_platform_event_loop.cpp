@@ -22,6 +22,7 @@
 #include <numeric>
 #include <string>
 #include <thread>
+#include <tuple>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
@@ -396,7 +397,7 @@ TEST_CASE("Notifies about events")
         // Register a notifier to listen to the read end of the pipe
         auto notifier1 = std::make_unique<FileDescriptorNotifier>(pipe1[0], FileDescriptorNotifier::NotificationType::Read);
         bool notified = false;
-        notifier1->triggered.connect([&notified](const int &) {
+        std::ignore = notifier1->triggered.connect([&notified](const int &) {
             SPDLOG_INFO("Notifier has been triggered");
             notified = true;
         });
