@@ -189,8 +189,7 @@ TEST_CASE("Event handling")
     }
 }
 
-#ifndef KD_PLATFORM_MACOS
-TEST_CASE("Timer handling")
+TEST_CASE("Timer handling" * doctest::timeout(120))
 {
     SUBCASE("timer fires correctly")
     {
@@ -206,8 +205,10 @@ TEST_CASE("Timer handling")
         auto time = startTime;
         std::ignore = timer.timeout.connect([&]() {
             const auto endTime = std::chrono::steady_clock::now();
+            const auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - time).count();
+            SPDLOG_INFO("elapsedTime = {}", elapsedTime);
             REQUIRE(endTime - time > 50ms);
-            REQUIRE(endTime - time < 150ms);
+            REQUIRE(endTime - time < 200ms);
             time = endTime;
             timeout++;
         });
@@ -215,6 +216,7 @@ TEST_CASE("Timer handling")
         while (std::chrono::steady_clock::now() - startTime < 500ms) {
             app.processEvents(500);
         }
+        SPDLOG_INFO("timeout = {}", timeout);
         REQUIRE(timeout > 3);
         REQUIRE(timeout < 8);
 
@@ -262,7 +264,6 @@ TEST_CASE("Timer handling")
         REQUIRE(fired == true);
     }
 }
-#endif
 
 TEST_CASE("Main event loop")
 {

@@ -82,6 +82,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         platform/macos/macos_platform_event_loop.h
         platform/macos/macos_platform_integration.mm
         platform/macos/macos_platform_integration.h
+        platform/macos/macos_platform_timer.mm
+        platform/macos/macos_platform_timer.h
     )
 endif()
 
