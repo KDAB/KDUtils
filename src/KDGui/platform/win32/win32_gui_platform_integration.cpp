@@ -21,6 +21,7 @@ using namespace KDFoundation;
 using namespace KDGui;
 
 Win32GuiPlatformIntegration::Win32GuiPlatformIntegration()
+    : m_logger{ KDUtils::Logger::logger("win32", spdlog::level::info) }
 {
 }
 
@@ -31,10 +32,6 @@ Win32GuiPlatformIntegration::~Win32GuiPlatformIntegration()
 
 Win32PlatformEventLoop *Win32GuiPlatformIntegration::createPlatformEventLoopImpl()
 {
-    // We ensure that the logger has been created here rather than in the ctor so that
-    // the central logging configuration in CoreApplication has had a chance to execute.
-    m_logger = KDUtils::Logger::logger("win32", spdlog::level::info);
-
     return new Win32PlatformEventLoop();
 }
 

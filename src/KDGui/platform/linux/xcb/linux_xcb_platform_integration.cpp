@@ -21,6 +21,7 @@
 using namespace KDGui;
 
 LinuxXcbPlatformIntegration::LinuxXcbPlatformIntegration()
+    : m_logger{ KDUtils::Logger::logger("xcb", spdlog::level::info) }
 {
     int screenNumber;
     m_connection = xcb_connect(nullptr, &screenNumber);
@@ -48,10 +49,7 @@ LinuxXcbPlatformIntegration::~LinuxXcbPlatformIntegration()
     m_clipboard.reset();
 
     xcb_disconnect(m_connection);
-    if (m_logger)
-        SPDLOG_LOGGER_DEBUG(m_logger, "Destroyed xcb_connection");
-    else
-        SPDLOG_DEBUG("Destroyed xcb_connection");
+    SPDLOG_LOGGER_DEBUG(m_logger, "Destroyed xcb_connection");
 }
 
 AbstractClipboard *LinuxXcbPlatformIntegration::clipboard()
@@ -76,9 +74,6 @@ LinuxXcbPlatformWindow *LinuxXcbPlatformIntegration::window(xcb_window_t xcbWind
 
 LinuxXcbPlatformEventLoop *LinuxXcbPlatformIntegration::createPlatformEventLoopImpl()
 {
-    // We ensure that the logger has been created here rather than in the ctor so that
-    // the central logging configuration in CoreApplication has had a chance to execute.
-    m_logger = KDUtils::Logger::logger("xcb", spdlog::level::info);
     return new LinuxXcbPlatformEventLoop(this);
 }
 
