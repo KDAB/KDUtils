@@ -29,7 +29,8 @@
 using namespace KDGui;
 
 LinuxWaylandPlatformIntegration::LinuxWaylandPlatformIntegration()
-    : m_clipboard{ new LinuxWaylandClipboard{ this } }
+    : m_logger{ KDUtils::Logger::logger("wayland", spdlog::level::info) }
+    , m_clipboard{ new LinuxWaylandClipboard{ this } }
 {
 }
 
@@ -49,8 +50,6 @@ LinuxWaylandPlatformIntegration::~LinuxWaylandPlatformIntegration()
 
 void LinuxWaylandPlatformIntegration::init()
 {
-    m_logger = KDUtils::Logger::logger("wayland", spdlog::level::info);
-
     SPDLOG_LOGGER_INFO(m_logger, "Wayland display is: {}", std::getenv("WAYLAND_DISPLAY")); // NOLINT(concurrency-mt-unsafe)
 
     m_display = wl_display_connect(nullptr);

@@ -18,14 +18,13 @@ using namespace KDGui;
 using namespace KDFoundation;
 
 LinuxWaylandPlatformEventLoop::LinuxWaylandPlatformEventLoop(LinuxWaylandPlatformIntegration *platformIntegration)
-    : m_platformIntegration{ platformIntegration }
+    : m_logger{ platformIntegration->logger() }
+    , m_platformIntegration{ platformIntegration }
 {
 }
 
 void LinuxWaylandPlatformEventLoop::init()
 {
-    m_logger = m_platformIntegration->logger();
-
     const int fd = wl_display_get_fd(m_platformIntegration->display());
     registerFileDescriptor(fd, FileDescriptorNotifier::NotificationType::Read);
 }

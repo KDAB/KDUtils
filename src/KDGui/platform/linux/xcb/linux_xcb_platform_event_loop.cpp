@@ -27,10 +27,9 @@ using namespace KDFoundation;
 using namespace KDGui;
 
 LinuxXcbPlatformEventLoop::LinuxXcbPlatformEventLoop(LinuxXcbPlatformIntegration *platformIntegration)
-    : m_platformIntegration{ platformIntegration }
+    : m_logger{ platformIntegration->logger() }
+    , m_platformIntegration{ platformIntegration }
 {
-    m_logger = m_platformIntegration->logger();
-
     m_keyboard = m_platformIntegration->keyboard();
 
     // Setup a notifier for the xcb connection. We have to manually register the notifier since

@@ -161,10 +161,10 @@ constexpr DWORD WindowExStyle = 0;
 
 Win32PlatformWindow::Win32PlatformWindow(Win32GuiPlatformIntegration *platformIntegration, Window *window)
     : AbstractPlatformWindow(window, AbstractPlatformWindow::Type::Win32)
+    , m_logger{ platformIntegration->logger() }
     , m_platformIntegration(platformIntegration)
     , m_handle(nullptr)
 {
-    m_logger = m_platformIntegration->logger();
 }
 
 Win32PlatformWindow::~Win32PlatformWindow()
