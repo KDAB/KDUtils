@@ -28,8 +28,8 @@ using namespace KDFoundation;
 using namespace KDGui;
 
 namespace {
-constexpr WCHAR *KDGuiWindowClassName = L"KDGuiWindowClass";
-constexpr WCHAR *KDGuiPlatformWindowProperty = L"KDGuiPlatformWindow";
+constexpr const WCHAR *KDGuiWindowClassName = L"KDGuiWindowClass";
+constexpr const WCHAR *KDGuiPlatformWindowProperty = L"KDGuiPlatformWindow";
 
 KeyboardModifiers getKeyboardModifiers()
 {
