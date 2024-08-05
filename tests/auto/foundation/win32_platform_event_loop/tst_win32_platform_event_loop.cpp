@@ -195,11 +195,11 @@ TEST_CASE("Wait for events")
         // Set up read notifier to receive the data
         FileDescriptorNotifier readNotifier(clientSock, FileDescriptorNotifier::NotificationType::Read);
         std::ignore = readNotifier.triggered.connect([&dataReceived](int fd) {
-            char buf[128] = {};
-            recv(fd, buf, 128, 0);
-            const int recvSize = recv(fd, buf, 128, 0);
+            std::array<char, 128> buf = {};
+            recv(fd, buf.data(), 128, 0);
+            const int recvSize = recv(fd, buf.data(), buf.size(), 0);
             SPDLOG_INFO("socket test: received {} bytes from the server", recvSize);
-            dataReceived = std::string(buf);
+            dataReceived = std::string(buf.data());
         });
         loop.registerNotifier(&readNotifier);
 
