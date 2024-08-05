@@ -281,7 +281,7 @@ void Win32PlatformWindow::disableCursor()
 void Win32PlatformWindow::enableCursor()
 {
     // Ungrab the cursor
-    ClipCursor(NULL);
+    ClipCursor(nullptr);
 
     // Restore the cursor position
     POINT pos{ static_cast<LONG>(m_cursorRestorePosition.x), static_cast<LONG>(m_cursorRestorePosition.y) };
@@ -296,9 +296,9 @@ void Win32PlatformWindow::enableCursor()
 void Win32PlatformWindow::updateCursor()
 {
     if (m_cursorMode == CursorMode::Normal)
-        SetCursor(LoadCursorW(NULL, IDC_ARROW));
+        SetCursor(LoadCursorW(nullptr, IDC_ARROW));
     else
-        SetCursor(NULL);
+        SetCursor(nullptr);
 }
 
 void Win32PlatformWindow::enableRawMouseInput()
@@ -325,7 +325,7 @@ void Win32PlatformWindow::disableRawMouseInput()
         HID_USAGE_PAGE_GENERIC,
         HID_USAGE_GENERIC_MOUSE,
         RIDEV_REMOVE,
-        NULL
+        nullptr
     };
     const auto result = RegisterRawInputDevices(&rawInputDevice, 1, sizeof(rawInputDevice));
     // NB: We will no longer receive WM_INPUT messages

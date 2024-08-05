@@ -154,7 +154,7 @@ TEST_CASE("Wait for events")
                 cond.notify_all();
             }
 
-            auto clientSocket = accept(serverSocket, NULL, NULL);
+            auto clientSocket = accept(serverSocket, nullptr, nullptr);
             closesocket(serverSocket);
 
             if (clientSocket != INVALID_SOCKET) {

@@ -58,11 +58,11 @@ Win32PlatformEventLoop::Win32PlatformEventLoop()
     // in Microsoft's official examples. Fear not.
     m_msgWindow = CreateWindow(
             s_msgWindowClassName,
-            0, 0, 0, 0, 0, 0,
+            nullptr, 0, 0, 0, 0, 0,
             HWND_MESSAGE,
-            0,
-            GetModuleHandle(0),
-            0);
+            nullptr,
+            GetModuleHandle(nullptr),
+            nullptr);
 
     if (!m_msgWindow)
         SPDLOG_CRITICAL("Failed to create window for socket events");
@@ -75,14 +75,14 @@ Win32PlatformEventLoop::~Win32PlatformEventLoop()
         CloseHandle(m_wakeUpEvent);
     if (m_msgWindow)
         DestroyWindow(m_msgWindow);
-    if (!UnregisterClass(s_msgWindowClassName, GetModuleHandle(0)))
+    if (!UnregisterClass(s_msgWindowClassName, GetModuleHandle(nullptr)))
         SPDLOG_WARN("Failed to unregister message window class");
 }
 
 void Win32PlatformEventLoop::waitForEventsImpl(int timeout)
 {
     MSG msg;
-    bool hasMessage = PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
+    bool hasMessage = PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE);
     if (!hasMessage) {
         // sleep until we get a message or the wake up event is signaled
         DWORD nCount = 0;
@@ -99,7 +99,7 @@ void Win32PlatformEventLoop::waitForEventsImpl(int timeout)
             ResetEvent(m_wakeUpEvent);
         } else {
             // either there's a message in the input queue or we timed out
-            hasMessage = PeekMessage(&msg, 0, 0, 0, PM_REMOVE);
+            hasMessage = PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE);
         }
     }
     if (hasMessage) {
