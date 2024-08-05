@@ -239,7 +239,7 @@ bool KDFoundation::Win32PlatformEventLoop::registerWithWSAAsyncSelect(int fd, co
 
     // If all notifiers are empty, we'll pass zero and unregister completely for this fd
     long int eventsToSubscribe = 0;
-    const FileDescriptorNotifier::NotificationType types[] = {
+    const std::array<FileDescriptorNotifier::NotificationType, 3> types = {
         FileDescriptorNotifier::NotificationType::Read,
         FileDescriptorNotifier::NotificationType::Write,
         FileDescriptorNotifier::NotificationType::Exception,
