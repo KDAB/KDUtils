@@ -23,11 +23,9 @@ using namespace KDFoundation;
 
 namespace {
 auto s_msgWindowClassName = L"Win32PlatformEventLoop_msgWindow";
-}
 
-enum {
-    WM_KD_SOCKETEVENT = WM_USER,
-};
+constexpr UINT WM_KD_SOCKETEVENT = WM_USER;
+} // namespace
 
 LRESULT CALLBACK Win32PlatformEventLoop::messageWindowProc(HWND hwnd, UINT msgId, WPARAM wp, LPARAM lp)
 {
