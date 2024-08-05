@@ -14,7 +14,7 @@
 namespace KC = KDUtils;
 
 #define StringLiteral(str)                    \
-    ([]() noexcept -> std::string {           \
+    ([]() -> std::string {                    \
         using namespace std::string_literals; \
         return str##s;                        \
     }())

@@ -11,6 +11,8 @@
 
 #include "file.h"
 
+#include <spdlog/spdlog.h>
+
 namespace KDUtils {
 
 #if defined(ANDROID)
@@ -32,8 +34,12 @@ File::File(const std::string &path)
 
 File::~File()
 {
-    if (isOpen())
-        close();
+    try {
+        if (isOpen())
+            close();
+    } catch (...) {
+        SPDLOG_WARN("Exception caught when destroying file handle, path: {}", m_path);
+    }
 }
 
 bool File::exists() const
