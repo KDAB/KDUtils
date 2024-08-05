@@ -21,7 +21,9 @@
 
 using namespace KDFoundation;
 
-static auto s_msgWindowClassName = L"Win32PlatformEventLoop_msgWindow";
+namespace {
+auto s_msgWindowClassName = L"Win32PlatformEventLoop_msgWindow";
+}
 
 enum {
     WM_KD_SOCKETEVENT = WM_USER,
