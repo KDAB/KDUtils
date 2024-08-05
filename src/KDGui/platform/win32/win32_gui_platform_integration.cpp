@@ -53,7 +53,7 @@ bool Win32GuiPlatformIntegration::registerWindowClass(const std::wstring &classN
     wc.style = style;
     wc.lpfnWndProc = windowProc;
     wc.hInstance = appInstance;
-    wc.hCursor = LoadCursorW(NULL, IDC_ARROW);
+    wc.hCursor = LoadCursorW(nullptr, IDC_ARROW);
     wc.lpszClassName = className.c_str();
     wc.hIcon = static_cast<HICON>(LoadImage(nullptr, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED));
 
