@@ -142,7 +142,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         break;
     }
     case WM_INPUT: {
-        HRAWINPUT rawInput = (HRAWINPUT)lParam;
+        auto rawInput = (HRAWINPUT)lParam;
         platformWindow->processRawInput(rawInput);
 
         // Let the default handler process this too

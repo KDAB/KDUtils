@@ -180,7 +180,7 @@ TEST_CASE("Wait for events")
 
         REQUIRE_MESSAGE(boundPort != 0, "Server couldn't bind");
 
-        SOCKET clientSock = INVALID_SOCKET;
+        SOCKET clientSock = INVALID_SOCKET; // NOLINT(modernize-use-auto)
         clientSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
         // A notifier for testing deregistration
