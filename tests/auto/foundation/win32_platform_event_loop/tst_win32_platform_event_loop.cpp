@@ -66,7 +66,7 @@ TEST_CASE("Wait for events")
         auto callWakeUp = [&mutex, &cond, &ready, &loop]() {
             SPDLOG_INFO("Launched helper thread");
             std::unique_lock lock(mutex);
-            cond.wait(lock, [&ready] { return ready == true; });
+            cond.wait(lock, [&ready] { return ready; });
             SPDLOG_INFO("Thread going to sleep before waking up event loop");
 
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -175,7 +175,7 @@ TEST_CASE("Wait for events")
         // Wait until the server is ready for connection
         {
             std::unique_lock lk(mutex);
-            cond.wait(lk, [&]() { return ready == true; });
+            cond.wait(lk, [&]() { return ready; });
         }
 
         REQUIRE_MESSAGE(boundPort != 0, "Server couldn't bind");
