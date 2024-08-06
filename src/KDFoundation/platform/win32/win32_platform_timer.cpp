@@ -48,7 +48,7 @@ Win32PlatformTimer::~Win32PlatformTimer()
     }
 }
 
-void Win32PlatformTimer::callback(HWND hwnd, UINT uMsg, UINT_PTR timerId, DWORD dwTime)
+void Win32PlatformTimer::callback(HWND /*hwnd*/, UINT /*uMsg*/, UINT_PTR timerId, DWORD /*dwTime*/)
 {
     auto timer = eventLoop()->timers[timerId];
     assert(timer);
