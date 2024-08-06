@@ -29,6 +29,7 @@ constexpr UINT WM_KD_SOCKETEVENT = WM_USER;
 
 LRESULT CALLBACK Win32PlatformEventLoop::messageWindowProc(HWND hwnd, UINT msgId, WPARAM wp, LPARAM lp)
 {
+    // NOLINTNEXTLINE(performance-no-int-to-ptr)
     auto *loop = reinterpret_cast<Win32PlatformEventLoop *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
     if (msgId == WM_KD_SOCKETEVENT) {
