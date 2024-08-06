@@ -220,6 +220,7 @@ void Win32PlatformEventLoop::handleSocketMessage(WPARAM wparam, LPARAM lparam)
             NotifierEvent ev;
             m_postman->deliverEvent(notifierSet.events[2], &ev);
         }
+    default:
         break;
     }
 }
