@@ -142,6 +142,7 @@ LRESULT CALLBACK windowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPara
         break;
     }
     case WM_INPUT: {
+        // NOLINTNEXTLINE(performance-no-int-to-ptr)
         auto rawInput = (HRAWINPUT)lParam;
         platformWindow->processRawInput(rawInput);
 
