@@ -5,9 +5,8 @@
 name: Linters
 
 on:
-  schedule:
-    - cron: '37 21 * * *'
   workflow_dispatch:
+  pull_request:
 
 env:
   CC: "clang"
