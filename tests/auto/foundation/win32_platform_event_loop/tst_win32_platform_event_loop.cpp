@@ -216,9 +216,11 @@ TEST_CASE("Wait for events")
         add.sin_port = htons(boundPort);
         add.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
-        // We don't check for success here because it intentionally returns an error. We're calling
-        // connect on an async socket so we expect WOULDBLOCK.
-        connect(clientSock, reinterpret_cast<sockaddr *>(&add), sizeof(add));
+        // We expect failure here. We're calling connect on an async socket so it should fail with
+        // WOULDBLOCK.
+        const auto rc = connect(clientSock, reinterpret_cast<sockaddr *>(&add), sizeof(add));
+
+        REQUIRE(rc == -1);
         REQUIRE(WSAGetLastError() == WSAEWOULDBLOCK);
 
         loop.waitForEvents(1000); // First we'll get FD_CONNECT on write notifier
