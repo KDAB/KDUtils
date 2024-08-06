@@ -97,7 +97,7 @@ TEST_CASE("Wait for events")
     SUBCASE("can watch a win32 socket")
     {
 
-        short boundPort = 0;
+        USHORT boundPort = 0;
         WSAData wsaData;
 
         Win32PlatformEventLoop loop;
@@ -124,10 +124,10 @@ TEST_CASE("Wait for events")
             ad.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
             int ret = 0;
-            const short startPort = 1337;
-            short foundPort = 0;
+            const USHORT startPort = 1337;
+            USHORT foundPort = 0;
             // Try 10 ports so that the tests running in parallel don't step on each others toes
-            for (int i = 0; i < 10; ++i) {
+            for (USHORT i = 0; i < 10; ++i) {
                 ad.sin_port = htons(startPort + i);
                 ret = bind(serverSocket, reinterpret_cast<sockaddr *>(&ad), sizeof(ad));
                 if (ret == 0) {
@@ -158,7 +158,7 @@ TEST_CASE("Wait for events")
             closesocket(serverSocket);
 
             if (clientSocket != INVALID_SOCKET) {
-                ret = send(clientSocket, dataToSend.c_str(), dataToSend.size() + 1, 0);
+                ret = send(clientSocket, dataToSend.c_str(), static_cast<int>(dataToSend.size()) + 1, 0);
                 if (ret != SOCKET_ERROR) {
                     SPDLOG_INFO("Server sent {} bytes", ret);
                 } else {
@@ -185,7 +185,7 @@ TEST_CASE("Wait for events")
 
         // A notifier for testing deregistration
         int unregisteredCalls = 0;
-        FileDescriptorNotifier unregistered(clientSock, FileDescriptorNotifier::NotificationType::Read);
+        FileDescriptorNotifier unregistered(static_cast<int>(clientSock), FileDescriptorNotifier::NotificationType::Read);
         std::ignore = unregistered.triggered.connect([&unregisteredCalls] {
             unregisteredCalls++;
         });
@@ -193,7 +193,7 @@ TEST_CASE("Wait for events")
         loop.unregisterNotifier(&unregistered);
 
         // Set up read notifier to receive the data
-        FileDescriptorNotifier readNotifier(clientSock, FileDescriptorNotifier::NotificationType::Read);
+        FileDescriptorNotifier readNotifier(static_cast<int>(clientSock), FileDescriptorNotifier::NotificationType::Read);
         std::ignore = readNotifier.triggered.connect([&dataReceived](int fd) {
             std::array<char, 128> buf = {};
             recv(fd, buf.data(), 128, 0);
@@ -204,7 +204,7 @@ TEST_CASE("Wait for events")
         loop.registerNotifier(&readNotifier);
 
         // A notifier for testing Write notification type
-        FileDescriptorNotifier writeNotifier(clientSock, FileDescriptorNotifier::NotificationType::Write);
+        FileDescriptorNotifier writeNotifier(static_cast<int>(clientSock), FileDescriptorNotifier::NotificationType::Write);
         int writeTriggered = 0;
         std::ignore = writeNotifier.triggered.connect([&writeTriggered]() {
             writeTriggered++;

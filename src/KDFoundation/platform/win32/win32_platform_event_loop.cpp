@@ -182,7 +182,7 @@ std::unique_ptr<AbstractPlatformTimer> Win32PlatformEventLoop::createPlatformTim
 
 void Win32PlatformEventLoop::handleSocketMessage(WPARAM wparam, LPARAM lparam)
 {
-    const int sockId = wparam;
+    const int sockId = static_cast<int>(wparam);
     const int err = WSAGETSELECTERROR(lparam);
     const int op = WSAGETSELECTEVENT(lparam);
 
