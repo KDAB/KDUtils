@@ -49,7 +49,7 @@ Win32PlatformEventLoop::Win32PlatformEventLoop()
     wc.lpfnWndProc = messageWindowProc;
     wc.lpszClassName = s_msgWindowClassName;
 
-    ATOM atom = RegisterClass(&wc);
+    const ATOM atom = RegisterClass(&wc);
     if (!atom)
         SPDLOG_CRITICAL("Failed to register message window class");
 
@@ -239,7 +239,7 @@ bool KDFoundation::Win32PlatformEventLoop::registerWithWSAAsyncSelect(int fd, co
 
     // If all notifiers are empty, we'll pass zero and unregister completely for this fd
     long int eventsToSubscribe = 0;
-    FileDescriptorNotifier::NotificationType types[] = {
+    const FileDescriptorNotifier::NotificationType types[] = {
         FileDescriptorNotifier::NotificationType::Read,
         FileDescriptorNotifier::NotificationType::Write,
         FileDescriptorNotifier::NotificationType::Exception,

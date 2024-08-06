@@ -77,7 +77,7 @@ TEST_CASE("Wait for events")
         // Kick the thread off
         {
             SPDLOG_INFO("Waking up helper thread");
-            std::unique_lock lock(mutex);
+            const std::unique_lock lock(mutex);
             ready = true;
             cond.notify_all();
         }
@@ -115,7 +115,7 @@ TEST_CASE("Wait for events")
         bool ready = false;
 
         auto serverFunction = [&mutex, &cond, &ready, &dataToSend, &boundPort]() {
-            SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+            const SOCKET serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
             if (serverSocket == INVALID_SOCKET) {
                 SPDLOG_ERROR("Cannot create server socket");
             }
@@ -148,7 +148,7 @@ TEST_CASE("Wait for events")
 
             // Send info to the client that we're ready
             {
-                std::lock_guard lk(mutex);
+                const std::lock_guard lk(mutex);
                 ready = true;
                 boundPort = foundPort;
                 cond.notify_all();
