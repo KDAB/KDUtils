@@ -64,7 +64,7 @@ sudo apt install gcovr
 ## Contact
 
 - Visit us on GitHub: <https://github.com/KDAB/KDUtils>
-- Email info@kdab.com for questions about copyright, licensing or commercial support.
+- Email <info@kdab.com> for questions about copyright, licensing or commercial support.
 
 ## Licensing
 
@@ -78,7 +78,7 @@ Contact KDAB at <info@kdab.com> to inquire about commercial licensing.
 Please submit your contributions or issue reports from our GitHub space at
 <https://github.com/KDAB/KDUtils>.
 
-Contact info@kdab.com for more information.
+Contact <info@kdab.com> for more information.
 
 ## About KDAB
 
