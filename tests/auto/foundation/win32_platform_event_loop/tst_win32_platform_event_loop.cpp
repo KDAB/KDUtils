@@ -232,7 +232,7 @@ TEST_CASE("Wait for events")
         REQUIRE_MESSAGE(dataReceived == dataToSend, "Data sent doesn't match the data received");
 
         closesocket(clientSock);
-        WSACleanup();
         serverThread.join();
+        WSACleanup();
     }
 }
