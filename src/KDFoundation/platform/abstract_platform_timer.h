@@ -15,10 +15,9 @@
 
 namespace KDFoundation {
 
-class KDFOUNDATION_API AbstractPlatformTimer
-{
-public:
-    virtual ~AbstractPlatformTimer() { }
+class KDFOUNDATION_API AbstractPlatformTimer{
+    public :
+            virtual ~AbstractPlatformTimer(){}
 };
 
 } // namespace KDFoundation
