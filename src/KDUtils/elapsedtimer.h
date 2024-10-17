@@ -12,13 +12,13 @@
 #ifndef KDUTILS_ELAPSEDTIMER_H
 #define KDUTILS_ELAPSEDTIMER_H
 
-#include <KDUtils/kdutils_export.h>
+#include <KDUtils/kdutils_global.h>
 #include <chrono>
 #include <ratio>
 
 namespace KDUtils {
 
-class KDUTILS_EXPORT ElapsedTimer
+class KDUTILS_API ElapsedTimer
 {
 public:
     using Clock = std::chrono::high_resolution_clock;

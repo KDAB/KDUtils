@@ -11,4 +11,8 @@
 
 #pragma once
 
+#include <KDUtils/kdutils_export.h>
+
+#define KDUTILS_API KDUTILS_EXPORT
+
 #define KD_UNUSED(x) (void)x;

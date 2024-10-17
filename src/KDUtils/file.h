@@ -11,7 +11,7 @@
 #ifndef KDUTILS_FILE_H
 #define KDUTILS_FILE_H
 
-#include <KDUtils/kdutils_export.h>
+#include <KDUtils/kdutils_global.h>
 #include <KDUtils/bytearray.h>
 #include <iostream>
 #include <fstream>
@@ -23,7 +23,7 @@
 
 namespace KDUtils {
 
-class KDUTILS_EXPORT File
+class KDUTILS_API File
 {
 public:
     File(const std::string &path);
@@ -60,7 +60,7 @@ private:
 };
 
 #if defined(ANDROID)
-KDUTILS_EXPORT void setAssetManager(AAssetManager *assetManager);
+KDUTILS_API void setAssetManager(AAssetManager *assetManager);
 #endif
 
 } // namespace KDUtils
