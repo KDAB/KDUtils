@@ -34,3 +34,4 @@ BraceWrapping:
     IndentBraces: false
 
 CommentPragmas:  '/\*(.+\n.+)+\*/'
+AttributeMacros: [KDFOUNDATION_API, KDGUI_API, KDUTILS_EXPORT]
