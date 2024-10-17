@@ -78,12 +78,12 @@ Url Url::fromLocalFile(const std::string &url)
     return Url(std::string("file://") + path);
 }
 
-KDUTILS_EXPORT bool operator==(const Url &a, const Url &b)
+bool operator==(const Url &a, const Url &b)
 {
     return a.url() == b.url();
 }
 
-KDUTILS_EXPORT bool operator!=(const Url &a, const Url &b)
+bool operator!=(const Url &a, const Url &b)
 {
     return !(a == b);
 }

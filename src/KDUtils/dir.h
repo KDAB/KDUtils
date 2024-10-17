@@ -12,13 +12,13 @@
 #ifndef KDUTILS_DIR_H
 #define KDUTILS_DIR_H
 
-#include <KDUtils/kdutils_export.h>
+#include <KDUtils/kdutils_global.h>
 #include <string>
 #include <filesystem>
 
 namespace KDUtils {
 
-class KDUTILS_EXPORT Dir
+class KDUTILS_API Dir
 {
 public:
     Dir();

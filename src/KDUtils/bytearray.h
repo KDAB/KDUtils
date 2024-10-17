@@ -16,11 +16,11 @@
 #include <cstdint>
 #include <string>
 
-#include <KDUtils/kdutils_export.h>
+#include <KDUtils/kdutils_global.h>
 
 namespace KDUtils {
 
-class KDUTILS_EXPORT ByteArray
+class KDUTILS_API ByteArray
 {
 public:
     ByteArray();
@@ -69,9 +69,9 @@ private:
     std::vector<uint8_t> m_data;
 };
 
-KDUTILS_EXPORT bool operator==(const ByteArray &a, const ByteArray &b);
-KDUTILS_EXPORT bool operator!=(const ByteArray &a, const ByteArray &b);
-KDUTILS_EXPORT ByteArray operator+(const ByteArray &a, const ByteArray &b);
+KDUTILS_API bool operator==(const ByteArray &a, const ByteArray &b);
+KDUTILS_API bool operator!=(const ByteArray &a, const ByteArray &b);
+KDUTILS_API ByteArray operator+(const ByteArray &a, const ByteArray &b);
 
 } // namespace KDUtils
 

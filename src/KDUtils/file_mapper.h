@@ -11,11 +11,11 @@
 #ifndef KDUTILS_FILE_MAPPER_H
 #define KDUTILS_FILE_MAPPER_H
 #include <KDUtils/file.h>
-#include <KDUtils/kdutils_export.h>
+#include <KDUtils/kdutils_global.h>
 
 namespace KDUtils {
 /// Provides memory mapping from a file.
-class KDUTILS_EXPORT FileMapper
+class KDUTILS_API FileMapper
 {
 public:
     struct Map;

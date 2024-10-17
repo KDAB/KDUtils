@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <KDUtils/kdutils_export.h>
+#include <KDUtils/kdutils_global.h>
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -19,7 +19,7 @@
 
 namespace KDUtils {
 
-class KDUTILS_EXPORT Logger
+class KDUTILS_API Logger
 {
 public:
     static std::shared_ptr<spdlog::logger> logger(const std::string &name, spdlog::level::level_enum defaultLevel = spdlog::level::warn);

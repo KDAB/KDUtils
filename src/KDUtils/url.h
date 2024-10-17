@@ -12,12 +12,12 @@
 #ifndef KDUTILS_URL_H
 #define KDUTILS_URL_H
 
-#include <KDUtils/kdutils_export.h>
+#include <KDUtils/kdutils_global.h>
 #include <string>
 
 namespace KDUtils {
 
-class KDUTILS_EXPORT Url
+class KDUTILS_API Url
 {
 public:
     Url() = default;
@@ -41,8 +41,8 @@ private:
     std::string m_path;
 };
 
-KDUTILS_EXPORT bool operator==(const Url &a, const Url &b);
-KDUTILS_EXPORT bool operator!=(const Url &a, const Url &b);
+KDUTILS_API bool operator==(const Url &a, const Url &b);
+KDUTILS_API bool operator!=(const Url &a, const Url &b);
 
 } // namespace KDUtils
 
