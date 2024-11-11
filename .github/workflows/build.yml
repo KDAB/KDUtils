@@ -49,6 +49,11 @@ jobs:
           libwayland-dev xvfb ninja-build \
           libmosquitto-dev
 
+      - name: Download mosquitto (MacOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install mosquitto
+
       - name: Download mosquitto (Windows)
         if: runner.os == 'Windows'
         run: |

@@ -13,6 +13,7 @@ find_file(
     NAMES mosquitto.h
     PATHS /usr/include
           /usr/local/include
+          /usr/local/opt/mosquitto/include
           $ENV{PROGRAMFILES}/mosquitto/devel
           $ENV{PROGRAMFILES\(X86\)}/mosquitto/devel
 )
@@ -21,7 +22,7 @@ if(UNIX)
     find_library(
         MOSQUITTO_LIBRARY
         NAMES mosquitto
-        PATHS /usr/lib /usr/local/lib
+        PATHS /usr/lib /usr/local/lib /usr/local/opt/mosquitto/lib
     )
 
     if(MOSQUITTO_HEADER AND MOSQUITTO_LIBRARY)
