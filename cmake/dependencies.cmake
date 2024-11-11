@@ -101,3 +101,8 @@ if(NOT TARGET mio::mio)
     )
     fetchcontent_makeavailable(mio)
 endif()
+
+# mosquitto library
+if(KDUTILS_BUILD_MQTT_SUPPORT)
+    find_package(Mosquitto REQUIRED)
+endif()
