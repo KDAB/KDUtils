@@ -17,8 +17,8 @@ jobs:
           - ubuntu-22.04
           - ubuntu-20.04
           - windows-2022
-          - macos-13
-          - macos-14
+          #- macos-13 -> disabled during introduction of KDMqtt
+          #- macos-14 -> disabled during introduction of KDMqtt
         build_type:
           - Debug
           - Release
