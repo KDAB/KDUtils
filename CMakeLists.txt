@@ -23,7 +23,12 @@ if(ANDROID)
 else()
     option(KDUTILS_BUILD_TESTS "Build the tests" ON)
     option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+endif()
 
+if(UNIX)
+    option(KDUTILS_BUILD_MQTT_SUPPORT "Build KDMqtt" ON)
+else()
+    option(KDUTILS_BUILD_MQTT_SUPPORT "Build KDMqtt" OFF)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -60,6 +65,10 @@ endif()
 add_subdirectory(src/KDUtils)
 add_subdirectory(src/KDFoundation)
 add_subdirectory(src/KDGui)
+
+if(KDUTILS_BUILD_MQTT_SUPPORT)
+    add_subdirectory(src/KDMqtt)
+endif()
 
 if(KDUTILS_BUILD_EXAMPLES)
     add_subdirectory(examples)

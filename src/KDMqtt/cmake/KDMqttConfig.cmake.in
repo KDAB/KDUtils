@@ -1,0 +1,15 @@
+# This file is part of KDUtils.
+#
+# SPDX-FileCopyrightText: 2024 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+# Author: Marco Thaller <marco.thaller@kdab.com>
+#
+# SPDX-License-Identifier: MIT
+#
+# Contact KDAB at <info@kdab.com> for commercial licensing options.
+#
+
+include(CMakeFindDependencyMacro)
+find_dependency(KDFoundation)
+find_dependency(mosquitto)
+
+include("${CMAKE_CURRENT_LIST_DIR}/KDMqttConfigTargets.cmake")
