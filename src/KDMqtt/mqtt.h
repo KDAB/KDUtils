@@ -16,6 +16,7 @@
 #include <KDMqtt/mosquitto_wrapper.h>
 #include <KDUtils/file.h>
 #include <KDUtils/url.h>
+#include <unordered_map>
 
 using namespace KDFoundation;
 using namespace KDUtils;

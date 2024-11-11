@@ -17,8 +17,8 @@ jobs:
           - ubuntu-22.04
           #- ubuntu-20.04 -> disabled during introduction of KDMqtt
           - windows-2022
-          #- macos-13 -> disabled during introduction of KDMqtt
-          #- macos-14 -> disabled during introduction of KDMqtt
+          - macos-13
+          - macos-14
         build_type:
           - Debug
           - Release
@@ -48,6 +48,11 @@ jobs:
           libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
           libwayland-dev xvfb ninja-build \
           libmosquittopp-dev
+
+      - name: Download mosquitto (MacOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install mosquitto
 
       - name: Download mosquitto (Windows)
         if: runner.os == 'Windows'
