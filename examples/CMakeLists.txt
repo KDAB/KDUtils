@@ -8,3 +8,4 @@
 #
 
 add_subdirectory(gui_window)
+add_subdirectory(mqtt_client)
