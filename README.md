@@ -32,6 +32,21 @@ You get:
 - Keyboard and mouse events
 - GuiApplication
 
+## KDMqtt
+
+KDMqtt provides a cross-platform MQTT client solution, based on [mosquitto](https://mosquitto.org/).
+
+You get a thin wrapper around libmosquitto that
+
+* seamlessly integrates into KDFoundation's `CoreAppliation`
+* comes with an API featuring properties and signals using [KDBindings](https://github.com/KDAB/KDBindings)
+
+For now, we don't support building mosquitto from source so you need to have it installed on your machine.
+
+You can find setup instructions and download links at
+
+<https://mosquitto.org/download/>
+
 ## KDUtils/KDUtils
 
 This namespace is the namesake of the entire library, and contains the STL
@@ -52,7 +67,7 @@ You get:
 On Linux:
 
 ```bash
-sudo apt install libxkbcommon-dev libxcb-xkb-dev libxkbcommon-x11-dev wayland-scanner++ wayland-protocols libwayland-dev
+sudo apt install libxkbcommon-dev libxcb-xkb-dev libxkbcommon-x11-dev wayland-scanner++ wayland-protocols libwayland-dev libmosquittopp-dev
 ```
 
 For debug builds with code coverage:
