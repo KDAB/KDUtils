@@ -15,7 +15,7 @@ jobs:
         os:
           - ubuntu-24.04
           - ubuntu-22.04
-          - ubuntu-20.04
+          #- ubuntu-20.04 -> disabled during introduction of KDMqtt
           - windows-2022
           #- macos-13 -> disabled during introduction of KDMqtt
           #- macos-14 -> disabled during introduction of KDMqtt
