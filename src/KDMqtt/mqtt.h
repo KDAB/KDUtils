@@ -20,6 +20,7 @@
 #include <KDUtils/url.h>
 #include <chrono>
 #include <optional>
+#include <unordered_map>
 
 using namespace KDFoundation;
 using namespace KDUtils;

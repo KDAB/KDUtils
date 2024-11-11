@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew tap KDAB/tap
-          brew install fmt spdlog KDBindings
+          brew install fmt spdlog KDBindings mosquitto
 
       - name: Configure project
         run: >
