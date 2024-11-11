@@ -8,4 +8,7 @@
 #
 
 add_subdirectory(gui_window)
-add_subdirectory(mqtt_client)
+
+if(KDUTILS_BUILD_MQTT_SUPPORT)
+    add_subdirectory(mqtt_client)
+endif()
