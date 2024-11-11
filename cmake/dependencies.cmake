@@ -101,3 +101,6 @@ if(NOT TARGET mio::mio)
     )
     fetchcontent_makeavailable(mio)
 endif()
+
+# mosquitto library
+find_package(Mosquitto REQUIRED)
