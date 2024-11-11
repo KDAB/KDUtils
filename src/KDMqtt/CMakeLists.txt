@@ -43,6 +43,12 @@ target_link_libraries(
     PRIVATE spdlog::spdlog
 )
 
+generate_export_header(KDMqtt BASE_NAME kdmqtt)
+configure_file(${CMAKE_CURRENT_BINARY_DIR}/kdmqtt_export.h ${CMAKE_BINARY_DIR}/include/KDMqtt/kdmqtt_export.h)
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/kdmqtt_export.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/KDMqtt
+)
 
 foreach(file ${HEADERS})
     get_filename_component(dir ${file} DIRECTORY)

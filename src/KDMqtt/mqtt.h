@@ -12,13 +12,14 @@
 
 #include <KDFoundation/file_descriptor_notifier.h>
 #include <KDFoundation/timer.h>
+#include <KDMqtt/kdmqtt_global.h>
+#include <KDMqtt/mosquitto_wrapper.h>
 #include <KDUtils/bytearray.h>
 #include <KDUtils/file.h>
 #include <KDUtils/flags.h>
 #include <KDUtils/url.h>
 #include <chrono>
 #include <optional>
-#include "mosquitto_wrapper.h"
 
 using namespace KDFoundation;
 using namespace KDUtils;
@@ -35,7 +36,7 @@ constexpr std::chrono::duration c_defaultKeepAlive = std::chrono::minutes(1);
  * interface exposed to application / business logic
  * to access MQTT library implementations.
  */
-class IMqttLib
+class KDMQTT_API IMqttLib
 {
 protected:
     IMqttLib() = default;
@@ -58,7 +59,7 @@ public:
  * This class exposes mosquitto library functions to
  * the application / business logic.
  */
-class MqttLib : public IMqttLib
+class KDMQTT_API MqttLib : public IMqttLib
 {
     friend class MqttClient;
     friend class MqttUnitTestHarness;
@@ -97,7 +98,7 @@ private:
  * interface exposed to application / business logic
  * to access MQTT client implementations.
  */
-class IMqttClient
+class KDMQTT_API IMqttClient
 {
 public:
     enum class ConnectionState {
@@ -151,7 +152,7 @@ public:
  * This class exposes mosquitto client functions to
  * the application / business logic.
  */
-class MqttClient : public IMqttClient
+class KDMQTT_API MqttClient : public IMqttClient
 {
     friend class MqttUnitTestHarness;
 
