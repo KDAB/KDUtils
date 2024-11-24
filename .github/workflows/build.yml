@@ -17,9 +17,8 @@ jobs:
           - ubuntu-22.04
           - ubuntu-20.04
           - windows-2022
-          #- windows-2019
-          - macos-12
-          #- macos-11
+          - macos-13
+          - macos-14
         build_type:
           - Debug
           - Release
@@ -33,7 +32,7 @@ jobs:
 
       - name: Install ninja-build tool
         if: ${{ runner.os != 'Linux' }}
-        uses: turtlesec-no/get-ninja@main
+        uses: urkle/action-get-ninja@e3ed0d4fc9ec9608cdc970133d71c980b6149631 #v1
 
       - name: Make sure MSVC is found when Ninja generator is in use
         uses: ilammy/msvc-dev-cmd@v1
