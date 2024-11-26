@@ -520,4 +520,4 @@ int MqttClient::SubscriptionsRegistry::grantedQosForTopic(const std::string &top
     return qosByTopicOfActiveSubscriptions.at(topic);
 }
 
-}
+} // namespace KDMqtt

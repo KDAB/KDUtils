@@ -16,18 +16,18 @@ add_executable(
 )
 
 target_link_libraries(
-    ${PROJECT_NAME}
-    KDMqtt
+    ${PROJECT_NAME} KDMqtt
 )
 
-if (WIN32)
+if(WIN32)
     # Deployment: On Windows, copy all DLLs from the mosquitto install directory next to the application binary so that they're found.
-    if (BUILD_INTEGRATION_MQTT AND MOSQUITTO_RUNTIME_DLLS)
+    if(BUILD_INTEGRATION_MQTT AND MOSQUITTO_RUNTIME_DLLS)
         foreach(MOSQUITTO_RUNTIME_DLL ${MOSQUITTO_RUNTIME_DLLS})
-            add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${MOSQUITTO_RUNTIME_DLL}"
-                $<TARGET_FILE_DIR:${PROJECT_NAME}>
+            add_custom_command(
+                TARGET ${PROJECT_NAME}
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different "${MOSQUITTO_RUNTIME_DLL}"
+                        $<TARGET_FILE_DIR:${PROJECT_NAME}>
             )
         endforeach()
     endif()

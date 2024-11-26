@@ -8,14 +8,9 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-set(SOURCES
-    mqtt.cpp
-)
+set(SOURCES mqtt.cpp)
 
-set(HEADERS
-    mosquitto_wrapper.h
-    mqtt.h
-)
+set(HEADERS mosquitto_wrapper.h mqtt.h)
 
 add_library(
     KDMqtt
@@ -50,9 +45,7 @@ target_link_libraries(
 )
 
 generate_export_header(KDMqtt BASE_NAME kdmqtt)
-configure_file(
-    ${CMAKE_CURRENT_BINARY_DIR}/kdmqtt_export.h ${CMAKE_BINARY_DIR}/include/KDMqtt/kdmqtt_export.h
-)
+configure_file(${CMAKE_CURRENT_BINARY_DIR}/kdmqtt_export.h ${CMAKE_BINARY_DIR}/include/KDMqtt/kdmqtt_export.h)
 # configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h ${CMAKE_BINARY_DIR}/include/KDMqtt/config.h)
 install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/kdmqtt_export.h

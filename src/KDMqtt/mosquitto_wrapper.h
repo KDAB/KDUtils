@@ -233,4 +233,4 @@ private:
     struct mosquitto *m_clientInstance;
 };
 
-}
+} // namespace KDMqtt

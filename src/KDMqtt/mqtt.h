@@ -247,4 +247,4 @@ private:
     SubscriptionsRegistry m_subscriptionsRegistry;
 };
 
-}
+} // namespace KDMqtt
