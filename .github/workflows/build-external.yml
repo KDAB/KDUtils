@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2025 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+#
+# SPDX-License-Identifier: MIT
+
+name: Build against external 3rdparty
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - macos-latest
+        shared:
+          - ON
+          - OFF
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew tap KDAB/tap
+          brew install fmt spdlog KDBindings
+
+      - name: Configure project
+        run: >
+          cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Debug -G Ninja
+          -DKDUTILS_BUILD_TESTS=ON
+          -DBUILD_SHARED_LIBS=${{ matrix.shared }}
+
+      - name: Check if external dependencies were used
+        run: |
+          ! grep -q "KDBindings_DIR-NOTFOUND" ./build/CMakeCache.txt
+          ! grep -q "spdlog_DIR-NOTFOUND" ./build/CMakeCache.txt
+          ! grep -q "fmt_DIR-NOTFOUND" ./build/CMakeCache.txt
+
+      - name: Build Project
+        run: cmake --build ./build
+
+      - name: Run tests
+        run: ctest --test-dir ./build --output-on-failure
