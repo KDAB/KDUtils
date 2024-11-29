@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
+# Test on macOS with some dependencies provided externally by Homebrew.
+# Both to validate the CMake setup for using system dependencies and to have early warning
+# about incompatible changes in some fast-moving external libraries.
 name: Build against external 3rdparty
 
 on: [push, pull_request]
