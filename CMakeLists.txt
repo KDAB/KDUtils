@@ -60,6 +60,7 @@ endif()
 add_subdirectory(src/KDUtils)
 add_subdirectory(src/KDFoundation)
 add_subdirectory(src/KDGui)
+add_subdirectory(src/KDMqtt)
 
 if(KDUTILS_BUILD_EXAMPLES)
     add_subdirectory(examples)
