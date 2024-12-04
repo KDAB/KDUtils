@@ -71,7 +71,6 @@ int main()
     auto logger = spdlog::android_logger_mt("gui_window", "gui_window");
     spdlog::set_default_logger(logger);
 
-
     KDGui::GuiApplication app;
 
     ExampleWindow w;
@@ -88,4 +87,3 @@ int main()
 
     return 0;
 }
-
