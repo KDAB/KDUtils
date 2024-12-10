@@ -5,3 +5,4 @@ CMakeUserPresets.json
 .vs/
 .vscode/
 .idea/
+examples/android/gui_window/local.properties
