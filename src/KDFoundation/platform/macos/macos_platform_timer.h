@@ -11,12 +11,12 @@
 
 #pragma once
 
+#include <KDFoundation/platform/abstract_platform_timer.h>
+#include <KDFoundation/file_descriptor_notifier.h>
+
 #include <CoreFoundation/CoreFoundation.h>
 
 #include <chrono>
-
-#include <KDFoundation/platform/abstract_platform_timer.h>
-#include <KDFoundation/file_descriptor_notifier.h>
 
 namespace KDFoundation {
 
@@ -32,7 +32,7 @@ private:
     void arm(std::chrono::microseconds us);
     void disarm();
     static void timerFired(CFRunLoopTimerRef timer, void *info);
-    Timer *m_handler;
+    Timer *const m_handler;
     CFRunLoopTimerRef cfTimer;
 };
 

@@ -11,16 +11,18 @@
 
 #include "macos_platform_timer.h"
 #include "macos_platform_event_loop.h"
+#include "KDFoundation/core_application.h"
+#include "KDFoundation/timer.h"
+#include "KDFoundation/platform/macos/macos_platform_event_loop.h"
+
 #include <Foundation/Foundation.h>
+
 #include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <cstddef>
 #include <type_traits>
 #include <unistd.h>
-#include "KDFoundation/core_application.h"
-#include "KDFoundation/timer.h"
-#include "KDFoundation/platform/macos/macos_platform_event_loop.h"
 
 using namespace KDFoundation;
 
@@ -51,7 +53,7 @@ MacOSPlatformTimer::~MacOSPlatformTimer()
     disarm();
 }
 
-void MacOSPlatformTimer::timerFired(CFRunLoopTimerRef timer, void *info)
+void MacOSPlatformTimer::timerFired(CFRunLoopTimerRef timer, void *)
 {
     MacOSPlatformEventLoop *ev = eventLoop();
     void *key = timer;
@@ -67,7 +69,7 @@ void MacOSPlatformTimer::arm(std::chrono::microseconds us)
     }
 
     CFTimeInterval interval = std::chrono::duration_cast<std::chrono::duration<double>>(us).count();
-    CFRunLoopTimerContext timerContext = { 0, NULL, NULL, NULL, NULL };
+    CFRunLoopTimerContext timerContext = { 0, nullptr, nullptr, nullptr, nullptr };
     CFAbsoluteTime fireDate = CFAbsoluteTimeGetCurrent() + interval;
     // Create the timer
     cfTimer = CFRunLoopTimerCreate(

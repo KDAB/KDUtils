@@ -13,6 +13,7 @@
 
 #include <KDFoundation/platform/abstract_platform_event_loop.h>
 #include <KDFoundation/kdfoundation_global.h>
+
 #include <unordered_map>
 
 namespace KDFoundation {

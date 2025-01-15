@@ -11,8 +11,10 @@
 
 #include "macos_platform_event_loop.h"
 #include "macos_platform_timer.h"
+
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
+
 #include <limits>
 #include <memory>
 
@@ -79,6 +81,7 @@ bool MacOSPlatformEventLoop::unregisterNotifier(FileDescriptorNotifier * /* noti
     // TODO
     return false;
 }
+
 std::unique_ptr<AbstractPlatformTimer> MacOSPlatformEventLoop::createPlatformTimerImpl(Timer *timer)
 {
     return std::make_unique<MacOSPlatformTimer>(timer);
