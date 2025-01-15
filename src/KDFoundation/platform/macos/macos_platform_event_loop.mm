@@ -10,14 +10,15 @@
 */
 
 #include "macos_platform_event_loop.h"
-
+#include "macos_platform_timer.h"
+#import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-
 #include <limits>
-
-using namespace KDFoundation;
+#include <memory>
 
 constexpr auto KDFoundationCocoaEventSubTypeWakeup = std::numeric_limits<short>::max();
+
+namespace KDFoundation {
 
 MacOSPlatformEventLoop::MacOSPlatformEventLoop()
 {
@@ -78,9 +79,9 @@ bool MacOSPlatformEventLoop::unregisterNotifier(FileDescriptorNotifier * /* noti
     // TODO
     return false;
 }
-
 std::unique_ptr<AbstractPlatformTimer> MacOSPlatformEventLoop::createPlatformTimerImpl(Timer *timer)
 {
-    // TODO
-    return {};
+    return std::make_unique<MacOSPlatformTimer>(timer);
 }
+
+} // namespace KDFoundation
