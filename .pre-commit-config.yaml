@@ -14,7 +14,7 @@ repos:
     args: [--allow-multiple-documents]
   - id: check-json
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v19.1.6
+  rev: v19.1.7
   hooks:
   - id: clang-format
 - repo: https://github.com/codespell-project/codespell
@@ -27,7 +27,7 @@ repos:
   - id: cmake-lint
   - id: cmake-format
 - repo: https://github.com/DavidAnson/markdownlint-cli2
-  rev: v0.17.1
+  rev: v0.17.2
   hooks:
   - id: markdownlint-cli2
     exclude: ^(3rdParty/|common/ui/resources/licenses/)
