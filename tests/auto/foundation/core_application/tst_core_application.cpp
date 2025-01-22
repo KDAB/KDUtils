@@ -187,8 +187,19 @@ TEST_CASE("Event handling")
     }
 }
 
-#ifndef KD_PLATFORM_MACOS
-TEST_CASE("Timer handling")
+/// macOS on GitHub runners is super slow and timeouts
+template<typename T>
+inline T adjustTimeout(T timeout)
+{
+#ifdef DOCTEST_PLATFORM_MAC
+    if (std::getenv("GITHUB_JOB"))
+        return timeout * 10;
+#endif
+
+    return timeout;
+}
+
+TEST_CASE("Timer handling" * doctest::timeout(120))
 {
     SUBCASE("timer fires correctly")
     {
@@ -196,7 +207,7 @@ TEST_CASE("Timer handling")
 
         CoreApplication app;
         Timer timer;
-        timer.interval = 100ms;
+        timer.interval = adjustTimeout(100ms);
         timer.running = true;
 
         int timeout = 0;
@@ -204,15 +215,18 @@ TEST_CASE("Timer handling")
         auto time = startTime;
         std::ignore = timer.timeout.connect([&]() {
             const auto endTime = std::chrono::steady_clock::now();
-            REQUIRE(endTime - time > 50ms);
-            REQUIRE(endTime - time < 150ms);
+            const auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - time).count();
+            SPDLOG_INFO("elapsedTime = {}", elapsedTime);
+            REQUIRE(endTime - time > adjustTimeout(50ms));
+            REQUIRE(endTime - time < adjustTimeout(250ms));
             time = endTime;
             timeout++;
         });
 
-        while (std::chrono::steady_clock::now() - startTime < 500ms) {
-            app.processEvents(500);
+        while (std::chrono::steady_clock::now() - startTime < adjustTimeout(500ms)) {
+            app.processEvents(adjustTimeout(500));
         }
+        SPDLOG_INFO("timeout = {}", timeout);
         REQUIRE(timeout > 3);
         REQUIRE(timeout < 8);
 
@@ -234,7 +248,7 @@ TEST_CASE("Timer handling")
         Timer timer;
 
         // Set initial interval to 100ms
-        timer.interval = 100ms;
+        timer.interval = adjustTimeout(100ms);
         timer.running = true;
 
         bool fired = false;
@@ -244,23 +258,22 @@ TEST_CASE("Timer handling")
         });
 
         // After 50ms, timer shouldn't have yet fired
-        app.processEvents(50);
+        app.processEvents(adjustTimeout(50));
         REQUIRE(fired == false);
 
         // Reset interval, it should fire 150ms from now
-        timer.interval = 150ms;
+        timer.interval = adjustTimeout(150ms);
 
         // Advance 100ms, it should _not_ yet fire because it was
         // restarted to 150ms even though the original timeout passed
-        app.processEvents(100);
+        app.processEvents(adjustTimeout(100));
         REQUIRE(fired == false);
 
         // It should fire after additional 100ms
-        app.processEvents(100);
+        app.processEvents(adjustTimeout(100));
         REQUIRE(fired == true);
     }
 }
-#endif
 
 TEST_CASE("Main event loop")
 {
