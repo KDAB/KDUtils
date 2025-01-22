@@ -1,0 +1,51 @@
+# SPDX-FileCopyrightText: 2024 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+#
+# SPDX-License-Identifier: MIT
+
+on:
+  workflow_dispatch:
+    inputs:
+      dependency:
+        type: choice
+        description: "Select an option"
+        options: #
+          - "Only print current and available versions" # don't change this one
+          - spdlog
+          - fmt
+          - KDBindings
+          - doctest
+
+name: bump dependencies
+
+env:
+  PROJECT_NAME: KDUtils
+
+jobs:
+  dependency-bump:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Checkout ci-release-tools
+        run: |
+          git clone https://github.com/KDABLabs/ci-release-tools.git
+
+      - name: Configure Git committer
+        run: |
+          git config --global user.name "KDAB GitHub Actions"
+          git config --global user.email "gh@kdab"
+
+      - name: Print current and available versions
+        if: inputs.dependency == 'Only print current and available versions'
+        run: |
+          python3 ./ci-release-tools/src/update_dependencies.py --print-dependency-versions --proj-name ${{ env.PROJECT_NAME }} --repo-path .
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Bump dependency
+        if: inputs.dependency != 'Only print current and available versions'
+        run: |
+          python3 ./ci-release-tools/src/update_dependencies.py --update-dependency ${{inputs.dependency}} --proj-name ${{ env.PROJECT_NAME }} --repo-path . --owner ${{ github.repository_owner }}
+        env:
+          GH_TOKEN: ${{ github.token }}
