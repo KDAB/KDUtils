@@ -71,7 +71,7 @@ sudo apt install gcovr
 KDUtils is © Klarälvdalens Datakonsult AB and is available under the
 terms of the [MIT](LICENSES/MIT.txt) license.
 
-Contact KDAB at <info@kdab.com> to inquire about commercial licensing.
+Contact KDAB at <info@kdab.com> if you need different licensing options.
 
 ## Get Involved
 
