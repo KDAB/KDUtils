@@ -182,6 +182,7 @@ public:
 
 private:
     bool m_verbose;
+    Timer m_establishConnectionTaskTimer;
 
     /*
      * Mosquitto client event handlers
@@ -201,6 +202,29 @@ private:
     void onReadOpRequested();
     void onWriteOpRequested();
     void onMiscTaskRequested();
+
+    /*
+     * Task to artificially invoke event handlers while the
+     * connection is being established after calling
+     * mosquitto_connect_async.
+     * Using mosquitto_connect_async apparently does not work
+     * in case one monitors the client socket themself and the
+     * connection uses TLS.
+     * Reading the mosquitto API docs, I am not sure if this
+     * is a bug or not. Though my hunch would be, that this is
+     * a bug, since using mosquitto_connect_async works in case
+     * the client socket is monitored and the connection
+     * DOES NOT use TLS.
+     * Other people have encountered similar behaviour and have
+     * mentioned it on GitHub:
+     * e.g. https://github.com/eclipse/mosquitto/issues/990
+     * To avoid the use of the blocking mosquitto_connect
+     * I decided to use this workaround / hack to be able to
+     * use the non-blocking mosquitto_connect_async.
+     * Thus far I have not encountered any downsides using the
+     * workaround.
+     */
+    void establishConnectionTask();
 
     /*
      * This struct modularizes the mechanism to hook mosquitto's
