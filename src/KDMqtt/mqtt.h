@@ -19,6 +19,7 @@
 #include <KDUtils/flags.h>
 #include <KDUtils/url.h>
 #include <chrono>
+#include <memory>
 #include <optional>
 #include <unordered_map>
 
@@ -262,11 +263,11 @@ private:
      */
     struct MosquittoClientDependency {
     public:
-        void init(MosquittoClient *client, MqttClient *parent);
+        void init(std::unique_ptr<MosquittoClient> &&client, MqttClient *parent);
         MosquittoClient *client();
 
     private:
-        MosquittoClient *mosquittoClient{ nullptr };
+        std::unique_ptr<MosquittoClient> mosquittoClient;
     };
     MosquittoClientDependency m_mosquitto;
 
