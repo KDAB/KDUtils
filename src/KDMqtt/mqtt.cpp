@@ -108,8 +108,8 @@ MqttClient::MqttClient(const std::string &clientId, Options options)
         spdlog::error("MqttClient::MqttClient() - CTOR called before MqttLib::init(). Initialize lib before instantiating MqttClient object!");
     }
 
-    auto *client = new MosquittoClient(clientId, static_cast<bool>(options & CLEAN_SESSION));
-    m_mosquitto.init(client, this);
+    auto client = std::make_unique<MosquittoClient>(clientId, static_cast<bool>(options & CLEAN_SESSION));
+    m_mosquitto.init(std::move(client), this);
 
     if (!(options & DONT_USE_OS_CERTIFICATE_STORE)) {
         // NOTE: on Windows, OpenSSL used by mosquitto doesn't use the system store by default
@@ -466,13 +466,12 @@ bool MqttClient::EventLoopHook::isEngaged() const
     return (readOpNotifier && writeOpNotifier);
 }
 
-void MqttClient::MosquittoClientDependency::init(MosquittoClient *client, MqttClient *parent)
+void MqttClient::MosquittoClientDependency::init(std::unique_ptr<MosquittoClient> &&client, MqttClient *parent)
 {
     spdlog::debug("MqttClient::MosquittoClientDependency::init()");
     assert(parent != nullptr);
 
-    delete mosquittoClient;
-    mosquittoClient = client;
+    mosquittoClient = std::move(client);
 
     std::ignore = mosquittoClient->connected.connect(&MqttClient::onConnected, parent);
     std::ignore = mosquittoClient->disconnected.connect(&MqttClient::onDisconnected, parent);
@@ -486,7 +485,7 @@ void MqttClient::MosquittoClientDependency::init(MosquittoClient *client, MqttCl
 
 MosquittoClient *MqttClient::MosquittoClientDependency::client()
 {
-    return mosquittoClient;
+    return mosquittoClient.get();
 }
 
 void MqttClient::SubscriptionsRegistry::registerPendingRegistryOperation(std::string_view topic, int msgId)
