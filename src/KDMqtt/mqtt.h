@@ -17,6 +17,7 @@
 #include <KDUtils/bytearray.h>
 #include <KDUtils/file.h>
 #include <KDUtils/flags.h>
+#include <KDUtils/logging.h>
 #include <KDUtils/url.h>
 #include <chrono>
 #include <memory>
@@ -92,15 +93,16 @@ public:
 protected:
     int version(int *major, int *minor, int *revision);
 
-    bool checkMosquittoResultAndDoDebugPrints(int result, std::string_view func = {});
+    bool checkAndLogMosquittoResult(int result, const char *func);
 
     std::string_view connackString(int connackCode);
     std::string_view errorString(int errorCode);
     std::string_view reasonString(int reasonCode);
 
 private:
-    MosquittoLib *m_mosquittoLib;
     bool m_isInitialized;
+    MosquittoLib *m_mosquittoLib;
+    std::shared_ptr<spdlog::logger> m_logger;
 };
 
 /*
@@ -170,7 +172,7 @@ class KDMQTT_API MqttClient : public IMqttClient
     friend class MqttUnitTestHarness;
 
 protected:
-    MqttClient(const std::string &clientId, MqttManager::ClientOptions options = MqttManager::ClientOption::CLEAN_SESSION);
+    MqttClient(std::shared_ptr<spdlog::logger> logger, const std::string &clientId, MqttManager::ClientOptions options = MqttManager::ClientOption::CLEAN_SESSION);
 
 public:
     ~MqttClient() = default;
@@ -188,8 +190,6 @@ public:
     int unsubscribe(const char *pattern) override;
 
 private:
-    Timer m_establishConnectionTaskTimer;
-
     /*
      * Mosquitto client event handlers
      */
@@ -231,6 +231,12 @@ private:
      * workaround.
      */
     void establishConnectionTask();
+
+    /*
+     * General member variables
+     */
+    Timer m_establishConnectionTaskTimer;
+    std::shared_ptr<spdlog::logger> m_logger;
 
     /*
      * This struct modularizes the mechanism to hook mosquitto's
@@ -282,6 +288,8 @@ private:
      */
     struct SubscriptionsRegistry {
     public:
+        void init(MqttClient *parent);
+
         void registerPendingRegistryOperation(std::string_view topic, int msgId);
         std::string registerTopicSubscriptionAndReturnTopicName(int msgId, int grantedQos);
         std::string unregisterTopicSubscriptionAndReturnTopicName(int msgId);
@@ -292,6 +300,7 @@ private:
     private:
         std::unordered_map<std::string, int> qosByTopicOfActiveSubscriptions;
         std::unordered_map<int, std::string> topicByMsgIdOfPendingOperations;
+        MqttClient *parent = nullptr;
     };
     SubscriptionsRegistry m_subscriptionsRegistry;
 };
