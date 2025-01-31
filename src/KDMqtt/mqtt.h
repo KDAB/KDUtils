@@ -161,8 +161,7 @@ class KDMQTT_API MqttClient : public IMqttClient
 public:
     enum Option : uint32_t {
         CLEAN_SESSION = 0x00000001,
-        VERBOSE = 0x00000002,
-        DONT_USE_OS_CERTIFICATE_STORE = 0x00000003
+        DONT_USE_OS_CERTIFICATE_STORE = 0x00000002
     };
     using Options = KDUtils::Flags<Option>;
 
@@ -182,7 +181,6 @@ public:
     int unsubscribe(const char *pattern) override;
 
 private:
-    bool m_verbose;
     Timer m_establishConnectionTaskTimer;
 
     /*

@@ -102,7 +102,6 @@ std::string_view MqttLib::reasonString(int reasonCode)
 }
 
 MqttClient::MqttClient(const std::string &clientId, Options options)
-    : m_verbose{ static_cast<bool>(options & VERBOSE) }
 {
     if (!MqttLib::instance().isInitialized()) {
         spdlog::error("MqttClient::MqttClient() - CTOR called before MqttLib::init(). Initialize lib before instantiating MqttClient object!");
@@ -291,10 +290,8 @@ void MqttClient::onConnected(int connackCode)
         // unhookFromEventLoop();
     }
 
-    if (m_verbose) {
-        const auto tlsIsEnabled = (m_mosquitto.client()->sslGet() != nullptr);
-        spdlog::info("MqttClient::onConnected() - This connection {} TLS encrypted", tlsIsEnabled ? "is" : "is not");
-    }
+    const auto tlsIsEnabled = (m_mosquitto.client()->sslGet() != nullptr);
+    spdlog::info("MqttClient::onConnected() - This connection {} TLS encrypted", tlsIsEnabled ? "is" : "is not");
 
     const auto state = hasError ? ConnectionState::DISCONNECTED : ConnectionState::CONNECTED;
     connectionState.set(state);
@@ -356,9 +353,7 @@ void MqttClient::onUnsubscribed(int msgId)
 
 void MqttClient::onLog(int level, const char *str) const
 {
-    if (m_verbose) {
-        spdlog::info("MqttClient::onLog() - level:{}, string:{})", level, str);
-    }
+    spdlog::debug("MqttClient::onLog() - level:{}, string:{})", level, str);
 }
 
 void MqttClient::onError()
