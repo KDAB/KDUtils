@@ -19,6 +19,14 @@ target_link_libraries(
     ${PROJECT_NAME} KDMqtt
 )
 
+add_custom_command(
+    TARGET ${PROJECT_NAME}
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_BINARY_DIR}/mosquitto.org.crt"
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    COMMENT "Copy mosquitto.org.cert next to binary."
+)
+
 if(WIN32)
     if(Mosquitto_FOUND AND MOSQUITTO_RUNTIME_DLLS)
         foreach(MOSQUITTO_RUNTIME_DLL ${MOSQUITTO_RUNTIME_DLLS})
