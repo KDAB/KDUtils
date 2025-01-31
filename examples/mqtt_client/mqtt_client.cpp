@@ -16,7 +16,14 @@ using namespace KDMqtt;
 
 int main()
 {
+    const bool useEncryptedConnection = true;
+
     const Url url("test.mosquitto.org");
+    const int port = useEncryptedConnection ? 8883 : 1883;
+
+    const auto caFilePath = std::filesystem::current_path().append("mosquitto.org.crt").string();
+    const File caFile(caFilePath);
+
     const std::string topic = "mytopic";
     const std::string payload = "Hello World!";
 
@@ -55,7 +62,11 @@ int main()
     };
     std::ignore = mqttClient.msgReceived.connect(onMqttMessageReceived);
 
-    mqttClient.connect(url);
+    if (useEncryptedConnection) {
+        mqttClient.setTls(caFile);
+    }
+
+    mqttClient.connect(url, port);
 
     app.exec();
 }
