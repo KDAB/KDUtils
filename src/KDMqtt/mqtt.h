@@ -31,6 +31,8 @@ namespace KDMqtt {
 constexpr int c_defaultPort = 1883;
 constexpr std::chrono::duration c_defaultKeepAlive = std::chrono::minutes(1);
 
+class IMqttClient;
+
 /*
  * Class: IMqttLib
  *
@@ -71,10 +73,18 @@ private:
     ~MqttLib();
 
 public:
+    enum ClientOption : uint32_t {
+        CLEAN_SESSION = 0x00000001,
+        DONT_USE_OS_CERTIFICATE_STORE = 0x00000002
+    };
+    using ClientOptions = KDUtils::Flags<ClientOption>;
+
     static MqttLib &instance();
 
     int init() override;
     int cleanup() override;
+
+    std::shared_ptr<IMqttClient> createClient(const std::string &clientId, ClientOptions options);
 
     [[nodiscard]] bool isInitialized() const override;
     bool isValidTopicNameForSubscription(const std::string &topic) override;
@@ -156,16 +166,13 @@ public:
  */
 class KDMQTT_API MqttClient : public IMqttClient
 {
+    friend class MqttLib;
     friend class MqttUnitTestHarness;
 
-public:
-    enum Option : uint32_t {
-        CLEAN_SESSION = 0x00000001,
-        DONT_USE_OS_CERTIFICATE_STORE = 0x00000002
-    };
-    using Options = KDUtils::Flags<Option>;
+protected:
+    MqttClient(const std::string &clientId, MqttLib::ClientOptions options = MqttLib::ClientOption::CLEAN_SESSION);
 
-    MqttClient(const std::string &clientId, Options options = CLEAN_SESSION);
+public:
     ~MqttClient() = default;
 
     int setTls(const File &cafile) override;
