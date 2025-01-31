@@ -29,8 +29,8 @@ int main()
 
     CoreApplication app;
 
-    MqttLib::instance().init();
-    auto mqttClient = MqttLib::instance().createClient("KDMqttClient", MqttLib::ClientOption::CLEAN_SESSION);
+    MqttManager::instance().init();
+    auto mqttClient = MqttManager::instance().createClient("KDMqttClient", MqttManager::ClientOption::CLEAN_SESSION);
 
     auto onMqttConnectionStateChanged = [&](const MqttClient::ConnectionState &connectionState) {
         if (connectionState == MqttClient::ConnectionState::CONNECTED) {

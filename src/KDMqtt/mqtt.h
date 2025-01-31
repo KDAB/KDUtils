@@ -34,21 +34,21 @@ constexpr std::chrono::duration c_defaultKeepAlive = std::chrono::minutes(1);
 class IMqttClient;
 
 /*
- * Class: IMqttLib
+ * Class: IMqttManager
  *
  * This is an abstract class specifying a generic
  * interface exposed to application / business logic
- * to access MQTT library implementations.
+ * providing methods to orchestrate MQTT.
  */
-class KDMQTT_API IMqttLib
+class KDMQTT_API IMqttManager
 {
 protected:
-    IMqttLib() = default;
-    virtual ~IMqttLib() { }
+    IMqttManager() = default;
+    virtual ~IMqttManager() { }
 
 public:
-    IMqttLib(const IMqttLib &) = delete;
-    IMqttLib &operator=(const IMqttLib &) = delete;
+    IMqttManager(const IMqttManager &) = delete;
+    IMqttManager &operator=(const IMqttManager &) = delete;
 
     virtual int init() = 0;
     virtual int cleanup() = 0;
@@ -58,19 +58,19 @@ public:
 };
 
 /*
- * Class: MqttLib
+ * Class: MqttManager
  *
- * This class exposes mosquitto library functions to
- * the application / business logic.
+ * This class implements a MQTT manager based on
+ * the mosquitto library.
  */
-class KDMQTT_API MqttLib : public IMqttLib
+class KDMQTT_API MqttManager : public IMqttManager
 {
     friend class MqttClient;
     friend class MqttUnitTestHarness;
 
 private:
-    MqttLib();
-    ~MqttLib();
+    MqttManager();
+    ~MqttManager();
 
 public:
     enum ClientOption : uint32_t {
@@ -79,7 +79,7 @@ public:
     };
     using ClientOptions = KDUtils::Flags<ClientOption>;
 
-    static MqttLib &instance();
+    static MqttManager &instance();
 
     int init() override;
     int cleanup() override;
@@ -161,16 +161,16 @@ public:
 /*
  * Class: MqttClient
  *
- * This class exposes mosquitto client functions to
- * the application / business logic.
+ * This class implements a MQTT client functions
+ * based on the mosquitto library.
  */
 class KDMQTT_API MqttClient : public IMqttClient
 {
-    friend class MqttLib;
+    friend class MqttManager;
     friend class MqttUnitTestHarness;
 
 protected:
-    MqttClient(const std::string &clientId, MqttLib::ClientOptions options = MqttLib::ClientOption::CLEAN_SESSION);
+    MqttClient(const std::string &clientId, MqttManager::ClientOptions options = MqttManager::ClientOption::CLEAN_SESSION);
 
 public:
     ~MqttClient() = default;
