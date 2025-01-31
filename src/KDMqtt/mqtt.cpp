@@ -18,76 +18,76 @@ constexpr std::chrono::duration c_miscTaskInterval = std::chrono::seconds(1);
 
 using namespace KDFoundation;
 
-MqttLib::MqttLib()
+MqttManager::MqttManager()
     : m_isInitialized{ false }
     , m_mosquittoLib(&MosquittoLib::instance())
 {
 }
 
-MqttLib::~MqttLib()
+MqttManager::~MqttManager()
 {
-    MqttLib::cleanup();
+    MqttManager::cleanup();
 }
 
-MqttLib &MqttLib::instance()
+MqttManager &MqttManager::instance()
 {
-    static MqttLib s_instance;
+    static MqttManager s_instance;
     return s_instance;
 }
 
-int MqttLib::init()
+int MqttManager::init()
 {
     int result = MOSQ_ERR_UNKNOWN;
 
     if (!m_isInitialized) {
         result = m_mosquittoLib->init();
-        const auto hasError = checkMosquittoResultAndDoDebugPrints(result, "MqttLib::init()");
+        const auto hasError = checkMosquittoResultAndDoDebugPrints(result, "MqttManager::init()");
         m_isInitialized = !hasError;
         if (m_isInitialized) {
             int major, minor, revision = 0;
             version(&major, &minor, &revision);
-            spdlog::info("MqttLib::init() - using libmosquitto v{}.{}.{}", major, minor, revision);
+            spdlog::info("MqttManager::init() - using libmosquitto v{}.{}.{}", major, minor, revision);
         }
     } else {
-        spdlog::warn("MqttLib::init() - Library is already initialized.");
+        spdlog::warn("MqttManager::init() - Library is already initialized.");
     }
     return result;
 }
 
-int MqttLib::cleanup()
+int MqttManager::cleanup()
 {
     const auto result = m_mosquittoLib->cleanup();
-    const auto hasError = checkMosquittoResultAndDoDebugPrints(result, "MqttLib::cleanup()");
+    const auto hasError = checkMosquittoResultAndDoDebugPrints(result, "MqttManager::cleanup()");
     m_isInitialized = hasError ? m_isInitialized : false;
     return result;
 }
 
-std::shared_ptr<IMqttClient> MqttLib::createClient(const std::string &clientId, ClientOptions options)
+std::shared_ptr<IMqttClient> MqttManager::createClient(const std::string &clientId, ClientOptions options)
 {
     if (!m_isInitialized) {
-        spdlog::error("MqttClient::MqttClient() - CTOR called before MqttLib::init(). Initialize lib before instantiating MqttClient object!");
+        spdlog::error("MqttClient::MqttClient() - CTOR called before MqttManager::init(). Initialize lib before instantiating MqttClient object!");
         return {};
     }
     auto client = new MqttClient(clientId, options);
     return std::shared_ptr<IMqttClient>(client);
 }
 
-bool MqttLib::isInitialized() const
+bool MqttManager::isInitialized() const
 {
     return m_isInitialized;
 }
 
-bool MqttLib::isValidTopicNameForSubscription(const std::string &topic)
+bool MqttManager::isValidTopicNameForSubscription(const std::string &topic)
 {
     return m_mosquittoLib->isValidTopicNameForSubscription(topic);
 }
 
-int MqttLib::version(int *major, int *minor, int *revision)
+int MqttManager::version(int *major, int *minor, int *revision)
 {
     return m_mosquittoLib->version(major, minor, revision);
 }
 
-bool MqttLib::checkMosquittoResultAndDoDebugPrints(int result, std::string_view func)
+bool MqttManager::checkMosquittoResultAndDoDebugPrints(int result, std::string_view func)
 {
     const auto isError = (result != MOSQ_ERR_SUCCESS);
     if (isError) {
@@ -97,30 +97,30 @@ bool MqttLib::checkMosquittoResultAndDoDebugPrints(int result, std::string_view 
     return isError;
 }
 
-std::string_view MqttLib::connackString(int connackCode)
+std::string_view MqttManager::connackString(int connackCode)
 {
     return m_mosquittoLib->connackString(connackCode);
 }
 
-std::string_view MqttLib::errorString(int errorCode)
+std::string_view MqttManager::errorString(int errorCode)
 {
     return m_mosquittoLib->errorString(errorCode);
 }
 
-std::string_view MqttLib::reasonString(int reasonCode)
+std::string_view MqttManager::reasonString(int reasonCode)
 {
     return m_mosquittoLib->reasonString(reasonCode);
 }
 
-MqttClient::MqttClient(const std::string &clientId, MqttLib::ClientOptions options)
+MqttClient::MqttClient(const std::string &clientId, MqttManager::ClientOptions options)
 {
-    auto client = std::make_unique<MosquittoClient>(clientId, static_cast<bool>(options & MqttLib::ClientOption::CLEAN_SESSION));
+    auto client = std::make_unique<MosquittoClient>(clientId, static_cast<bool>(options & MqttManager::ClientOption::CLEAN_SESSION));
     m_mosquitto.init(std::move(client), this);
 
-    if (!(options & MqttLib::ClientOption::DONT_USE_OS_CERTIFICATE_STORE)) {
+    if (!(options & MqttManager::ClientOption::DONT_USE_OS_CERTIFICATE_STORE)) {
         // NOTE: on Windows, OpenSSL used by mosquitto doesn't use the system store by default
         const auto result = m_mosquitto.client()->tlsEnableUseOsCertificates();
-        MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::tlsEnableUseOsCertificates()");
+        MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::tlsEnableUseOsCertificates()");
     }
 
     m_establishConnectionTaskTimer.interval.set(std::chrono::milliseconds(200));
@@ -145,7 +145,7 @@ int MqttClient::setTls(const File &cafile)
     }
 
     auto result = m_mosquitto.client()->tlsSet(cafile.path(), std::nullopt, std::nullopt, std::nullopt);
-    MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::setTls()");
+    MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::setTls()");
 
     return result;
 }
@@ -160,7 +160,7 @@ int MqttClient::setUsernameAndPassword(const std::string &username, const std::s
     }
 
     const auto result = m_mosquitto.client()->usernamePasswordSet(username, password);
-    MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::setUsernameAndPassword()");
+    MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::setUsernameAndPassword()");
     return result;
 }
 
@@ -174,7 +174,7 @@ int MqttClient::setWill(const std::string &topic, int payloadlen, const void *pa
     }
 
     const auto result = m_mosquitto.client()->willSet(topic.c_str(), payloadlen, payload, qos, retain);
-    MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::setWill()");
+    MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::setWill()");
     return result;
 }
 
@@ -195,7 +195,7 @@ int MqttClient::connect(const Url &host, int port, std::chrono::seconds keepaliv
     connectionState.set(ConnectionState::CONNECTING);
     const auto result = m_mosquitto.client()->connectAsync(host.url().c_str(), port, keepalive.count());
 
-    const auto hasError = MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::connect()");
+    const auto hasError = MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::connect()");
     if (!hasError) {
         m_establishConnectionTaskTimer.running.set(true);
         m_eventLoopHook.engage(m_mosquitto.client()->socket());
@@ -221,7 +221,7 @@ int MqttClient::disconnect()
 
     connectionState.set(ConnectionState::DISCONNECTING);
     const auto result = m_mosquitto.client()->disconnect();
-    MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::disconnect()");
+    MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::disconnect()");
     return result;
 }
 
@@ -235,7 +235,7 @@ int MqttClient::publish(int *msgId, const char *topic, int payloadlen, const voi
     }
 
     const auto result = m_mosquitto.client()->publish(msgId, topic, payloadlen, payload, qos, retain);
-    MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::publish()");
+    MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::publish()");
     return result;
 }
 
@@ -250,7 +250,7 @@ int MqttClient::subscribe(const char *pattern, int qos)
 
     int msgId;
     const auto result = m_mosquitto.client()->subscribe(&msgId, pattern, qos);
-    const auto hasError = MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::subscribe()");
+    const auto hasError = MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::subscribe()");
     if (!hasError) {
         const auto topic = std::string(pattern);
         m_subscriptionsRegistry.registerPendingRegistryOperation(topic, msgId);
@@ -270,7 +270,7 @@ int MqttClient::unsubscribe(const char *pattern)
 
     int msgId;
     const auto result = m_mosquitto.client()->unsubscribe(&msgId, pattern);
-    const auto hasError = MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::unsubscribe()");
+    const auto hasError = MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::unsubscribe()");
     if (!hasError) {
         const auto topic = std::string(pattern);
         m_subscriptionsRegistry.registerPendingRegistryOperation(topic, msgId);
@@ -281,7 +281,7 @@ int MqttClient::unsubscribe(const char *pattern)
 
 void MqttClient::onConnected(int connackCode)
 {
-    spdlog::debug("MqttClient::onConnected() - connackCode({}): {}", connackCode, MqttLib::instance().connackString(connackCode));
+    spdlog::debug("MqttClient::onConnected() - connackCode({}): {}", connackCode, MqttManager::instance().connackString(connackCode));
 
     m_establishConnectionTaskTimer.running.set(false);
 
@@ -306,7 +306,7 @@ void MqttClient::onConnected(int connackCode)
 
 void MqttClient::onDisconnected(int reasonCode)
 {
-    spdlog::debug("MqttClient::onDisconnected() - reasonCode({}): {}", reasonCode, MqttLib::instance().reasonString(reasonCode));
+    spdlog::debug("MqttClient::onDisconnected() - reasonCode({}): {}", reasonCode, MqttManager::instance().reasonString(reasonCode));
 
     m_eventLoopHook.disengage();
 
@@ -373,7 +373,7 @@ void MqttClient::onError()
 void MqttClient::onReadOpRequested()
 {
     auto result = m_mosquitto.client()->loopRead();
-    MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "loopRead()");
+    MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "loopRead()");
 }
 
 void MqttClient::onWriteOpRequested()
@@ -384,13 +384,13 @@ void MqttClient::onWriteOpRequested()
     }
 
     auto result = m_mosquitto.client()->loopWrite();
-    MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "loopWrite()");
+    MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "loopWrite()");
 }
 
 void MqttClient::onMiscTaskRequested()
 {
     auto result = m_mosquitto.client()->loopMisc();
-    MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "loopMisc()");
+    MqttManager::instance().checkMosquittoResultAndDoDebugPrints(result, "loopMisc()");
 }
 
 void MqttClient::establishConnectionTask()
