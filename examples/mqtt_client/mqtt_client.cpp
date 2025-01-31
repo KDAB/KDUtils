@@ -30,27 +30,27 @@ int main()
     CoreApplication app;
 
     MqttLib::instance().init();
-    MqttClient mqttClient("KDMqttClient", MqttClient::Option::CLEAN_SESSION);
+    auto mqttClient = MqttLib::instance().createClient("KDMqttClient", MqttLib::ClientOption::CLEAN_SESSION);
 
     auto onMqttConnectionStateChanged = [&](const MqttClient::ConnectionState &connectionState) {
         if (connectionState == MqttClient::ConnectionState::CONNECTED) {
-            mqttClient.subscribe(topic.c_str());
+            mqttClient->subscribe(topic.c_str());
         }
         if (connectionState == MqttClient::ConnectionState::DISCONNECTED) {
             app.quit();
         }
     };
-    std::ignore = mqttClient.connectionState.valueChanged().connect(onMqttConnectionStateChanged);
+    std::ignore = mqttClient->connectionState.valueChanged().connect(onMqttConnectionStateChanged);
 
     auto onMqttSubscriptionStateChanged = [&](const MqttClient::SubscriptionState &subscriptionState) {
         if (subscriptionState == MqttClient::SubscriptionState::SUBSCRIBED) {
-            mqttClient.publish(nullptr, topic.c_str(), payload.length(), payload.c_str());
+            mqttClient->publish(nullptr, topic.c_str(), payload.length(), payload.c_str());
         }
         if (subscriptionState == MqttClient::SubscriptionState::UNSUBSCRIBED) {
-            mqttClient.disconnect();
+            mqttClient->disconnect();
         }
     };
-    std::ignore = mqttClient.subscriptionState.valueChanged().connect(onMqttSubscriptionStateChanged);
+    std::ignore = mqttClient->subscriptionState.valueChanged().connect(onMqttSubscriptionStateChanged);
 
     auto onMqttMessageReceived = [&](const MqttClient::Message message) {
         const auto timestamp = std::time(nullptr);
@@ -58,15 +58,15 @@ int main()
         const auto topic = message.topic;
         const auto payload = std::string(message.payload.toStdString());
         spdlog::info("Received MQTT message. Topic: {}. Payload: {}", topic, payload);
-        mqttClient.unsubscribe(topic.c_str());
+        mqttClient->unsubscribe(topic.c_str());
     };
-    std::ignore = mqttClient.msgReceived.connect(onMqttMessageReceived);
+    std::ignore = mqttClient->msgReceived.connect(onMqttMessageReceived);
 
     if (useEncryptedConnection) {
-        mqttClient.setTls(caFile);
+        mqttClient->setTls(caFile);
     }
 
-    mqttClient.connect(url, port);
+    mqttClient->connect(url, port);
 
     app.exec();
 }

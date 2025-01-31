@@ -9,6 +9,7 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 #include "mqtt.h"
+#include <memory>
 #include <spdlog/spdlog.h>
 
 namespace KDMqtt {
@@ -61,6 +62,16 @@ int MqttLib::cleanup()
     return result;
 }
 
+std::shared_ptr<IMqttClient> MqttLib::createClient(const std::string &clientId, ClientOptions options)
+{
+    if (!m_isInitialized) {
+        spdlog::error("MqttClient::MqttClient() - CTOR called before MqttLib::init(). Initialize lib before instantiating MqttClient object!");
+        return {};
+    }
+    auto client = new MqttClient(clientId, options);
+    return std::shared_ptr<IMqttClient>(client);
+}
+
 bool MqttLib::isInitialized() const
 {
     return m_isInitialized;
@@ -101,16 +112,12 @@ std::string_view MqttLib::reasonString(int reasonCode)
     return m_mosquittoLib->reasonString(reasonCode);
 }
 
-MqttClient::MqttClient(const std::string &clientId, Options options)
+MqttClient::MqttClient(const std::string &clientId, MqttLib::ClientOptions options)
 {
-    if (!MqttLib::instance().isInitialized()) {
-        spdlog::error("MqttClient::MqttClient() - CTOR called before MqttLib::init(). Initialize lib before instantiating MqttClient object!");
-    }
-
-    auto client = std::make_unique<MosquittoClient>(clientId, static_cast<bool>(options & CLEAN_SESSION));
+    auto client = std::make_unique<MosquittoClient>(clientId, static_cast<bool>(options & MqttLib::ClientOption::CLEAN_SESSION));
     m_mosquitto.init(std::move(client), this);
 
-    if (!(options & DONT_USE_OS_CERTIFICATE_STORE)) {
+    if (!(options & MqttLib::ClientOption::DONT_USE_OS_CERTIFICATE_STORE)) {
         // NOTE: on Windows, OpenSSL used by mosquitto doesn't use the system store by default
         const auto result = m_mosquitto.client()->tlsEnableUseOsCertificates();
         MqttLib::instance().checkMosquittoResultAndDoDebugPrints(result, "MqttClient::tlsEnableUseOsCertificates()");
