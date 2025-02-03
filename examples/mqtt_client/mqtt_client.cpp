@@ -52,9 +52,7 @@ int main()
     };
     std::ignore = mqttClient->subscriptionState.valueChanged().connect(onMqttSubscriptionStateChanged);
 
-    auto onMqttMessageReceived = [&](const MqttClient::Message message) {
-        const auto timestamp = std::time(nullptr);
-        const auto timestring = std::string(std::asctime(std::localtime(&timestamp)));
+    auto onMqttMessageReceived = [&](const MqttClient::Message &message) {
         const auto topic = message.topic;
         const auto payload = std::string(message.payload.toStdString());
         spdlog::info("Received MQTT message. Topic: {}. Payload: {}", topic, payload);
