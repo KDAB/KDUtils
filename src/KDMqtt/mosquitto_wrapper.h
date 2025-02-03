@@ -19,6 +19,13 @@
   - some functions wrapped by mosquittopp are not wrapped here [1]
   - some functions wrapped here are not wrapped by mosquittopp [1]
   - mosquitto event callbacks are exposed as KDBindings::Signals
+  - we use `const std::string &` for strings passed to functions to
+    ensure null-termination by type
+  - we use `std::string_view` as return values in functions returning
+    a string
+  - apart from that, we try to stick to the same parameter types as
+    used in the underlying mosquitto functions and avoid introducing
+    custom types here (use custom types in the next upper SW layer).
 
   [1] as of January 2024
  */
