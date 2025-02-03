@@ -20,6 +20,7 @@
 #include <KDUtils/logging.h>
 #include <KDUtils/url.h>
 #include <chrono>
+#include <cstdint>
 #include <memory>
 #include <optional>
 #include <unordered_map>
@@ -129,11 +130,17 @@ public:
         UNSUBSCRIBED
     };
 
+    enum class QOS {
+        AT_MOST_ONCE = 0,
+        AT_LEAST_ONCE = 1,
+        EXACTLY_ONCE = 2
+    };
+
     struct Message {
         int msgId;
         std::string topic;
         ByteArray payload;
-        int qos;
+        QOS qos;
         bool retain;
     };
 
@@ -149,15 +156,15 @@ public:
 
     virtual int setTls(const File &cafile) = 0;
     virtual int setUsernameAndPassword(const std::string &username, const std::string &password) = 0;
-    virtual int setWill(const std::string &topic, int payloadlen = 0, const void *payload = nullptr, int qos = 0, bool retain = false) = 0;
+    virtual int setWill(const std::string &topic, const ByteArray *payload = nullptr, QOS qos = QOS::AT_MOST_ONCE, bool retain = false) = 0;
 
-    virtual int connect(const Url &host, int port = c_defaultPort, std::chrono::seconds keepalive = c_defaultKeepAlive) = 0;
+    virtual int connect(const Url &host, uint16_t port = c_defaultPort, std::chrono::seconds keepalive = c_defaultKeepAlive) = 0;
     virtual int disconnect() = 0;
 
-    virtual int publish(int *msgId, const char *topic, int payloadlen = 0, const void *payload = nullptr, int qos = 0, bool retain = false) = 0;
+    virtual int publish(int *msgId, const std::string &topic, const ByteArray *payload = nullptr, QOS qos = QOS::AT_MOST_ONCE, bool retain = false) = 0;
 
-    virtual int subscribe(const char *pattern, int qos = 0) = 0;
-    virtual int unsubscribe(const char *pattern) = 0;
+    virtual int subscribe(const std::string &pattern, QOS qos = QOS::AT_MOST_ONCE) = 0;
+    virtual int unsubscribe(const std::string &pattern) = 0;
 };
 
 /*
@@ -179,15 +186,15 @@ public:
 
     int setTls(const File &cafile) override;
     int setUsernameAndPassword(const std::string &username, const std::string &password) override;
-    int setWill(const std::string &topic, int payloadlen = 0, const void *payload = nullptr, int qos = 0, bool retain = false) override;
+    int setWill(const std::string &topic, const ByteArray *payload = nullptr, QOS qos = QOS::AT_MOST_ONCE, bool retain = false) override;
 
-    int connect(const Url &host, int port = c_defaultPort, std::chrono::seconds keepalive = c_defaultKeepAlive) override;
+    int connect(const Url &host, uint16_t port = c_defaultPort, std::chrono::seconds keepalive = c_defaultKeepAlive) override;
     int disconnect() override;
 
-    int publish(int *msgId, const char *topic, int payloadlen = 0, const void *payload = nullptr, int qos = 0, bool retain = false) override;
+    int publish(int *msgId, const std::string &topic, const ByteArray *payload = nullptr, QOS qos = QOS::AT_MOST_ONCE, bool retain = false) override;
 
-    int subscribe(const char *pattern, int qos = 0) override;
-    int unsubscribe(const char *pattern) override;
+    int subscribe(const std::string &pattern, QOS qos = QOS::AT_MOST_ONCE) override;
+    int unsubscribe(const std::string &pattern) override;
 
 private:
     /*
@@ -291,14 +298,14 @@ private:
         void init(MqttClient *parent);
 
         void registerPendingRegistryOperation(std::string_view topic, int msgId);
-        std::string registerTopicSubscriptionAndReturnTopicName(int msgId, int grantedQos);
+        std::string registerTopicSubscriptionAndReturnTopicName(int msgId, QOS grantedQos);
         std::string unregisterTopicSubscriptionAndReturnTopicName(int msgId);
 
         std::vector<std::string> subscribedTopics() const;
-        int grantedQosForTopic(const std::string &topic) const;
+        QOS grantedQosForTopic(const std::string &topic) const;
 
     private:
-        std::unordered_map<std::string, int> qosByTopicOfActiveSubscriptions;
+        std::unordered_map<std::string, QOS> qosByTopicOfActiveSubscriptions;
         std::unordered_map<int, std::string> topicByMsgIdOfPendingOperations;
         MqttClient *parent = nullptr;
     };

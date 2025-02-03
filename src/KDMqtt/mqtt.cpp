@@ -168,21 +168,23 @@ int MqttClient::setUsernameAndPassword(const std::string &username, const std::s
     return result;
 }
 
-int MqttClient::setWill(const std::string &topic, int payloadlen, const void *payload, int qos, bool retain)
+int MqttClient::setWill(const std::string &topic, const ByteArray *payload, QOS qos, bool retain)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - topic: {}, qos: {}, retain: {}", __FUNCTION__, topic, qos, retain);
+    SPDLOG_LOGGER_TRACE(m_logger, "{}() - topic: {}, qos: {}, retain: {}", __FUNCTION__, topic, static_cast<int>(qos), retain);
 
     if (connectionState.get() != ConnectionState::DISCONNECTED) {
         SPDLOG_LOGGER_ERROR(m_logger, "Setting will is only allowed when disconnected.");
         return MOSQ_ERR_UNKNOWN;
     }
 
-    const auto result = m_mosquitto.client()->willSet(topic.c_str(), payloadlen, payload, qos, retain);
+    const int payloadlen = payload ? static_cast<int>(payload->size()) : 0;
+    const auto payloadData = payload ? payload->constData() : nullptr;
+    const auto result = m_mosquitto.client()->willSet(topic.c_str(), payloadlen, payloadData, static_cast<int>(qos), retain);
     MqttManager::instance().CHECK_AND_LOG_MOSQUITTO_RESULT(result);
     return result;
 }
 
-int MqttClient::connect(const Url &host, int port, std::chrono::seconds keepalive)
+int MqttClient::connect(const Url &host, uint16_t port, std::chrono::seconds keepalive)
 {
     SPDLOG_LOGGER_TRACE(m_logger, "{}() - host: {}, port: {}, keepalive: {}", __FUNCTION__, host.url(), port, keepalive.count());
 
@@ -229,23 +231,25 @@ int MqttClient::disconnect()
     return result;
 }
 
-int MqttClient::publish(int *msgId, const char *topic, int payloadlen, const void *payload, int qos, bool retain)
+int MqttClient::publish(int *msgId, const std::string &topic, const ByteArray *payload, QOS qos, bool retain)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - topic: {}, qos: {}, retain: {}", __FUNCTION__, topic, qos, retain);
+    SPDLOG_LOGGER_TRACE(m_logger, "{}() - topic: {}, qos: {}, retain: {}", __FUNCTION__, topic, static_cast<int>(qos), retain);
 
     if (connectionState.get() == ConnectionState::DISCONNECTED) {
         SPDLOG_LOGGER_ERROR(m_logger, "Not connected to any host.");
         return MOSQ_ERR_UNKNOWN;
     }
 
-    const auto result = m_mosquitto.client()->publish(msgId, topic, payloadlen, payload, qos, retain);
+    const int payloadlen = payload ? static_cast<int>(payload->size()) : 0;
+    const auto payloadData = payload ? payload->constData() : nullptr;
+    const auto result = m_mosquitto.client()->publish(msgId, topic, payloadlen, payloadData, static_cast<int>(qos), retain);
     MqttManager::instance().CHECK_AND_LOG_MOSQUITTO_RESULT(result);
     return result;
 }
 
-int MqttClient::subscribe(const char *pattern, int qos)
+int MqttClient::subscribe(const std::string &pattern, QOS qos)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - subscribe pattern: {}, qos: {}", __FUNCTION__, pattern, qos);
+    SPDLOG_LOGGER_TRACE(m_logger, "{}() - subscribe pattern: {}, qos: {}", __FUNCTION__, pattern, static_cast<int>(qos));
 
     if (connectionState.get() == ConnectionState::DISCONNECTED) {
         SPDLOG_LOGGER_ERROR(m_logger, "Not connected to any host.");
@@ -253,7 +257,7 @@ int MqttClient::subscribe(const char *pattern, int qos)
     }
 
     int msgId;
-    const auto result = m_mosquitto.client()->subscribe(&msgId, pattern, qos);
+    const auto result = m_mosquitto.client()->subscribe(&msgId, pattern, static_cast<int>(qos));
     const auto hasError = MqttManager::instance().CHECK_AND_LOG_MOSQUITTO_RESULT(result);
     if (!hasError) {
         const auto topic = std::string(pattern);
@@ -263,7 +267,7 @@ int MqttClient::subscribe(const char *pattern, int qos)
     return result;
 }
 
-int MqttClient::unsubscribe(const char *pattern)
+int MqttClient::unsubscribe(const std::string &pattern)
 {
     SPDLOG_LOGGER_TRACE(m_logger, "{}() - unsubscribe pattern: {}", __FUNCTION__, pattern);
 
@@ -331,7 +335,7 @@ void MqttClient::onMessage(const mosquitto_message *msg)
         .msgId = msg->mid,
         .topic = msg->topic,
         .payload = ByteArray(static_cast<char *>(msg->payload), msg->payloadlen),
-        .qos = msg->qos,
+        .qos = static_cast<QOS>(msg->qos),
         .retain = msg->retain
     };
     msgReceived.emit(std::move(message));
@@ -344,7 +348,7 @@ void MqttClient::onSubscribed(int msgId, int qosCount, const int *grantedQos)
     // add handling of multiple topic/QOS pairs here.
     assert(qosCount == 1);
 
-    const auto topic = m_subscriptionsRegistry.registerTopicSubscriptionAndReturnTopicName(msgId, grantedQos[0]);
+    const auto topic = m_subscriptionsRegistry.registerTopicSubscriptionAndReturnTopicName(msgId, static_cast<QOS>(grantedQos[0]));
     SPDLOG_LOGGER_TRACE(m_logger, "{}() - msgId: {}, topic: {}, qosCount: {}, grantedQos: {}", __FUNCTION__, msgId, topic, qosCount, grantedQos[0]);
 
     const auto state = m_subscriptionsRegistry.subscribedTopics().empty() ? SubscriptionState::UNSUBSCRIBED : SubscriptionState::SUBSCRIBED;
@@ -509,9 +513,9 @@ void MqttClient::SubscriptionsRegistry::registerPendingRegistryOperation(std::st
     topicByMsgIdOfPendingOperations[msgId] = topic;
 }
 
-std::string MqttClient::SubscriptionsRegistry::registerTopicSubscriptionAndReturnTopicName(int msgId, int grantedQos)
+std::string MqttClient::SubscriptionsRegistry::registerTopicSubscriptionAndReturnTopicName(int msgId, QOS grantedQos)
 {
-    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}() - msgId: {}, grantedQos:{}", __FUNCTION__, msgId, grantedQos);
+    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}() - msgId: {}, grantedQos:{}", __FUNCTION__, msgId, static_cast<int>(grantedQos));
 
     auto it = topicByMsgIdOfPendingOperations.find(msgId);
     if (it == topicByMsgIdOfPendingOperations.end()) {
@@ -556,7 +560,7 @@ std::vector<std::string> MqttClient::SubscriptionsRegistry::subscribedTopics() c
     return keys;
 }
 
-int MqttClient::SubscriptionsRegistry::grantedQosForTopic(const std::string &topic) const
+IMqttClient::QOS MqttClient::SubscriptionsRegistry::grantedQosForTopic(const std::string &topic) const
 {
     return qosByTopicOfActiveSubscriptions.at(topic);
 }

@@ -24,8 +24,8 @@ int main()
     const auto caFilePath = std::filesystem::current_path().append("mosquitto.org.crt").string();
     const File caFile(caFilePath);
 
-    const std::string topic = "mytopic";
-    const std::string payload = "Hello World!";
+    const std::string topic("mytopic");
+    const ByteArray payload("Hello World!");
 
     CoreApplication app;
 
@@ -34,7 +34,7 @@ int main()
 
     auto onMqttConnectionStateChanged = [&](const MqttClient::ConnectionState &connectionState) {
         if (connectionState == MqttClient::ConnectionState::CONNECTED) {
-            mqttClient->subscribe(topic.c_str());
+            mqttClient->subscribe(topic);
         }
         if (connectionState == MqttClient::ConnectionState::DISCONNECTED) {
             app.quit();
@@ -44,7 +44,7 @@ int main()
 
     auto onMqttSubscriptionStateChanged = [&](const MqttClient::SubscriptionState &subscriptionState) {
         if (subscriptionState == MqttClient::SubscriptionState::SUBSCRIBED) {
-            mqttClient->publish(nullptr, topic.c_str(), payload.length(), payload.c_str());
+            mqttClient->publish(nullptr, topic, &payload);
         }
         if (subscriptionState == MqttClient::SubscriptionState::UNSUBSCRIBED) {
             mqttClient->disconnect();
@@ -56,7 +56,7 @@ int main()
         const auto topic = message.topic;
         const auto payload = std::string(message.payload.toStdString());
         spdlog::info("Received MQTT message. Topic: {}. Payload: {}", topic, payload);
-        mqttClient->unsubscribe(topic.c_str());
+        mqttClient->unsubscribe(topic);
     };
     std::ignore = mqttClient->msgReceived.connect(onMqttMessageReceived);
 
