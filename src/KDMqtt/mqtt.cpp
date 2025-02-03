@@ -47,7 +47,7 @@ int MqttManager::init()
         const auto hasError = CHECK_AND_LOG_MOSQUITTO_RESULT(result);
         m_isInitialized = !hasError;
         if (m_isInitialized) {
-            int major, minor, revision = 0;
+            int major, minor, revision = 0; // NOLINT(readability-isolate-declaration)
             version(&major, &minor, &revision);
             SPDLOG_LOGGER_INFO(m_logger, "Using libmosquitto v{}.{}.{}", major, minor, revision);
         }
@@ -179,7 +179,7 @@ int MqttClient::setWill(const std::string &topic, const ByteArray *payload, QOS 
 
     const int payloadlen = payload ? static_cast<int>(payload->size()) : 0;
     const auto payloadData = payload ? payload->constData() : nullptr;
-    const auto result = m_mosquitto.client()->willSet(topic.c_str(), payloadlen, payloadData, static_cast<int>(qos), retain);
+    const auto result = m_mosquitto.client()->willSet(topic, payloadlen, payloadData, static_cast<int>(qos), retain);
     MqttManager::instance().CHECK_AND_LOG_MOSQUITTO_RESULT(result);
     return result;
 }
@@ -199,7 +199,7 @@ int MqttClient::connect(const Url &host, uint16_t port, std::chrono::seconds kee
     }
 
     connectionState.set(ConnectionState::CONNECTING);
-    const auto result = m_mosquitto.client()->connectAsync(host.url().c_str(), port, keepalive.count());
+    const auto result = m_mosquitto.client()->connectAsync(host.url(), port, static_cast<int>(keepalive.count()));
 
     const auto hasError = MqttManager::instance().CHECK_AND_LOG_MOSQUITTO_RESULT(result);
     if (!hasError) {
@@ -305,14 +305,14 @@ void MqttClient::onConnected(int connackCode)
         // unhookFromEventLoop();
     }
 
-    const auto tlsIsEnabled = (m_mosquitto.client()->sslGet() != nullptr);
+    const auto tlsIsEnabled = (m_mosquitto.client()->sslGet() != nullptr); // NOLINT(clang-analyzer-deadcode.DeadStores)
     SPDLOG_LOGGER_INFO(m_logger, "This connection {} TLS encrypted", tlsIsEnabled ? "is" : "is not");
 
     const auto state = hasError ? ConnectionState::DISCONNECTED : ConnectionState::CONNECTED;
     connectionState.set(state);
 }
 
-void MqttClient::onDisconnected(int reasonCode)
+void MqttClient::onDisconnected(int reasonCode) // NOLINT(misc-unused-parameters)
 {
     SPDLOG_LOGGER_TRACE(m_logger, "{}() - reasonCode({}): {}", __FUNCTION__, reasonCode, MqttManager::instance().reasonString(reasonCode));
 
@@ -341,14 +341,14 @@ void MqttClient::onMessage(const mosquitto_message *msg)
     msgReceived.emit(std::move(message));
 }
 
-void MqttClient::onSubscribed(int msgId, int qosCount, const int *grantedQos)
+void MqttClient::onSubscribed(int msgId, int qosCount, const int *grantedQos) // NOLINT(bugprone-easily-swappable-parameters, misc-unused-parameters)
 {
     // we only handle subscriptions to one single topic with one single QOS value for now.
     // in case mosquitto_subscribe_multiple is added to MosquittoClient some time in the future,
     // add handling of multiple topic/QOS pairs here.
     assert(qosCount == 1);
 
-    const auto topic = m_subscriptionsRegistry.registerTopicSubscriptionAndReturnTopicName(msgId, static_cast<QOS>(grantedQos[0]));
+    const auto topic = m_subscriptionsRegistry.registerTopicSubscriptionAndReturnTopicName(msgId, static_cast<QOS>(grantedQos[0])); // NOLINT(bugprone-unused-local-non-trivial-variable)
     SPDLOG_LOGGER_TRACE(m_logger, "{}() - msgId: {}, topic: {}, qosCount: {}, grantedQos: {}", __FUNCTION__, msgId, topic, qosCount, grantedQos[0]);
 
     const auto state = m_subscriptionsRegistry.subscribedTopics().empty() ? SubscriptionState::UNSUBSCRIBED : SubscriptionState::SUBSCRIBED;
@@ -358,7 +358,7 @@ void MqttClient::onSubscribed(int msgId, int qosCount, const int *grantedQos)
 
 void MqttClient::onUnsubscribed(int msgId)
 {
-    const auto topic = m_subscriptionsRegistry.unregisterTopicSubscriptionAndReturnTopicName(msgId);
+    const auto topic = m_subscriptionsRegistry.unregisterTopicSubscriptionAndReturnTopicName(msgId); // NOLINT(bugprone-unused-local-non-trivial-variable)
     SPDLOG_LOGGER_TRACE(m_logger, "{}() - msgId: {}, topic: {}", __FUNCTION__, msgId, topic);
 
     const auto state = m_subscriptionsRegistry.subscribedTopics().empty() ? SubscriptionState::UNSUBSCRIBED : SubscriptionState::SUBSCRIBED;
@@ -366,7 +366,7 @@ void MqttClient::onUnsubscribed(int msgId)
     subscriptions.set(m_subscriptionsRegistry.subscribedTopics());
 }
 
-void MqttClient::onLog(int level, const char *str) const
+void MqttClient::onLog(int level, const char *str) const // NOLINT(misc-unused-parameters, readability-convert-member-functions-to-static)
 {
     SPDLOG_LOGGER_DEBUG(m_logger, "{}() - level: {}, string: {})", __FUNCTION__, level, str);
 }
