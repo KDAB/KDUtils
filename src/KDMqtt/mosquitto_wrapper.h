@@ -48,7 +48,10 @@ class MosquittoLib
 {
 private:
     MosquittoLib() = default;
-    ~MosquittoLib() = default;
+    ~MosquittoLib()
+    {
+        MosquittoLib::cleanup();
+    }
 
     MosquittoLib(const MosquittoLib &) = delete;
     MosquittoLib &operator=(const MosquittoLib &) = delete;

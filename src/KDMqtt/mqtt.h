@@ -72,7 +72,7 @@ class KDMQTT_API MqttManager : public IMqttManager
 
 private:
     MqttManager();
-    ~MqttManager();
+    ~MqttManager() = default;
 
 public:
     enum ClientOption : uint32_t {
@@ -285,7 +285,7 @@ private:
         MosquittoClient *client();
 
     private:
-        std::unique_ptr<MosquittoClient> mosquittoClient;
+        std::unique_ptr<MosquittoClient> m_client;
     };
     MosquittoClientDependency m_mosquitto;
 
