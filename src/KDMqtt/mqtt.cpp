@@ -27,11 +27,6 @@ MqttManager::MqttManager()
 {
 }
 
-MqttManager::~MqttManager()
-{
-    MqttManager::cleanup();
-}
-
 MqttManager &MqttManager::instance()
 {
     static MqttManager s_instance;
@@ -481,21 +476,21 @@ void MqttClient::MosquittoClientDependency::init(std::unique_ptr<MosquittoClient
     assert(parent != nullptr);
     SPDLOG_LOGGER_TRACE(parent->m_logger, "{}()", __FUNCTION__);
 
-    mosquittoClient = std::move(client);
+    m_client = std::move(client);
 
-    std::ignore = mosquittoClient->connected.connect(&MqttClient::onConnected, parent);
-    std::ignore = mosquittoClient->disconnected.connect(&MqttClient::onDisconnected, parent);
-    std::ignore = mosquittoClient->published.connect(&MqttClient::onPublished, parent);
-    std::ignore = mosquittoClient->message.connect(&MqttClient::onMessage, parent);
-    std::ignore = mosquittoClient->subscribed.connect(&MqttClient::onSubscribed, parent);
-    std::ignore = mosquittoClient->unsubscribed.connect(&MqttClient::onUnsubscribed, parent);
-    std::ignore = mosquittoClient->log.connect(&MqttClient::onLog, parent);
-    std::ignore = mosquittoClient->error.connect(&MqttClient::onError, parent);
+    std::ignore = m_client->connected.connect(&MqttClient::onConnected, parent);
+    std::ignore = m_client->disconnected.connect(&MqttClient::onDisconnected, parent);
+    std::ignore = m_client->published.connect(&MqttClient::onPublished, parent);
+    std::ignore = m_client->message.connect(&MqttClient::onMessage, parent);
+    std::ignore = m_client->subscribed.connect(&MqttClient::onSubscribed, parent);
+    std::ignore = m_client->unsubscribed.connect(&MqttClient::onUnsubscribed, parent);
+    std::ignore = m_client->log.connect(&MqttClient::onLog, parent);
+    std::ignore = m_client->error.connect(&MqttClient::onError, parent);
 }
 
 MosquittoClient *MqttClient::MosquittoClientDependency::client()
 {
-    return mosquittoClient.get();
+    return m_client.get();
 }
 
 void MqttClient::SubscriptionsRegistry::init(MqttClient *parent)
