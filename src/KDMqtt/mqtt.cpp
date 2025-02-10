@@ -137,7 +137,7 @@ MqttClient::MqttClient(std::shared_ptr<spdlog::logger> logger, const std::string
 
 int MqttClient::setTls(const File &cafile)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - cafile: {}", __FUNCTION__, cafile.path());
+    SPDLOG_LOGGER_TRACE(m_logger, "cafile: {}", cafile.path());
 
     if (connectionState.get() != ConnectionState::DISCONNECTED) {
         SPDLOG_LOGGER_ERROR(m_logger, "Setting TLS is only allowed when disconnected.");
@@ -157,7 +157,7 @@ int MqttClient::setTls(const File &cafile)
 
 int MqttClient::setUsernameAndPassword(const std::string &username, const std::string &password)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - username: {}, password: {}", __FUNCTION__, username, password);
+    SPDLOG_LOGGER_TRACE(m_logger, "username: {}, password: {}", username, password);
 
     if (connectionState.get() != ConnectionState::DISCONNECTED) {
         SPDLOG_LOGGER_ERROR(m_logger, "Setting username and password is only allowed when disconnected.");
@@ -171,7 +171,7 @@ int MqttClient::setUsernameAndPassword(const std::string &username, const std::s
 
 int MqttClient::setWill(const std::string &topic, const ByteArray *payload, QOS qos, bool retain)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - topic: {}, qos: {}, retain: {}", __FUNCTION__, topic, static_cast<int>(qos), retain);
+    SPDLOG_LOGGER_TRACE(m_logger, "topic: {}, qos: {}, retain: {}", topic, static_cast<int>(qos), retain);
 
     if (connectionState.get() != ConnectionState::DISCONNECTED) {
         SPDLOG_LOGGER_ERROR(m_logger, "Setting will is only allowed when disconnected.");
@@ -187,7 +187,7 @@ int MqttClient::setWill(const std::string &topic, const ByteArray *payload, QOS 
 
 int MqttClient::connect(const Url &host, uint16_t port, std::chrono::seconds keepalive)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - host: {}, port: {}, keepalive: {}", __FUNCTION__, host.url(), port, keepalive.count());
+    SPDLOG_LOGGER_TRACE(m_logger, "host: {}, port: {}, keepalive: {}", host.url(), port, keepalive.count());
 
     if (connectionState.get() == ConnectionState::CONNECTING) {
         SPDLOG_LOGGER_ERROR(m_logger, "Already connecting to host.");
@@ -212,7 +212,7 @@ int MqttClient::connect(const Url &host, uint16_t port, std::chrono::seconds kee
 
 int MqttClient::disconnect()
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}()", __FUNCTION__);
+    SPDLOG_LOGGER_TRACE(m_logger, "no args");
 
     m_establishConnectionTaskTimer.running.set(false);
 
@@ -234,7 +234,7 @@ int MqttClient::disconnect()
 
 int MqttClient::publish(int *msgId, const std::string &topic, const ByteArray *payload, QOS qos, bool retain)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - topic: {}, qos: {}, retain: {}", __FUNCTION__, topic, static_cast<int>(qos), retain);
+    SPDLOG_LOGGER_TRACE(m_logger, "topic: {}, qos: {}, retain: {}", topic, static_cast<int>(qos), retain);
 
     if (connectionState.get() == ConnectionState::DISCONNECTED) {
         SPDLOG_LOGGER_ERROR(m_logger, "Not connected to any host.");
@@ -250,7 +250,7 @@ int MqttClient::publish(int *msgId, const std::string &topic, const ByteArray *p
 
 int MqttClient::subscribe(const std::string &pattern, QOS qos)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - subscribe pattern: {}, qos: {}", __FUNCTION__, pattern, static_cast<int>(qos));
+    SPDLOG_LOGGER_TRACE(m_logger, "subscribe pattern: {}, qos: {}", pattern, static_cast<int>(qos));
 
     if (connectionState.get() == ConnectionState::DISCONNECTED) {
         SPDLOG_LOGGER_ERROR(m_logger, "Not connected to any host.");
@@ -270,7 +270,7 @@ int MqttClient::subscribe(const std::string &pattern, QOS qos)
 
 int MqttClient::unsubscribe(const std::string &pattern)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - unsubscribe pattern: {}", __FUNCTION__, pattern);
+    SPDLOG_LOGGER_TRACE(m_logger, "unsubscribe pattern: {}", pattern);
 
     if (connectionState.get() == ConnectionState::DISCONNECTED) {
         SPDLOG_LOGGER_ERROR(m_logger, "Not connected to any host.");
@@ -290,7 +290,7 @@ int MqttClient::unsubscribe(const std::string &pattern)
 
 void MqttClient::onConnected(int connackCode)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - connackCode({}): {}", __FUNCTION__, connackCode, MqttManager::instance().connackString(connackCode));
+    SPDLOG_LOGGER_TRACE(m_logger, "connackCode({}): {}", connackCode, MqttManager::instance().connackString(connackCode));
 
     m_establishConnectionTaskTimer.running.set(false);
 
@@ -317,7 +317,7 @@ void MqttClient::onConnected(int connackCode)
 
 void MqttClient::onDisconnected(int reasonCode) // NOLINT(misc-unused-parameters)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - reasonCode({}): {}", __FUNCTION__, reasonCode, MqttManager::instance().reasonString(reasonCode));
+    SPDLOG_LOGGER_TRACE(m_logger, "reasonCode({}): {}", reasonCode, MqttManager::instance().reasonString(reasonCode));
 
     m_eventLoopHook.disengage();
 
@@ -326,13 +326,13 @@ void MqttClient::onDisconnected(int reasonCode) // NOLINT(misc-unused-parameters
 
 void MqttClient::onPublished(int msgId)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - msgId: {}", __FUNCTION__, msgId);
+    SPDLOG_LOGGER_TRACE(m_logger, "msgId: {}", msgId);
     msgPublished.emit(msgId);
 }
 
 void MqttClient::onMessage(const mosquitto_message *msg)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - msgId: {}, topic: {}", __FUNCTION__, msg->mid, msg->topic);
+    SPDLOG_LOGGER_TRACE(m_logger, "msgId: {}, topic: {}", msg->mid, msg->topic);
 
     Message message{
         .msgId = msg->mid,
@@ -352,7 +352,7 @@ void MqttClient::onSubscribed(int msgId, int qosCount, const int *grantedQos) //
     assert(qosCount == 1);
 
     const auto topic = m_subscriptionsRegistry.registerTopicSubscriptionAndReturnTopicName(msgId, static_cast<QOS>(grantedQos[0])); // NOLINT(bugprone-unused-local-non-trivial-variable)
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - msgId: {}, topic: {}, qosCount: {}, grantedQos: {}", __FUNCTION__, msgId, topic, qosCount, grantedQos[0]);
+    SPDLOG_LOGGER_TRACE(m_logger, "msgId: {}, topic: {}, qosCount: {}, grantedQos: {}", msgId, topic, qosCount, grantedQos[0]);
 
     const auto state = m_subscriptionsRegistry.subscribedTopics().empty() ? SubscriptionState::UNSUBSCRIBED : SubscriptionState::SUBSCRIBED;
     subscriptionState.set(state);
@@ -362,7 +362,7 @@ void MqttClient::onSubscribed(int msgId, int qosCount, const int *grantedQos) //
 void MqttClient::onUnsubscribed(int msgId)
 {
     const auto topic = m_subscriptionsRegistry.unregisterTopicSubscriptionAndReturnTopicName(msgId); // NOLINT(bugprone-unused-local-non-trivial-variable)
-    SPDLOG_LOGGER_TRACE(m_logger, "{}() - msgId: {}, topic: {}", __FUNCTION__, msgId, topic);
+    SPDLOG_LOGGER_TRACE(m_logger, "msgId: {}, topic: {}", msgId, topic);
 
     const auto state = m_subscriptionsRegistry.subscribedTopics().empty() ? SubscriptionState::UNSUBSCRIBED : SubscriptionState::SUBSCRIBED;
     subscriptionState.set(state);
@@ -371,12 +371,12 @@ void MqttClient::onUnsubscribed(int msgId)
 
 void MqttClient::onLog(int level, const char *str) const // NOLINT(misc-unused-parameters, readability-convert-member-functions-to-static)
 {
-    SPDLOG_LOGGER_DEBUG(m_logger, "{}() - level: {}, string: {})", __FUNCTION__, level, str);
+    SPDLOG_LOGGER_DEBUG(m_logger, "level: {}, string: {})", level, str);
 }
 
 void MqttClient::onError()
 {
-    SPDLOG_LOGGER_ERROR(m_logger, "{}()", __FUNCTION__);
+    SPDLOG_LOGGER_ERROR(m_logger, "no args");
     m_establishConnectionTaskTimer.running.set(false);
     error.emit();
 }
@@ -414,7 +414,7 @@ void MqttClient::establishConnectionTask()
 void MqttClient::EventLoopHook::init(const std::chrono::milliseconds miscTaskInterval, MqttClient *parent)
 {
     assert(parent != nullptr);
-    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}() - miscTaskInterval: {} ms", __FUNCTION__, miscTaskInterval.count());
+    SPDLOG_LOGGER_TRACE(parent->m_logger, "miscTaskInterval: {} ms", miscTaskInterval.count());
 
     this->parent = parent;
 
@@ -425,7 +425,7 @@ void MqttClient::EventLoopHook::init(const std::chrono::milliseconds miscTaskInt
 
 void MqttClient::EventLoopHook::engage(const int socket)
 {
-    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}() - socket: {}", __FUNCTION__, socket);
+    SPDLOG_LOGGER_TRACE(parent->m_logger, "socket: {}", socket);
 
     if (!isSetup()) {
         SPDLOG_LOGGER_ERROR(parent->m_logger, "EventLoopHook is not initialized. Call MqttClient::EventLoopHook::init() first.");
@@ -453,7 +453,7 @@ void MqttClient::EventLoopHook::engage(const int socket)
 
 void MqttClient::EventLoopHook::disengage()
 {
-    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}()", __FUNCTION__);
+    SPDLOG_LOGGER_TRACE(parent->m_logger, "no args");
 
     if (!isEngaged()) {
         SPDLOG_LOGGER_ERROR(parent->m_logger, "EventLoopHook is already disengaged.");
@@ -482,7 +482,7 @@ bool MqttClient::EventLoopHook::isEngaged() const
 void MqttClient::MosquittoClientDependency::init(std::unique_ptr<MosquittoClient> &&client, MqttClient *parent)
 {
     assert(parent != nullptr);
-    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}()", __FUNCTION__);
+    SPDLOG_LOGGER_TRACE(parent->m_logger, "no args");
 
     m_client = std::move(client);
 
@@ -504,21 +504,21 @@ MosquittoClient *MqttClient::MosquittoClientDependency::client()
 void MqttClient::SubscriptionsRegistry::init(MqttClient *parent)
 {
     assert(parent != nullptr);
-    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}()", __FUNCTION__);
+    SPDLOG_LOGGER_TRACE(parent->m_logger, "no args");
 
     this->parent = parent;
 }
 
 void MqttClient::SubscriptionsRegistry::registerPendingRegistryOperation(std::string_view topic, int msgId)
 {
-    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}() - topic:{}, msgId: {}", __FUNCTION__, topic, msgId);
+    SPDLOG_LOGGER_TRACE(parent->m_logger, "topic:{}, msgId: {}", topic, msgId);
 
     topicByMsgIdOfPendingOperations[msgId] = topic;
 }
 
 std::string MqttClient::SubscriptionsRegistry::registerTopicSubscriptionAndReturnTopicName(int msgId, QOS grantedQos)
 {
-    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}() - msgId: {}, grantedQos:{}", __FUNCTION__, msgId, static_cast<int>(grantedQos));
+    SPDLOG_LOGGER_TRACE(parent->m_logger, "msgId: {}, grantedQos:{}", msgId, static_cast<int>(grantedQos));
 
     auto it = topicByMsgIdOfPendingOperations.find(msgId);
     if (it == topicByMsgIdOfPendingOperations.end()) {
@@ -536,7 +536,7 @@ std::string MqttClient::SubscriptionsRegistry::registerTopicSubscriptionAndRetur
 
 std::string MqttClient::SubscriptionsRegistry::unregisterTopicSubscriptionAndReturnTopicName(int msgId)
 {
-    SPDLOG_LOGGER_TRACE(parent->m_logger, "{}() - msgId: {}", __FUNCTION__, msgId);
+    SPDLOG_LOGGER_TRACE(parent->m_logger, "msgId: {}", msgId);
 
     auto it = topicByMsgIdOfPendingOperations.find(msgId);
     if (it == topicByMsgIdOfPendingOperations.end()) {
