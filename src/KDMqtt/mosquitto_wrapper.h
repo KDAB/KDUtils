@@ -38,6 +38,12 @@
 #include <string>
 #include <string_view>
 
+// Mosquitto version v2.0.0 introduces
+// - function `mosquitto_ssl_get()` and
+// - option `MOSQ_OPT_TLS_USE_OS_CERTS` in function `mosquitto_int_option`
+#define HAS_MOSQUITTO_SSL_GET (LIBMOSQUITTO_MAJOR > 1)
+#define HAS_TLS_USE_OS_CERTS (LIBMOSQUITTO_MAJOR > 1)
+
 namespace KDMqtt {
 
 /*
@@ -185,10 +191,12 @@ public:
         return mosquitto_want_write(m_clientInstance);
     }
 
+#if (HAS_MOSQUITTO_SSL_GET)
     virtual void *sslGet()
     {
         return mosquitto_ssl_get(m_clientInstance);
     }
+#endif
 
     virtual int tlsSet(std::optional<const std::string> cafile, std::optional<const std::string> capath, std::optional<const std::string> certfile, std::optional<const std::string> keyfile, int (*pw_callback)(char *buf, int size, int rwflag, void *userdata) = nullptr)
     {
@@ -196,6 +204,7 @@ public:
     }
 
     // NOTE: on Windows, OpenSSL used by mosquitto doesn't use the system store by default
+#if HAS_TLS_USE_OS_CERTS
     virtual int tlsEnableUseOsCertificates()
     {
         return mosquitto_int_option(m_clientInstance, MOSQ_OPT_TLS_USE_OS_CERTS, 1);
@@ -205,6 +214,7 @@ public:
     {
         return mosquitto_int_option(m_clientInstance, MOSQ_OPT_TLS_USE_OS_CERTS, 0);
     }
+#endif
 
     virtual int usernamePasswordSet(const std::string &username, const std::string &password)
     {
