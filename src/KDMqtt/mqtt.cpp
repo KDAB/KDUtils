@@ -45,6 +45,10 @@ int MqttManager::init()
             int major, minor, revision = 0; // NOLINT(readability-isolate-declaration)
             version(&major, &minor, &revision);
             SPDLOG_LOGGER_INFO(m_logger, "Using libmosquitto v{}.{}.{}", major, minor, revision);
+
+#if !HAS_MOSQUITTO_SSL_GET || !HAS_TLS_USE_OS_CERTS
+            SPDLOG_LOGGER_WARN(m_logger, "KDMqtt was compiled with a libmosquitto version that does not support all TLS features! Minimal recommended version is v2.0.0");
+#endif
         }
     } else {
         SPDLOG_LOGGER_WARN(m_logger, "Library is already initialized.");
@@ -115,11 +119,13 @@ MqttClient::MqttClient(std::shared_ptr<spdlog::logger> logger, const std::string
     auto client = std::make_unique<MosquittoClient>(clientId, static_cast<bool>(options & MqttManager::ClientOption::CLEAN_SESSION));
     m_mosquitto.init(std::move(client), this);
 
+#if HAS_TLS_USE_OS_CERTS
     if (!(options & MqttManager::ClientOption::DONT_USE_OS_CERTIFICATE_STORE)) {
         // NOTE: on Windows, OpenSSL used by mosquitto doesn't use the system store by default
         const auto result = m_mosquitto.client()->tlsEnableUseOsCertificates();
         MqttManager::instance().CHECK_AND_LOG_MOSQUITTO_RESULT(result);
     }
+#endif
 
     m_establishConnectionTaskTimer.interval.set(std::chrono::milliseconds(200));
     m_establishConnectionTaskTimer.running.set(false);
@@ -300,8 +306,10 @@ void MqttClient::onConnected(int connackCode)
         // unhookFromEventLoop();
     }
 
+#if HAS_MOSQUITTO_SSL_GET
     const auto tlsIsEnabled = (m_mosquitto.client()->sslGet() != nullptr); // NOLINT(clang-analyzer-deadcode.DeadStores)
     SPDLOG_LOGGER_INFO(m_logger, "This connection {} TLS encrypted", tlsIsEnabled ? "is" : "is not");
+#endif
 
     const auto state = hasError ? ConnectionState::DISCONNECTED : ConnectionState::CONNECTED;
     connectionState.set(state);

@@ -42,6 +42,7 @@ You get a thin wrapper around libmosquitto that
 - comes with an API featuring properties and signals using [KDBindings](https://github.com/KDAB/KDBindings)
 
 For now, we don't support building mosquitto from source so you need to have it installed on your machine.
+Minimal recommended version is libmosquitto v2.0.0 (previous versions are lacking full TLS support).
 
 You can find setup instructions and download links at: <https://mosquitto.org/download/>
 
