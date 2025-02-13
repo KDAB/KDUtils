@@ -18,6 +18,7 @@ jobs:
           - windows-2022
           - macos-13
           - macos-14
+          - macos-15
         build_type:
           - Debug
           - Release
