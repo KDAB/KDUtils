@@ -526,7 +526,7 @@ std::string MqttClient::SubscriptionsRegistry::registerTopicSubscriptionAndRetur
         return {};
     }
 
-    auto topic = it->second;
+    const auto topic = it->second;
     topicByMsgIdOfPendingOperations.erase(it);
 
     qosByTopicOfActiveSubscriptions[topic] = grantedQos;
@@ -544,7 +544,7 @@ std::string MqttClient::SubscriptionsRegistry::unregisterTopicSubscriptionAndRet
         return {};
     }
 
-    const auto &topic = it->second;
+    const auto topic = it->second;
     topicByMsgIdOfPendingOperations.erase(it);
 
     qosByTopicOfActiveSubscriptions.erase(topic);
