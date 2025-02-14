@@ -48,10 +48,7 @@ endif()
 add_subdirectory(auto/utils)
 add_subdirectory(auto/foundation)
 add_subdirectory(auto/gui)
-if(UNIX
-   AND NOT APPLE
-   AND KDUTILS_BUILD_MQTT_SUPPORT
-)
+if(UNIX AND KDUTILS_BUILD_MQTT_SUPPORT)
     FetchContent_Declare(
         FakeIt
         DOWNLOAD_EXTRACT_TIMESTAMP ON
