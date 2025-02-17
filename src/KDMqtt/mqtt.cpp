@@ -9,6 +9,7 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 #include "mqtt.h"
+#include "mosquitto_wrapper.h"
 #include <memory>
 #include <spdlog/spdlog.h>
 

@@ -13,7 +13,6 @@
 #include <KDFoundation/file_descriptor_notifier.h>
 #include <KDFoundation/timer.h>
 #include <KDMqtt/kdmqtt_global.h>
-#include <KDMqtt/mosquitto_wrapper.h>
 #include <KDUtils/bytearray.h>
 #include <KDUtils/file.h>
 #include <KDUtils/flags.h>
@@ -28,12 +27,16 @@
 using namespace KDFoundation;
 using namespace KDUtils;
 
+struct mosquitto_message;
+
 namespace KDMqtt {
 
 constexpr int c_defaultPort = 1883;
 constexpr std::chrono::duration c_defaultKeepAlive = std::chrono::minutes(1);
 
 class IMqttClient;
+class MosquittoLib;
+class MosquittoClient;
 
 /*
  * Class: IMqttManager
