@@ -26,9 +26,9 @@ else()
 endif()
 
 if(UNIX)
-    option(KDUTILS_BUILD_MQTT_SUPPORT "Build KDMqtt" ON)
+    option(KDUTILS_BUILD_MQTT_SUPPORT "EXPERIMENTAL: Build KDMqtt" ON)
 else()
-    option(KDUTILS_BUILD_MQTT_SUPPORT "Build KDMqtt" OFF)
+    option(KDUTILS_BUILD_MQTT_SUPPORT "EXPERIMENTAL: Build KDMqtt" OFF)
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
