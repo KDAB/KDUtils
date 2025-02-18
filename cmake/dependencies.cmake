@@ -103,10 +103,4 @@ if(NOT TARGET mio::mio)
 endif()
 
 # mosquitto library
-if(KDUTILS_BUILD_MQTT_SUPPORT)
-    find_package(Mosquitto REQUIRED)
-
-    if(KDUTILS_BUILD_EXAMPLES)
-        file(DOWNLOAD https://test.mosquitto.org/ssl/mosquitto.org.crt ${CMAKE_BINARY_DIR}/mosquitto.org.crt)
-    endif()
-endif()
+find_package(Mosquitto QUIET)
