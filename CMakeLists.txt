@@ -25,12 +25,6 @@ else()
     option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 endif()
 
-if(UNIX)
-    option(KDUTILS_BUILD_MQTT_SUPPORT "EXPERIMENTAL: Build KDMqtt" ON)
-else()
-    option(KDUTILS_BUILD_MQTT_SUPPORT "EXPERIMENTAL: Build KDMqtt" OFF)
-endif()
-
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/ECM/modules")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/ECM/find-modules")
@@ -53,6 +47,18 @@ include(cmake/dependencies.cmake)
 include(GenerateExportHeader)
 include(GNUInstallDirs)
 include(CTest)
+
+if(UNIX)
+    cmake_dependent_option(
+        KDUTILS_BUILD_MQTT_SUPPORT
+        "EXPERIMENTAL: Build KDMqtt"
+        ON
+        "Mosquitto_FOUND"
+        OFF
+    )
+else()
+    option(KDUTILS_BUILD_MQTT_SUPPORT "EXPERIMENTAL: Build KDMqtt" OFF)
+endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     option(KDUTILS_CODE_COVERAGE "Code Coverage" OFF)
