@@ -19,7 +19,7 @@ function(add_core_test name sources)
     target_link_libraries(${name} PRIVATE KDUtils::KDFoundation doctest::doctest)
 
     add_test(NAME ${name} COMMAND $<TARGET_FILE:${name}>)
-    set_tests_properties(${name} PROPERTIES LABELS "Foundatation")
+    set_tests_properties(${name} PROPERTIES LABELS "Foundation")
 
     if(APPLE)
         target_compile_options(${name} PRIVATE -Wno-deprecated-declarations)
