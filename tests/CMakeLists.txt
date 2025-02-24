@@ -48,11 +48,12 @@ endif()
 add_subdirectory(auto/utils)
 add_subdirectory(auto/foundation)
 add_subdirectory(auto/gui)
-if(UNIX AND KDUTILS_BUILD_MQTT_SUPPORT)
+if(KDUTILS_BUILD_MQTT_SUPPORT)
     FetchContent_Declare(
         FakeIt
         DOWNLOAD_EXTRACT_TIMESTAMP ON
         URL https://github.com/eranpeer/FakeIt/archive/refs/tags/2.4.1.zip
+        URL_HASH SHA256=384d98a703da5995915933bc61820c9cdc2f96f95db8b2ae86fc5c660f8bb9e8
     )
     FetchContent_MakeAvailable(FakeIt)
 
