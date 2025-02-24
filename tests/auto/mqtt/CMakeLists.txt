@@ -20,7 +20,7 @@ project(
 
 add_executable(
     ${PROJECT_NAME}
-    tst_mosquitto_mock.h tst_mqtt.cpp
+    tst_mqtt.cpp
 )
 
 target_include_directories(
