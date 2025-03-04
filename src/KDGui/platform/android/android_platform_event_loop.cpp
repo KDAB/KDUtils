@@ -63,8 +63,19 @@ int32_t AndroidPlatformEventLoop::androidHandleInputEvent(android_app *app, AInp
             return 0;
         }
         break;
+    case AINPUT_EVENT_TYPE_MOTION: {
+        auto platformIntegration = reinterpret_cast<AndroidPlatformEventLoop *>(AndroidPlatformIntegration::s_androidApp->userData)->androidPlatformIntegration();
+        const auto timestamp = AMotionEvent_getEventTime(event);
+        const auto action = AMotionEvent_getAction(event);
+        // Only track the first touch event
+        const auto xPos = static_cast<int64_t>(AMotionEvent_getX(event, 0));
+        const auto yPos = static_cast<int64_t>(AMotionEvent_getY(event, 0));
+
+        platformIntegration->handleTouchEvent(action, xPos, yPos, timestamp);
+        break;
+    }
+
     // TODO IMPLEMENT ME
-    case AINPUT_EVENT_TYPE_MOTION:
     case AINPUT_EVENT_TYPE_FOCUS:
     case AINPUT_EVENT_TYPE_CAPTURE:
     case AINPUT_EVENT_TYPE_DRAG:

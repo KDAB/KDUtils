@@ -71,6 +71,30 @@ void AndroidPlatformIntegration::handleKeyEvent(int32_t action, int32_t code, in
     }
 }
 
+void AndroidPlatformIntegration::handleTouchEvent(int32_t action, int64_t xPos, int64_t yPos, int64_t time)
+{
+    const auto mouseButton = LeftButton;
+
+    for (auto *platformWindow : m_windows) {
+
+        switch (action) {
+        case AMOTION_EVENT_ACTION_DOWN:
+            platformWindow->handleMousePress(time, mouseButton, xPos, yPos);
+            break;
+        case AMOTION_EVENT_ACTION_UP:
+            platformWindow->handleMouseRelease(time, mouseButton, xPos, yPos);
+            break;
+        case AMOTION_EVENT_ACTION_MOVE:
+            platformWindow->handleMouseMove(time, mouseButton, xPos, yPos);
+            break;
+        default:
+            __android_log_print(ANDROID_LOG_INFO, "KDGuiAndroid",
+                                "touch event not handled: %d", action);
+            break;
+        }
+    }
+}
+
 void AndroidPlatformIntegration::registerPlatformWindow(AbstractPlatformWindow *window)
 {
     m_windows.insert(window);
@@ -97,7 +121,7 @@ static void handle_cmd(android_app *app, int32_t cmd)
         startMain = false;
         break;
     default:
-        __android_log_print(ANDROID_LOG_INFO, "SerenityNativeApplication",
+        __android_log_print(ANDROID_LOG_INFO, "KDGuiAndroid",
                             "event not handled: %d", cmd);
     }
 }
@@ -117,7 +141,7 @@ void android_main(struct android_app *app)
                 source->process(app, source);
         }
     } while (app->destroyRequested == 0 && !startMain);
-    static const char *appStr = "SerenityNativeApplication";
+    static const char *appStr = "KDGuiAndroid";
     if (startMain && main)
         exit(main(1, &appStr));
     else
