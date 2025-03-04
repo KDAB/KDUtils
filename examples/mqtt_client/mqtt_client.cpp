@@ -30,7 +30,11 @@ int main()
     CoreApplication app;
 
     MqttManager::instance().init();
-    auto mqttClient = MqttManager::instance().createClient("KDMqttClient", MqttManager::ClientOption::CLEAN_SESSION);
+    MqttManager::ClientOptions options(MqttManager::ClientOption::CLEAN_SESSION);
+    if (!useEncryptedConnection) {
+        options.setFlag(MqttManager::ClientOption::DONT_USE_OS_CERTIFICATE_STORE);
+    }
+    auto mqttClient = MqttManager::instance().createClient("KDMqttClient", options);
 
     auto onMqttConnectionStateChanged = [&](const MqttClient::ConnectionState &connectionState) {
         if (connectionState == MqttClient::ConnectionState::CONNECTED) {
