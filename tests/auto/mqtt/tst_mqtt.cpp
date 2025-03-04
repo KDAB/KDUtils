@@ -780,7 +780,7 @@ TEST_SUITE("Mqtt")
         MqttUnitTestHarness muth;
         auto mqttClient = muth.initMqttManagerAndCreateMqttClient();
 
-        SUBCASE("sets connection state to CONNECTED")
+        SUBCASE("sets connection state to CONNECTED on SUCCESS")
         {
             // GIVEN
             mqttClient->connectionState.set(MqttClient::ConnectionState::CONNECTING);
@@ -792,7 +792,7 @@ TEST_SUITE("Mqtt")
             REQUIRE(mqttClient->connectionState.get() == MqttClient::ConnectionState::CONNECTED);
         }
 
-        SUBCASE("sets connection state to DISCONNECTED")
+        SUBCASE("sets connection state to DISCONNECTED on ERROR")
         {
             // GIVEN
             mqttClient->connectionState.set(MqttClient::ConnectionState::CONNECTING);
@@ -810,7 +810,7 @@ TEST_SUITE("Mqtt")
         MqttUnitTestHarness muth;
         auto mqttClient = muth.initMqttManagerAndCreateMqttClient();
 
-        SUBCASE("disengages event loop hook")
+        SUBCASE("disengages EventLoopHook")
         {
             // GIVEN
             mqttClient->connectionState.set(MqttClient::ConnectionState::DISCONNECTING);
@@ -950,7 +950,7 @@ TEST_SUITE("Mqtt")
             REQUIRE(mqttClient->subscriptionState.get() == MqttClient::SubscriptionState::UNSUBSCRIBED);
         }
 
-        SUBCASE("adds topic to list of subscribed topics if a subscription operation is pending for topic")
+        SUBCASE("removes topic from list of subscribed topics if a subscription operation is pending for topic")
         {
             // GIVEN
             mqttClient->connectionState.set(MqttClient::ConnectionState::CONNECTED);
