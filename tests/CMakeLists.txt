@@ -49,10 +49,9 @@ add_subdirectory(auto/utils)
 add_subdirectory(auto/foundation)
 add_subdirectory(auto/gui)
 if(UNIX AND KDUTILS_BUILD_MQTT_SUPPORT)
-    file(DOWNLOAD
-        https://raw.githubusercontent.com/eranpeer/FakeIt/refs/tags/2.4.1/single_header/doctest/fakeit.hpp
-        "${CMAKE_BINARY_DIR}/tests/auto/fakeit.h"
-        EXPECTED_HASH SHA256=09be612875c0dd0c0692256739eb859e66f6e82c1f1082d50eacb670f471f63b
+    file(DOWNLOAD https://raw.githubusercontent.com/eranpeer/FakeIt/refs/tags/2.4.1/single_header/doctest/fakeit.hpp
+         "${CMAKE_BINARY_DIR}/tests/auto/fakeit.h"
+         EXPECTED_HASH SHA256=09be612875c0dd0c0692256739eb859e66f6e82c1f1082d50eacb670f471f63b
     )
 
     add_subdirectory(auto/mqtt)
