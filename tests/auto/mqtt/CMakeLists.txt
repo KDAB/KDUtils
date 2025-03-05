@@ -25,7 +25,7 @@ add_executable(
 
 target_include_directories(
     ${PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/tests/auto/foundation/common ${fakeit_SOURCE_DIR}/single_header/doctest
+    PRIVATE ${CMAKE_SOURCE_DIR}/tests/auto/foundation/common ${CMAKE_BINARY_DIR}/tests/auto
 )
 
 target_link_libraries(
