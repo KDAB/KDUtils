@@ -313,3 +313,5 @@ private:
 };
 
 } // namespace KDMqtt
+
+OPERATORS_FOR_FLAGS(KDMqtt::MqttManager::ClientOptions);
