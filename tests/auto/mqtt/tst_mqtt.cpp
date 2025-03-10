@@ -15,7 +15,7 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
 #include <signal_spy.h>
-#include "fakeit.hpp" // <= include after doctest.h
+#include "fakeit.h" // <= include after doctest.h
 
 using namespace fakeit;
 
