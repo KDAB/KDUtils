@@ -79,6 +79,14 @@ For debug builds with code coverage:
 sudo apt install gcovr
 ```
 
+On Android:
+
+All dependencies are supplied by the Android SDK (version 32 and above) and NDK
+(version 26.1.10909125 and above).
+
+An example app can be built and run by opening the directory examples/gui_window/android in
+Android Studio.
+
 ## Contact
 
 - Visit us on GitHub: <https://github.com/KDAB/KDUtils>
