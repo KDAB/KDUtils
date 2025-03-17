@@ -37,6 +37,9 @@ public:
         return nullptr;
     }
 
+    KDUtils::Dir applicationDataDir(const KDFoundation::CoreApplication &app, bool local) const override;
+    KDUtils::Dir assetsDataDir(const KDFoundation::CoreApplication &app) const override;
+
 private:
     KDFoundation::Win32PlatformEventLoop *createPlatformEventLoopImpl() override;
     Win32PlatformWindow *createPlatformWindowImpl(Window *window) override;

@@ -23,8 +23,9 @@ Dir::Dir()
 {
 }
 
-Dir::Dir(const char *path)
+Dir::Dir(const char *path, StorageType type)
     : m_path(std::filesystem::u8path(path))
+    , m_type(type)
 {
     // If the filename part is empty, the parameter was likely supplied
     // with a trailing separator. If so, strip it by going to the parent.
@@ -33,13 +34,13 @@ Dir::Dir(const char *path)
     }
 }
 
-Dir::Dir(const std::string &path)
-    : Dir(path.c_str())
+Dir::Dir(const std::string &path, StorageType type)
+    : Dir(path.c_str(), type)
 {
 }
 
-Dir::Dir(const std::filesystem::path &path)
-    : Dir(path.string())
+Dir::Dir(const std::filesystem::path &path, StorageType type)
+    : Dir(path.string(), type)
 {
 }
 
@@ -65,7 +66,7 @@ bool Dir::ensureExists()
 {
     if (exists())
         return true;
-    else if (!parent().ensureExists())
+    else if (hasParent() && !parent().ensureExists())
         return false;
     else
         return mkdir();
@@ -86,6 +87,11 @@ std::string Dir::absoluteFilePath(const std::string &file) const
     std::error_code e;
     const std::filesystem::path fPath{ file };
     return std::filesystem::absolute(m_path / fPath, e).generic_u8string();
+}
+
+StorageType Dir::type() const
+{
+    return m_type;
 }
 
 Dir Dir::applicationDir()

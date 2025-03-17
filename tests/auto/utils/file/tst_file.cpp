@@ -75,6 +75,17 @@ TEST_SUITE("File")
         CHECK(f.fileName() == "tst_file.cpp");
     }
 
+    TEST_CASE("checkFileType")
+    {
+        // GIVEN
+        const File f(TST_DIR "tst_file.cpp");
+        const File a("tst_asset.txt", KDUtils::StorageType::Asset);
+
+        // THEN
+        CHECK(f.type() == KDUtils::StorageType::Normal);
+        CHECK(a.type() == KDUtils::StorageType::Asset);
+    }
+
     TEST_CASE("checkCanOpenAndReadExistingFile")
     {
         // GIVEN

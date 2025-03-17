@@ -48,6 +48,9 @@ public:
     void unregisterWindowForEvents(xcb_window_t xcbWindow) { m_windows.erase(xcbWindow); }
     LinuxXcbPlatformWindow *window(xcb_window_t xcbWindow) const;
 
+    KDUtils::Dir applicationDataDir(const KDFoundation::CoreApplication &app, bool local) const override;
+    KDUtils::Dir assetsDataDir(const KDFoundation::CoreApplication &app) const override;
+
 private:
     LinuxXcbPlatformEventLoop *createPlatformEventLoopImpl() override;
     LinuxXcbPlatformWindow *createPlatformWindowImpl(Window *window) override;

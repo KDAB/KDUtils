@@ -14,9 +14,13 @@
 #include <KDFoundation/platform/abstract_platform_event_loop.h>
 #include <KDFoundation/kdfoundation_global.h>
 
+#include <KDUtils/dir.h>
+
 #include <memory>
 
 namespace KDFoundation {
+
+class CoreApplication;
 
 class KDFOUNDATION_API AbstractPlatformIntegration
 {
@@ -28,6 +32,13 @@ public:
     {
         return std::unique_ptr<AbstractPlatformEventLoop>(this->createPlatformEventLoopImpl());
     }
+
+    // Returns the path to the application's data directory.
+    // Usually this depends on the application name and organization from the application.
+    virtual KDUtils::Dir applicationDataDir(const CoreApplication &app, bool local) const = 0;
+
+    // Returns the path to the application's asset directory.
+    virtual KDUtils::Dir assetsDataDir(const CoreApplication &app) const = 0;
 
 private:
     virtual AbstractPlatformEventLoop *createPlatformEventLoopImpl() = 0;

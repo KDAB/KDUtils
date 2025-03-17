@@ -12,6 +12,7 @@
 #include "linux_wayland_platform_integration.h"
 
 #include <KDFoundation/core_application.h>
+#include <KDFoundation/platform/linux/linux_platform_integration.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_input.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_output.h>
 #include <KDUtils/logging.h>
@@ -123,6 +124,16 @@ LinuxWaylandPlatformWindow *LinuxWaylandPlatformIntegration::window(wl_surface *
 LinuxWaylandPlatformEventLoop *LinuxWaylandPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new LinuxWaylandPlatformEventLoop(this);
+}
+
+KDUtils::Dir LinuxWaylandPlatformIntegration::applicationDataDir(const KDFoundation::CoreApplication &app, bool) const
+{
+    return KDUtils::Dir(KDFoundation::LinuxPlatformIntegration::linuxAppDataPath(app));
+}
+
+KDUtils::Dir LinuxWaylandPlatformIntegration::assetsDataDir(const KDFoundation::CoreApplication &) const
+{
+    return KDUtils::Dir(KDFoundation::CoreApplication::applicationDir().parent().absoluteFilePath("assets"));
 }
 
 LinuxWaylandPlatformWindow *LinuxWaylandPlatformIntegration::createPlatformWindowImpl(Window *window)

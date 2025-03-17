@@ -43,7 +43,9 @@ public:
         return nullptr;
     }
 
-public:
+    KDUtils::Dir applicationDataDir(const KDFoundation::CoreApplication &app, bool local) const override;
+    KDUtils::Dir assetsDataDir(const KDFoundation::CoreApplication &app) const override;
+
     static android_app *s_androidApp;
 
 private:
