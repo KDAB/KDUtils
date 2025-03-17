@@ -13,6 +13,8 @@
 #include "linux_xkb_keyboard.h"
 
 #include <KDUtils/logging.h>
+#include <KDFoundation/core_application.h>
+#include <KDFoundation/platform/linux/linux_platform_integration.h>
 
 #define explicit i_am_not_really_using_explicit
 #include <xcb/xkb.h>
@@ -75,6 +77,22 @@ LinuxXcbPlatformWindow *LinuxXcbPlatformIntegration::window(xcb_window_t xcbWind
 LinuxXcbPlatformEventLoop *LinuxXcbPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new LinuxXcbPlatformEventLoop(this);
+}
+
+KDUtils::Dir LinuxXcbPlatformIntegration::standardDir(const KDFoundation::CoreApplication &app, KDFoundation::StandardDir type) const
+{
+    switch (type) {
+    case KDFoundation::StandardDir::Application:
+        return KDUtils::Dir(KDUtils::Dir::applicationDir().path());
+    case KDFoundation::StandardDir::ApplicationData:
+    case KDFoundation::StandardDir::ApplicationDataLocal:
+        return KDUtils::Dir(KDFoundation::LinuxPlatformIntegration::linuxAppDataPath(app));
+    case KDFoundation::StandardDir::Assets:
+        return KDUtils::Dir(KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
+    default:
+        SPDLOG_WARN("Unsupported standard directory requested");
+        return {};
+    }
 }
 
 LinuxXcbPlatformWindow *LinuxXcbPlatformIntegration::createPlatformWindowImpl(Window *window)

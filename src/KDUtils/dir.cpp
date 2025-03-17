@@ -23,8 +23,9 @@ Dir::Dir()
 {
 }
 
-Dir::Dir(const char *path)
+Dir::Dir(const char *path, StorageType type)
     : m_path(std::filesystem::u8path(path))
+    , m_type(type)
 {
     // If the filename part is empty, the parameter was likely supplied
     // with a trailing separator. If so, strip it by going to the parent.
@@ -33,13 +34,13 @@ Dir::Dir(const char *path)
     }
 }
 
-Dir::Dir(const std::string &path)
-    : Dir(path.c_str())
+Dir::Dir(const std::string &path, StorageType type)
+    : Dir(path.c_str(), type)
 {
 }
 
-Dir::Dir(const std::filesystem::path &path)
-    : Dir(path.string())
+Dir::Dir(const std::filesystem::path &path, StorageType type)
+    : Dir(path.string(), type)
 {
 }
 
@@ -86,6 +87,11 @@ std::string Dir::absoluteFilePath(const std::string &file) const
     return std::filesystem::absolute(m_path / fPath, e).generic_u8string();
 }
 
+StorageType Dir::type() const
+{
+    return m_type;
+}
+
 Dir Dir::applicationDir()
 {
     const int length = wai_getExecutablePath(NULL, 0, NULL); // NOLINT(modernize-use-nullptr)
@@ -114,8 +120,10 @@ bool Dir::operator==(const Dir &other) const
 Dir Dir::parent() const
 {
     auto absolutePath = std::filesystem::absolute(m_path);
-    if (!absolutePath.has_parent_path())
+    if (!absolutePath.has_parent_path()) {
         SPDLOG_CRITICAL("Parent path not found for {}", m_path.generic_u8string());
+        return {};
+    }
 
     return Dir(absolutePath.parent_path());
 }

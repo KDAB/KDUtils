@@ -77,6 +77,8 @@ public:
     void unregisterWindowForEvents(wl_surface *surface) { m_windows.erase(surface); }
     LinuxWaylandPlatformWindow *window(wl_surface *surface) const;
 
+    KDUtils::Dir standardDir(const KDFoundation::CoreApplication &app, KDFoundation::StandardDir type) const override;
+
 private:
     LinuxWaylandPlatformEventLoop *createPlatformEventLoopImpl() override;
     LinuxWaylandPlatformWindow *createPlatformWindowImpl(Window *window) override;

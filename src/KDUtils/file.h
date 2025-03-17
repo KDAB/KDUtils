@@ -23,10 +23,18 @@
 
 namespace KDUtils {
 
+// Some platforms have special requirements for accessing some file types
+// such as assets and shared data directories on Android.
+// For Desktop platforms, type should always be Normal.
+enum class StorageType {
+    Normal, // Files that can be accessed normally using the c++ standard library
+    Asset, // Files that must be accessed from an application's embedded assets
+};
+
 class KDUTILS_API File
 {
 public:
-    File(const std::string &path);
+    File(const std::string &path, StorageType type = StorageType::Normal);
     ~File();
 
     // Can't be copied
@@ -46,12 +54,14 @@ public:
     void write(const ByteArray &data);
     std::string fileName() const;
     const std::string &path() const;
+    StorageType type() const;
 
     std::uintmax_t size() const;
     static std::uintmax_t size(const std::string &path);
 
 private:
     std::string m_path;
+    StorageType m_type = StorageType::Normal;
 #if defined(ANDROID)
     AAsset *m_asset = nullptr;
 #else

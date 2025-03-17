@@ -16,6 +16,7 @@
 #include "win32_utils.h"
 
 #include <KDUtils/logging.h>
+#include <KDFoundation/core_application.h>
 
 using namespace KDFoundation;
 using namespace KDGui;
@@ -33,6 +34,23 @@ Win32GuiPlatformIntegration::~Win32GuiPlatformIntegration()
 Win32PlatformEventLoop *Win32GuiPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new Win32PlatformEventLoop();
+}
+
+KDUtils::Dir Win32GuiPlatformIntegration::standardDir(const KDFoundation::CoreApplication &app, KDFoundation::StandardDir type) const
+{
+    switch (type) {
+    case StandardDir::Application:
+        return KDUtils::Dir::applicationDir();
+    case StandardDir::ApplicationData:
+        return KDUtils::Dir(KDFoundation::Win32PlatformIntegration::windowsAppDataPath(app, false));
+    case StandardDir::ApplicationDataLocal:
+        return KDUtils::Dir(KDFoundation::Win32PlatformIntegration::windowsAppDataPath(app, true));
+    case StandardDir::Assets:
+        return KDUtils::Dir(KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
+    default:
+        SPDLOG_WARN("Unsupported standard directory requested");
+        return {};
+    }
 }
 
 Win32PlatformWindow *Win32GuiPlatformIntegration::createPlatformWindowImpl(Window *window)
