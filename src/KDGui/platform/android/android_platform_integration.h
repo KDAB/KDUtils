@@ -17,14 +17,6 @@
 
 #include <unordered_set>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-struct android_app;
-#ifdef __cplusplus
-}
-#endif
-
 namespace KDGui {
 
 class KDGUI_API AndroidPlatformIntegration : public AbstractGuiPlatformIntegration
@@ -43,14 +35,14 @@ public:
         return nullptr;
     }
 
-public:
-    static android_app *s_androidApp;
-
 private:
     KDFoundation::AbstractPlatformEventLoop *createPlatformEventLoopImpl() override;
     AbstractPlatformWindow *createPlatformWindowImpl(Window *window) override;
 
-private:
+    KDBindings::ConnectionHandle m_resizeEventConnection;
+    KDBindings::ConnectionHandle m_keyEventConnection;
+    KDBindings::ConnectionHandle m_touchEventConnection;
+
     std::unordered_set<AbstractPlatformWindow *> m_windows;
 };
 

@@ -82,7 +82,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
         APPEND
         SOURCES
         platform/android/android_keyboard_map.cpp
-        platform/android/android_platform_event_loop.cpp
         platform/android/android_platform_integration.cpp
         platform/android/android_platform_window.cpp
     )

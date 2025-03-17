@@ -12,6 +12,7 @@
 #include "android_platform_window.h"
 
 #include <KDFoundation/core_application.h>
+#include <KDFoundation/platform/android/android_platform_integration.h>
 #include <KDGui/gui_events.h>
 #include <KDGui/window.h>
 
@@ -30,10 +31,10 @@ AndroidPlatformWindow::AndroidPlatformWindow(AndroidPlatformIntegration *android
 
 bool AndroidPlatformWindow::create()
 {
-    if (AndroidPlatformIntegration::s_androidApp->userData) {
+    if (KDFoundation::AndroidPlatformIntegration::s_androidApp->userData) {
         m_androidPlatformIntegrationSerenity->registerPlatformWindow(this);
-        const auto width = ANativeWindow_getWidth(AndroidPlatformIntegration::s_androidApp->window);
-        const auto height = ANativeWindow_getHeight(AndroidPlatformIntegration::s_androidApp->window);
+        const auto width = ANativeWindow_getWidth(KDFoundation::AndroidPlatformIntegration::s_androidApp->window);
+        const auto height = ANativeWindow_getHeight(KDFoundation::AndroidPlatformIntegration::s_androidApp->window);
         if (m_window->width.get() != width || m_window->height.get() != height) {
             m_androidPlatformIntegrationSerenity->handleWindowResize();
         }
@@ -50,7 +51,7 @@ bool AndroidPlatformWindow::destroy()
 
 bool AndroidPlatformWindow::isCreated()
 {
-    return AndroidPlatformIntegration::s_androidApp->userData;
+    return KDFoundation::AndroidPlatformIntegration::s_androidApp->userData;
 }
 
 void AndroidPlatformWindow::map() { }
@@ -128,7 +129,7 @@ void AndroidPlatformWindow::handleTextInput(const std::string &str)
 
 ANativeWindow *AndroidPlatformWindow::nativeWindow()
 {
-    return AndroidPlatformIntegration::s_androidApp->window;
+    return KDFoundation::AndroidPlatformIntegration::s_androidApp->window;
 }
 
 } // namespace KDGui

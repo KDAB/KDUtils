@@ -85,6 +85,14 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
         platform/macos/macos_platform_timer.mm
         platform/macos/macos_platform_timer.h
     )
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    list(
+        APPEND
+        SOURCES
+        platform/android/android_platform_event_loop.cpp
+        platform/android/android_platform_integration.cpp
+        platform/android/android_platform_timer.cpp
+    )
 endif()
 
 add_library(

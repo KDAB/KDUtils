@@ -1,8 +1,7 @@
 /*
   This file is part of KDUtils.
 
-  SPDX-FileCopyrightText: 2018 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
-  Author: BogDan Vatra <bogdan@kdab.com>
+  SPDX-FileCopyrightText: 2025 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
 
   SPDX-License-Identifier: MIT
 
@@ -18,12 +17,12 @@
 #include <KDFoundation/file_descriptor_notifier.h>
 #include <KDFoundation/postman.h>
 
-#include <android/log.h>
+#include <KDUtils/logging.h>
 
 #include "android_platform_integration.h"
+#include "android_platform_timer.h"
 
-using namespace KDFoundation;
-namespace KDGui {
+namespace KDFoundation {
 
 void AndroidPlatformEventLoop::androidHandleCmd(android_app *app, int32_t cmd)
 {
@@ -34,11 +33,16 @@ void AndroidPlatformEventLoop::androidHandleCmd(android_app *app, int32_t cmd)
         //    case APP_CMD_TERM_WINDOW:
         //// TODO handle me
         //        break;
-    case APP_CMD_WINDOW_RESIZED:
-        reinterpret_cast<AndroidPlatformEventLoop *>(AndroidPlatformIntegration::s_androidApp->userData)->androidPlatformIntegration()->handleWindowResize();
+    case APP_CMD_WINDOW_RESIZED: {
+        auto eventLoop = reinterpret_cast<AndroidPlatformEventLoop *>(AndroidPlatformIntegration::s_androidApp->userData);
+        if (!eventLoop) {
+            SPDLOG_CRITICAL("Could not find Android Event Loop");
+        }
+        eventLoop->windowResize.emit();
         break;
+    }
     default:
-        __android_log_print(ANDROID_LOG_INFO, "AndroidPlatformEventLoop", "event not handled: %d", cmd);
+        SPDLOG_INFO("Event not handled : {}", cmd);
     }
 }
 
@@ -58,20 +62,24 @@ int32_t AndroidPlatformEventLoop::androidHandleInputEvent(android_app *app, AInp
             env->CallVoidMethod(app->activity->clazz, finish, 0);
             return 1; // prevent default handler
         } else {
-            auto platformIntegration = reinterpret_cast<AndroidPlatformEventLoop *>(AndroidPlatformIntegration::s_androidApp->userData)->androidPlatformIntegration();
-            platformIntegration->handleKeyEvent(AKeyEvent_getAction(event), AKeyEvent_getKeyCode(event), AKeyEvent_getMetaState(event), AKeyEvent_getEventTime(event));
+            auto eventLoop = reinterpret_cast<AndroidPlatformEventLoop *>(AndroidPlatformIntegration::s_androidApp->userData);
+            if (!eventLoop) {
+                SPDLOG_CRITICAL("Could not find Android Event Loop");
+            }
+            eventLoop->keyEvent.emit(AKeyEvent_getAction(event), AKeyEvent_getKeyCode(event), AKeyEvent_getMetaState(event), AKeyEvent_getEventTime(event));
             return 0;
         }
         break;
     case AINPUT_EVENT_TYPE_MOTION: {
-        auto platformIntegration = reinterpret_cast<AndroidPlatformEventLoop *>(AndroidPlatformIntegration::s_androidApp->userData)->androidPlatformIntegration();
-        const auto timestamp = AMotionEvent_getEventTime(event);
-        const auto action = AMotionEvent_getAction(event);
+        auto eventLoop = reinterpret_cast<AndroidPlatformEventLoop *>(AndroidPlatformIntegration::s_androidApp->userData);
+        if (!eventLoop) {
+            SPDLOG_CRITICAL("Could not find Android Event Loop");
+        }
         // Only track the first touch event
         const auto xPos = static_cast<int64_t>(AMotionEvent_getX(event, 0));
         const auto yPos = static_cast<int64_t>(AMotionEvent_getY(event, 0));
 
-        platformIntegration->handleTouchEvent(action, xPos, yPos, timestamp);
+        eventLoop->touchEvent.emit(AMotionEvent_getAction(event), xPos, yPos, AMotionEvent_getEventTime(event));
         break;
     }
 
@@ -87,12 +95,12 @@ int32_t AndroidPlatformEventLoop::androidHandleInputEvent(android_app *app, AInp
     return 0;
 }
 
-AndroidPlatformEventLoop::AndroidPlatformEventLoop(AndroidPlatformIntegration *androidPlatformInitegration)
+AndroidPlatformEventLoop::AndroidPlatformEventLoop(AbstractPlatformIntegration *platformInitegration)
 {
     AndroidPlatformIntegration::s_androidApp->onAppCmd = androidHandleCmd;
     AndroidPlatformIntegration::s_androidApp->onInputEvent = androidHandleInputEvent;
     AndroidPlatformIntegration::s_androidApp->userData = this;
-    m_androidPlatformInitegration = androidPlatformInitegration;
+    m_androidPlatformInitegration = dynamic_cast<AndroidPlatformIntegration *>(platformInitegration);
 }
 
 void AndroidPlatformEventLoop::waitForEventsImpl(int timeout)
@@ -103,9 +111,8 @@ void AndroidPlatformEventLoop::waitForEventsImpl(int timeout)
             source->process(AndroidPlatformIntegration::s_androidApp, source);
     }
     if (AndroidPlatformIntegration::s_androidApp->destroyRequested) {
-        __android_log_print(ANDROID_LOG_INFO, "AndroidPlatformEventLoop", "destroyRequested 1");
         if (auto instance = KDFoundation::CoreApplication::instance()) {
-            __android_log_print(ANDROID_LOG_INFO, "AndroidPlatformEventLoop", "destroyRequested 2");
+            SPDLOG_INFO("Destroy requested");
             instance->quit();
         }
     }
@@ -150,15 +157,15 @@ bool AndroidPlatformEventLoop::unregisterNotifier(KDFoundation::FileDescriptorNo
     return true;
 }
 
-AndroidPlatformIntegration *AndroidPlatformEventLoop::androidPlatformIntegration()
+AbstractPlatformIntegration *AndroidPlatformEventLoop::androidPlatformIntegration()
 {
     return m_androidPlatformInitegration;
 }
 
 std::unique_ptr<KDFoundation::AbstractPlatformTimer>
-AndroidPlatformEventLoop::createPlatformTimerImpl(KDFoundation::Timer * /*timer*/)
+AndroidPlatformEventLoop::createPlatformTimerImpl(KDFoundation::Timer *timer)
 {
-    return {};
+    return std::make_unique<AndroidPlatformTimer>(timer);
 }
 
 int AndroidPlatformEventLoop::ALooperCallback(int fd, int events, void *data)
@@ -201,4 +208,4 @@ bool AndroidPlatformEventLoop::NotifierSet::isEmpty() const
     return events[0] == nullptr && events[1] == nullptr && events[2] == nullptr;
 }
 
-} // namespace KDGui
+} // namespace KDFoundation
