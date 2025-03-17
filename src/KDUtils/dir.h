@@ -33,6 +33,9 @@ public:
     std::string dirName() const;
     std::string absoluteFilePath(const std::string &file) const;
 
+    Dir parent() const;
+    bool hasParent() const;
+
     static Dir applicationDir();
     static std::string fromNativeSeparators(const std::string &path);
 
