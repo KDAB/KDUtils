@@ -29,6 +29,10 @@ public:
     bool exists() const;
     bool mkdir();
     bool rmdir();
+
+    // Create the directory and all missing parents, if they do not already exist
+    bool ensureExists();
+
     std::string path() const;
     std::string dirName() const;
     std::string absoluteFilePath(const std::string &file) const;
