@@ -10,10 +10,11 @@
 */
 
 #include "dir.h"
-#include <filesystem>
+#include "logging.h"
 
 #include <whereami.h>
 
+#include <filesystem>
 #include <iostream>
 
 namespace KDUtils {
@@ -100,6 +101,22 @@ std::string Dir::fromNativeSeparators(const std::string &path)
 bool Dir::operator==(const Dir &other) const
 {
     return m_path == other.m_path;
+}
+
+Dir Dir::parent() const
+{
+    auto absolutePath = std::filesystem::absolute(m_path);
+    if (!absolutePath.has_parent_path())
+        SPDLOG_CRITICAL("Parent path not found for {}", m_path.generic_u8string());
+
+    return Dir(absolutePath.parent_path());
+}
+
+bool Dir::hasParent() const
+{
+    auto absolutePath = std::filesystem::absolute(m_path);
+    auto parentPath = absolutePath.parent_path();
+    return absolutePath != parentPath;
 }
 
 } // namespace KDUtils
