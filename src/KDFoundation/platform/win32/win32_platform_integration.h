@@ -23,6 +23,11 @@ public:
     Win32PlatformIntegration();
     ~Win32PlatformIntegration() override;
 
+    std::string applicationDataPath(const CoreApplication &app) const override;
+    std::string assetsDataPath(const CoreApplication &app) const override;
+
+    static std::string windowsAppDataPath(const CoreApplication &app);
+
 private:
     Win32PlatformEventLoop *createPlatformEventLoopImpl() override;
 };

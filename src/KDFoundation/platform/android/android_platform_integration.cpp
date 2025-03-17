@@ -35,6 +35,16 @@ AbstractPlatformEventLoop *AndroidPlatformIntegration::createPlatformEventLoopIm
     return new AndroidPlatformEventLoop(this);
 }
 
+std::string AndroidPlatformIntegration::applicationDataPath(const CoreApplication &app) const
+{
+    return std::string(s_androidApp->activity->externalDataPath);
+}
+
+std::string AndroidPlatformIntegration::assetsDataPath(const CoreApplication &app) const
+{
+    return std::string(assetsDirPathIndicator);
+}
+
 } // namespace KDFoundation
 
 namespace {

@@ -18,6 +18,8 @@
 
 namespace KDFoundation {
 
+class CoreApplication;
+
 class KDFOUNDATION_API AbstractPlatformIntegration
 {
 public:
@@ -28,6 +30,13 @@ public:
     {
         return std::unique_ptr<AbstractPlatformEventLoop>(this->createPlatformEventLoopImpl());
     }
+
+    // Returns the path to the application's data directory.
+    // Usually this depends on the application name and organization from the application.
+    virtual std::string applicationDataPath(const CoreApplication &app) const = 0;
+
+    // Returns the path to the application's asset directory.
+    virtual std::string assetsDataPath(const CoreApplication &app) const = 0;
 
 private:
     virtual AbstractPlatformEventLoop *createPlatformEventLoopImpl() = 0;

@@ -34,6 +34,9 @@ public:
 
     static android_app *s_androidApp;
 
+    std::string applicationDataPath(const CoreApplication &app) const override;
+    std::string assetsDataPath(const CoreApplication &app) const override;
+
     // Assets must be dealt with separately from regular files on Android, so we require a special path indicator
     static constexpr std::string_view assetsDirPathIndicator = "ANDROID_ASSETS_DIR";
 

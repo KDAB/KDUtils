@@ -65,9 +65,10 @@ class ExampleWindow : public KDGui::Window
 int main() // NOLINT(bugprone-exception-escape)
 {
     KDGui::GuiApplication app;
+    app.applicationName = "KDGui window example";
 
     ExampleWindow w;
-    w.title = "KDGui window example";
+    w.title = app.applicationName();
     w.visible = true;
 
     std::ignore = w.visible.valueChanged().connect([&app](bool visible) {

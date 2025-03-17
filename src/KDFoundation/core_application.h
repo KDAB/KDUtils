@@ -17,6 +17,7 @@
 #include <KDFoundation/platform/abstract_platform_integration.h>
 
 #include <KDUtils/logging.h>
+#include <KDUtils/dir.h>
 
 #include <kdbindings/property.h>
 
@@ -34,6 +35,7 @@ class KDFOUNDATION_API CoreApplication : public Object
 {
 public:
     KDBindings::Property<std::string> applicationName{};
+    KDBindings::Property<std::string> organizationName{};
 
     CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration = {});
     ~CoreApplication() override;
@@ -55,6 +57,15 @@ public:
 
     int exec();
     void quit();
+
+    // Directory containing the application executable
+    static KDUtils::Dir applicationDir();
+
+    // Directory containing data files specific to this application
+    KDUtils::Dir applicationDataDir() const;
+
+    // Directory containing assets bundled with the application package
+    KDUtils::Dir assetsDir() const;
 
     std::shared_ptr<KDBindings::ConnectionEvaluator> connectionEvaluator();
     AbstractPlatformIntegration *platformIntegration();

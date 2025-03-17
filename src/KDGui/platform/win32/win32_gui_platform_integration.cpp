@@ -16,6 +16,7 @@
 #include "win32_utils.h"
 
 #include <KDUtils/logging.h>
+#include <KDFoundation/core_application.h>
 
 using namespace KDFoundation;
 using namespace KDGui;
@@ -33,6 +34,16 @@ Win32GuiPlatformIntegration::~Win32GuiPlatformIntegration()
 Win32PlatformEventLoop *Win32GuiPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new Win32PlatformEventLoop();
+}
+
+std::string Win32GuiPlatformIntegration::applicationDataPath(const KDFoundation::CoreApplication &app) const
+{
+    return KDFoundation::Win32PlatformIntegration::windowsAppDataPath(app);
+}
+
+std::string Win32GuiPlatformIntegration::assetsDataPath(const KDFoundation::CoreApplication &) const
+{
+    return CoreApplication::applicationDir().parent().absoluteFilePath("assets");
 }
 
 Win32PlatformWindow *Win32GuiPlatformIntegration::createPlatformWindowImpl(Window *window)

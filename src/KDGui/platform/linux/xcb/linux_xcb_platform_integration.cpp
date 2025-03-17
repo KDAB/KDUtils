@@ -13,6 +13,8 @@
 #include "linux_xkb_keyboard.h"
 
 #include <KDUtils/logging.h>
+#include <KDFoundation/core_application.h>
+#include <KDFoundation/platform/linux/linux_platform_integration.h>
 
 #define explicit i_am_not_really_using_explicit
 #include <xcb/xkb.h>
@@ -75,6 +77,16 @@ LinuxXcbPlatformWindow *LinuxXcbPlatformIntegration::window(xcb_window_t xcbWind
 LinuxXcbPlatformEventLoop *LinuxXcbPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new LinuxXcbPlatformEventLoop(this);
+}
+
+std::string LinuxXcbPlatformIntegration::applicationDataPath(const KDFoundation::CoreApplication &app) const
+{
+    return KDFoundation::LinuxPlatformIntegration::linuxAppDataPath(app);
+}
+
+std::string LinuxXcbPlatformIntegration::assetsDataPath(const KDFoundation::CoreApplication &) const
+{
+    return KDFoundation::CoreApplication::applicationDir().parent().absoluteFilePath("assets");
 }
 
 LinuxXcbPlatformWindow *LinuxXcbPlatformIntegration::createPlatformWindowImpl(Window *window)

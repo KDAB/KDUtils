@@ -148,3 +148,18 @@ void CoreApplication::event(EventReceiver *target, Event *event)
 
     Object::event(target, event);
 }
+
+KDUtils::Dir CoreApplication::applicationDir()
+{
+    return KDUtils::Dir::applicationDir();
+}
+
+KDUtils::Dir CoreApplication::applicationDataDir() const
+{
+    return KDUtils::Dir(m_platformIntegration->applicationDataPath(*this));
+}
+
+KDUtils::Dir CoreApplication::assetsDir() const
+{
+    return KDUtils::Dir(m_platformIntegration->assetsDataPath(*this));
+}

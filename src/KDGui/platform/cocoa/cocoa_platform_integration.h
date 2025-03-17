@@ -30,6 +30,9 @@ public:
         return nullptr;
     }
 
+    std::string applicationDataPath(const KDFoundation::CoreApplication &app) const override;
+    std::string assetsDataPath(const KDFoundation::CoreApplication &app) const override;
+
 private:
     KDFoundation::AbstractPlatformEventLoop *createPlatformEventLoopImpl() override;
     AbstractPlatformWindow *createPlatformWindowImpl(Window *window) override;

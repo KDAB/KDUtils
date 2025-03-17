@@ -23,6 +23,11 @@ public:
     MacOSPlatformIntegration();
     ~MacOSPlatformIntegration() override;
 
+    std::string applicationDataPath(const CoreApplication &app) const override;
+    std::string assetsDataPath(const CoreApplication &app) const override;
+
+    static std::string macAppDataPath(const CoreApplication &app);
+
 private:
     MacOSPlatformEventLoop *createPlatformEventLoopImpl() override;
 };

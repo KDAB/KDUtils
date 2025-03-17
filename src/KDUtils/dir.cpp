@@ -65,7 +65,7 @@ bool Dir::ensureExists()
 {
     if (exists())
         return true;
-    else if (!parent().ensureExists())
+    else if (hasParent() && !parent().ensureExists())
         return false;
     else
         return mkdir();

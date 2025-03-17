@@ -12,6 +12,9 @@
 #include "cocoa_platform_integration.h"
 #include "cocoa_platform_integration_impl.h"
 
+#include <KDFoundation/core_application.h>
+#include <KDFoundation/platform/macos/macos_platform_integration.h>
+
 using namespace KDGui;
 
 CocoaPlatformIntegration::CocoaPlatformIntegration()
@@ -29,4 +32,14 @@ KDFoundation::AbstractPlatformEventLoop *CocoaPlatformIntegration::createPlatfor
 AbstractPlatformWindow *CocoaPlatformIntegration::createPlatformWindowImpl(Window *window)
 {
     return m_impl->createPlatformWindow(window);
+}
+
+std::string CocoaPlatformIntegration::applicationDataPath(const KDFoundation::CoreApplication &app) const
+{
+    return KDFoundation::MacOSPlatformIntegration::macAppDataPath(app);
+}
+
+std::string CocoaPlatformIntegration::assetsDataPath(const KDFoundation::CoreApplication &) const
+{
+    return KDFoundation::CoreApplication::applicationDir().parent().absoluteFilePath("assets");
 }

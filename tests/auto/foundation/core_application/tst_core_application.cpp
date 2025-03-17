@@ -13,6 +13,8 @@
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/timer.h>
 #include <KDFoundation/event.h>
+#include <KDUtils/dir.h>
+#include <KDUtils/file.h>
 #include <KDUtils/logging.h>
 
 #include <condition_variable>
@@ -315,5 +317,38 @@ TEST_CASE("Main event loop")
         REQUIRE(elapsedTime < 1000);
 
         t1.join();
+    }
+}
+
+TEST_CASE("Application Directories")
+{
+    CoreApplication app;
+
+    // Some directories require app metadata to be set
+    app.applicationName = "tst_core_application";
+    app.organizationName = "kdfoundation_test";
+
+    SUBCASE("applicationDir")
+    {
+        REQUIRE(CoreApplication::applicationDir() == KDUtils::Dir::applicationDir());
+    }
+    SUBCASE("applicationDataDir")
+    {
+        auto appDataDir = app.applicationDataDir();
+
+        // Application data directory needs to exist, or be created
+        REQUIRE(appDataDir.ensureExists());
+
+        // Application data directory needs to be a writable location
+        auto file = KDUtils::File(appDataDir.absoluteFilePath("testfile"));
+        REQUIRE(file.open(std::ios::out) == true);
+        file.write(KDUtils::ByteArray("test", 4));
+        file.close();
+        REQUIRE(file.remove() == true);
+    }
+    SUBCASE("applicationAssetsDir")
+    {
+        // True for all desktop platforms
+        REQUIRE(app.assetsDir() == KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
     }
 }

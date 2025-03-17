@@ -77,6 +77,9 @@ public:
     void unregisterWindowForEvents(wl_surface *surface) { m_windows.erase(surface); }
     LinuxWaylandPlatformWindow *window(wl_surface *surface) const;
 
+    std::string applicationDataPath(const KDFoundation::CoreApplication &app) const override;
+    std::string assetsDataPath(const KDFoundation::CoreApplication &app) const override;
+
 private:
     LinuxWaylandPlatformEventLoop *createPlatformEventLoopImpl() override;
     LinuxWaylandPlatformWindow *createPlatformWindowImpl(Window *window) override;

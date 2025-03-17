@@ -41,6 +41,16 @@ KDFoundation::AbstractPlatformEventLoop *AndroidPlatformIntegration::createPlatf
     return eventLoop;
 }
 
+std::string AndroidPlatformIntegration::applicationDataPath(const KDFoundation::CoreApplication &app) const
+{
+    return KDFoundation::AndroidPlatformIntegration::s_androidApp->activity->externalDataPath;
+}
+
+std::string AndroidPlatformIntegration::assetsDataPath(const KDFoundation::CoreApplication &app) const
+{
+    return std::string(KDFoundation::AndroidPlatformIntegration::assetsDirPathIndicator);
+}
+
 AbstractPlatformWindow *AndroidPlatformIntegration::createPlatformWindowImpl(Window *window)
 {
     return new AndroidPlatformWindow(this, window);

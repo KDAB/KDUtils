@@ -22,6 +22,11 @@ public:
     LinuxPlatformIntegration();
     ~LinuxPlatformIntegration() override;
 
+    std::string applicationDataPath(const CoreApplication &app) const override;
+    std::string assetsDataPath(const CoreApplication &app) const override;
+
+    static std::string linuxAppDataPath(const CoreApplication &app);
+
 private:
     LinuxPlatformEventLoop *createPlatformEventLoopImpl() override;
 };
