@@ -157,4 +157,34 @@ TEST_SUITE("Dir")
         CHECK(rootDir.hasParent() == false);
         CHECK(relativeDir.hasParent());
     }
+
+    TEST_CASE("checkCanCreateWithParents")
+    {
+        // GIVEN
+        Dir d(TST_DIR "/subdir1/subdir2");
+
+        // THEN
+        CHECK(!d.exists());
+        CHECK(!d.parent().exists());
+
+        // WHEN
+        const auto wasCreatedAlone = d.mkdir({ false });
+
+        // THEN
+        CHECK(!wasCreatedAlone);
+        CHECK(!d.exists());
+        CHECK(!d.parent().exists());
+
+        // WHEN
+        const auto wasCreatedWithParent = d.mkdir({ true });
+
+        // THEN
+        CHECK(wasCreatedWithParent);
+        CHECK(d.exists());
+        CHECK(d.parent().exists());
+
+        // cleanup
+        CHECK(d.rmdir());
+        CHECK(d.parent().rmdir());
+    }
 }
