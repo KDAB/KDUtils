@@ -7,3 +7,4 @@ CMakeUserPresets.json
 .idea/
 compile_commands.json
 out/
+.DS_Store
