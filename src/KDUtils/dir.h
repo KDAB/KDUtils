@@ -27,8 +27,13 @@ public:
     Dir(const std::filesystem::path &path);
 
     bool exists() const;
-    bool mkdir();
+
+    struct MkDirOptions {
+        bool createParentDirectories{ false };
+    };
+    bool mkdir(const MkDirOptions &options = { false });
     bool rmdir();
+
     std::string path() const;
     std::string dirName() const;
     std::string absoluteFilePath(const std::string &file) const;

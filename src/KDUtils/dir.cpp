@@ -49,8 +49,16 @@ bool Dir::exists() const
     return std::filesystem::exists(m_path, e) && std::filesystem::is_directory(m_path, e);
 }
 
-bool Dir::mkdir()
+bool Dir::mkdir(const MkDirOptions &options)
 {
+    if (options.createParentDirectories) {
+        auto parentToMake = parent();
+        if (!parentToMake.exists() && !parentToMake.mkdir(options)) {
+            SPDLOG_CRITICAL("Failed to create parent directory {}", parentToMake.path());
+            return false;
+        }
+    }
+
     std::error_code e;
     return std::filesystem::create_directory(m_path, e);
 }
