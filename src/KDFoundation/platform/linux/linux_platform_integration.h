@@ -22,6 +22,10 @@ public:
     LinuxPlatformIntegration();
     ~LinuxPlatformIntegration() override;
 
+    KDUtils::Dir standardDir(const CoreApplication &app, StandardDir type) const override;
+
+    static std::string linuxAppDataPath(const CoreApplication &app);
+
 private:
     LinuxPlatformEventLoop *createPlatformEventLoopImpl() override;
 };

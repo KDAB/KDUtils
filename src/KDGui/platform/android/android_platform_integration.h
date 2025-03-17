@@ -43,7 +43,8 @@ public:
         return nullptr;
     }
 
-public:
+    KDUtils::Dir standardDir(const KDFoundation::CoreApplication &app, KDFoundation::StandardDir type) const override;
+
     static android_app *s_androidApp;
 
 private:

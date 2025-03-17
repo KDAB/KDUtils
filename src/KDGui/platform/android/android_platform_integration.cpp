@@ -12,6 +12,7 @@
 #include "android_platform_integration.h"
 
 #include <android_native_app_glue.h>
+#include <KDGui/platform/android/android_platform_event_loop.h>
 #include <KDUtils/file.h>
 #include <KDGui/window.h>
 
@@ -31,6 +32,23 @@ android_app *KDGui::AndroidPlatformIntegration::s_androidApp = nullptr;
 KDFoundation::AbstractPlatformEventLoop *AndroidPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new AndroidPlatformEventLoop(this);
+}
+
+KDUtils::Dir AndroidPlatformIntegration::standardDir(const KDFoundation::CoreApplication &app, KDFoundation::StandardDir type) const
+{
+    switch (type) {
+    case KDFoundation::StandardDir::Application:
+        return KDUtils::Dir(KDUtils::Dir::applicationDir().path());
+    case KDFoundation::StandardDir::ApplicationData:
+        return KDUtils::Dir(s_androidApp->activity->externalDataPath);
+    case KDFoundation::StandardDir::ApplicationDataLocal:
+        return KDUtils::Dir(s_androidApp->activity->internalDataPath);
+    case KDFoundation::StandardDir::Assets:
+        return KDUtils::Dir("", KDUtils::StorageType::Asset);
+    default:
+        SPDLOG_WARN("Unsupported standard directory requested");
+        return {};
+    }
 }
 
 AbstractPlatformWindow *AndroidPlatformIntegration::createPlatformWindowImpl(Window *window)

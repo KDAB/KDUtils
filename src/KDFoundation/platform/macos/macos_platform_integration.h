@@ -23,6 +23,10 @@ public:
     MacOSPlatformIntegration();
     ~MacOSPlatformIntegration() override;
 
+    KDUtils::Dir standardDir(const CoreApplication &app, StandardDir type) const override;
+
+    static std::string macAppDataPath(const CoreApplication &app);
+
 private:
     MacOSPlatformEventLoop *createPlatformEventLoopImpl() override;
 };

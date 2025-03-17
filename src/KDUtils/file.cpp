@@ -27,8 +27,9 @@ const char *assetPath(const std::string &path)
 }
 #endif
 
-File::File(const std::string &path)
+File::File(const std::string &path, StorageType type)
     : m_path(path)
+    , m_type(type)
 {
 }
 
@@ -195,5 +196,10 @@ void setAssetManager(AAssetManager *assetManager)
     s_assetManager = assetManager;
 }
 #endif
+
+StorageType File::type() const
+{
+    return m_type;
+}
 
 } // namespace KDUtils

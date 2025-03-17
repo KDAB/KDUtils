@@ -148,3 +148,8 @@ void CoreApplication::event(EventReceiver *target, Event *event)
 
     Object::event(target, event);
 }
+
+KDUtils::Dir CoreApplication::standardDir(StandardDir type) const
+{
+    return m_platformIntegration->standardDir(*this, type);
+}

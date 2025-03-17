@@ -13,6 +13,7 @@
 #define KDUTILS_DIR_H
 
 #include <KDUtils/kdutils_global.h>
+#include <KDUtils/file.h>
 #include <string>
 #include <filesystem>
 
@@ -22,9 +23,9 @@ class KDUTILS_API Dir
 {
 public:
     Dir();
-    Dir(const char *path);
-    Dir(const std::string &path);
-    Dir(const std::filesystem::path &path);
+    Dir(const char *path, StorageType type = StorageType::Normal);
+    Dir(const std::string &path, StorageType type = StorageType::Normal);
+    Dir(const std::filesystem::path &path, StorageType type = StorageType::Normal);
 
     bool exists() const;
 
@@ -37,6 +38,7 @@ public:
     std::string path() const;
     std::string dirName() const;
     std::string absoluteFilePath(const std::string &file) const;
+    StorageType type() const;
 
     Dir parent() const;
     bool hasParent() const;
@@ -48,6 +50,7 @@ public:
 
 private:
     std::filesystem::path m_path;
+    StorageType m_type = StorageType::Normal;
 };
 
 } // namespace KDUtils

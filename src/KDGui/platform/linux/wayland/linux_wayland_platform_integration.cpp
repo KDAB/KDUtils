@@ -12,6 +12,7 @@
 #include "linux_wayland_platform_integration.h"
 
 #include <KDFoundation/core_application.h>
+#include <KDFoundation/platform/linux/linux_platform_integration.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_input.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_output.h>
 #include <KDUtils/logging.h>
@@ -123,6 +124,22 @@ LinuxWaylandPlatformWindow *LinuxWaylandPlatformIntegration::window(wl_surface *
 LinuxWaylandPlatformEventLoop *LinuxWaylandPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new LinuxWaylandPlatformEventLoop(this);
+}
+
+KDUtils::Dir LinuxWaylandPlatformIntegration::standardDir(const KDFoundation::CoreApplication &app, KDFoundation::StandardDir type) const
+{
+    switch (type) {
+    case KDFoundation::StandardDir::Application:
+        return KDUtils::Dir(KDUtils::Dir::applicationDir().path());
+    case KDFoundation::StandardDir::ApplicationData:
+    case KDFoundation::StandardDir::ApplicationDataLocal:
+        return KDUtils::Dir(KDFoundation::LinuxPlatformIntegration::linuxAppDataPath(app));
+    case KDFoundation::StandardDir::Assets:
+        return KDUtils::Dir(KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
+    default:
+        SPDLOG_WARN("Unsupported standard directory requested");
+        return {};
+    }
 }
 
 LinuxWaylandPlatformWindow *LinuxWaylandPlatformIntegration::createPlatformWindowImpl(Window *window)

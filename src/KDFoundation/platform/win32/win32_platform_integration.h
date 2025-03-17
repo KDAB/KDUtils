@@ -23,6 +23,10 @@ public:
     Win32PlatformIntegration();
     ~Win32PlatformIntegration() override;
 
+    KDUtils::Dir standardDir(const CoreApplication &app, StandardDir type) const override;
+
+    static std::string windowsAppDataPath(const CoreApplication &app, bool local);
+
 private:
     Win32PlatformEventLoop *createPlatformEventLoopImpl() override;
 };
