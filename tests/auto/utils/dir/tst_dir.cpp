@@ -131,4 +131,30 @@ TEST_SUITE("Dir")
         // THEN
         CHECK(d.path() == TST_DIR);
     }
+
+    TEST_CASE("checkParent")
+    {
+        // GIVEN
+        const Dir d(TST_DIR "/subdir");
+
+        // WHEN
+        const Dir parent = d.parent();
+
+        // THEN
+        CHECK(parent.path() == TST_DIR);
+        CHECK(parent.absoluteFilePath(d.dirName()) == d.path());
+    }
+
+    TEST_CASE("checkHasParent")
+    {
+        // GIVEN
+        const Dir absoluteDir(TST_DIR "/subdir1");
+        const Dir rootDir("/");
+        const Dir relativeDir("subdir2");
+
+        // THEN
+        CHECK(absoluteDir.hasParent());
+        CHECK(rootDir.hasParent() == false);
+        CHECK(relativeDir.hasParent());
+    }
 }
