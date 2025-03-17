@@ -61,6 +61,16 @@ bool Dir::rmdir()
     return std::filesystem::remove_all(m_path, e) > 0;
 }
 
+bool Dir::ensureExists()
+{
+    if (exists())
+        return true;
+    else if (!parent().ensureExists())
+        return false;
+    else
+        return mkdir();
+}
+
 std::string Dir::path() const
 {
     return m_path.generic_u8string();
