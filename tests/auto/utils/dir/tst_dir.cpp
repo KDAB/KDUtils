@@ -187,4 +187,27 @@ TEST_SUITE("Dir")
         CHECK(d.rmdir());
         CHECK(d.parent().rmdir());
     }
+
+    TEST_CASE("checkMultibyteDirName")
+    {
+        // GIVEN
+        Dir d(TST_DIR "/donkey 🫏 test");
+
+        // THEN
+        CHECK(!d.exists());
+
+        // WHEN
+        bool wasCreated = d.mkdir();
+
+        // THEN
+        CHECK(wasCreated);
+        CHECK(d.exists());
+
+        // WHEN
+        bool wasRemoved = d.rmdir();
+
+        // THEN
+        CHECK(wasRemoved);
+        CHECK(!d.exists());
+    }
 }
