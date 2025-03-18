@@ -24,7 +24,7 @@ Dir::Dir()
 }
 
 Dir::Dir(const char *path)
-    : m_path(path)
+    : m_path(std::filesystem::u8path(path))
 {
     // If the filename part is empty, the parameter was likely supplied
     // with a trailing separator. If so, strip it by going to the parent.
