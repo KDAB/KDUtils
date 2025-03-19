@@ -210,4 +210,17 @@ TEST_SUITE("Dir")
         CHECK(wasRemoved);
         CHECK(!d.exists());
     }
+
+    TEST_CASE("checkRelativeDir")
+    {
+        // GIVEN
+        const Dir d(TST_DIR, KDUtils::StorageType::Asset);
+
+        // WHEN
+        const Dir grandchild = d.relativeDir("child/grandchild");
+
+        // THEN
+        CHECK(grandchild.parent().parent().path() == TST_DIR);
+        CHECK(grandchild.type() == d.type());
+    }
 }

@@ -40,8 +40,13 @@ public:
     std::string absoluteFilePath(const std::string &file) const;
     StorageType type() const;
 
+    File file(const std::string &fileName) const;
+
     Dir parent() const;
     bool hasParent() const;
+
+    // Returns a directory based on a relative path from this directory, preserving the storage type
+    Dir relativeDir(const std::string &relativePath) const;
 
     static Dir applicationDir();
     static std::string fromNativeSeparators(const std::string &path);
