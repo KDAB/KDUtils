@@ -14,6 +14,9 @@
 #include <android_native_app_glue.h>
 #include <KDGui/platform/android/android_platform_event_loop.h>
 #include <KDUtils/file.h>
+#include <KDUtils/platform/android/android_file.h>
+#include <KDFoundation/core_application.h>
+
 #include <KDGui/window.h>
 
 #include <dlfcn.h>

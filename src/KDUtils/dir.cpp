@@ -12,6 +12,10 @@
 #include "dir.h"
 #include "logging.h"
 
+#ifdef ANDROID
+#include <KDUtils/platform/android/android_file.h>
+#endif
+
 #include <whereami.h>
 
 #include <filesystem>
@@ -46,8 +50,20 @@ Dir::Dir(const std::filesystem::path &path, StorageType type)
 
 bool Dir::exists() const
 {
-    std::error_code e;
-    return std::filesystem::exists(m_path, e) && std::filesystem::is_directory(m_path, e);
+#ifdef ANDROID
+    if (m_type == StorageType::Asset) {
+        if (AAssetDir *dir = AAssetManager_openDir(assetManager(), m_path.c_str())) {
+            AAssetDir_close(dir);
+            return true;
+        } else {
+            return false;
+        }
+    } else
+#endif
+    {
+        std::error_code e;
+        return std::filesystem::exists(m_path, e) && std::filesystem::is_directory(m_path, e);
+    }
 }
 
 bool Dir::mkdir(const MkDirOptions &options)
@@ -133,6 +149,16 @@ bool Dir::hasParent() const
     auto absolutePath = std::filesystem::absolute(m_path);
     auto parentPath = absolutePath.parent_path();
     return absolutePath != parentPath;
+}
+
+File Dir::file(const std::string &fileName) const
+{
+    return File((m_path / fileName).generic_u8string(), m_type);
+}
+
+Dir Dir::relativeDir(const std::string &relativePath) const
+{
+    return Dir(m_path / relativePath, m_type);
 }
 
 } // namespace KDUtils
