@@ -7,10 +7,13 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-add_subdirectory(filesystem)
-add_subdirectory(gui_window)
+project(filesystem_example LANGUAGES CXX)
 
-if(KDUTILS_BUILD_MQTT_SUPPORT)
-    file(DOWNLOAD https://test.mosquitto.org/ssl/mosquitto.org.crt ${CMAKE_BINARY_DIR}/mosquitto.org.crt)
-    add_subdirectory(mqtt_client)
-endif()
+add_executable(
+    ${PROJECT_NAME}
+    filesystem.cpp
+)
+
+target_link_libraries(
+    ${PROJECT_NAME} KDGui
+)
