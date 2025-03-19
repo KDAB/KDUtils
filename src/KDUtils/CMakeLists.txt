@@ -12,7 +12,6 @@ set(SOURCES
     bytearray.cpp
     dir.cpp
     elapsedtimer.cpp
-    file.cpp
     file_mapper.cpp
     logging.cpp
     url.cpp
@@ -31,6 +30,12 @@ set(HEADERS
     url.h
     kdutils_global.h
 )
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    list(APPEND SOURCES platform/android/android_file.cpp)
+else()
+    list(APPEND SOURCES file.cpp)
+endif()
 
 add_library(
     KDUtils

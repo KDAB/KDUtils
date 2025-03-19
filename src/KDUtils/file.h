@@ -8,18 +8,12 @@
 
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
-#ifndef KDUTILS_FILE_H
-#define KDUTILS_FILE_H
+#pragma once
 
 #include <KDUtils/kdutils_global.h>
 #include <KDUtils/bytearray.h>
 #include <iostream>
-#include <fstream>
 #include <filesystem>
-
-#if defined(ANDROID)
-#include <android/asset_manager.h>
-#endif
 
 namespace KDUtils {
 
@@ -30,6 +24,8 @@ enum class StorageType {
     Normal, // Files that can be accessed normally using the c++ standard library
     Asset, // Files that must be accessed from an application's embedded assets
 };
+
+struct PlatformFileData;
 
 class KDUTILS_API File
 {
@@ -42,7 +38,7 @@ public:
     File &operator=(File &) = delete;
 
     bool exists() const;
-    static bool exists(const std::string &path);
+    static bool exists(const std::string &path, StorageType type = StorageType::Normal);
 
     bool open(std::ios_base::openmode mode);
     bool isOpen() const;
@@ -57,22 +53,12 @@ public:
     StorageType type() const;
 
     std::uintmax_t size() const;
-    static std::uintmax_t size(const std::string &path);
+    static std::uintmax_t size(const std::string &path, StorageType type = StorageType::Normal);
 
 private:
     std::string m_path;
+    std::unique_ptr<PlatformFileData> m_data;
     StorageType m_type = StorageType::Normal;
-#if defined(ANDROID)
-    AAsset *m_asset = nullptr;
-#else
-    std::fstream m_stream;
-#endif
 };
 
-#if defined(ANDROID)
-KDUTILS_API void setAssetManager(AAssetManager *assetManager);
-#endif
-
 } // namespace KDUtils
-
-#endif // KUESA_COREUTILS_FILE_H
