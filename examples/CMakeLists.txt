@@ -7,6 +7,7 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
+add_subdirectory(filesystem)
 add_subdirectory(gui_window)
 
 if(KDUTILS_BUILD_MQTT_SUPPORT)

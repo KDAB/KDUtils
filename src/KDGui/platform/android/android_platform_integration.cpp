@@ -12,7 +12,11 @@
 #include "android_platform_integration.h"
 
 #include <android_native_app_glue.h>
+#include <KDGui/platform/android/android_platform_event_loop.h>
 #include <KDUtils/file.h>
+#include <KDUtils/platform/android/android_file.h>
+#include <KDFoundation/core_application.h>
+
 #include <KDGui/window.h>
 
 #include <dlfcn.h>
@@ -31,6 +35,19 @@ android_app *KDGui::AndroidPlatformIntegration::s_androidApp = nullptr;
 KDFoundation::AbstractPlatformEventLoop *AndroidPlatformIntegration::createPlatformEventLoopImpl()
 {
     return new AndroidPlatformEventLoop(this);
+}
+
+KDUtils::Dir AndroidPlatformIntegration::applicationDataDir(const KDFoundation::CoreApplication &app, bool local) const
+{
+    if (local)
+        return KDUtils::Dir(s_androidApp->activity->internalDataPath);
+    else
+        return KDUtils::Dir(s_androidApp->activity->externalDataPath);
+}
+
+KDUtils::Dir AndroidPlatformIntegration::assetsDataDir(const KDFoundation::CoreApplication &app) const
+{
+    return KDUtils::Dir("", KDUtils::StorageType::Asset);
 }
 
 AbstractPlatformWindow *AndroidPlatformIntegration::createPlatformWindowImpl(Window *window)

@@ -38,6 +38,13 @@ precedence = "aggregate"
 SPDX-FileCopyrightText = "2025 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>"
 SPDX-License-Identifier = "MIT"
 
+#example assets
+[[annotations]]
+path = ["assets/text**"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2025 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>"
+SPDX-License-Identifier = "MIT"
+
 #3rdparty
 [[annotations]]
 path = "cmake/CodeCoverage.cmake"

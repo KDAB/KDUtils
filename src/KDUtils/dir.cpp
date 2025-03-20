@@ -10,10 +10,15 @@
 */
 
 #include "dir.h"
-#include <filesystem>
+#include "logging.h"
+
+#ifdef ANDROID
+#include <KDUtils/platform/android/android_file.h>
+#endif
 
 #include <whereami.h>
 
+#include <filesystem>
 #include <iostream>
 
 namespace KDUtils {
@@ -22,8 +27,9 @@ Dir::Dir()
 {
 }
 
-Dir::Dir(const char *path)
-    : m_path(path)
+Dir::Dir(const char *path, StorageType type)
+    : m_path(std::filesystem::u8path(path))
+    , m_type(type)
 {
     // If the filename part is empty, the parameter was likely supplied
     // with a trailing separator. If so, strip it by going to the parent.
@@ -32,20 +38,32 @@ Dir::Dir(const char *path)
     }
 }
 
-Dir::Dir(const std::string &path)
-    : Dir(path.c_str())
+Dir::Dir(const std::string &path, StorageType type)
+    : Dir(path.c_str(), type)
 {
 }
 
-Dir::Dir(const std::filesystem::path &path)
-    : Dir(path.string())
+Dir::Dir(const std::filesystem::path &path, StorageType type)
+    : Dir(path.string(), type)
 {
 }
 
 bool Dir::exists() const
 {
-    std::error_code e;
-    return std::filesystem::exists(m_path, e) && std::filesystem::is_directory(m_path, e);
+#ifdef ANDROID
+    if (m_type == StorageType::Asset) {
+        if (AAssetDir *dir = AAssetManager_openDir(assetManager(), m_path.c_str())) {
+            AAssetDir_close(dir);
+            return true;
+        } else {
+            return false;
+        }
+    } else
+#endif
+    {
+        std::error_code e;
+        return std::filesystem::exists(m_path, e) && std::filesystem::is_directory(m_path, e);
+    }
 }
 
 bool Dir::mkdir()
@@ -58,6 +76,16 @@ bool Dir::rmdir()
 {
     std::error_code e;
     return std::filesystem::remove_all(m_path, e) > 0;
+}
+
+bool Dir::ensureExists()
+{
+    if (exists())
+        return true;
+    else if (hasParent() && !parent().ensureExists())
+        return false;
+    else
+        return mkdir();
 }
 
 std::string Dir::path() const
@@ -75,6 +103,11 @@ std::string Dir::absoluteFilePath(const std::string &file) const
     std::error_code e;
     const std::filesystem::path fPath{ file };
     return std::filesystem::absolute(m_path / fPath, e).generic_u8string();
+}
+
+StorageType Dir::type() const
+{
+    return m_type;
 }
 
 Dir Dir::applicationDir()
@@ -100,6 +133,32 @@ std::string Dir::fromNativeSeparators(const std::string &path)
 bool Dir::operator==(const Dir &other) const
 {
     return m_path == other.m_path;
+}
+
+Dir Dir::parent() const
+{
+    auto absolutePath = std::filesystem::absolute(m_path);
+    if (!absolutePath.has_parent_path())
+        SPDLOG_CRITICAL("Parent path not found for {}", m_path.generic_u8string());
+
+    return Dir(absolutePath.parent_path());
+}
+
+bool Dir::hasParent() const
+{
+    auto absolutePath = std::filesystem::absolute(m_path);
+    auto parentPath = absolutePath.parent_path();
+    return absolutePath != parentPath;
+}
+
+File Dir::file(const std::string &fileName) const
+{
+    return File((m_path / fileName).generic_u8string(), m_type);
+}
+
+Dir Dir::relativeDir(const std::string &relativePath) const
+{
+    return Dir(m_path / relativePath, m_type);
 }
 
 } // namespace KDUtils

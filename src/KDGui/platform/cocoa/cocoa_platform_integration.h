@@ -30,6 +30,9 @@ public:
         return nullptr;
     }
 
+    KDUtils::Dir applicationDataDir(const KDFoundation::CoreApplication &app, bool local) const override;
+    KDUtils::Dir assetsDataDir(const KDFoundation::CoreApplication &app) const override;
+
 private:
     KDFoundation::AbstractPlatformEventLoop *createPlatformEventLoopImpl() override;
     AbstractPlatformWindow *createPlatformWindowImpl(Window *window) override;

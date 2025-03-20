@@ -131,4 +131,88 @@ TEST_SUITE("Dir")
         // THEN
         CHECK(d.path() == TST_DIR);
     }
+
+    TEST_CASE("checkParent")
+    {
+        // GIVEN
+        const Dir d(TST_DIR "/subdir");
+
+        // WHEN
+        const Dir parent = d.parent();
+
+        // THEN
+        CHECK(parent.path() == TST_DIR);
+        CHECK(parent.absoluteFilePath(d.dirName()) == d.path());
+    }
+
+    TEST_CASE("checkHasParent")
+    {
+        // GIVEN
+        const Dir absoluteDir(TST_DIR "/subdir1");
+        const Dir rootDir("/");
+        const Dir relativeDir("subdir2");
+
+        // THEN
+        CHECK(absoluteDir.hasParent());
+        CHECK(rootDir.hasParent() == false);
+        CHECK(relativeDir.hasParent());
+    }
+
+    TEST_CASE("checkCanEnsureExists")
+    {
+        // GIVEN
+        Dir d(TST_DIR "/subdir1/subdir2");
+
+        // THEN
+        CHECK(!d.exists());
+        CHECK(!d.parent().exists());
+
+        // WHEN
+        bool wasCreated = d.ensureExists();
+
+        // THEN
+        CHECK(wasCreated);
+        CHECK(d.exists());
+        CHECK(d.parent().exists());
+
+        // cleanup
+        CHECK(d.rmdir());
+        CHECK(d.parent().rmdir());
+    }
+
+    TEST_CASE("checkMultibyteDirName")
+    {
+        // GIVEN
+        Dir d(TST_DIR "/donkey 🫏 test");
+
+        // THEN
+        CHECK(!d.exists());
+
+        // WHEN
+        bool wasCreated = d.mkdir();
+
+        // THEN
+        CHECK(wasCreated);
+        CHECK(d.exists());
+
+        // WHEN
+        bool wasRemoved = d.rmdir();
+
+        // THEN
+        CHECK(wasRemoved);
+        CHECK(!d.exists());
+    }
+
+    TEST_CASE("checkRelativeDir")
+    {
+        // GIVEN
+        const Dir d(TST_DIR, KDUtils::StorageType::Asset);
+
+        // WHEN
+        const Dir grandchild = d.relativeDir("child/grandchild");
+
+        // THEN
+        CHECK(grandchild.parent().parent().path() == TST_DIR);
+        CHECK(grandchild.type() == d.type());
+    }
 }

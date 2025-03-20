@@ -13,6 +13,7 @@
 #define KDUTILS_DIR_H
 
 #include <KDUtils/kdutils_global.h>
+#include <KDUtils/file.h>
 #include <string>
 #include <filesystem>
 
@@ -22,16 +23,29 @@ class KDUTILS_API Dir
 {
 public:
     Dir();
-    Dir(const char *path);
-    Dir(const std::string &path);
-    Dir(const std::filesystem::path &path);
+    Dir(const char *path, StorageType type = StorageType::Normal);
+    Dir(const std::string &path, StorageType type = StorageType::Normal);
+    Dir(const std::filesystem::path &path, StorageType type = StorageType::Normal);
 
     bool exists() const;
     bool mkdir();
     bool rmdir();
+
+    // Create the directory and all missing parents, if they do not already exist
+    bool ensureExists();
+
     std::string path() const;
     std::string dirName() const;
     std::string absoluteFilePath(const std::string &file) const;
+    StorageType type() const;
+
+    File file(const std::string &fileName) const;
+
+    Dir parent() const;
+    bool hasParent() const;
+
+    // Returns a directory based on a relative path from this directory, preserving the storage type
+    Dir relativeDir(const std::string &relativePath) const;
 
     static Dir applicationDir();
     static std::string fromNativeSeparators(const std::string &path);
@@ -40,6 +54,7 @@ public:
 
 private:
     std::filesystem::path m_path;
+    StorageType m_type = StorageType::Normal;
 };
 
 } // namespace KDUtils
