@@ -78,7 +78,6 @@ endif()
 
 if(KDUTILS_BUILD_EXAMPLES)
     add_subdirectory(examples)
-    add_subdirectory(assets)
 endif()
 
 if(KDUTILS_BUILD_TESTS)
