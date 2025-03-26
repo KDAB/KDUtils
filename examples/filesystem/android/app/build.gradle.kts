@@ -65,7 +65,7 @@ dependencies {
 
 // Task to copy text files
 tasks.register<Copy>("copyText") {
-    from("../../../../assets/text")
+    from("../../assets/text")
     into("src/main/assets/text")
 }
 
