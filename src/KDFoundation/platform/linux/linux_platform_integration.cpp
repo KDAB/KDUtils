@@ -12,7 +12,6 @@
 #include <KDFoundation/platform/linux/linux_platform_integration.h>
 
 #include <KDFoundation/core_application.h>
-#include "linux_platform_integration.h"
 
 using namespace KDFoundation;
 
