@@ -22,7 +22,7 @@ else()
     fetchcontent_declare(
         doctest
         GIT_REPOSITORY https://github.com/doctest/doctest.git
-        GIT_TAG ae7a13539fb71f270b87eb2e874fbac80bc8dda2 # v2.4.11
+        GIT_TAG 3a01ec37828affe4c9650004edb5b304fb9d5b75 # dev branch commit with CMake compatibility fix
     )
     fetchcontent_makeavailable(doctest)
 
