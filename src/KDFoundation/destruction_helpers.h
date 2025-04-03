@@ -78,13 +78,13 @@ private:
 template<typename DependencyType, typename ContainerType>
 void registerDestructionHelper(Property<DependencyType *> *property, ConnectionHandle *connectionHandle, ContainerType *owner)
 {
-    property->valueAboutToChange().connect([=](DependencyType *oldVal, DependencyType * /* newVal */) {
+    std::ignore = property->valueAboutToChange().connect([=](DependencyType *oldVal, DependencyType * /* newVal */) {
         if (!oldVal) {
             return;
         }
         oldVal->destroyed.disconnect(*connectionHandle);
     });
-    property->valueChanged().connect([=](DependencyType *newVal) {
+    std::ignore = property->valueChanged().connect([=](DependencyType *newVal) {
         if (!newVal) {
             return;
         }
@@ -93,7 +93,7 @@ void registerDestructionHelper(Property<DependencyType *> *property, ConnectionH
         });
     });
     if (owner) {
-        owner->destroyed.connect([=] {
+        std::ignore = owner->destroyed.connect([=] {
             if ((*property)() && connectionHandle->isActive()) {
                 (*property)()->destroyed.disconnect(*connectionHandle);
             }
