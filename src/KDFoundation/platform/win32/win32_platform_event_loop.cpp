@@ -188,6 +188,9 @@ void Win32PlatformEventLoop::handleSocketMessage(WPARAM wparam, LPARAM lparam)
     const int op = WSAGETSELECTEVENT(lparam);
 
     if (err) {
+        // TODO: Can we deliver the message to the notifier too? For e.g. if we get a
+        // WSAECONNREFUSED error, we should be able to deliver it to the notifier.
+        // See winerror.h for the error codes.
         SPDLOG_WARN("Error when receiving message on socket {}, Err = {}", sockId, err);
         return;
     }

@@ -28,6 +28,7 @@ public:
     explicit ByteArray(const uint8_t *, size_t size);
     explicit ByteArray(const std::vector<uint8_t> &data);
     explicit ByteArray(size_t size, uint8_t c = 0);
+    explicit ByteArray(const std::string &data);
     ByteArray(const ByteArray &);
     ~ByteArray();
 
@@ -42,6 +43,8 @@ public:
     ByteArray left(size_t left) const;
     ByteArray &remove(size_t pos, size_t len);
     ByteArray &operator+=(const ByteArray &other);
+    void append(const ByteArray &other);
+    void append(const uint8_t *data, size_t size);
     void clear();
 
     size_t size() const;

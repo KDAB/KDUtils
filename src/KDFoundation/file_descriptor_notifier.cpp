@@ -16,6 +16,7 @@
 #include <KDUtils/logging.h>
 
 #include <cassert>
+#include "file_descriptor_notifier.h"
 
 using namespace KDFoundation;
 
@@ -24,32 +25,13 @@ FileDescriptorNotifier::FileDescriptorNotifier(int fd, NotificationType type)
     , m_type{ type }
 {
     assert(m_fd >= 0);
-
-    // TODO: Handle this on other threads by getting the event loop from
-    //       some thread local storage.
-    // Get hold of the event loop from the application
-    auto app = CoreApplication::instance();
-    if (!app) {
-        SPDLOG_WARN("No application object exists yet. The notifier for fd {} will not be registered", m_fd);
-        return;
-    }
-
-    auto eventLoop = app->eventLoop();
-    if (eventLoop)
-        eventLoop->registerNotifier(this);
+    registerNotifier();
 }
 
 FileDescriptorNotifier::~FileDescriptorNotifier()
 {
-    auto app = CoreApplication::instance();
-    if (!app) {
-        SPDLOG_WARN("No application object exists yet we still have a notifier for fd {} alive", m_fd);
-        return;
-    }
-
-    auto eventLoop = app->eventLoop();
-    if (eventLoop)
-        eventLoop->unregisterNotifier(this);
+    if (m_isEnabled)
+        unregisterNotifier();
 }
 
 void FileDescriptorNotifier::event(EventReceiver *target, Event *ev)
@@ -60,4 +42,59 @@ void FileDescriptorNotifier::event(EventReceiver *target, Event *ev)
     }
 
     Object::event(target, ev);
+}
+
+void FileDescriptorNotifier::setEnabled(bool enabled)
+{
+    if (m_isEnabled == enabled)
+        return;
+
+    m_isEnabled = enabled;
+    if (m_isEnabled) {
+        registerNotifier();
+    } else {
+        unregisterNotifier();
+    }
+}
+
+void KDFoundation::FileDescriptorNotifier::registerNotifier()
+{
+    // TODO: Handle this on other threads by getting the event loop from
+    //       some thread local storage.
+    // Get hold of the event loop from the application
+    auto app = CoreApplication::instance();
+    if (!app) {
+        SPDLOG_WARN("No application object exists yet. The notifier for fd {} will not be registered", m_fd);
+        return;
+    }
+
+    auto eventLoop = app->eventLoop();
+    if (!eventLoop) {
+        SPDLOG_WARN("No event loop exists yet. The notifier for fd {} will not be registered", m_fd);
+        return;
+    }
+
+    const bool result = eventLoop->registerNotifier(this);
+    if (!result)
+        SPDLOG_WARN("Failed to register notifier for fd {} with the event loop", m_fd);
+}
+
+void KDFoundation::FileDescriptorNotifier::unregisterNotifier()
+{
+    auto app = CoreApplication::instance();
+    if (!app) {
+        SPDLOG_WARN("No application object exists yet we still have a notifier for fd {} alive", m_fd);
+        return;
+    }
+
+    auto eventLoop = app->eventLoop();
+    if (!eventLoop) {
+        SPDLOG_WARN("No event loop exists yet. The notifier for fd {} will not be unregistered", m_fd);
+        return;
+    }
+
+    // Unregister the notifier from the event loop
+    const bool result = eventLoop->unregisterNotifier(this);
+    if (!result)
+        SPDLOG_WARN("Failed to unregister notifier for fd {} from the event loop", m_fd);
 }
