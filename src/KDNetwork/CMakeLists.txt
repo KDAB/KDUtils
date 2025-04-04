@@ -54,6 +54,13 @@ target_link_libraries(
     PUBLIC KDFoundation OpenSSL::SSL OpenSSL::Crypto
 )
 
+# Link c-ares for asynchronous DNS resolution
+if(TARGET c-ares::cares)
+    target_link_libraries(KDNetwork PRIVATE c-ares::cares)
+else()
+    target_link_libraries(KDNetwork PRIVATE c-ares)
+endif()
+
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_link_libraries(KDNetwork PUBLIC ws2_32)
 endif()
