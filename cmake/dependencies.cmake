@@ -104,3 +104,11 @@ endif()
 
 # mosquitto library
 find_package(Mosquitto QUIET)
+
+# OpenSSL library
+if(KDUTILS_BUILD_NETWORK_SUPPORT)
+    find_package(OpenSSL QUIET)
+    if(NOT TARGET OpenSSL::SSL)
+        message(FATAL_ERROR "OpenSSL not found. Please install OpenSSL.")
+    endif()
+endif()

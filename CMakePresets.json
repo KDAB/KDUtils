@@ -1,5 +1,5 @@
 {
-    "version": 2,
+    "version": 3,
     "configurePresets": [
         {
             "name": "configure-base",
@@ -25,7 +25,8 @@
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "cl",
                 "CMAKE_CXX_COMPILER": "cl"
-            }
+            },
+            "toolchainFile": "${env.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         },
         {
             "name": "debug",

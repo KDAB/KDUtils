@@ -51,6 +51,12 @@ ByteArray::ByteArray(size_t size, uint8_t c)
     std::memset(m_data.data(), c, size);
 }
 
+ByteArray::ByteArray(const std::string &data)
+{
+    m_data.resize(data.size());
+    std::memcpy(m_data.data(), data.data(), data.size());
+}
+
 ByteArray::ByteArray(const ByteArray &other)
     : m_data(other.m_data)
 {
@@ -113,6 +119,18 @@ ByteArray &ByteArray::operator+=(const ByteArray &other)
 {
     m_data.insert(m_data.end(), other.m_data.begin(), other.m_data.end());
     return *this;
+}
+
+void ByteArray::append(const ByteArray &other)
+{
+    m_data.insert(m_data.end(), other.m_data.begin(), other.m_data.end());
+}
+
+void ByteArray::append(const uint8_t *data, size_t size)
+{
+    if (data == nullptr || size == 0)
+        return;
+    m_data.insert(m_data.end(), data, data + size);
 }
 
 void ByteArray::clear()
