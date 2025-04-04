@@ -47,12 +47,19 @@ public:
     }
     NotificationType type() const { return m_type; }
 
+    bool isEnabled() const noexcept { return m_isEnabled; }
+    void setEnabled(bool enabled);
+
 protected:
     void event(EventReceiver *target, Event *ev) override;
 
 private:
+    void registerNotifier();
+    void unregisterNotifier();
+
     int m_fd;
     NotificationType m_type;
+    bool m_isEnabled{ true }; // Default to enabled
 };
 
 } // namespace KDFoundation

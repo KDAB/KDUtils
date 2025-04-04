@@ -43,3 +43,11 @@ endif()
 if(KDUTILS_BUILD_MQTT_SUPPORT)
     find_package(mosquitto REQUIRED)
 endif()
+
+# OpenSSL library
+if(KDUTILS_BUILD_NETWORK_SUPPORT)
+    find_package(OpenSSL QUIET)
+    if(NOT TARGET OpenSSL::SSL)
+        message(FATAL_ERROR "OpenSSL not found. Please install OpenSSL.")
+    endif()
+endif()

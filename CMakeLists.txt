@@ -25,6 +25,7 @@ endif()
 
 option(KDUTILS_BUILD_EXAMPLES "Build examples" ON)
 option(KDUTILS_BUILD_MQTT_SUPPORT "EXPERIMENTAL: Build KDMqtt" OFF)
+option(KDUTILS_BUILD_NETWORK_SUPPORT "Build KDNetwork" ON)
 
 if(ANDROID)
     option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
@@ -83,6 +84,10 @@ endif()
 add_subdirectory(src/KDUtils)
 add_subdirectory(src/KDFoundation)
 add_subdirectory(src/KDGui)
+
+if(KDUTILS_BUILD_NETWORK_SUPPORT)
+    add_subdirectory(src/KDNetwork)
+endif()
 
 if(KDUTILS_BUILD_MQTT_SUPPORT)
     add_subdirectory(src/KDMqtt)

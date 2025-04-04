@@ -21,7 +21,8 @@
         {
             "name": "mio",
             "version>=": "2023-03-03"
-        }
+        },
+        "openssl"
     ],
     "features": {
         "testing": {
