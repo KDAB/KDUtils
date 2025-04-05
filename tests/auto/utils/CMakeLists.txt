@@ -23,19 +23,16 @@ function(add_utils_test name sources)
     endif()
 endfunction()
 
+add_subdirectory(bytearray)
+add_subdirectory(color)
+add_subdirectory(dir)
+add_subdirectory(elapsedtimer)
+add_subdirectory(file)
+add_subdirectory(flags)
+add_subdirectory(signal)
+add_subdirectory(tailwind_colors)
 add_subdirectory(uri)
-
-# include(doctest)
-
-# add_subdirectory(bytearray)
-# add_subdirectory(color)
-# add_subdirectory(file)
-# add_subdirectory(dir)
-# add_subdirectory(elapsedtimer)
-# add_subdirectory(flags)
-# add_subdirectory(signal)
-# add_subdirectory(url)
-# add_subdirectory(tailwind_colors)
+add_subdirectory(url)
 
 add_feature_info(KDUtils-Test ON "Build KDUtils Tests")
 

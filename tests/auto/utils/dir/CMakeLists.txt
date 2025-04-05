@@ -8,23 +8,15 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-add_executable(
-    tst_dir
-    tst_dir.cpp
+project(
+    test-utils-dir
+    VERSION 0.1
+    LANGUAGES CXX
 )
-target_link_libraries(
-    tst_dir
-    PRIVATE KDUtils doctest::doctest
-)
+add_utils_test(${PROJECT_NAME} tst_dir.cpp)
+
 get_filename_component(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../assets/ ABSOLUTE)
 target_compile_definitions(
-    tst_dir PRIVATE TST_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" EXECUTABLE_DIR="$<TARGET_FILE_DIR:tst_dir>"
-)
-doctest_discover_tests(
-    tst_dir
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
+    test-utils-dir PRIVATE TST_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+                           EXECUTABLE_DIR="$<TARGET_FILE_DIR:test-utils-dir>"
 )
