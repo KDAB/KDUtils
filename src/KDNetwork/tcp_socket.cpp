@@ -10,6 +10,7 @@
 */
 
 #include "tcp_socket.h"
+#include <KDNetwork/dns_resolver.h>
 
 #include <KDUtils/logging.h>
 
@@ -54,6 +55,25 @@ TcpSocket::TcpSocket(int connectedFd, State initialState)
             setReadNotificationEnabled(true);
             // Write notifier disabled until needed
             setWriteNotificationEnabled(false);
+
+            // Get and store the peer address and port information
+            if (initialState == State::Connected) {
+                struct sockaddr_storage peerAddr;
+                socklen_t peerAddrLen = sizeof(peerAddr);
+
+                if (getpeername(m_socketFd, reinterpret_cast<struct sockaddr *>(&peerAddr), &peerAddrLen) == 0) {
+                    // Successfully retrieved peer address
+                    m_peerAddress = IpAddress(reinterpret_cast<const struct sockaddr *>(&peerAddr), peerAddrLen);
+
+                    // Extract the port number based on the address family
+                    if (peerAddr.ss_family == AF_INET) {
+                        m_peerPort = ntohs(reinterpret_cast<const struct sockaddr_in *>(&peerAddr)->sin_port);
+                    } else if (peerAddr.ss_family == AF_INET6) {
+                        m_peerPort = ntohs(reinterpret_cast<const struct sockaddr_in6 *>(&peerAddr)->sin6_port);
+                    }
+                }
+                // If getpeername fails, we'll have the default null address and port 0
+            }
         }
     } else {
         setError(SocketError::InvalidSocketError); // Invalid FD passed
@@ -65,6 +85,16 @@ TcpSocket::~TcpSocket()
 {
 }
 
+/**
+ * @brief Connect to a host using a hostname and port
+ *
+ * This method performs an asynchronous DNS resolution of the hostname
+ * and then attempts to connect to the resolved IP address.
+ *
+ * @param host The hostname to connect to
+ * @param port The port number to connect to
+ * @return true if the connection process was initiated successfully
+ */
 bool TcpSocket::connectToHost(const std::string &host, std::uint16_t port)
 {
     if (state() != State::Unconnected) {
@@ -72,52 +102,77 @@ bool TcpSocket::connectToHost(const std::string &host, std::uint16_t port)
         return false;
     }
 
-    // --- Asynchronous DNS Lookup Integration Point ---
-    // This is where we would integrate an asynchronous DNS resolver such as c-ares.
-    // TODO: Replace synchronous getaddrinfo with a call to an asynchronous DnsResolver class.
-    // The DnsResolver would take the hostname/port and a callback/lambda.
-    // When the lookup completes, the callback would execute the socket opening
-    // and connection logic below. For now, we use synchronous getaddrinfo as a placeholder.
-    // WARNING: Synchronous getaddrinfo will block the event loop!
-    // ----------------------------------------------------
-    addrinfo hints = {};
-    hints.ai_family = AF_UNSPEC; // Allow IPv4 or IPv6
-    hints.ai_socktype = SOCK_STREAM; // TCP
-    addrinfo *result = nullptr;
-    std::string service = std::to_string(port);
+    // Store the connection info for later use
+    m_pendingConnection = PendingConnection{ host, port };
 
-    // *** START SYNC DNS LOOKUP (Replace with Async) ***
-    int gaiError = ::getaddrinfo(host.c_str(), service.c_str(), &hints, &result);
-    if (gaiError != 0) {
-#if defined(KD_PLATFORM_WIN32)
-        // Map gai_strerror equivalent if needed, or use generic error
-        setError(SocketError::AddressResolutionError, gaiError); // Pass GAI error if possible
-#else
-        // Can potentially use gai_strerror(gaiError) for logging
-        setError(SocketError::AddressResolutionError, gaiError);
-#endif
-        return false;
-    }
-    // Ensure result is freed even on exceptions / early returns
-    std::unique_ptr<addrinfo, decltype(&freeaddrinfo)> addrInfoPtr(result, freeaddrinfo);
-    if (!addrInfoPtr) {
-        setError(SocketError::AddressResolutionError); // No addresses found
-        return false;
-    }
-    // *** END SYNC DNS LOOKUP ***
-    // ----------------------------------------------------
-    // --- End Asynchronous DNS Lookup Integration Point ---
+    // Use the thread-local DnsResolver singleton for asynchronous DNS lookup
+    auto &resolver = DnsResolver::instance();
 
-    // Open the socket (base class handles making it non-blocking by default now)
-    if (!open(addrInfoPtr->ai_family, addrInfoPtr->ai_socktype, addrInfoPtr->ai_protocol)) {
-        // error set by open()
+    // Start asynchronous DNS lookup for host
+    bool lookupStarted = resolver.lookup(host, [this](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
+        this->handleDnsLookupCompleted(ec, addresses);
+    });
+
+    if (!lookupStarted) {
+        // DNS lookup failed to start
+        m_pendingConnection.reset();
+        setError(SocketError::AddressResolutionError); // Failed to initiate lookup
         return false;
     }
 
-    // Socket opened successfully, now attempt non-blocking connect
-    setState(State::Connecting); // Update state before connect call
+    // Set the socket state to Resolving to indicate DNS lookup in progress
+    setState(State::Resolving);
 
-    int ret = ::connect(m_socketFd, addrInfoPtr->ai_addr, static_cast<socklen_t>(addrInfoPtr->ai_addrlen));
+    return true; // Successfully initiated DNS resolution
+}
+
+/**
+ * @brief Connect to a host using an IP address and port
+ *
+ * This method skips DNS resolution and directly connects to the specified IP address.
+ *
+ * @param address The IP address (IPv4 or IPv6) to connect to
+ * @param port The port number to connect to
+ * @return true if the connection process was initiated successfully
+ */
+bool TcpSocket::connectToHost(const IpAddress &address, std::uint16_t port)
+{
+    if (state() != State::Unconnected) {
+        setError(SocketError::InvalidSocketError); // Can only connect from Unconnected state
+        return false;
+    }
+
+    if (address.isNull()) {
+        setError(SocketError::AddressResolutionError); // Invalid IP address
+        return false;
+    }
+
+    // Set up sockaddr_storage for either IPv4 or IPv6
+    struct sockaddr_storage addr;
+    socklen_t addrLen = sizeof(addr);
+
+    // Use the IpAddress's toSockAddr method to fill in the sockaddr structure
+    if (!address.toSockAddr(reinterpret_cast<struct sockaddr *>(&addr), addrLen, port)) {
+        setError(SocketError::AddressResolutionError); // Failed to create socket address
+        return false;
+    }
+
+    // Open the socket with the appropriate family
+    int family = addr.ss_family;
+    if (!open(family, SOCK_STREAM, 0)) {
+        // error already set by open()
+        return false;
+    }
+
+    // Store the destination address for later reference
+    m_peerAddress = address;
+    m_peerPort = port;
+
+    // Socket opened, now set to connecting state and attempt connection
+    setState(State::Connecting);
+
+    // Attempt non-blocking connect
+    int ret = ::connect(m_socketFd, reinterpret_cast<struct sockaddr *>(&addr), addrLen);
 
     if (ret == 0) {
         // Connected immediately (likely localhost)
@@ -131,24 +186,20 @@ bool TcpSocket::connectToHost(const std::string &host, std::uint16_t port)
 #if defined(KD_PLATFORM_WIN32)
         int error_code = WSAGetLastError();
         // WSAEWOULDBLOCK is the typical code for non-blocking connect in progress
-        if (error_code == WSAEWOULDBLOCK || error_code == WSAEINPROGRESS) { // WSAEINPROGRESS might also occur
-            // Connection attempt is in progress asynchronously.
-            // The outcome will be signaled via write readiness (success or SO_ERROR)
-            // or read readiness (SO_ERROR). Enable the write notifier to detect this.
+        if (error_code == WSAEWOULDBLOCK || error_code == WSAEINPROGRESS) {
+            // Connection attempt is in progress asynchronously
             setWriteNotificationEnabled(true);
             setError(SocketError::NoError); // Clear any potential error from open()
             return true; // Indicate connection process initiated
         } else {
-            // Immediate connection error (e.g., network unreachable, connection refused)
+            // Immediate connection error
             setError(SocketError::ConnectError, error_code);
             close(); // Cleanup the failed socket attempt
-            // Do not emit disconnected here, as we never reached Connected state
             return false;
         }
 #else
         if (errno == EINPROGRESS) {
-            // Connection attempt is in progress asynchronously.
-            // Enable write notifier to detect completion/failure.
+            // Connection attempt is in progress asynchronously
             setWriteNotificationEnabled(true);
             setError(SocketError::NoError); // Clear any potential error from open()
             return true; // Indicate connection process initiated
@@ -156,8 +207,111 @@ bool TcpSocket::connectToHost(const std::string &host, std::uint16_t port)
             // Immediate connection error
             setError(SocketError::ConnectError, errno);
             close(); // Cleanup the failed socket attempt
-            // Do not emit disconnected here
             return false;
+        }
+#endif
+    }
+}
+
+// Method to handle DNS lookup completion and initiate socket connection
+void TcpSocket::handleDnsLookupCompleted(std::error_code ec, const std::vector<IpAddress> &addresses)
+{
+    // Check if we have a pending connection request
+    if (!m_pendingConnection) {
+        // This could happen if disconnectFromHost() was called during the lookup
+        return;
+    }
+
+    // Extract connection info
+    std::string host = m_pendingConnection->hostname;
+    std::uint16_t port = m_pendingConnection->port;
+
+    // If lookup failed or no addresses returned
+    if (ec || addresses.empty()) {
+        setError(SocketError::AddressResolutionError, ec.value());
+        // Reset pending connection state
+        m_pendingConnection.reset();
+        // Restore socket to unconnected state
+        setState(State::Unconnected);
+        return;
+    }
+
+    // We've got at least one resolved address, attempt to connect
+    // For now, just use the first address
+    const IpAddress &ipAddress = addresses[0];
+
+    // Store the peer address
+    m_peerAddress = ipAddress;
+    m_peerPort = port;
+
+    // Set up sockaddr_storage for either IPv4 or IPv6
+    struct sockaddr_storage addr;
+    socklen_t addrLen = sizeof(addr);
+
+    // Use the IpAddress's toSockAddr method to fill in the sockaddr structure
+    if (!ipAddress.toSockAddr(reinterpret_cast<struct sockaddr *>(&addr), addrLen, port)) {
+        setError(SocketError::AddressResolutionError);
+        m_pendingConnection.reset();
+        setState(State::Unconnected);
+        return;
+    }
+
+    // Open the socket with the appropriate family
+    int family = addr.ss_family;
+    if (!open(family, SOCK_STREAM, 0)) {
+        // error set by open()
+        m_pendingConnection.reset();
+        return;
+    }
+
+    // DNS resolution is complete, now we're moving to actual connection phase
+    setState(State::Connecting);
+
+    // Socket opened successfully, now attempt non-blocking connect
+    int ret = ::connect(m_socketFd, reinterpret_cast<struct sockaddr *>(&addr), addrLen);
+
+    // We no longer need the pending connection data
+    m_pendingConnection.reset();
+
+    if (ret == 0) {
+        // Connected immediately (likely localhost)
+        setState(State::Connected);
+        setError(SocketError::NoError);
+        connected.emit();
+        // Enable write notifier only if data is already waiting in the buffer
+        setWriteNotificationEnabled(!m_writeBuffer.isEmpty());
+        return;
+    } else { // ret < 0
+#if defined(KD_PLATFORM_WIN32)
+        int error_code = WSAGetLastError();
+        // WSAEWOULDBLOCK is the typical code for non-blocking connect in progress
+        if (error_code == WSAEWOULDBLOCK || error_code == WSAEINPROGRESS) { // WSAEINPROGRESS might also occur
+            // Connection attempt is in progress asynchronously.
+            // The outcome will be signaled via write readiness (success or SO_ERROR)
+            // or read readiness (SO_ERROR). Enable the write notifier to detect this.
+            setWriteNotificationEnabled(true);
+            setError(SocketError::NoError); // Clear any potential error from open()
+            return; // Indicate connection process initiated
+        } else {
+            // Immediate connection error (e.g., network unreachable, connection refused)
+            setError(SocketError::ConnectError, error_code);
+            close(); // Cleanup the failed socket attempt
+            // Do not emit disconnected here, as we never reached Connected state
+            return;
+        }
+#else
+        if (errno == EINPROGRESS) {
+            // Connection attempt is in progress asynchronously.
+            // Enable write notifier to detect completion/failure.
+            setWriteNotificationEnabled(true);
+            setError(SocketError::NoError); // Clear any potential error from open()
+            return; // Indicate connection process initiated
+        } else {
+            // Immediate connection error
+            setError(SocketError::ConnectError, errno);
+            close(); // Cleanup the failed socket attempt
+            // Do not emit disconnected here
+            return;
         }
 #endif
     }
@@ -362,6 +516,27 @@ void TcpSocket::handleConnectionResult()
         // Connection successful
         setState(State::Connected);
         setError(SocketError::NoError); // Clear any transient errors
+
+        // Get and store the peer address and port information
+        struct sockaddr_storage peerAddr;
+        socklen_t peerAddrLen = sizeof(peerAddr);
+
+        if (getpeername(m_socketFd, reinterpret_cast<struct sockaddr *>(&peerAddr), &peerAddrLen) == 0) {
+            // Successfully retrieved peer address
+            m_peerAddress = IpAddress(reinterpret_cast<const struct sockaddr *>(&peerAddr), peerAddrLen);
+
+            // Extract the port number based on the address family
+            if (peerAddr.ss_family == AF_INET) {
+                m_peerPort = ntohs(reinterpret_cast<const struct sockaddr_in *>(&peerAddr)->sin_port);
+            } else if (peerAddr.ss_family == AF_INET6) {
+                m_peerPort = ntohs(reinterpret_cast<const struct sockaddr_in6 *>(&peerAddr)->sin6_port);
+            }
+        } else {
+            // Failed to get peer information, reset to defaults
+            m_peerAddress = IpAddress();
+            m_peerPort = 0;
+        }
+
         connected.emit(); // Notify user
 
         // Disable write notifier *unless* data was already added to the write buffer
@@ -465,6 +640,24 @@ void TcpSocket::processReceivedData(const std::uint8_t *buffer, int size)
     // The user can then call bytesAvailable() to check how much data is available
     // in total. Or they can call read() or readAll() to consume the data.
     bytesReceived.emit(size);
+}
+
+/**
+ * @brief Get the peer address (remote host address)
+ * @return The IP address of the connected peer, or null address if not connected
+ */
+IpAddress TcpSocket::peerAddress() const noexcept
+{
+    return m_peerAddress;
+}
+
+/**
+ * @brief Get the peer port (remote port)
+ * @return The port of the connected peer, or 0 if not connected
+ */
+std::uint16_t TcpSocket::peerPort() const noexcept
+{
+    return m_peerPort;
 }
 
 } // namespace KDNetwork
