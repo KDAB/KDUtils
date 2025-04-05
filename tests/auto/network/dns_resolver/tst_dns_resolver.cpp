@@ -71,11 +71,11 @@ public:
                     ec = std::error_code(1, std::generic_category());
                 } else {
                     if (hostname == "localhost" || hostname == "127.0.0.1") {
-                        addresses.push_back("127.0.0.1");
+                        addresses.push_back(IpAddress{ "127.0.0.1" });
                     } else if (hostname == "example.com") {
-                        addresses.push_back("93.184.216.34");
+                        addresses.push_back(IpAddress{ "93.184.216.34" });
                     } else {
-                        addresses.push_back("192.168.1.1");
+                        addresses.push_back(IpAddress{ "192.168.1.1" });
                     }
                 }
 
@@ -93,11 +93,11 @@ public:
             ec = std::error_code(1, std::generic_category());
         } else {
             if (hostname == "localhost" || hostname == "127.0.0.1") {
-                addresses.push_back("127.0.0.1");
+                addresses.push_back(IpAddress{ "127.0.0.1" });
             } else if (hostname == "example.com") {
-                addresses.push_back("93.184.216.34");
+                addresses.push_back(IpAddress{ "93.184.216.34" });
             } else {
-                addresses.push_back("192.168.1.1");
+                addresses.push_back(IpAddress{ "192.168.1.1" });
             }
         }
 
@@ -382,7 +382,7 @@ TEST_CASE("DNS Resolver Real Network Tests")
                 bool foundLocalhost = false;
                 for (const auto &address : addresses) {
                     MESSAGE("Resolved localhost to: " << address);
-                    if (address == "127.0.0.1" || address == "::1") {
+                    if (address == IpAddress{ "127.0.0.1" } || address == IpAddress{ "::1" }) {
                         foundLocalhost = true;
                     }
                 }
