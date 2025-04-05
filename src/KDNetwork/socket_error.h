@@ -31,11 +31,15 @@ enum class SocketError {
     ReadError,
     WriteError,
     CloseError,
-    SetNonBlockingError,
+    TimeoutError,
+    ServerAcceptError, // For server sockets
+    SetNonBlockingError, // Issues with setting non-blocking mode
+    SocketConfigurationError, // Issues with socket options
     InvalidSocketError, // Operation on an uninitialized/closed socket
     UnsupportedOperationError,
     AddressResolutionError, // For DNS related issues if handled here
     TlsHandshakeError, // For SSL/TLS sockets
+    ServerIsAlreadyListening, // Attempt to listen on a socket that is already listening
     UnknownError
 };
 

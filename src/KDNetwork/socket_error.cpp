@@ -37,8 +37,14 @@ public:
             return "Socket write error";
         case SocketError::CloseError:
             return "Socket close error";
+        case SocketError::TimeoutError:
+            return "Socket operation timed out";
+        case SocketError::ServerAcceptError:
+            return "Socket accept failed";
         case SocketError::SetNonBlockingError:
             return "Failed to set non-blocking mode";
+        case SocketError::SocketConfigurationError:
+            return "Socket configuration error";
         case SocketError::InvalidSocketError:
             return "Operation on invalid socket";
         case SocketError::UnsupportedOperationError:
@@ -47,6 +53,8 @@ public:
             return "Address resolution failed";
         case SocketError::TlsHandshakeError:
             return "TLS handshake failed";
+        case SocketError::ServerIsAlreadyListening:
+            return "Server is already listening on this socket";
         case SocketError::UnknownError:
             return "Unknown socket error";
         default:
