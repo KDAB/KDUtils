@@ -13,8 +13,10 @@
 
 #include <KDNetwork/socket.h>
 #include <KDNetwork/kdnetwork_export.h>
+#include <KDNetwork/ip_address.h>
 
 #include <KDUtils/bytearray.h>
+#include <optional>
 
 namespace KDNetwork {
 
@@ -43,6 +45,7 @@ public:
     TcpSocket &operator=(TcpSocket &&other) noexcept = default;
 
     virtual bool connectToHost(const std::string &host, std::uint16_t port);
+    virtual bool connectToHost(const IpAddress &address, std::uint16_t port);
     virtual void disconnectFromHost();
 
     std::int64_t write(const KDUtils::ByteArray &data);
@@ -55,6 +58,9 @@ public:
 
     // The number of bytes currently pending in the internal write buffer.
     std::int64_t bytesToWrite() const noexcept;
+
+    IpAddress peerAddress() const noexcept;
+    std::uint16_t peerPort() const noexcept;
 
 protected:
     // Reads incoming data or handles EOF/errors. Also used to detect connection errors during the connecting phase.
@@ -75,12 +81,22 @@ private:
     // Appends data to the read buffer and emits bytesReceived signal.
     void processReceivedData(const std::uint8_t *buffer, int size);
 
+    // Handle DNS lookup completion and initiate socket connection
+    void handleDnsLookupCompleted(std::error_code ec, const std::vector<IpAddress> &addresses);
+
     KDUtils::ByteArray m_readBuffer; // Internal buffer for incoming data.
     KDUtils::ByteArray m_writeBuffer; // Internal buffer for outgoing data.
 
-    // TODO: Store peer address/port information
-    // IpAddress m_peerAddress;
-    // uint16_t m_peerPort;
+    // State for pending DNS lookup and connection
+    struct PendingConnection {
+        std::string hostname;
+        std::uint16_t port;
+    };
+    std::optional<PendingConnection> m_pendingConnection;
+
+    // Peer information
+    IpAddress m_peerAddress;
+    std::uint16_t m_peerPort{ 0 };
 };
 
 } // namespace KDNetwork
