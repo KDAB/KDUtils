@@ -27,6 +27,7 @@ set(SOURCES
     udp_socket.cpp
     dns_resolver.cpp
     ssl_socket.cpp
+    ip_address.cpp
 )
 
 set(HEADERS
@@ -37,6 +38,7 @@ set(HEADERS
     udp_socket.h
     dns_resolver.h
     ssl_socket.h
+    ip_address.h
 )
 
 # Add library

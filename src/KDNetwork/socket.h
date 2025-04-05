@@ -51,6 +51,7 @@ public:
         Unconnected, // Initial state, or after close()
         Opening, // Socket FD created but not yet configured/connected
         Bound, // Socket has been bound to an address/port
+        Resolving, // Asynchronous DNS resolution in progress
         Connecting, // Client specific: connection attempt in progress
         Connected, // Client specific: connection established
         Listening, // Server specific: listening for incoming connections

@@ -38,6 +38,9 @@ namespace KDNetwork {
 
 namespace {
 
+// Thread-local storage for DnsResolver instance
+thread_local std::unique_ptr<DnsResolver> t_instance;
+
 // Error category for DNS errors
 class DnsErrorCategory : public std::error_category
 {
@@ -68,22 +71,16 @@ DnsResolver::AddressInfoList addrInfoToList(const ares_addrinfo *addrInfo)
     if (!addrInfo)
         return addresses;
 
-    char ipAddress[INET6_ADDRSTRLEN];
-
     for (const ares_addrinfo_node *node = addrInfo->nodes; node; node = node->ai_next) {
         switch (node->ai_family) {
         case AF_INET: {
             const sockaddr_in *addr = reinterpret_cast<const sockaddr_in *>(node->ai_addr);
-            if (inet_ntop(AF_INET, &addr->sin_addr, ipAddress, sizeof(ipAddress))) {
-                addresses.emplace_back(ipAddress);
-            }
+            addresses.emplace_back(IpAddress(reinterpret_cast<const struct sockaddr *>(addr), sizeof(sockaddr_in)));
             break;
         }
         case AF_INET6: {
             const sockaddr_in6 *addr = reinterpret_cast<const sockaddr_in6 *>(node->ai_addr);
-            if (inet_ntop(AF_INET6, &addr->sin6_addr, ipAddress, sizeof(ipAddress))) {
-                addresses.emplace_back(ipAddress);
-            }
+            addresses.emplace_back(IpAddress(reinterpret_cast<const struct sockaddr *>(addr), sizeof(sockaddr_in6)));
             break;
         }
         default:
@@ -96,6 +93,23 @@ DnsResolver::AddressInfoList addrInfoToList(const ares_addrinfo *addrInfo)
 }
 
 } // anonymous namespace
+
+/**
+ * @brief Gets the thread-local singleton instance of DnsResolver
+ *
+ * This method ensures that each thread has its own DnsResolver instance,
+ * following c-ares recommendations while maintaining thread safety.
+ *
+ * @return DnsResolver& Reference to the thread-local DnsResolver instance
+ */
+DnsResolver &DnsResolver::instance()
+{
+    if (!t_instance) {
+        t_instance = std::make_unique<DnsResolver>();
+        KDUtils::Logger::logger("KDNetwork")->debug("Created thread-local DnsResolver instance");
+    }
+    return *t_instance;
+}
 
 DnsResolver::DnsResolver()
 {

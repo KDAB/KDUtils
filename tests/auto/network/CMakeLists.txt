@@ -37,6 +37,7 @@ endfunction()
 
 add_subdirectory(tcp_socket)
 add_subdirectory(dns_resolver)
+add_subdirectory(ip_address)
 
 add_feature_info(KDNetwork-Tests ON "Build KDNetwork Tests")
 
