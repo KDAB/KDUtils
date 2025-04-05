@@ -20,6 +20,8 @@
 
 #include <filesystem>
 #include <iostream>
+#include <algorithm>
+#include <cctype>
 
 namespace KDUtils {
 
@@ -117,7 +119,7 @@ Dir Dir::applicationDir()
         wai_getExecutablePath(appPath.data(), length, NULL); // NOLINT(modernize-use-nullptr)
 
         const std::filesystem::path appFSPath(appPath);
-        return Dir(appFSPath.parent_path());
+        return Dir(appFSPath.parent_path().generic_u8string());
     }
 
     return {};
@@ -128,9 +130,26 @@ std::string Dir::fromNativeSeparators(const std::string &path)
     return std::filesystem::path(path).generic_u8string();
 }
 
+Dir Dir::normalized() const
+{
+    Dir result(*this);
+    std::string pathStr = result.m_path.string();
+
+    // Convert Windows drive letter to lowercase if present
+    if (pathStr.length() >= 2 && pathStr[1] == ':' && std::isalpha(static_cast<unsigned char>(pathStr[0]))) {
+        pathStr[0] = static_cast<char>(std::tolower(static_cast<unsigned char>(pathStr[0])));
+    }
+
+    // Convert the path to use the generic format with forward slashes
+    result.m_path = std::filesystem::path(pathStr).make_preferred().generic_u8string();
+
+    return result;
+}
+
 bool Dir::operator==(const Dir &other) const
 {
-    return m_path == other.m_path;
+    // Compare normalized paths to handle case differences in Windows drive letters
+    return this->normalized().m_path == other.normalized().m_path;
 }
 
 Dir Dir::parent() const

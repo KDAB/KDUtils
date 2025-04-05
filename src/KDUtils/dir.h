@@ -51,6 +51,9 @@ public:
     static Dir applicationDir();
     static std::string fromNativeSeparators(const std::string &path);
 
+    // Returns a normalized form of the directory with lowercase drive letters on Windows
+    Dir normalized() const;
+
     bool operator==(const Dir &other) const;
 
 private:
