@@ -8,19 +8,9 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-add_executable(
-    tst_flags
-    tst_flags.cpp
+project(
+    test-utils-flags
+    VERSION 0.1
+    LANGUAGES CXX
 )
-target_link_libraries(
-    tst_flags
-    PRIVATE KDUtils doctest::doctest
-)
-doctest_discover_tests(
-    tst_flags
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
-)
+add_utils_test(${PROJECT_NAME} tst_flags.cpp)
