@@ -32,6 +32,6 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    std::cout << "Server started on port 3001.  Press Ctrl+C to exit." << std::endl;
+    std::cout << "Press Ctrl+C to exit." << std::endl;
     return app.exec();
 }

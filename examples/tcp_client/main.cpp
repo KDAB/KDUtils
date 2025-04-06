@@ -11,6 +11,7 @@
 
 #include "client.h"
 
+#include <KDNetwork/ip_address.h>
 #include <KDFoundation/core_application.h>
 
 #include <iostream>
@@ -21,7 +22,7 @@ int main(int argc, char *argv[])
     KDFoundation::CoreApplication app;
 
     Client client;
-    if (!client.connectToServer("127.0.0.1", 3001)) {
+    if (!client.connectToServer(KDNetwork::IpAddress::localhost(), 3001)) {
         std::cout << "Failed to connect to server." << std::endl;
         return 1;
     }
