@@ -25,7 +25,7 @@ Client::Client()
     });
 }
 
-bool Client::connectToServer(const std::string &host, std::uint16_t port)
+bool Client::connectToServer(const KDNetwork::IpAddress &host, std::uint16_t port)
 {
     bool connected = m_socket.connectToHost(host, port);
     if (!connected) {
