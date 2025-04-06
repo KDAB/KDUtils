@@ -60,6 +60,44 @@ Socket::~Socket()
     cleanupSocket();
 }
 
+Socket::Socket(Socket &&other) noexcept
+    : readyRead(std::move(other.readyRead))
+    , readyWrite(std::move(other.readyWrite))
+    , errorOccurred(std::move(other.errorOccurred))
+    , stateChanged(std::move(other.stateChanged))
+    , m_type(std::exchange(other.m_type, SocketType::Unknown))
+    , m_socketFd(std::exchange(other.m_socketFd, -1))
+    , m_state(std::exchange(other.m_state, State::Unconnected))
+    , m_lastError(std::exchange(other.m_lastError, SocketError::NoError))
+    , m_lastErrorCode(std::exchange(other.m_lastErrorCode, std::error_code()))
+    , m_isBlocking(std::exchange(other.m_isBlocking, false))
+    , m_readNotifier(std::move(other.m_readNotifier))
+    , m_writeNotifier(std::move(other.m_writeNotifier))
+{
+}
+
+Socket &Socket::operator=(Socket &&other) noexcept
+{
+    if (this != &other) {
+        // Move assignment
+        readyRead = std::move(other.readyRead);
+        readyWrite = std::move(other.readyWrite);
+        errorOccurred = std::move(other.errorOccurred);
+        stateChanged = std::move(other.stateChanged);
+
+        m_type = std::exchange(other.m_type, SocketType::Unknown);
+        m_socketFd = std::exchange(other.m_socketFd, -1);
+        m_state = std::exchange(other.m_state, State::Unconnected);
+        m_lastError = std::exchange(other.m_lastError, SocketError::NoError);
+        m_lastErrorCode = std::exchange(other.m_lastErrorCode, std::error_code());
+        m_isBlocking = std::exchange(other.m_isBlocking, false);
+
+        m_readNotifier = std::move(other.m_readNotifier);
+        m_writeNotifier = std::move(other.m_writeNotifier);
+    }
+    return *this;
+}
+
 bool Socket::isValid() const
 {
 #if defined(KD_PLATFORM_WIN32)

@@ -41,8 +41,8 @@ public:
     TcpSocket &operator=(const TcpSocket &other) = delete;
 
     // Is movable
-    TcpSocket(TcpSocket &&other) noexcept = default;
-    TcpSocket &operator=(TcpSocket &&other) noexcept = default;
+    TcpSocket(TcpSocket &&other) noexcept;
+    TcpSocket &operator=(TcpSocket &&other) noexcept;
 
     virtual bool connectToHost(const std::string &host, std::uint16_t port);
     virtual bool connectToHost(const IpAddress &address, std::uint16_t port);
