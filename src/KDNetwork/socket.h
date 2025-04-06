@@ -58,11 +58,8 @@ public:
         Closing // Socket is in the process of closing (optional state)
     };
 
-    KDBindings::Signal<> connected;
-    KDBindings::Signal<> disconnected;
     KDBindings::Signal<> readyRead;
     KDBindings::Signal<> readyWrite;
-    KDBindings::Signal<std::int64_t> bytesWritten;
     KDBindings::Signal<std::error_code> errorOccurred;
     KDBindings::Signal<State> stateChanged;
 
@@ -73,8 +70,8 @@ public:
     Socket &operator=(Socket const &other) = delete;
 
     // Is movable
-    Socket(Socket &&other) noexcept = default;
-    Socket &operator=(Socket &&other) noexcept = default;
+    Socket(Socket &&other) noexcept;
+    Socket &operator=(Socket &&other) noexcept;
 
     bool isValid() const;
     inline State state() const noexcept { return m_state; }
@@ -85,6 +82,7 @@ public:
     bool setBlocking(bool enabled) noexcept;
 
     enum class SocketType : std::uint8_t {
+        Unknown = 0,
         Tcp,
         Udp,
         SslTcp
@@ -101,7 +99,7 @@ public:
 protected:
     explicit Socket(SocketType type);
 
-    SocketType m_type;
+    SocketType m_type{ SocketType::Unknown }; // Type of socket (TCP, UDP, etc.)
     int m_socketFd{ -1 }; // File descriptor for the socket
     State m_state{ State::Unconnected };
     SocketError m_lastError{ SocketError::NoError };

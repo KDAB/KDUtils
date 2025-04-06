@@ -85,6 +85,37 @@ TcpSocket::~TcpSocket()
 {
 }
 
+TcpSocket::TcpSocket(TcpSocket &&other) noexcept
+    : Socket(std::move(other))
+    , connected(std::move(other.connected)) // Move the connected signal
+    , disconnected(std::move(other.disconnected)) // Move the disconnected signal
+    , bytesReceived(std::move(other.bytesReceived)) // Move the bytes received signal
+    , bytesWritten(std::move(other.bytesWritten)) // Move the bytes written signal
+    , m_readBuffer(std::move(other.m_readBuffer)) // Move the read buffer
+    , m_writeBuffer(std::move(other.m_writeBuffer)) // Move the write buffer
+    , m_pendingConnection(std::move(other.m_pendingConnection)) // Move the pending connection info
+    , m_peerAddress(std::move(other.m_peerAddress)) // Move the peer address
+    , m_peerPort(other.m_peerPort) // Copy the port
+{
+}
+
+TcpSocket &TcpSocket::operator=(TcpSocket &&other) noexcept
+{
+    if (this != &other) {
+        Socket::operator=(std::move(other)); // Move base class
+        connected = std::move(other.connected); // Move the connected signal
+        disconnected = std::move(other.disconnected); // Move the disconnected signal
+        bytesReceived = std::move(other.bytesReceived); // Move the bytes received signal
+        bytesWritten = std::move(other.bytesWritten); // Move the bytes written signal
+        m_readBuffer = std::move(other.m_readBuffer); // Move the read buffer
+        m_writeBuffer = std::move(other.m_writeBuffer); // Move the write buffer
+        m_pendingConnection = std::move(other.m_pendingConnection); // Move the pending connection info
+        m_peerAddress = std::move(other.m_peerAddress); // Move the peer address
+        m_peerPort = other.m_peerPort; // Copy the port
+    }
+    return *this;
+}
+
 /**
  * @brief Connect to a host using a hostname and port
  *
@@ -414,6 +445,7 @@ void TcpSocket::onReadReady()
     // Ensure socket is valid and in a readable state
     if (!isValid() || (state() != State::Connected && state() != State::Closing)) {
         // TODO: Allow reading during graceful close? Maybe not needed if disconnect is abrupt.
+        readyRead.emit(); // Emit signal to notify about read readiness
         return;
     }
 
