@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <KDNetwork/ip_address.h>
 #include <KDNetwork/tcp_socket.h>
 
 #include <memory>
@@ -21,7 +22,7 @@ public:
     Client();
     ~Client() = default;
 
-    bool connectToServer(const std::string &host, std::uint16_t port);
+    bool connectToServer(const KDNetwork::IpAddress &host, std::uint16_t port);
 
 private:
     KDNetwork::TcpSocket m_socket;

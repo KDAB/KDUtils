@@ -11,20 +11,27 @@
 
 #include "server.h"
 
+#include <KDNetwork/ip_address.h>
 #include <KDNetwork/tcp_socket.h>
 
 #include <iostream>
 #include <random>
 #include <vector>
 
+using namespace KDNetwork;
+
 bool Server::start()
 {
-    m_server.setNewConnectionCallback([this](std::unique_ptr<KDNetwork::TcpSocket> socket) {
+    m_server.setNewConnectionCallback([this](std::unique_ptr<TcpSocket> socket) {
         newConnection(std::move(socket));
     });
 
-    // TODO: Listen on any port and retrieve the assigned port and address and print them
-    return m_server.listen("127.0.0.1", 3001); // Listen on localhost, port 3001.
+    const auto result = m_server.listen(IpAddress::localhost(), 3001); // Listen on localhost, port 3001
+    if (!result) {
+        std::cerr << "Failed to start server: " << m_server.lastErrorCode().message() << std::endl;
+        return false;
+    }
+    std::cout << "Server is listening on address: " << m_server.serverAddress().toString() << ", port: " << m_server.serverPort() << std::endl;
 }
 
 void Server::newConnection(std::unique_ptr<KDNetwork::TcpSocket> socket)
