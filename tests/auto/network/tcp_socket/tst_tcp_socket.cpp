@@ -413,8 +413,8 @@ TEST_CASE("Client-Server interaction")
         TcpSocket clientSocket;
         std::ignore = clientSocket.connected.connect([&]() {
             // Send test message after connection established
-            std::string testMessage = "Hello, TCP Socket!";
-            clientSocket.write(KDUtils::ByteArray(testMessage.c_str(), testMessage.length()));
+            const std::string testMessage = "Hello, TCP Socket!";
+            clientSocket.write(KDUtils::ByteArray(testMessage));
         });
 
         clientSocket.connectToHost(IpAddress::localhost(), serverPort);
@@ -441,15 +441,15 @@ TEST_CASE("Client-Server interaction")
             serverSideSocket = client;
 
             std::ignore = serverSideSocket->bytesReceived.connect([&]() {
-                std::string data = serverSideSocket->readAll().toStdString();
+                const std::string data = serverSideSocket->readAll().toStdString();
                 receivedMessages.push_back(data);
 
                 if (receivedMessages.size() >= 3) {
                     app.quit();
                 } else {
                     // Echo the message back to the client
-                    std::string echo = "Echo: " + data;
-                    serverSideSocket->write(KDUtils::ByteArray(echo.c_str(), echo.length()));
+                    const std::string echo = "Echo: " + data;
+                    serverSideSocket->write(KDUtils::ByteArray(echo));
                 }
             });
         });
@@ -461,18 +461,18 @@ TEST_CASE("Client-Server interaction")
         std::vector<std::string> clientReceivedMessages;
 
         std::ignore = clientSocket.bytesReceived.connect([&]() {
-            std::string data = clientSocket.readAll().toStdString();
+            const std::string data = clientSocket.readAll().toStdString();
             clientReceivedMessages.push_back(data);
 
             // Send next message back to server
-            std::string nextMessage = "Message " + std::to_string(clientReceivedMessages.size());
-            clientSocket.write(KDUtils::ByteArray(nextMessage.c_str(), nextMessage.length()));
+            const std::string nextMessage = "Message " + std::to_string(clientReceivedMessages.size());
+            clientSocket.write(KDUtils::ByteArray(nextMessage));
         });
 
         std::ignore = clientSocket.connected.connect([&]() {
             // Send initial message
-            std::string initialMessage = "Message 0";
-            clientSocket.write(KDUtils::ByteArray(initialMessage.c_str(), initialMessage.length()));
+            const std::string initialMessage = "Message 0";
+            clientSocket.write(KDUtils::ByteArray(initialMessage));
         });
 
         // Connect to server
