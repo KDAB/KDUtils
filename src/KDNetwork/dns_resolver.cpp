@@ -19,6 +19,7 @@
 
 #include <map>
 #include <system_error>
+#include <algorithm> // For std::stable_sort
 
 // Platform-specific includes
 #if defined(KD_PLATFORM_WIN32)
@@ -63,15 +64,22 @@ std::error_code make_error_code(int code)
     return std::error_code(code, dnsErrorCategory);
 }
 
-// Helper function to convert ares_addrinfo to AddressInfoList
-DnsResolver::AddressInfoList addrInfoToList(const ares_addrinfo *addrInfo)
+// Helper function to convert ares_addrinfo to AddressInfoList and sort according to preference
+DnsResolver::AddressInfoList addrInfoToList(const ares_addrinfo *addrInfo, DnsResolver::AddressFamily family)
 {
     DnsResolver::AddressInfoList addresses;
 
     if (!addrInfo)
         return addresses;
 
+    // First pass: collect all addresses
     for (const ares_addrinfo_node *node = addrInfo->nodes; node; node = node->ai_next) {
+        // Skip addresses that don't match family-only filters
+        if (family == DnsResolver::AddressFamily::IPv4Only && node->ai_family != AF_INET)
+            continue;
+        if (family == DnsResolver::AddressFamily::IPv6Only && node->ai_family != AF_INET6)
+            continue;
+
         switch (node->ai_family) {
         case AF_INET: {
             const sockaddr_in *addr = reinterpret_cast<const sockaddr_in *>(node->ai_addr);
@@ -87,6 +95,20 @@ DnsResolver::AddressInfoList addrInfoToList(const ares_addrinfo *addrInfo)
             // Unsupported address family
             continue;
         }
+    }
+
+    // Re-order based on preference
+    // Use stable_sort to maintain the original order within each group
+    if (family == DnsResolver::AddressFamily::IPv4) {
+        std::stable_sort(addresses.begin(), addresses.end(),
+                         [](const IpAddress &a, const IpAddress &b) {
+                             return a.isIPv4() && !b.isIPv4(); // Sort IPv4 before IPv6
+                         });
+    } else if (family == DnsResolver::AddressFamily::IPv6) {
+        std::stable_sort(addresses.begin(), addresses.end(),
+                         [](const IpAddress &a, const IpAddress &b) {
+                             return a.isIPv6() && !b.isIPv6(); // Sort IPv6 before IPv4
+                         });
     }
 
     return addresses;
@@ -123,6 +145,26 @@ DnsResolver::~DnsResolver()
 }
 
 /**
+ * @brief Sets the preferred address family for DNS lookups.
+ *
+ * @param family The address family preference to use for lookups
+ */
+void DnsResolver::setPreferredAddressFamily(DnsResolver::AddressFamily family)
+{
+    m_preferredAddressFamily = family;
+}
+
+/**
+ * @brief Gets the current preferred address family for DNS lookups.
+ *
+ * @return The current address family preference
+ */
+DnsResolver::AddressFamily DnsResolver::preferredAddressFamily() const
+{
+    return m_preferredAddressFamily;
+}
+
+/**
  * @brief Performs an asynchronous DNS lookup for the specified hostname
  *
  * @param hostname The hostname to resolve
@@ -130,6 +172,20 @@ DnsResolver::~DnsResolver()
  * @return true if the lookup was initiated successfully, false otherwise
  */
 bool DnsResolver::lookup(const std::string &hostname, LookupCallback callback)
+{
+    // Use the default address family preference
+    return lookup(hostname, m_preferredAddressFamily, std::move(callback));
+}
+
+/**
+ * @brief Performs an asynchronous DNS lookup for the specified hostname with specific address family preference
+ *
+ * @param hostname The hostname to resolve
+ * @param family The preferred address family for this lookup
+ * @param callback Function to be called when the lookup is complete
+ * @return true if the lookup was initiated successfully, false otherwise
+ */
+bool DnsResolver::lookup(const std::string &hostname, AddressFamily family, LookupCallback callback)
 {
     if (!m_initialized) {
         if (!initializeAres()) {
@@ -139,10 +195,23 @@ bool DnsResolver::lookup(const std::string &hostname, LookupCallback callback)
     }
 
     uint64_t requestId = m_nextRequestId++;
-    m_lookupRequests[requestId] = { hostname, std::move(callback) };
+    m_lookupRequests[requestId] = { hostname, family, std::move(callback) };
 
     struct ares_addrinfo_hints hints = {};
-    hints.ai_family = AF_UNSPEC; // Allow IPv4 or IPv6
+
+    // Set up hints based on address family preference
+    switch (family) {
+    case AddressFamily::IPv4Only:
+        hints.ai_family = AF_INET; // IPv4 only
+        break;
+    case AddressFamily::IPv6Only:
+        hints.ai_family = AF_INET6; // IPv6 only
+        break;
+    default:
+        hints.ai_family = AF_UNSPEC; // Allow IPv4 or IPv6
+        break;
+    }
+
     hints.ai_flags = ARES_AI_CANONNAME; // Return canonical name
 
     ares_addrinfo_callback callback_func = [](void *arg, int status, int timeouts, struct ares_addrinfo *result) {
@@ -300,6 +369,7 @@ void DnsResolver::addressInfoCallback(void *arg, int status, int timeouts, struc
     if (it != resolver->m_lookupRequests.end()) {
         auto callback = std::move(it->second.callback);
         auto hostname = std::move(it->second.hostname);
+        auto family = it->second.family;
         resolver->m_lookupRequests.erase(it);
 
         // Create error code if status is not success
@@ -309,8 +379,8 @@ void DnsResolver::addressInfoCallback(void *arg, int status, int timeouts, struc
             KDUtils::Logger::logger("KDNetwork")->warn("DNS lookup failed for {}: {} (timeout: {})", hostname, ec.message(), timeouts);
             callback(ec, {});
         } else {
-            // Convert address information to list of addresses
-            auto addresses = addrInfoToList(result);
+            // Convert address information to list of addresses with proper ordering
+            auto addresses = addrInfoToList(result, family);
             KDUtils::Logger::logger("KDNetwork")->debug("DNS lookup succeeded for {}: {} addresses", hostname, addresses.size());
             callback(ec, addresses);
         }

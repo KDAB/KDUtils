@@ -126,4 +126,21 @@ if(KDUTILS_BUILD_NETWORK_SUPPORT)
         set(CARES_INSTALL ON)
         FetchContent_MakeAvailable(c-ares)
     endif()
+
+    # llhttp library
+    find_package(llhttp QUIET)
+    if(NOT TARGET llhttp)
+        FetchContent_Declare(llhttp URL "https://github.com/nodejs/llhttp/archive/refs/tags/release/v9.2.1.tar.gz")
+
+        set(BUILD_SHARED_LIBS
+            OFF
+            CACHE INTERNAL ""
+        )
+        set(BUILD_STATIC_LIBS
+            ON
+            CACHE INTERNAL ""
+        )
+
+        FetchContent_MakeAvailable(llhttp)
+    endif()
 endif()
