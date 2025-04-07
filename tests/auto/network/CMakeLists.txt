@@ -40,6 +40,7 @@ add_subdirectory(dns_resolver)
 add_subdirectory(ip_address)
 add_subdirectory(http_cookie)
 add_subdirectory(http_cookie_jar)
+add_subdirectory(http_session)
 
 add_feature_info(KDNetwork-Tests ON "Build KDNetwork Tests")
 
