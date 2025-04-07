@@ -10,6 +10,7 @@
 */
 
 #include "socket.h"
+#include <KDNetwork/network_initializer.h>
 
 #include <KDFoundation/file_descriptor_notifier.h>
 
@@ -32,27 +33,11 @@ using namespace KDFoundation;
 
 namespace KDNetwork {
 
-// Static initialization block to ensure WSAStartup is called prior to any socket operations
-struct WSAInitializer {
-    WSAInitializer()
-    {
-        WSADATA wsaData;
-        int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
-        if (result != 0) {
-            KDUtils::Logger::logger("KDNetwork")->error("WSAStartup failed: {}", result);
-        }
-    }
-    ~WSAInitializer()
-    {
-        WSACleanup();
-    }
-};
-
-static WSAInitializer wsaInitializer;
-
 Socket::Socket(SocketType type)
     : m_type(type)
 {
+    // Ensure network subsystem is initialized
+    NetworkInitializer::instance();
 }
 
 Socket::~Socket()

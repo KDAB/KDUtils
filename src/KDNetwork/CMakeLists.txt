@@ -36,6 +36,7 @@ set(SOURCES
     http_response.cpp
     http_session.cpp
     http_parser.cpp
+    network_initializer.cpp
 )
 
 set(HEADERS
@@ -54,6 +55,7 @@ set(HEADERS
     http_response.h
     http_session.h
     http_parser.h
+    network_initializer.h
 )
 
 # Add library
