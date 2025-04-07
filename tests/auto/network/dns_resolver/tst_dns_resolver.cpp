@@ -23,21 +23,22 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 
+namespace doctest {
+template<>
+struct StringMaker<KDNetwork::IpAddress> {
+    static String convert(const KDNetwork::IpAddress &val)
+    {
+        return val.toString().c_str();
+    }
+};
+} // namespace doctest
+
 // Environment variable to control whether to run network tests
 // Set KDUTILS_RUN_NETWORK_TESTS=1 to enable tests with real network requests
 bool shouldRunNetworkTests()
 {
-    // #ifdef _WIN32
-    //     char *env = nullptr;
-    //     size_t len = 0;
-    //     _dupenv_s(&env, &len, "KDUTILS_RUN_NETWORK_TESTS");
-    //     bool shouldRun = env != nullptr && std::string(env) == "1";
-    //     free(env);
-    //     return shouldRun;
-    // #else
     const char *env = std::getenv("KDUTILS_RUN_NETWORK_TESTS");
     return env != nullptr && std::string(env) == "1";
-    // #endif
 }
 
 using namespace KDFoundation;

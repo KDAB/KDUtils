@@ -10,6 +10,8 @@
 */
 
 #include <KDNetwork/dns_resolver.h>
+#include <KDNetwork/network_initializer.h>
+
 #include <KDFoundation/config.h>
 
 #include <KDUtils/logging.h>
@@ -135,6 +137,10 @@ DnsResolver &DnsResolver::instance()
 
 DnsResolver::DnsResolver()
 {
+    // Initialize the network subsystem if needed
+    KDNetwork::NetworkInitializer::instance();
+
+    // Initialize c-ares library
     if (!initializeAres())
         KDUtils::Logger::logger("KDNetwork")->error("Failed to initialize c-ares library");
 }

@@ -136,8 +136,8 @@ TEST_CASE("HttpRequest headers")
 
         auto headers = request.allHeaders();
         CHECK(headers.size() == 3);
-        CHECK(headers.count("Content-Type") == 1);
-        CHECK(headers.count("Accept") == 2);
+        CHECK(headers.count("content-type") == 1);
+        CHECK(headers.count("accept") == 2);
     }
 }
 

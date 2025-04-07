@@ -130,7 +130,7 @@ TEST_CASE("HttpCookie Parse from Set-Cookie header")
         REQUIRE(cookie.has_value());
         CHECK(cookie->name() == "name");
         CHECK(cookie->value() == "value");
-        CHECK(cookie->domain() == ".example.com");
+        CHECK(cookie->domain() == "example.com");
         CHECK(cookie->path() == "/test");
         CHECK(cookie->isSecure());
         CHECK(cookie->isHttpOnly());
