@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     CoreApplication app;
 
     HttpClient client;
-    client.get(Uri("http://localhost:3000/"), [&](const HttpResponse &response) {
+    client.get(Uri("http://getstreamline.org/"), [&](const HttpResponse &response) {
         if (response.isSuccessful()) {
             std::cout << "Got response: " << response.bodyAsString() << std::endl;
 

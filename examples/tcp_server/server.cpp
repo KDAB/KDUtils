@@ -32,6 +32,7 @@ bool Server::start()
         return false;
     }
     std::cout << "Server is listening on address: " << m_server.serverAddress().toString() << ", port: " << m_server.serverPort() << std::endl;
+    return true;
 }
 
 void Server::newConnection(std::unique_ptr<KDNetwork::TcpSocket> socket)
