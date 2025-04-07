@@ -17,7 +17,7 @@
 
 namespace KDNetwork {
 
-std::string toString(HttpMethod method)
+std::string toStdString(HttpMethod method)
 {
     switch (method) {
     case HttpMethod::Get:
