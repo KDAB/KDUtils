@@ -28,6 +28,14 @@ set(SOURCES
     dns_resolver.cpp
     ssl_socket.cpp
     ip_address.cpp
+    # HTTP-related sources
+    http_client.cpp
+    http_cookie.cpp
+    http_cookie_jar.cpp
+    http_request.cpp
+    http_response.cpp
+    http_session.cpp
+    http_parser.cpp
 )
 
 set(HEADERS
@@ -39,6 +47,13 @@ set(HEADERS
     dns_resolver.h
     ssl_socket.h
     ip_address.h
+    http_client.h
+    http_cookie_jar.h
+    http_cookie.h
+    http_request.h
+    http_response.h
+    http_session.h
+    http_parser.h
 )
 
 # Add library
@@ -54,6 +69,7 @@ add_library(
 target_link_libraries(
     KDNetwork
     PUBLIC KDFoundation OpenSSL::SSL OpenSSL::Crypto
+    PRIVATE llhttp_static
 )
 
 # Link c-ares for asynchronous DNS resolution

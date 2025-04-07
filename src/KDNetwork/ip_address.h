@@ -98,6 +98,11 @@ public:
     Type type() const noexcept;
 
     /**
+     * @brief Returns whether the address is valid (not Invalid)
+     */
+    bool isValid() const noexcept { return type() != Type::Invalid; }
+
+    /**
      * @brief Converts the IP address to a string representation
      *
      * @return String representation of the IP address

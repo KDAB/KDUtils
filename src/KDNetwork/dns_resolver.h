@@ -49,6 +49,23 @@ namespace KDNetwork {
 class KDNETWORK_EXPORT DnsResolver
 {
 public:
+    /**
+     * @brief AddressFamily enum defines the address family preferences for DNS lookups.
+     *
+     * - Any: Use any address family (IPv4 or IPv6)
+     * - IPv4: Prefer IPv4 addresses
+     * - IPv6: Prefer IPv6 addresses
+     * - IPv4Only: Only use IPv4 addresses
+     * - IPv6Only: Only use IPv6 addresses
+     */
+    enum class AddressFamily {
+        Any, ///< Use any address family (IPv4 or IPv6)
+        IPv4, ///< Prefer IPv4 addresses
+        IPv6, ///< Prefer IPv6 addresses
+        IPv4Only, ///< Only use IPv4 addresses
+        IPv6Only ///< Only use IPv6 addresses
+    };
+
     // Per-thread singleton instance
     static DnsResolver &instance();
 
@@ -62,6 +79,10 @@ public:
     // Movable
     DnsResolver(DnsResolver &&) = default;
     DnsResolver &operator=(DnsResolver &&) = default;
+
+    // Set the preferred address family for DNS lookups
+    void setPreferredAddressFamily(AddressFamily family);
+    DnsResolver::AddressFamily preferredAddressFamily() const;
 
     /**
      * @brief Result list of resolved IP addresses
@@ -79,7 +100,24 @@ public:
      */
     using LookupCallback = std::function<void(std::error_code, const AddressInfoList &)>;
 
+    /**
+     * @brief Perform an asynchronous DNS lookup for the specified hostname using the preferred address family
+     *
+     * @param hostname The hostname to resolve
+     * @param callback Function to be called when the lookup is complete
+     * @return true if the lookup was initiated successfully, false otherwise
+     */
     bool lookup(const std::string &hostname, LookupCallback callback);
+
+    /**
+     * @brief Perform an asynchronous DNS lookup for the specified hostname with a specific address family preference
+     *
+     * @param hostname The hostname to resolve
+     * @param family The preferred address family for this lookup
+     * @param callback Function to be called when the lookup is complete
+     * @return true if the lookup was initiated successfully, false otherwise
+     */
+    bool lookup(const std::string &hostname, AddressFamily family, LookupCallback callback);
 
     void cancelLookups();
 
@@ -106,6 +144,7 @@ protected:
     // Track lookup requests by id
     struct LookupRequest {
         std::string hostname;
+        AddressFamily family;
         LookupCallback callback;
     };
     std::map<uint64_t, LookupRequest> m_lookupRequests;
@@ -114,6 +153,9 @@ protected:
     // Socket notifier tracking
     std::map<int, std::unique_ptr<KDFoundation::FileDescriptorNotifier>> m_readNotifiers;
     std::map<int, std::unique_ptr<KDFoundation::FileDescriptorNotifier>> m_writeNotifiers;
+
+    // Preferred address family for lookups
+    AddressFamily m_preferredAddressFamily{ AddressFamily::IPv4 };
 };
 
 } // namespace KDNetwork
