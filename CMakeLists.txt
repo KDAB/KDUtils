@@ -38,6 +38,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 cmake_policy(SET CMP0090 NEW) # Stop export(PACKAGE) from modifying the system-wide cmake package system
 cmake_policy(SET CMP0117 NEW) # Do not add /GR to CMAKE_CXX_FLAGS
+cmake_policy(SET CMP0135 NEW) # Use current timestamp when extracting tarball for FetchContent
 
 option(KDUTILS_BUILD_EXAMPLES "Build examples" ON)
 option(KDUTILS_BUILD_NETWORK_SUPPORT "Build KDNetwork" ON)
