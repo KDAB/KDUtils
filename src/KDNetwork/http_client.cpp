@@ -67,7 +67,7 @@ public:
         std::stringstream ss;
 
         // Request line
-        ss << toString(request.method()) << " ";
+        ss << toStdString(request.method()) << " ";
 
         // Extract path from URL
         std::string urlStr = request.url().toString();
