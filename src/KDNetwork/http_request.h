@@ -37,9 +37,9 @@ enum class HttpMethod {
 };
 
 /**
- * @brief Convert HttpMethod to string
+ * @brief Convert HttpMethod to std::string
  */
-KDNETWORK_EXPORT std::string toString(HttpMethod method);
+KDNETWORK_EXPORT std::string toStdString(HttpMethod method);
 
 /**
  * @brief The HttpRequest class represents an HTTP request
