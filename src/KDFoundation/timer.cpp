@@ -17,6 +17,7 @@
 
 using namespace KDFoundation;
 
+// TODO: Handle timers on different threads
 Timer::Timer()
     : m_platformTimer(CoreApplication::instance()->eventLoop()->createPlatformTimer(this))
 {
@@ -24,4 +25,14 @@ Timer::Timer()
 
 Timer::~Timer()
 {
+}
+
+void Timer::handleTimeout()
+{
+    // If this is a single shot timer, stop it before emitting the timeout signal
+    if (singleShot())
+        running = false;
+
+    // Emit the timeout signal
+    timeout.emit();
 }
