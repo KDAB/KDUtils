@@ -38,7 +38,9 @@ enum class SocketError {
     InvalidSocketError, // Operation on an uninitialized/closed socket
     UnsupportedOperationError,
     AddressResolutionError, // For DNS related issues if handled here
-    TlsHandshakeError, // For SSL/TLS sockets
+    SslError, // General SSL/TLS errors
+    SslCertificateError, // SSL certificate verification errors
+    SslHandshakeError, // For SSL/TLS sockets
     ServerIsAlreadyListening, // Attempt to listen on a socket that is already listening
     UnknownError
 };
