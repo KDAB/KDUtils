@@ -20,6 +20,10 @@
 namespace KDFoundation {
 
 class AbstractPlatformTimer;
+// Forward declaration of platform-specific timer implementations
+class Win32PlatformTimer;
+class LinuxPlatformTimer;
+class MacOSPlatformTimer;
 
 class KDFOUNDATION_API Timer
 {
@@ -31,8 +35,17 @@ public:
 
     KDBindings::Property<bool> running{ false };
     KDBindings::Property<std::chrono::microseconds> interval{};
+    KDBindings::Property<bool> singleShot{ false };
 
 private:
+    // Allow platform-specific timer implementations to call handleTimeout
+    friend class Win32PlatformTimer;
+    friend class LinuxPlatformTimer;
+    friend class MacOSPlatformTimer;
+
+    // Helper method for platform timers to call when timeout occurs
+    void handleTimeout();
+
     std::unique_ptr<AbstractPlatformTimer> m_platformTimer;
 };
 
