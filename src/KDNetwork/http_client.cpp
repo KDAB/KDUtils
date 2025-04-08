@@ -257,7 +257,7 @@ std::shared_ptr<HttpClient::RequestState> HttpClient::createRequestState(
 
     // Set up the timeout timer
     state->timeoutTimer = std::make_unique<KDFoundation::Timer>();
-    // TODO: state->timeoutTimer->singleShot = true;
+    state->timeoutTimer->singleShot = true;
     state->timeoutTimer->interval = request.timeout();
     // TODO: Can we ignore this? Or should we put the connection handler in the state?
     std::ignore = state->timeoutTimer->timeout.connect([this, state]() {
