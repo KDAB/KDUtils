@@ -51,8 +51,12 @@ public:
             return "Unsupported operation";
         case SocketError::AddressResolutionError:
             return "Address resolution failed";
-        case SocketError::TlsHandshakeError:
-            return "TLS handshake failed";
+        case SocketError::SslError:
+            return "SSL error occurred";
+        case SocketError::SslCertificateError:
+            return "SSL certificate verification failed";
+        case SocketError::SslHandshakeError:
+            return "SSL handshake failed";
         case SocketError::ServerIsAlreadyListening:
             return "Server is already listening on this socket";
         case SocketError::UnknownError:

@@ -48,8 +48,8 @@ public:
     virtual bool connectToHost(const IpAddress &address, std::uint16_t port);
     virtual void disconnectFromHost();
 
-    std::int64_t write(const KDUtils::ByteArray &data);
-    std::int64_t write(const std::uint8_t *data, std::int64_t size);
+    virtual std::int64_t write(const KDUtils::ByteArray &data);
+    virtual std::int64_t write(const std::uint8_t *data, std::int64_t size);
     KDUtils::ByteArray read(std::int64_t maxSize);
     KDUtils::ByteArray readAll();
 
@@ -70,16 +70,16 @@ protected:
     // to resume sending data from the write buffer when the socket becomes writable again.
     void onWriteReady() override;
 
+    // Processes data received from the socket.
+    // Appends data to the read buffer and emits bytesReceived signal.
+    void processReceivedData(const std::uint8_t *buffer, int size);
+
 private:
     // Called from onReadReady/onWriteReady when state is Connecting. Sets state, emits signals.
     void handleConnectionResult();
 
     // Called internally by write() and onWriteReady(). Handles partial sends and EWOULDBLOCK.
     void trySend();
-
-    // Processes data received from the socket.
-    // Appends data to the read buffer and emits bytesReceived signal.
-    void processReceivedData(const std::uint8_t *buffer, int size);
 
     // Handle DNS lookup completion and initiate socket connection
     void handleDnsLookupCompleted(std::error_code ec, const std::vector<IpAddress> &addresses);
