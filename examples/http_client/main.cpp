@@ -32,7 +32,8 @@ int main(int argc, char *argv[])
 
     // Example 1: Callback-based approach (works with event loop)
     HttpClient client;
-    client.get(Uri("http://localhost:3000/"), [&](const HttpResponse &response) {
+    // client.get(Uri("http://localhost:3000/"), [&](const HttpResponse &response) {
+    client.get(Uri("https://getstreamline.org/"), [&](const HttpResponse &response) {
         if (response.isSuccessful()) {
             std::cout << "Got response: " << response.bodyAsString() << std::endl;
 
@@ -48,12 +49,12 @@ int main(int argc, char *argv[])
             for (const auto &header : response.allHeaders()) {
                 std::cout << header.first << ": " << header.second << std::endl;
             }
-
-            // Quit the event loop
-            app.quit();
         } else {
             std::cout << "Error: " << response.error() << std::endl;
         }
+
+        // Quit the event loop
+        app.quit();
     });
 
     // Run the event loop - this keeps the network operations running

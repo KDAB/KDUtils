@@ -353,6 +353,7 @@ void HttpClient::startRequest(std::shared_ptr<RequestState> state)
             state->timeoutTimer->running = true;
 
             // Connect to the first address
+            KDUtils::Logger::logger("KDNetwork")->warn("Connecting to host: {} at {}", state->host, addresses[0].toString());
             auto tcpSocket = std::dynamic_pointer_cast<TcpSocket>(state->socket);
             if (tcpSocket) {
                 if (!tcpSocket->connectToHost(addresses[0], state->port)) {
@@ -695,8 +696,24 @@ void HttpClient::onTimeout(std::shared_ptr<RequestState> state)
 std::shared_ptr<Socket> HttpClient::createSocket(bool secure)
 {
     if (secure) {
-        // TODO: Implement ssl/tls return std::make_shared<SslSocket>();
-        return {};
+        auto sslSocket = std::make_shared<SslSocket>();
+
+        // Set default verification mode
+        sslSocket->setVerificationMode(SslSocket::VerificationMode::VerifyPeer);
+
+        // Connect signal for SSL handshake errors
+        std::ignore = sslSocket->handshakeError.connect([this, &sslSocket](const std::string &error) {
+            auto it = std::find_if(m_activeRequests.begin(), m_activeRequests.end(),
+                                   [&sslSocket](const auto &pair) {
+                                       return pair.first == sslSocket;
+                                   });
+
+            if (it != m_activeRequests.end()) {
+                failRequest(it->second, "SSL handshake error: " + error);
+            }
+        });
+
+        return sslSocket;
     } else {
         return std::make_shared<TcpSocket>();
     }
