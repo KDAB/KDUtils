@@ -34,3 +34,13 @@ Timer::Timer()
 Timer::~Timer()
 {
 }
+
+void Timer::handleTimeout()
+{
+    // If this is a single shot timer, stop it before emitting the timeout signal
+    if (singleShot())
+        running = false;
+
+    // Emit the timeout signal
+    timeout.emit();
+}
