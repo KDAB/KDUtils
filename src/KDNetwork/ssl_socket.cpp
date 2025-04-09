@@ -681,12 +681,12 @@ void SslSocket::continueHandshake()
         handleSslRead();
     } else if (sslError == SSL_ERROR_WANT_READ) {
         // Need more data, waiting for read event
-        KDUtils::Logger::logger("KDNetwork")->warn("SSL handshake waiting for read");
+        KDUtils::Logger::logger("KDNetwork")->trace("SSL handshake waiting for read");
         setReadNotificationEnabled(true);
         setWriteNotificationEnabled(false);
     } else if (sslError == SSL_ERROR_WANT_WRITE) {
         // Need to write, waiting for write event
-        KDUtils::Logger::logger("KDNetwork")->warn("SSL handshake waiting for write");
+        KDUtils::Logger::logger("KDNetwork")->trace("SSL handshake waiting for write");
         setReadNotificationEnabled(false);
         setWriteNotificationEnabled(true);
     } else {
@@ -696,10 +696,10 @@ void SslSocket::continueHandshake()
         // Get certificate details if available, even if verification failed
         X509 *cert = SSL_get_peer_certificate(d->ssl);
         if (cert) {
-            KDUtils::Logger::logger("KDNetwork")->error("Server certificate details:\n" + formatCertificateDetails(cert));
+            KDUtils::Logger::logger("KDNetwork")->debug("Server certificate details:\n" + formatCertificateDetails(cert));
             X509_free(cert);
         } else {
-            KDUtils::Logger::logger("KDNetwork")->error("No server certificate received");
+            KDUtils::Logger::logger("KDNetwork")->debug("No server certificate received");
         }
 
         std::string error = "SSL handshake failed: " + errorMsg;
@@ -1003,7 +1003,7 @@ bool SslSocket::verifySslCertificate()
     }
 
     // Log certificate details for debugging
-    KDUtils::Logger::logger("KDNetwork")->warn("Server certificate details:\n" + formatCertificateDetails(cert));
+    KDUtils::Logger::logger("KDNetwork")->debug("Server certificate details:\n" + formatCertificateDetails(cert));
 
     // Check verification result
     long verifyResult = SSL_get_verify_result(d->ssl);

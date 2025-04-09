@@ -107,6 +107,18 @@ public:
                                    std::function<void(const HttpResponse &)> callback = nullptr);
 
     /**
+     * @brief Convenience method to send a POST request. Caller is responsible for setting the content type.
+     *
+     * @param url The URL to request
+     * @param data The data to send in the request body
+     * @param callback Optional callback function to call when the request completes
+     * @return A future that will be set to the response when completed
+     */
+    std::future<HttpResponse> post(const KDUtils::Uri &url,
+                                   const KDUtils::ByteArray &data,
+                                   std::function<void(const HttpResponse &)> callback = nullptr);
+
+    /**
      * @brief Convenience method to send a PUT request
      */
     std::future<HttpResponse> put(const KDUtils::Uri &url,
@@ -197,7 +209,7 @@ private:
     bool parseResponseHeader(std::shared_ptr<RequestState> state);
     void parseResponseBody(std::shared_ptr<RequestState> state);
 
-    std::shared_ptr<KDNetwork::Socket> createSocket(bool secure);
+    std::shared_ptr<KDNetwork::Socket> createSocket(bool secure, const std::string &host = {});
 
     std::shared_ptr<HttpSession> m_session;
 

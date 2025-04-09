@@ -14,6 +14,7 @@ if(KDUTILS_BUILD_NETWORK_SUPPORT)
     add_subdirectory(tcp_server)
     add_subdirectory(tcp_client)
     add_subdirectory(http_client)
+    add_subdirectory(open_ai_client)
 endif()
 
 if(KDUTILS_BUILD_MQTT_SUPPORT)
