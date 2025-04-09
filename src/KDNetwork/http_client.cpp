@@ -176,6 +176,15 @@ std::future<HttpResponse> HttpClient::post(const KDUtils::Uri &url,
     return send(request, callback);
 }
 
+std::future<HttpResponse> HttpClient::post(const KDUtils::Uri &url,
+                                           const KDUtils::ByteArray &data,
+                                           std::function<void(const HttpResponse &)> callback)
+{
+    HttpRequest request(url, HttpMethod::Post);
+    request.setBody(data);
+    return send(request, callback);
+}
+
 std::future<HttpResponse> HttpClient::put(const KDUtils::Uri &url,
                                           const KDUtils::ByteArray &data,
                                           const std::string &contentType,
@@ -337,7 +346,7 @@ void HttpClient::startRequest(std::shared_ptr<RequestState> state)
             }
 
             // Create socket
-            state->socket = createSocket(state->secure);
+            state->socket = createSocket(state->secure, state->host);
             if (!state->socket) {
                 failRequest(state, "Failed to create socket");
                 return;
@@ -353,7 +362,7 @@ void HttpClient::startRequest(std::shared_ptr<RequestState> state)
             state->timeoutTimer->running = true;
 
             // Connect to the first address
-            KDUtils::Logger::logger("KDNetwork")->warn("Connecting to host: {} at {}", state->host, addresses[0].toString());
+            KDUtils::Logger::logger("KDNetwork")->debug("Connecting to host: {} at {}", state->host, addresses[0].toString());
             auto tcpSocket = std::dynamic_pointer_cast<TcpSocket>(state->socket);
             if (tcpSocket) {
                 if (!tcpSocket->connectToHost(addresses[0], state->port)) {
@@ -693,13 +702,17 @@ void HttpClient::onTimeout(std::shared_ptr<RequestState> state)
     failRequest(state, "Request timeout");
 }
 
-std::shared_ptr<Socket> HttpClient::createSocket(bool secure)
+std::shared_ptr<Socket> HttpClient::createSocket(bool secure, const std::string &host)
 {
     if (secure) {
         auto sslSocket = std::make_shared<SslSocket>();
 
         // Set default verification mode
         sslSocket->setVerificationMode(SslSocket::VerificationMode::VerifyPeer);
+
+        // Set the peer verification name
+        if (!host.empty())
+            sslSocket->setPeerVerifyName(host);
 
         // Connect signal for SSL handshake errors
         std::ignore = sslSocket->handshakeError.connect([this, &sslSocket](const std::string &error) {
