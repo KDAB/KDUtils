@@ -15,10 +15,13 @@
 #include <KDUtils/logging.h>
 
 #if defined(KD_PLATFORM_WIN32)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
 #else
 #include <errno.h>
 #include <netdb.h> // For getaddrinfo (used as placeholder)
 #include <sys/socket.h> // For getsockopt, SO_ERROR, send flags (MSG_NOSIGNAL)
+#include <sys/types.h> // For ssize_t
 #include <unistd.h> // For read/write/send/recv
 #endif // KD_PLATFORM_WIN32
 
@@ -452,7 +455,7 @@ void TcpSocket::onReadReady()
     // Read data in a loop as readiness notification is level-triggered
     constexpr int tempBufferSize = 4096; // Sensible chunk size
     std::uint8_t tempBuffer[tempBufferSize];
-    int bytesRead = 0;
+    ssize_t bytesRead = 0;
 
     while (isValid()) { // Loop while socket is valid
 #if defined(KD_PLATFORM_WIN32)
