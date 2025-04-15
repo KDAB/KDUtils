@@ -38,6 +38,7 @@ class Socket;
 class TcpSocket;
 class SslSocket;
 class DnsResolver;
+class SseClient;
 
 /**
  * @brief The HttpClient class provides functionality for making HTTP requests
@@ -50,8 +51,9 @@ class DnsResolver;
  * - Authentication
  * - Timeouts
  * - SSL/TLS
+ * - Server-Sent Events (SSE)
  */
-class KDNETWORK_EXPORT HttpClient
+class KDNETWORK_EXPORT HttpClient : public std::enable_shared_from_this<HttpClient>
 {
 public:
     /**
@@ -160,6 +162,31 @@ public:
      * @brief Set a new session
      */
     void setSession(std::shared_ptr<HttpSession> session);
+
+    /**
+     * @brief Create a Server-Sent Events client
+     *
+     * Creates a new SseClient instance that uses this HttpClient for its connections.
+     * The SSE client can be used to establish persistent connections to SSE endpoints.
+     *
+     * @return A new SseClient instance
+     */
+    std::shared_ptr<SseClient> createSseClient();
+
+    /**
+     * @brief Send an HTTP request with associated SSE client
+     * 
+     * Internal method used by SseClient to associate itself with a request.
+     * Not intended to be called directly by users.
+     * 
+     * @param request The HTTP request to send
+     * @param sseClient The SseClient that initiated this request
+     * @param callback Optional callback function to call when the request completes
+     * @return A future that will be set to the response when completed
+     */
+    std::future<HttpResponse> sendWithSseClient(const HttpRequest &request,
+                                              std::shared_ptr<SseClient> sseClient,
+                                              std::function<void(const HttpResponse &)> callback = nullptr);
 
     /**
      * @brief Signal emitted when a request is about to be sent

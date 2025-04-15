@@ -14,6 +14,7 @@
 #include <cctype>
 #include <sstream>
 #include <iomanip>
+#include "http_request.h"
 
 namespace KDNetwork {
 
@@ -82,6 +83,12 @@ HttpMethod HttpRequest::method() const
 void HttpRequest::setMethod(HttpMethod method)
 {
     m_method = method;
+}
+
+bool HttpRequest::hasHeader(const std::string &name) const
+{
+    const std::string normalized = normalizeHeaderName(name);
+    return m_headers.find(normalized) != m_headers.end();
 }
 
 std::string HttpRequest::header(const std::string &name) const
