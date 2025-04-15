@@ -37,6 +37,8 @@ set(SOURCES
     http_session.cpp
     http_parser.cpp
     network_initializer.cpp
+    sse_client.cpp
+    sse_event.cpp
 )
 
 set(HEADERS
@@ -56,6 +58,8 @@ set(HEADERS
     http_session.h
     http_parser.h
     network_initializer.h
+    sse_client.h
+    sse_event.h
 )
 
 # Add library

@@ -104,6 +104,14 @@ public:
     void setMethod(HttpMethod method);
 
     /**
+     * @brief Checks for the presence of a header
+     *
+     * @param name The name of the header (case-insensitive)
+     * @return true if the header exists, false otherwise
+     */
+    bool hasHeader(const std::string &name) const;
+
+    /**
      * @brief Get a header value
      *
      * @param name The name of the header (case-insensitive)
