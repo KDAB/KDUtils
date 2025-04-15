@@ -28,11 +28,13 @@ OpenAiClient::OpenAiClient(const std::string_view &apiKey)
     : m_apiKey(apiKey)
     , m_client(std::make_shared<KDNetwork::HttpClient>())
 {
+    setupSseClient();
 }
 
 OpenAiClient::~OpenAiClient()
 {
-    m_client->cancelAll();
+    if (m_sseClient)
+        m_sseClient->disconnect();
 }
 
 bool OpenAiClient::createResponse(const std::string_view &prompt)
@@ -48,12 +50,30 @@ bool OpenAiClient::createResponse(const std::string_view &prompt)
                                { "stream", true } }); // Enable streaming vis Server Sent Events (SSE)
     const ByteArray bodyPayload(body.dump());
 
+    // Set up the request
+    // Note: The SSE client will handle the connection and streaming
+    // The HTTP client is used to send the initial request.
+    // Note: The SSE client will set the Accept and Cache-Control headers automatically
+    // if not already set.
+    HttpRequest request(url, HttpMethod::Post);
+    request.setHeader("Content-Type", "application/json");
+    request.setHeader("Authorization", "Bearer " + m_apiKey);
+    request.setBody(bodyPayload);
+
+    m_sseClient->connect(request);
+
+    return true;
+}
+
+void OpenAiClient::setupSseClient()
+{
     // Set up the SSE client
     m_sseClient = m_client->createSseClient();
 
     std::ignore = m_sseClient->messageReceived.connect([this](const KDNetwork::SseEvent &event) {
         // For OpenAI API specifically, parse the JSON data according to:
         // https://platform.openai.com/docs/api-reference/responses-streaming
+        // TODO: Handle other event types to progressively build up the full OpenAI response object
         if (event.event() == "response.output_text.delta") {
             // Extract the text delta from the event data
             json data = json::parse(event.data());
@@ -89,18 +109,4 @@ bool OpenAiClient::createResponse(const std::string_view &prompt)
     std::ignore = m_sseClient->disconnected.connect([]() {
         Logger::logger("OpenAI Client")->info("Disconnected from SSE stream");
     });
-
-    // Set up the request
-    // Note: The SSE client will handle the connection and streaming
-    // The HTTP client is used to send the initial request.
-    // Note: The SSE client will set the Accept and Cache-Control headers automatically
-    // if not already set.
-    HttpRequest request(url, HttpMethod::Post);
-    request.setHeader("Content-Type", "application/json");
-    request.setHeader("Authorization", "Bearer " + m_apiKey);
-    request.setBody(bodyPayload);
-
-    m_sseClient->connect(request);
-
-    return true;
 }
