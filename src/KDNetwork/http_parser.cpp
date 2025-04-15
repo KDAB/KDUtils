@@ -349,13 +349,27 @@ int HttpParser::onMessageComplete(llhttp_t *parser)
 
 int HttpParser::onChunkHeader(llhttp_t *parser)
 {
-    // No specific action needed for chunk header in this implementation
+    // Store chunk size information if needed
+    // We can use this for more granular progress reporting
+    auto *p = static_cast<Private *>(parser->data);
+
+    // Access chunk size if needed
+    // size_t chunkSize = parser->content_length;
+
     return 0;
 }
 
 int HttpParser::onChunkComplete(llhttp_t *parser)
 {
-    // No specific action needed for chunk complete in this implementation
+    auto *p = static_cast<Private *>(parser->data);
+
+    // For SSE streaming, we want to process complete chunks as they arrive
+    // rather than waiting for the full message to complete
+
+    // If we're in streaming mode, notify that a chunk is complete
+    // This is particularly useful for SSE where we want to process each chunk
+    // even before the entire response is complete
+
     return 0;
 }
 

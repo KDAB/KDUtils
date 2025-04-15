@@ -13,6 +13,7 @@
 #include <KDNetwork/ssl_socket.h>
 #include <KDNetwork/dns_resolver.h>
 #include <KDNetwork/http_parser.h>
+#include <KDNetwork/sse_client.h>
 
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/timer.h>
@@ -60,6 +61,12 @@ public:
     std::unique_ptr<KDFoundation::Timer> timeoutTimer;
     bool headersParsed{ false };
     bool completed{ false };
+
+    // New flag for SSE/streaming mode
+    bool streamingMode{ false };
+
+    // Reference to associated SSE client for streaming connections
+    std::shared_ptr<SseClient> sseClient;
 
     // Helper to generate request data
     void buildRequestData()
@@ -144,6 +151,27 @@ std::future<HttpResponse> HttpClient::send(const HttpRequest &request,
 
     // Create request state
     auto state = createRequestState(request, callback, std::move(promise));
+
+    // Start the request (async)
+    startRequest(state);
+
+    return future;
+}
+
+std::future<HttpResponse> HttpClient::sendWithSseClient(
+        const HttpRequest &request,
+        std::shared_ptr<SseClient> sseClient,
+        std::function<void(const HttpResponse &)> callback)
+{
+    // Create promise for the future
+    std::promise<HttpResponse> promise;
+    std::future<HttpResponse> future = promise.get_future();
+
+    // Create request state
+    auto state = createRequestState(request, callback, std::move(promise));
+
+    // Store the reference to the SSE client
+    state->sseClient = sseClient;
 
     // Start the request (async)
     startRequest(state);
@@ -797,18 +825,53 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
 
         // Get expected content length
         state->expectedContentLength = state->response.contentLength();
+        
+        // Check if this is an SSE stream by looking at the content type
+        // and set streaming mode flag
+        auto contentTypeIt = headers.find("content-type");
+        if (contentTypeIt != headers.end() && 
+            contentTypeIt->second.find("text/event-stream") != std::string::npos) {
+            state->streamingMode = true;
+            
+            // For streaming responses with SSE client, call the client's callback immediately
+            // with just the headers so it can emit the 'connected' signal
+            if (state->sseClient && state->request.header("Accept").find("text/event-stream") != std::string::npos) {
+                // Create a response with just the headers for the callback
+                if (state->userCallback) {
+                    state->userCallback(state->response);
+                }
+            }
+            
+            // For streaming responses, we want to emit the headers right away
+            // so clients can start processing the content type and other headers
+            responseReceived.emit(state->response);
+        }
     });
 
     // Body data callback
     state->parser->setBodyDataCallback([this, state](const uint8_t *data, size_t length) {
-        // Append body data to response
+        // Create a chunk from the incoming data
         KDUtils::ByteArray chunk(data, length);
+
+        // Append body data to response
         KDUtils::ByteArray currentBody = state->response.body();
         currentBody.append(chunk);
         state->response.setBody(currentBody);
 
         // Update download progress
         downloadProgress.emit(state->request, currentBody.size(), state->expectedContentLength);
+
+        // For SSE streaming mode, send only the new chunk to the associated SseClient
+        if (state->streamingMode && state->headersParsed) {
+            // If this request is from an SSE client, pass the chunk directly to it
+            if (state->sseClient) {
+                // Only send the new chunk, not the entire accumulated body
+                state->sseClient->processDataChunk(chunk);
+            } else {
+                // For other streaming consumers, emit the response
+                responseReceived.emit(state->response);
+            }
+        }
     });
 
     // Message complete callback
@@ -822,14 +885,27 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
             m_session->cookieJar().parseCookies(state->request.url(), setCookieValues);
         }
 
-        // Finish the request
-        finishRequest(state);
+        // For non-streaming responses, finish the request now
+        if (!state->streamingMode) {
+            // Finish the request
+            finishRequest(state);
+        }
+        // For streaming responses (like SSE), we don't finish the request
+        // as the connection stays open
     });
 
     // Error callback
     state->parser->setErrorCallback([this, state](const std::string &error) {
         failRequest(state, "HTTP parsing error: " + error);
     });
+}
+
+std::shared_ptr<SseClient> HttpClient::createSseClient()
+{
+    // Create a new SseClient instance using this HttpClient
+    // Use the shared_from_this pattern to ensure HttpClient stays alive
+    // as long as the SseClient needs it
+    return std::shared_ptr<SseClient>(new SseClient(shared_from_this()));
 }
 
 } // namespace KDNetwork
