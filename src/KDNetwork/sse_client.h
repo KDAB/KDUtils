@@ -115,6 +115,9 @@ private:
     class Private;
     std::unique_ptr<Private> d;
 
+    // Flag to track explicit disconnection
+    bool isDisconnecting = false;
+
     // Disable copying and assignment
     SseClient(const SseClient &) = delete;
     SseClient &operator=(const SseClient &) = delete;
