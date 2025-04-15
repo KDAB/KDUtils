@@ -27,6 +27,7 @@ public:
     bool isConnected;
     std::string lastEventId;
     HttpRequest activeRequest;
+    bool isDisconnecting = false; // Flag to track explicit disconnection
 
     // Internal parser for SSE events
     class SseParser
@@ -151,6 +152,9 @@ void SseClient::connect(const HttpRequest &request)
         disconnect();
     }
 
+    // Reset the disconnecting flag when starting a new connection
+    d->isDisconnecting = false;
+
     // Make a copy of the request that we can modify
     HttpRequest sseRequest = request;
 
@@ -197,10 +201,15 @@ void SseClient::connect(const HttpRequest &request)
         }
     };
 
-    // Set up error handling
+    // Set up error handling - only emit errors if we're not deliberately disconnecting
     std::ignore = d->httpClient->error.connect([this](const HttpRequest &, const std::string &errorMessage) {
         d->isConnected = false;
-        error.emit("Connection error: " + errorMessage);
+        
+        // Only emit error if this wasn't an explicit disconnect
+        if (!d->isDisconnecting) {
+            error.emit("Connection error: " + errorMessage);
+        }
+        
         disconnected.emit();
     });
 
@@ -212,6 +221,9 @@ void SseClient::connect(const HttpRequest &request)
 void SseClient::disconnect()
 {
     if (d->isConnected) {
+        // Set the disconnecting flag to avoid emitting error on deliberate disconnect
+        d->isDisconnecting = true;
+        
         // Cancel the request and close the connection
         d->httpClient->cancelAll();
         d->isConnected = false;
