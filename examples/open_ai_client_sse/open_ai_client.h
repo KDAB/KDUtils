@@ -35,6 +35,8 @@ public:
     bool createResponse(const std::string_view &prompt);
 
 private:
+    void setupSseClient();
+
     const KDUtils::Uri m_baseUrl{ "https://api.openai.com/v1/" };
     const std::string m_apiKey;
     std::shared_ptr<KDNetwork::HttpClient> m_client;
