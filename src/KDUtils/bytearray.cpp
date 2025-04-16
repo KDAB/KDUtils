@@ -133,6 +133,18 @@ void ByteArray::append(const uint8_t *data, size_t size)
     m_data.insert(m_data.end(), data, data + size);
 }
 
+void ByteArray::append(uint8_t c)
+{
+    m_data.push_back(c);
+}
+
+void ByteArray::append(const std::string &data)
+{
+    if (data.empty())
+        return;
+    m_data.insert(m_data.end(), data.data(), data.data() + data.size());
+}
+
 void ByteArray::clear()
 {
     m_data.clear();
