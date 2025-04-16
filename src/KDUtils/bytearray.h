@@ -9,8 +9,7 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 
-#ifndef KDUTILS_BYTEARRAY_H
-#define KDUTILS_BYTEARRAY_H
+#pragma once
 
 #include <vector>
 #include <cstdint>
@@ -45,6 +44,8 @@ public:
     ByteArray &operator+=(const ByteArray &other);
     void append(const ByteArray &other);
     void append(const uint8_t *data, size_t size);
+    void append(uint8_t c);
+    void append(const std::string &data);
     void clear();
 
     size_t size() const;
@@ -63,6 +64,12 @@ public:
     inline const uint8_t *constData() const { return m_data.data(); }
     inline const std::vector<uint8_t> &vector() const { return m_data; }
 
+    inline const uint8_t &operator[](size_t i) const { return m_data[i]; }
+    inline uint8_t &operator[](size_t i) { return m_data[i]; }
+
+    inline const uint8_t &at(size_t i) const { return m_data[i]; }
+    inline uint8_t &at(size_t i) { return m_data[i]; }
+
     std::string toStdString() const { return std::string(m_data.begin(), m_data.end()); }
 
     ByteArray toBase64() const;
@@ -77,5 +84,3 @@ KDUTILS_API bool operator!=(const ByteArray &a, const ByteArray &b);
 KDUTILS_API ByteArray operator+(const ByteArray &a, const ByteArray &b);
 
 } // namespace KDUtils
-
-#endif // KUESA_COREUTILS_BYTEARRAY_H

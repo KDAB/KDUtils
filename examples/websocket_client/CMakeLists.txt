@@ -1,0 +1,26 @@
+# This file is part of KDUtils.
+#
+# SPDX-FileCopyrightText: 2025 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+#
+# SPDX-License-Identifier: MIT
+#
+# Contact KDAB at <info@kdab.com> for commercial licensing options.
+#
+
+project(
+    websocket_client_example
+    DESCRIPTION "WebSocket client example for KDNetwork"
+    LANGUAGES CXX
+)
+
+# Add executable
+add_executable(
+    websocket_client_example
+    main.cpp
+)
+
+# Link with KDNetwork
+target_link_libraries(
+    websocket_client_example
+    PRIVATE KDUtils::KDNetwork
+)
