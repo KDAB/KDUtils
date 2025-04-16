@@ -241,6 +241,15 @@ void WebSocketClient::setupSocket(std::shared_ptr<Socket> socket, const KDUtils:
         m_receiveBuffer.append(excessData);
     }
 
+    // Emit the connected signal and process any initial data
+    connected.emit();
+
+    // Process any initial data in the buffer. This can happen if the server includes a message in the
+    // same packet as the upgrade response.
+    if (!m_receiveBuffer.isEmpty()) {
+        processIncomingData();
+    }
+
     // Set up read handler for future data
     std::ignore = tcpSocket->bytesReceived.connect([this]() {
         processIncomingData();
@@ -253,23 +262,6 @@ void WebSocketClient::setupSocket(std::shared_ptr<Socket> socket, const KDUtils:
 
     // Start ping timer for keep-alive
     startPingTimer();
-
-    // Emit connected signal via a single shot timer to ensure HttpClient cleanup is complete
-    if (!m_connectedTimer) {
-        m_connectedTimer = std::make_unique<KDFoundation::Timer>();
-    }
-    m_connectedTimer->singleShot = true;
-    m_connectedTimer->interval = std::chrono::milliseconds(0); // Immediate but still asynchronous
-    std::ignore = m_connectedTimer->timeout.connect([this]() {
-        // Emit the connected signal and process any initial data
-        connected.emit();
-
-        if (!m_receiveBuffer.isEmpty()) {
-            KDUtils::Logger::logger("WebsocketClient")->warn("Processing initial data from buffer");
-            processIncomingData();
-        }
-    });
-    m_connectedTimer->running = true;
 }
 
 void WebSocketClient::processIncomingData()
