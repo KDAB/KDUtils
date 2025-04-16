@@ -14,6 +14,7 @@
 #include <cctype>
 #include <charconv>
 #include <sstream>
+#include "http_response.h"
 
 namespace KDNetwork {
 
@@ -73,6 +74,12 @@ std::string HttpResponse::httpVersion() const
 void HttpResponse::setHttpVersion(const std::string &version)
 {
     m_httpVersion = version;
+}
+
+bool HttpResponse::hasHeader(const std::string &name) const
+{
+    const std::string normalized = normalizeHeaderName(name);
+    return m_headers.find(normalized) != m_headers.end();
 }
 
 bool HttpResponse::isSuccessful() const
@@ -285,6 +292,18 @@ void HttpResponse::setError(const std::string &error)
 {
     m_isError = true;
     m_errorString = error;
+}
+
+std::shared_ptr<Socket> HttpResponse::takeSocket() const
+{
+    auto socket = m_socket;
+    m_socket.reset();
+    return socket;
+}
+
+void HttpResponse::setSocket(std::shared_ptr<Socket> socket)
+{
+    m_socket = socket;
 }
 
 } // namespace KDNetwork

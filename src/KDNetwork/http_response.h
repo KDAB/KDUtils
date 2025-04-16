@@ -18,6 +18,7 @@
 
 #include <chrono>
 #include <map>
+#include <memory>
 #include <optional>
 #include <set>
 #include <string>
@@ -26,6 +27,8 @@
 namespace KDNetwork {
 
 class HttpRequest;
+class Socket;
+class WebsocketClient;
 
 /**
  * @brief The HttpResponse class represents an HTTP response
@@ -88,6 +91,14 @@ public:
      * @param version The HTTP version
      */
     void setHttpVersion(const std::string &version);
+
+    /**
+     * @brief Checks for the presence of a header
+     *
+     * @param name The name of the header (case-insensitive)
+     * @return true if the header exists, false otherwise
+     */
+    bool hasHeader(const std::string &name) const;
 
     /**
      * @brief Get a header value
@@ -250,6 +261,27 @@ public:
     void setRedirectCount(int count);
 
 private:
+    /**
+     * @brief Take ownership of the socket used for this response
+     *
+     * This method is used for protocol upgrades like WebSocket.
+     * After calling this method, the HttpClient will no longer manage this socket,
+     * and the caller is responsible for it.
+     *
+     * @return The socket, or nullptr if not available or already taken
+     */
+    std::shared_ptr<Socket> takeSocket() const;
+
+    /**
+     * @brief Set the socket for this response
+     *
+     * This method is used internally by HttpClient to associate a socket
+     * with a response, typically for protocol upgrades.
+     *
+     * @param socket The socket to associate with this response
+     */
+    void setSocket(std::shared_ptr<Socket> socket);
+
     HttpRequest m_request;
     int m_statusCode = 0;
     std::string m_reasonPhrase;
@@ -262,10 +294,16 @@ private:
     bool m_isError = false;
     std::string m_errorString;
 
+    // Socket used for this response (only set for protocol upgrades)
+    mutable std::shared_ptr<Socket> m_socket;
+
     /**
      * @brief Set of status codes that indicate redirects
      */
     static const std::set<int> redirectCodes;
+
+    friend class HttpClient;
+    friend class WebSocketClient;
 };
 
 } // namespace KDNetwork

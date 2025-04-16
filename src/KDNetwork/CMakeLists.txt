@@ -39,6 +39,9 @@ set(SOURCES
     network_initializer.cpp
     sse_client.cpp
     sse_event.cpp
+    # WebSocket implementation
+    websocket_client.cpp
+    websocket_frame.cpp
 )
 
 set(HEADERS
@@ -60,6 +63,10 @@ set(HEADERS
     network_initializer.h
     sse_client.h
     sse_event.h
+    # WebSocket headers
+    websocket_client.h
+    websocket_frame.h
+    websocket_common.h
 )
 
 # Add library
