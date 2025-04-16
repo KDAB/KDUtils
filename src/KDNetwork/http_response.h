@@ -282,6 +282,23 @@ private:
      */
     void setSocket(std::shared_ptr<Socket> socket);
 
+    /**
+     * @brief Store excess data (data beyond HTTP response headers/body) for WebSocket
+     *
+     * @param data The excess data
+     */
+    void setExcessData(const KDUtils::ByteArray &data);
+
+    /**
+     * @brief Get excess data that was received after HTTP headers/body
+     *
+     * Useful for WebSocket upgrades where the first frame might be in the same packet.
+     *
+     * @return The excess data
+     */
+    KDUtils::ByteArray takeExcessData() const;
+
+private:
     HttpRequest m_request;
     int m_statusCode = 0;
     std::string m_reasonPhrase;
@@ -296,6 +313,9 @@ private:
 
     // Socket used for this response (only set for protocol upgrades)
     mutable std::shared_ptr<Socket> m_socket;
+
+    // Data beyond HTTP headers/body, used for WebSocket upgrades
+    mutable KDUtils::ByteArray m_excessData;
 
     /**
      * @brief Set of status codes that indicate redirects

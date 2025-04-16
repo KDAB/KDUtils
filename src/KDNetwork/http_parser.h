@@ -35,6 +35,45 @@ namespace KDNetwork {
 class KDNETWORK_EXPORT HttpParser
 {
 public:
+    enum class ParserError {
+        NoError = 0, ///< No error
+        Internal = 1,
+        Strict = 2,
+        CrExpected = 25,
+        LfExpected = 3,
+        UnexpectedContentLength = 4,
+        UnexpectedSpace = 30,
+        ClosedConnection = 5,
+        InvalidMethod = 6,
+        InvalidUrl = 7,
+        InvalidConstant = 8,
+        InvalidVersion = 9,
+        InvalidHeaderToken = 10,
+        InvalidContentLength = 11,
+        InvalidChunkSize = 12,
+        InvalidStatus = 13,
+        InvalidEofState = 14,
+        InvalidTransferEncoding = 15,
+        CbMessageBegin = 16,
+        CbHeadersComplete = 17,
+        CbMessageComplete = 18,
+        CbChunkHeader = 19,
+        CbChunkComplete = 20,
+        Paused = 21,
+        PausedUpgrade = 22,
+        PausedH2Upgrade = 23,
+        User = 24,
+        CbUrlComplete = 26,
+        CbStatusComplete = 27,
+        CbMethodComplete = 32,
+        CbVersionComplete = 33,
+        CbHeaderFieldComplete = 28,
+        CbHeaderValueComplete = 29,
+        CbChunkExtensionNameComplete = 34,
+        CbChunkExtensionValueComplete = 35,
+        CbReset = 31
+    };
+
     /**
      * @brief Parser type enumeration
      */
@@ -173,6 +212,10 @@ public:
      * @brief Get the current parsed headers
      */
     const std::multimap<std::string, std::string> &headers() const;
+
+    ParserError error() const;
+    std::string errorString() const;
+    size_t errorLocation() const;
 
 private:
     // Private implementation details
