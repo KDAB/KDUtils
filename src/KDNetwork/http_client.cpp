@@ -692,9 +692,26 @@ void HttpClient::onReadyRead(std::shared_ptr<RequestState> state)
 
     // Process received data
     if (state->parser) {
-        if (!state->parser->parse(data) && !state->websocketUpgrade) {
-            failRequest(state, "HTTP parsing error");
-            return;
+        // Parse the data
+        bool parseResult = state->parser->parse(data);
+
+        if (!parseResult) {
+            if (state->websocketUpgrade && state->parser->error() == HttpParser::ParserError::PausedUpgrade) {
+                // Find where the parser paused and store the remaining data so that the WebSocket client can handle it
+                KDUtils::ByteArray excessData = data.mid(state->parser->errorLocation());
+                state->response.setExcessData(excessData);
+
+                // Emit completion signals - but don't touch the socket
+                if (state->userCallback) {
+                    state->userCallback(state->response);
+                }
+
+                return;
+            } else {
+                // Parsing error occurred
+                failRequest(state, "HTTP parsing error");
+                return;
+            }
         }
 
         // Update download progress
@@ -829,18 +846,49 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
         // Get expected content length
         state->expectedContentLength = state->response.contentLength();
 
-        // Check if this is a WebSocket upgrade by looking at the status code and headers
-        if (statusCode == 101 &&
+        // Check if this is a WebSocket upgrade
+        if (state->response.statusCode() == 101 &&
             state->response.hasHeader("Upgrade") &&
             state->response.header("Upgrade").find("websocket") != std::string::npos) {
-            // This is a WebSocket upgrade - set the socket on the response
-            // so WebSocketClient can take ownership of it
+            // For WebSocket upgrades, we finish the request, but we don't close the socket
+            // The socket ownership will be transferred to WebSocketClient via takeSocket()
+            state->websocketUpgrade = true;
             state->response.setSocket(state->socket);
-        }
-        // Check if this is an SSE stream by looking at the content type
-        // and set streaming mode flag
-        else if (state->response.hasHeader("Content-Type") &&
-                 state->response.header("Content-Type").find("text/event-stream") != std::string::npos) {
+
+            // To prevent the finishRequest from reusing the socket, we'll remove it from our tracking
+            auto it = m_activeRequests.find(state->socket);
+            if (it != m_activeRequests.end()) {
+                m_activeRequests.erase(it);
+            }
+
+            // Disable read/write notifications to prevent further processing
+            if (state->socket) {
+                // We don't want to close the socket, but we do want to stop listening to it
+                // The socket callbacks will be set up by WebSocketClient after it takes ownership
+                if (auto tcpSocket = std::dynamic_pointer_cast<TcpSocket>(state->socket)) {
+                    tcpSocket->bytesReceived.disconnectAll();
+                    tcpSocket->connected.disconnectAll();
+                    tcpSocket->errorOccurred.disconnectAll();
+                }
+            }
+
+            responseReceived.emit(state->response);
+
+            // Set promise value
+            try {
+                state->responsePromise.set_value(state->response);
+            } catch (const std::future_error &) {
+                // Promise might already be set
+            }
+
+            // Stop the timer
+            if (state->timeoutTimer) {
+                state->timeoutTimer->running = false;
+            }
+
+            return;
+        } else if (state->response.hasHeader("Content-Type") && // Check if this is an SSE stream by looking at the content type and set streaming mode flag
+                   state->response.header("Content-Type").find("text/event-stream") != std::string::npos) {
             state->streamingMode = true;
 
             // For streaming responses with SSE client, call the client's callback immediately
@@ -888,6 +936,11 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
     state->parser->setMessageCompleteCallback([this, state]() {
         state->completed = true;
 
+        if (state->websocketUpgrade) {
+            // WebSocket upgrade completed, no need to finish the request
+            return;
+        }
+
         // Process cookies
         auto cookieHeaders = state->response.headers("Set-Cookie");
         if (!cookieHeaders.empty()) {
@@ -895,52 +948,6 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
             m_session->cookieJar().parseCookies(state->request.url(), setCookieValues);
         }
 
-        // Check if this is a WebSocket upgrade
-        if (state->response.statusCode() == 101 &&
-            state->response.hasHeader("Upgrade") &&
-            state->response.header("Upgrade").find("websocket") != std::string::npos) {
-            // For WebSocket upgrades, we finish the request, but we don't close the socket
-            // The socket ownership will be transferred to WebSocketClient via takeSocket()
-            state->websocketUpgrade = true;
-
-            // To prevent the finishRequest from reusing the socket, we'll remove it from our tracking
-            auto it = m_activeRequests.find(state->socket);
-            if (it != m_activeRequests.end()) {
-                m_activeRequests.erase(it);
-            }
-
-            // Disable read/write notifications to prevent further processing
-            if (state->socket) {
-                // We don't want to close the socket, but we do want to stop listening to it
-                // The socket callbacks will be set up by WebSocketClient after it takes ownership
-                if (auto tcpSocket = std::dynamic_pointer_cast<TcpSocket>(state->socket)) {
-                    tcpSocket->bytesReceived.disconnectAll();
-                    tcpSocket->connected.disconnectAll();
-                    tcpSocket->errorOccurred.disconnectAll();
-                }
-            }
-
-            // Emit completion signals - but don't touch the socket
-            if (state->userCallback) {
-                state->userCallback(state->response);
-            }
-
-            responseReceived.emit(state->response);
-
-            // Set promise value
-            try {
-                state->responsePromise.set_value(state->response);
-            } catch (const std::future_error &) {
-                // Promise might already be set
-            }
-
-            // Stop the timer
-            if (state->timeoutTimer) {
-                state->timeoutTimer->running = false;
-            }
-
-            return; // Skip normal finishRequest to avoid socket closure
-        }
         // For non-streaming responses, finish the request now
         else if (!state->streamingMode) {
             // Finish the request

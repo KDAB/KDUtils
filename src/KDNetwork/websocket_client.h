@@ -178,10 +178,10 @@ public:
     KDBindings::Signal<> aboutToReconnect;
 
 private:
-    // Setup socket after successful handshake
-    void setupSocket(std::shared_ptr<Socket> socket);
+    // Setup socket after successful connection
+    void setupSocket(std::shared_ptr<Socket> socket, const KDUtils::ByteArray &excessData = KDUtils::ByteArray());
 
-    // Process incoming WebSocket data
+    // Process incoming data from the socket
     void processIncomingData();
 
     // Handle a single WebSocket frame
