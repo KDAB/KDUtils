@@ -238,9 +238,6 @@ private:
     // Timer for ping/pong keep-alive
     std::unique_ptr<KDFoundation::Timer> m_pingTimer;
     std::chrono::steady_clock::time_point m_lastPongReceived;
-
-    // Timer for deferred emission of the connected signal
-    std::unique_ptr<KDFoundation::Timer> m_connectedTimer;
 };
 
 } // namespace KDNetwork
