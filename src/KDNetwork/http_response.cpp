@@ -306,4 +306,19 @@ void HttpResponse::setSocket(std::shared_ptr<Socket> socket)
     m_socket = socket;
 }
 
+// Setting and retrieving excess data (data beyond HTTP response) for WebSocket upgrades
+void HttpResponse::setExcessData(const KDUtils::ByteArray &data)
+{
+    if (!data.isEmpty()) {
+        m_excessData = data;
+    }
+}
+
+KDUtils::ByteArray HttpResponse::takeExcessData() const
+{
+    KDUtils::ByteArray data = std::move(m_excessData);
+    m_excessData.clear();
+    return data;
+}
+
 } // namespace KDNetwork

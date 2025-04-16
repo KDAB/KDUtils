@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <cctype>
 #include <sstream>
+#include "http_parser.h"
 
 namespace KDNetwork {
 
@@ -69,6 +70,10 @@ struct HttpParser::Private {
     std::string statusMessage;
     int statusCode = 0;
     std::string firstLine;
+
+    HttpParser::ParserError error;
+    std::string errorString;
+    size_t errorLocation = 0;
 
     std::multimap<std::string, std::string> headers;
 
@@ -173,9 +178,15 @@ bool HttpParser::parse(const uint8_t *data, size_t length)
 {
     enum llhttp_errno err = llhttp_execute(d->parser, reinterpret_cast<const char *>(data), length);
     if (err != HPE_OK) {
-        std::string errorMessage = llhttp_get_error_reason(d->parser);
+        d->error = static_cast<ParserError>(err);
+        d->errorString = llhttp_get_error_reason(d->parser);
+
+        // Calculate error location offset from the start of the data
+        const char *pos = llhttp_get_error_pos(d->parser);
+        d->errorLocation = pos ? (pos - reinterpret_cast<const char *>(data)) : 0;
+
         if (d->errorCallback) {
-            d->errorCallback(errorMessage);
+            d->errorCallback(d->errorString);
         }
         return false;
     }
@@ -247,6 +258,21 @@ bool HttpParser::isChunked() const
 const std::multimap<std::string, std::string> &HttpParser::headers() const
 {
     return d->headers;
+}
+
+HttpParser::ParserError HttpParser::error() const
+{
+    return d->error;
+}
+
+std::string HttpParser::errorString() const
+{
+    return d->errorString;
+}
+
+size_t HttpParser::errorLocation() const
+{
+    return d->errorLocation;
 }
 
 // Static C callbacks that delegate to instance methods
