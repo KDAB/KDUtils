@@ -123,7 +123,10 @@ std::future<bool> WebSocketClient::connectToUrl(const KDUtils::Uri &url)
                 // Take ownership of the socket from HttpClient
                 auto socket = response.takeSocket();
                 if (socket) {
-                    setupSocket(socket);
+                    // Check if there's any excess data from the HTTP response (might contain initial WebSocket frames)
+                    KDUtils::ByteArray excessData = response.takeExcessData();
+
+                    setupSocket(socket, excessData);
                     promise->set_value(true);
                     return;
                 }
@@ -215,7 +218,7 @@ void WebSocketClient::setAutoReconnect(bool enabled)
     m_autoReconnect = enabled;
 }
 
-void WebSocketClient::setupSocket(std::shared_ptr<Socket> socket)
+void WebSocketClient::setupSocket(std::shared_ptr<Socket> socket, const KDUtils::ByteArray &excessData)
 {
     auto tcpSocket = std::dynamic_pointer_cast<TcpSocket>(socket);
     if (!tcpSocket) {
@@ -224,14 +227,26 @@ void WebSocketClient::setupSocket(std::shared_ptr<Socket> socket)
         return;
     }
 
+    KDUtils::Logger::logger("WebsocketClient")->debug("Connected to WebSocket server");
+
+    // Store the socket and update state
     m_socket = socket;
     m_state = State::Connected;
 
-    // Set up read handler
+    // Reset buffer
+    m_receiveBuffer.clear();
+
+    // Append any excess data from the HTTP response
+    if (!excessData.isEmpty()) {
+        m_receiveBuffer.append(excessData);
+    }
+
+    // Set up read handler for future data
     std::ignore = tcpSocket->bytesReceived.connect([this]() {
         processIncomingData();
     });
 
+    // Set up error handler
     std::ignore = m_socket->errorOccurred.connect([this](std::error_code ec) {
         handleSocketError(ec);
     });
@@ -239,22 +254,22 @@ void WebSocketClient::setupSocket(std::shared_ptr<Socket> socket)
     // Start ping timer for keep-alive
     startPingTimer();
 
-    // Reset buffer
-    m_receiveBuffer.clear();
-
-    // Emit connected signal via a single shot timer. This is to allow the bytesReceived signal
-    // on the socket to finish processing its current emission and to be properly disconnected
-    // from the HttpClient's handlers. We also trigger an immediate read to ensure we process
-    // any pending data.
+    // Emit connected signal via a single shot timer to ensure HttpClient cleanup is complete
     if (!m_connectedTimer) {
         m_connectedTimer = std::make_unique<KDFoundation::Timer>();
-        m_connectedTimer->singleShot = true;
-        std::ignore = m_connectedTimer->timeout.connect([this, tcpSocket]() {
-            connected.emit();
-            tcpSocket->bytesReceived.emit(0); // Trigger immediate read
-        });
-        m_connectedTimer->running = true;
     }
+    m_connectedTimer->singleShot = true;
+    m_connectedTimer->interval = std::chrono::milliseconds(0); // Immediate but still asynchronous
+    std::ignore = m_connectedTimer->timeout.connect([this]() {
+        // Emit the connected signal and process any initial data
+        connected.emit();
+
+        if (!m_receiveBuffer.isEmpty()) {
+            KDUtils::Logger::logger("WebsocketClient")->warn("Processing initial data from buffer");
+            processIncomingData();
+        }
+    });
+    m_connectedTimer->running = true;
 }
 
 void WebSocketClient::processIncomingData()
