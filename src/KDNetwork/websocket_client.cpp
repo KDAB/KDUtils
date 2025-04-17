@@ -155,15 +155,12 @@ void WebSocketClient::disconnect(uint16_t code, const std::string &reason)
         sendFrame(closeFrame);
 
         // Set up a timeout for clean disconnection
-        if (!m_closeTimer)
-            m_closeTimer = std::make_unique<KDFoundation::Timer>();
-        m_closeTimer->singleShot = true;
-        m_closeTimer->interval = std::chrono::milliseconds(WebSocket::DEFAULT_CLOSE_TIMEOUT_MS);
-        std::ignore = m_closeTimer->timeout.connect([this]() {
+        // clang-format off
+        m_closeTimer = KDFoundation::Timer::createTimeout([this]() {
             // Force close if no response from server
             forceClose();
-        });
-        m_closeTimer->running = true;
+        }, std::chrono::milliseconds(WebSocket::DEFAULT_CLOSE_TIMEOUT_MS));
+        // clang-format on
     } else {
         forceClose();
     }
@@ -447,16 +444,12 @@ void WebSocketClient::handleSocketError(std::error_code ec)
         aboutToReconnect.emit();
 
         // Schedule reconnect
-        if (!m_reconnectTimer) {
-            m_reconnectTimer = std::make_unique<KDFoundation::Timer>();
-        }
-        m_reconnectTimer->singleShot = true;
-        m_reconnectTimer->interval = m_reconnectInterval;
-        std::ignore = m_reconnectTimer->timeout.connect([this]() {
+        // clang-format off
+        m_reconnectTimer = KDFoundation::Timer::createTimeout([this]() {
             if (m_url.isValid())
                 connectToUrl(m_url);
-        });
-        m_reconnectTimer->running = true;
+        }, m_reconnectInterval);
+        // clang-format on
     }
 }
 
