@@ -51,7 +51,7 @@ public:
 
     // Option 1: Explicit ownership of timer via unique_ptr
     template<typename Func>
-    static std::unique_ptr<Timer> createTimeout(Func &&callback, std::chrono::milliseconds delay)
+    [[nodiscard]] static std::unique_ptr<Timer> createTimeout(Func &&callback, std::chrono::milliseconds delay)
     {
         auto timer = std::make_unique<Timer>();
         timer->singleShot = true;
@@ -62,7 +62,7 @@ public:
     }
 
     template<typename Func>
-    static std::unique_ptr<Timer> createRecurring(Func &&callback, std::chrono::milliseconds interval)
+    [[nodiscard]] static std::unique_ptr<Timer> createRecurring(Func &&callback, std::chrono::milliseconds interval)
     {
         auto timer = std::make_unique<Timer>();
         timer->singleShot = false;
