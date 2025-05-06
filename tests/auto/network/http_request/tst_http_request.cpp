@@ -147,7 +147,7 @@ TEST_CASE("HttpRequest body")
 
     SUBCASE("Set body from ByteArray")
     {
-        ByteArray data{ { 0x01, 0x02, 0x03, 0x04 } };
+        ByteArray data{ std::vector<std::uint8_t>{ 0x01, 0x02, 0x03, 0x04 } };
         request.setBody(data);
 
         CHECK(request.body() == data);
