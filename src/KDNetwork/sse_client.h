@@ -14,7 +14,7 @@
 #include <KDNetwork/http_request.h>
 #include <KDNetwork/sse_event.h>
 
-#include <KDBindings/signal.h>
+#include <kdbindings/signal.h>
 
 #include <memory>
 #include <string>
