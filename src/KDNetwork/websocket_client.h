@@ -15,7 +15,7 @@
 
 #include <KDFoundation/timer.h>
 
-#include <KDBindings/signal.h>
+#include <kdbindings/signal.h>
 
 #include <KDUtils/bytearray.h>
 #include <KDUtils/uri.h>

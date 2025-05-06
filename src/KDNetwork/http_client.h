@@ -17,7 +17,7 @@
 
 #include <KDFoundation/timer.h>
 
-#include <KDBindings/signal.h>
+#include <kdbindings/signal.h>
 
 #include <chrono>
 #include <functional>

@@ -18,7 +18,7 @@
 
 #include <KDFoundation/file_descriptor_notifier.h>
 
-#include <KDBindings/signal.h>
+#include <kdbindings/signal.h>
 
 #include <functional>
 #include <memory>
