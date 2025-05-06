@@ -107,9 +107,9 @@ find_package(Mosquitto QUIET)
 
 # OpenSSL library
 if(KDUTILS_BUILD_NETWORK_SUPPORT)
-    find_package(OpenSSL QUIET)
+    find_package(OpenSSL 3.0.0 QUIET)
     if(NOT TARGET OpenSSL::SSL)
-        message(FATAL_ERROR "OpenSSL not found. Please install OpenSSL.")
+        message(FATAL_ERROR "OpenSSL 3.0.0 or higher not found. Please install OpenSSL 3.0.0 or later.")
     endif()
 
     # c-ares library for asynchronous DNS resolution
