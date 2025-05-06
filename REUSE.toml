@@ -12,14 +12,14 @@ SPDX-License-Identifier = "MIT"
 
 #misc documentation
 [[annotations]]
-path = ["ChangeLog", "README.md"]
+path = ["ChangeLog", "README.md", "kdnetwork-plan.md", "sse-plan.md", "websockets-plan.md"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>"
 SPDX-License-Identifier = "MIT"
 
 #misc config files
 [[annotations]]
-path = [".pre-commit-config.yaml", ".codespellrc", ".krazy", ".cmake-format.py", ".clang-format", ".clang-tidy", "**.gitignore", ".gitreview", ".markdownlint.jsonc", "appveyor.yml", "REUSE.toml"]
+path = [".pre-commit-config.yaml", ".codespellrc", ".krazy", ".cmake-format.py", ".clang-format", ".clang-tidy", "**.gitignore", ".gitreview", ".markdownlint.jsonc", "appveyor.yml", "REUSE.toml", "vcpkg.json"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>"
 SPDX-License-Identifier = "BSD-3-Clause"
