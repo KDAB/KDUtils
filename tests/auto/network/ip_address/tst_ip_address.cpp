@@ -99,8 +99,7 @@ TEST_CASE("Constructor tests")
 
     SUBCASE("sockaddr constructor - IPv4")
     {
-        struct sockaddr_in addr4 {
-        };
+        struct sockaddr_in addr4{};
         addr4.sin_family = AF_INET;
         addr4.sin_addr.s_addr = htonl(0xC0A80101); // 192.168.1.1
 
@@ -112,8 +111,7 @@ TEST_CASE("Constructor tests")
 
     SUBCASE("sockaddr constructor - IPv6")
     {
-        struct sockaddr_in6 addr6 {
-        };
+        struct sockaddr_in6 addr6{};
         addr6.sin6_family = AF_INET6;
 
         // ::1 (loopback)
