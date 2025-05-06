@@ -175,18 +175,18 @@ public:
 
     /**
      * @brief Send an HTTP request with associated SSE client
-     * 
+     *
      * Internal method used by SseClient to associate itself with a request.
      * Not intended to be called directly by users.
-     * 
+     *
      * @param request The HTTP request to send
      * @param sseClient The SseClient that initiated this request
      * @param callback Optional callback function to call when the request completes
      * @return A future that will be set to the response when completed
      */
     std::future<HttpResponse> sendWithSseClient(const HttpRequest &request,
-                                              std::shared_ptr<SseClient> sseClient,
-                                              std::function<void(const HttpResponse &)> callback = nullptr);
+                                                std::shared_ptr<SseClient> sseClient,
+                                                std::function<void(const HttpResponse &)> callback = nullptr);
 
     /**
      * @brief Signal emitted when a request is about to be sent
@@ -232,9 +232,6 @@ private:
     void onTimeout(std::shared_ptr<RequestState> state);
 
     void setupParserCallbacks(std::shared_ptr<RequestState> state);
-    void processReceivedData(std::shared_ptr<RequestState> state);
-    bool parseResponseHeader(std::shared_ptr<RequestState> state);
-    void parseResponseBody(std::shared_ptr<RequestState> state);
 
     std::shared_ptr<KDNetwork::Socket> createSocket(bool secure, const std::string &host = {});
 
