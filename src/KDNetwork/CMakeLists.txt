@@ -81,7 +81,11 @@ add_library(
 # Link dependencies
 target_link_libraries(
     KDNetwork
-    PUBLIC KDFoundation OpenSSL::SSL OpenSSL::Crypto
+    PUBLIC KDUtils::KDFoundation
+           KDUtils::KDUtils
+           KDAB::KDBindings
+           OpenSSL::SSL
+           OpenSSL::Crypto
     PRIVATE llhttp_static
 )
 
