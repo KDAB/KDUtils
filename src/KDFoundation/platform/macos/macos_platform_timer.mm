@@ -34,14 +34,14 @@ inline MacOSPlatformEventLoop *eventLoop()
 MacOSPlatformTimer::MacOSPlatformTimer(Timer *timer)
     : m_handler{ timer }, cfTimer{ nullptr }
 {
-    timer->running.valueChanged().connect([this, timer](bool running) {
+    std::ignore = timer->running.valueChanged().connect([this, timer](bool running) {
         if (running) {
             arm(timer->interval.get());
         } else {
             disarm();
         }
     });
-    timer->interval.valueChanged().connect([this, timer]() {
+    std::ignore = timer->interval.valueChanged().connect([this, timer]() {
         if (timer->running.get()) {
             arm(timer->interval.get());
         }
