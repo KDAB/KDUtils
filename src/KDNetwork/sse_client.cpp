@@ -204,12 +204,12 @@ void SseClient::connect(const HttpRequest &request)
     // Set up error handling - only emit errors if we're not deliberately disconnecting
     std::ignore = d->httpClient->error.connect([this](const HttpRequest &, const std::string &errorMessage) {
         d->isConnected = false;
-        
+
         // Only emit error if this wasn't an explicit disconnect
         if (!d->isDisconnecting) {
             error.emit("Connection error: " + errorMessage);
         }
-        
+
         disconnected.emit();
     });
 
@@ -223,7 +223,7 @@ void SseClient::disconnect()
     if (d->isConnected) {
         // Set the disconnecting flag to avoid emitting error on deliberate disconnect
         d->isDisconnecting = true;
-        
+
         // Cancel the request and close the connection
         d->httpClient->cancelAll();
         d->isConnected = false;
