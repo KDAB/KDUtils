@@ -89,13 +89,13 @@ ByteArray ByteArray::mid(size_t pos, size_t len) const
     if (len == 0)
         len = size() - pos;
     len = std::min(len, size());
-    return ByteArray({ m_data.begin() + int64_t(pos), m_data.begin() + int64_t(pos + len) });
+    return ByteArray(std::vector<uint8_t>{ m_data.begin() + int64_t(pos), m_data.begin() + int64_t(pos + len) });
 }
 
 ByteArray ByteArray::left(size_t left) const
 {
     left = std::min(left, size());
-    return ByteArray({ m_data.begin(), m_data.begin() + int64_t(left) });
+    return ByteArray(std::vector<uint8_t>{ m_data.begin(), m_data.begin() + int64_t(left) });
 }
 
 int64_t ByteArray::indexOf(uint8_t v) const
