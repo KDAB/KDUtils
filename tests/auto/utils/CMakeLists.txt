@@ -10,6 +10,7 @@
 
 project(KDUtils-Tests)
 
+# Create a test executable linking to the KDUtils library
 function(add_utils_test name sources)
     add_executable(${name} ${sources})
 
