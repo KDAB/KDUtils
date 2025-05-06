@@ -30,7 +30,7 @@ repos:
   rev: v0.18.1
   hooks:
   - id: markdownlint-cli2
-    exclude: ^(3rdParty/|common/ui/resources/licenses/)
+    exclude: ^(3rdParty/|common/ui/resources/licenses/|kdnetwork-plan.md|sse-plan.md|websockets-plan.md)
     files: \.(md|mdown|markdown)$
 - repo: https://github.com/fsfe/reuse-tool
   rev: v5.0.2
