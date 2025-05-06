@@ -40,6 +40,11 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
+      - name: Set up vcpkg
+        uses: microsoft/vcpkg-action@v2
+        with:
+          vcpkgJson: true # Use the vcpkg.json file to install dependencies
+
       - name: Install ninja-build tool
         if: ${{ runner.os != 'Linux' }}
         uses: urkle/action-get-ninja@e3ed0d4fc9ec9608cdc970133d71c980b6149631 #v1
