@@ -97,6 +97,7 @@ jobs:
         with:
           token: ${{ github.token }}
           triplet: ${{ matrix.platform.triplet }}
+          manifest-dir: ${{ github.workspace }}
 
       - name: Configure project
         run: >
