@@ -57,7 +57,7 @@ jobs:
 
       - name: Set up vcpkg
         id: vcpkg
-        uses: microsoft/vcpkg-action@v6
+        uses: johnwason/vcpkg-action@v6
 
       - name: Install ninja-build tool
         if: ${{ runner.os != 'Linux' }}
