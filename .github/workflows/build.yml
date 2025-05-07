@@ -24,7 +24,7 @@ jobs:
           - os: ubuntu-22.04
             triplet: x64-linux-release
           - os: ubuntu-24.04-arm
-            triplet: x64-linux-release
+            triplet: arm64-linux-release
           - os: windows-2022
             triplet: x64-windows-release
           # - os: macos-13
