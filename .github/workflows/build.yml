@@ -27,12 +27,12 @@ jobs:
             triplet: arm64-linux-release
           - os: windows-2022
             triplet: x64-windows-release
-          # - os: macos-13
-          #   triplet: x64-osx-release
-          # - os: macos-14
-          #   triplet: x64-osx-release
-          # - os: macos-15
-          #   triplet: x64-osx-release
+          - os: macos-13
+            triplet: x64-osx-release
+          - os: macos-14
+            triplet: x64-osx-release
+          - os: macos-15
+            triplet: x64-osx-release
         build_type:
           - Debug
           - Release
