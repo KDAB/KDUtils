@@ -32,7 +32,7 @@ jobs:
           - os: macos-14
             triplet: x64-osx-release
           - os: macos-15
-            triplet: x64-osx-release
+            triplet: arm64-osx-release
         build_type:
           - Debug
           - Release
