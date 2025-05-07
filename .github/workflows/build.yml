@@ -62,13 +62,6 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
-      - name: Set up vcpkg
-        id: vcpkg
-        uses: johnwason/vcpkg-action@v6
-        with:
-          token: ${{ github.token }}
-          triplet: ${{ matrix.platform.triplet }}
-
       - name: Install ninja-build tool
         if: ${{ runner.os != 'Linux' }}
         uses: urkle/action-get-ninja@e3ed0d4fc9ec9608cdc970133d71c980b6149631 #v1
@@ -83,7 +76,8 @@ jobs:
           sudo apt install -y libxkbcommon-dev libxcb-xkb-dev \
           libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
           libwayland-dev xvfb ninja-build \
-          libmosquitto-dev gcovr
+          libmosquitto-dev gcovr \
+          linux-libc-dev
 
       - name: Download mosquitto (MacOS)
         if: runner.os == 'macOS'
@@ -96,6 +90,13 @@ jobs:
           curl --no-progress-meter --location --remote-name `
             https://mosquitto.org/files/binary/win64/mosquitto-$env:MOSQUITTO_VERSION-install-windows-x64.exe
           & .\mosquitto-$env:MOSQUITTO_VERSION-install-windows-x64.exe /S
+
+      - name: Set up vcpkg
+        id: vcpkg
+        uses: johnwason/vcpkg-action@v6
+        with:
+          token: ${{ github.token }}
+          triplet: ${{ matrix.platform.triplet }}
 
       - name: Configure project
         run: >
