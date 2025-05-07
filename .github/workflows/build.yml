@@ -21,18 +21,18 @@ jobs:
         platform:
           - os: ubuntu-24.04
             triplet: x64-linux-release
-          - os: ubuntu-22.04
-            triplet: x64-linux-release
-          - os: ubuntu-24.04-arm
-            triplet: x64-linux-release
-          - os: windows-2022
-            triplet: x64-windows-release
-          - os: macos-13
-            triplet: x64-osx-release
-          - os: macos-14
-            triplet: x64-osx-release
-          - os: macos-15
-            triplet: x64-osx-release
+          # - os: ubuntu-22.04
+          #   triplet: x64-linux-release
+          # - os: ubuntu-24.04-arm
+          #   triplet: x64-linux-release
+          # - os: windows-2022
+          #   triplet: x64-windows-release
+          # - os: macos-13
+          #   triplet: x64-osx-release
+          # - os: macos-14
+          #   triplet: x64-osx-release
+          # - os: macos-15
+          #   triplet: x64-osx-release
         build_type:
           - Debug
           - Release
