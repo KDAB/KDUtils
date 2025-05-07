@@ -26,21 +26,6 @@ jobs:
         shared:
           - ON
           - OFF
-        config:
-          - os: ubuntu-24.04
-            vcpkg_triplet: x64-linux-release
-          - os: ubuntu-22.04
-            vcpkg_triplet: x64-linux-release
-          - os: ubuntu-24.04-arm
-            vcpkg_triplet: arm64-linux-release
-          - os: macos-13
-            vcpkg_triplet: x64-osx-release
-          - os: macos-14
-            vcpkg_triplet: x64-osx-release
-          - os: macos-15
-            vcpkg_triplet: x64-osx-release
-          - os: windows-2022
-            vcpkg_triplet: x64-windows-release
 
     env:
       MOSQUITTO_VERSION: 2.0.20
@@ -52,6 +37,9 @@ jobs:
       - name: Set up vcpkg
         id: vcpkg
         uses: johnwason/vcpkg-action@v6
+        with:
+          token: ${{ github.token }}
+          triplet: ${{ matrix.os == 'windows-2022' && 'x64-windows-release' || matrix.os == 'ubuntu-24.04-arm' && 'arm64-linux-release' || matrix.os == 'ubuntu-24.04' || matrix.os == 'ubuntu-22.04' && 'x64-linux-release' || 'x64-osx-release' }}
 
       - name: Install ninja-build tool
         if: ${{ runner.os != 'Linux' }}
@@ -87,9 +75,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -DKDUTILS_BUILD_TESTS=${{ matrix.build_type == 'Debug' }}
           -DBUILD_SHARED_LIBS=${{ matrix.shared }}
-          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
-          -DVCPKG_TARGET_TRIPLET=${{ matrix.config.vcpkg_triplet }}
-          -DVCPKG_MANIFEST_MODE=OFF
+          ${{ steps.vcpkg.outputs.vcpkg-cmake-config }}
 
       - name: Build Project
         run: cmake --build ./build
