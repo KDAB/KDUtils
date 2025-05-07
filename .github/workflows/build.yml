@@ -14,17 +14,17 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.platform.os }}
     strategy:
       fail-fast: true
       matrix:
-        include:
+        platform:
           - os: ubuntu-24.04
             triplet: x64-linux-release
           - os: ubuntu-22.04
             triplet: x64-linux-release
           - os: ubuntu-24.04-arm
-            triplet: arm64-linux-release
+            triplet: x64-linux-release
           - os: windows-2022
             triplet: x64-windows-release
           - os: macos-13
@@ -67,7 +67,7 @@ jobs:
         uses: johnwason/vcpkg-action@v6
         with:
           token: ${{ github.token }}
-          triplet: ${{ matrix.triplet }}
+          triplet: ${{ matrix.platform.triplet }}
 
       - name: Install ninja-build tool
         if: ${{ runner.os != 'Linux' }}
