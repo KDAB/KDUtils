@@ -30,7 +30,7 @@ jobs:
           - os: macos-13
             triplet: x64-osx-release
           - os: macos-14
-            triplet: x64-osx-release
+            triplet: arm64-osx-release
           - os: macos-15
             triplet: arm64-osx-release
         build_type:
