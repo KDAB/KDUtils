@@ -29,7 +29,8 @@ LinuxPlatformTimer::LinuxPlatformTimer(Timer *timer)
     m_notifierConnection = m_notifier.triggered.connect([this, timer]() {
         std::array<char, 8> buf;
         std::ignore = read(m_notifier.fileDescriptor(), buf.data(), buf.size());
-        timer->timeout.emit();
+        // Use handleTimeout instead of directly emitting the timeout signal
+        timer->handleTimeout();
     });
 
     m_timerRunningConnection = timer->running.valueChanged().connect([this, timer](bool running) {

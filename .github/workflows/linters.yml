@@ -20,11 +20,13 @@ jobs:
         include:
           - name: Ubuntu
             os: ubuntu-24.04
+            triplet: x64-linux-release
             # Specify executable name on Linux to have control over the version.
             # Sadly, on Linux these per-version executables aren't there.
             tidy-executable: clang-tidy-18
           - name: Windows
             os: windows-2022
+            triplet: x64-windows-release
             tidy-executable: clang-tidy
       fail-fast: false
 
@@ -44,11 +46,20 @@ jobs:
           libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
           libwayland-dev xvfb ninja-build cppcheck libmosquitto-dev
 
+      - name: Set up vcpkg
+        id: vcpkg
+        uses: johnwason/vcpkg-action@v6
+        with:
+          token: ${{ github.token }}
+          triplet: ${{ matrix.triplet }}
+          manifest-dir: ${{ github.workspace }}
+
       - name: Configure project
         run: >
           cmake -S . -B build -G Ninja -DKDUTILS_BUILD_TESTS=True
           -DCMAKE_CXX_CLANG_TIDY="${{matrix.tidy-executable}}"
           -DCMAKE_BUILD_TYPE=Release -DKDUTILS_BUILD_TESTS=ON
+          ${{ steps.vcpkg.outputs.vcpkg-cmake-config }}
 
       - name: Build Project
         shell: pwsh
