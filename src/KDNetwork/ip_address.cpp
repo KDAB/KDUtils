@@ -100,8 +100,7 @@ std::string IpAddress::toString() const
     if (std::holds_alternative<IPv4Data>(m_data)) {
         // IPv4 address
         const std::uint32_t ipv4 = std::get<IPv4Data>(m_data);
-        struct in_addr addr {
-        };
+        struct in_addr addr{};
         addr.s_addr = htonl(ipv4); // Convert to network byte order
 
         char buf[INET_ADDRSTRLEN] = {};
@@ -111,8 +110,7 @@ std::string IpAddress::toString() const
     } else if (std::holds_alternative<IPv6Data>(m_data)) {
         // IPv6 address
         const auto &ipv6 = std::get<IPv6Data>(m_data);
-        struct in6_addr addr {
-        };
+        struct in6_addr addr{};
         std::memcpy(addr.s6_addr, ipv6.data(), 16);
 
         char buf[INET6_ADDRSTRLEN] = {};
