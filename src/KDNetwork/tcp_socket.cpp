@@ -143,7 +143,7 @@ bool TcpSocket::connectToHost(const std::string &host, std::uint16_t port)
     auto &resolver = DnsResolver::instance();
 
     // Start asynchronous DNS lookup for host
-    bool lookupStarted = resolver.lookup(host, [this](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
+    const bool lookupStarted = resolver.lookup(host, [this](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
         this->handleDnsLookupCompleted(ec, addresses);
     });
 
@@ -192,7 +192,7 @@ bool TcpSocket::connectToHost(const IpAddress &address, std::uint16_t port)
     }
 
     // Open the socket with the appropriate family
-    int family = addr.ss_family;
+    const int family = addr.ss_family;
     if (!open(family, SOCK_STREAM, 0)) {
         // error already set by open()
         return false;
@@ -206,7 +206,7 @@ bool TcpSocket::connectToHost(const IpAddress &address, std::uint16_t port)
     setState(State::Connecting);
 
     // Attempt non-blocking connect
-    int ret = ::connect(m_socketFd, reinterpret_cast<struct sockaddr *>(&addr), addrLen);
+    const int ret = ::connect(m_socketFd, reinterpret_cast<struct sockaddr *>(&addr), addrLen);
 
     if (ret == 0) {
         // Connected immediately (likely localhost)
@@ -218,7 +218,7 @@ bool TcpSocket::connectToHost(const IpAddress &address, std::uint16_t port)
         return true;
     } else { // ret < 0
 #if defined(KD_PLATFORM_WIN32)
-        int error_code = WSAGetLastError();
+        const int error_code = WSAGetLastError();
         // WSAEWOULDBLOCK is the typical code for non-blocking connect in progress
         if (error_code == WSAEWOULDBLOCK || error_code == WSAEINPROGRESS) {
             // Connection attempt is in progress asynchronously
@@ -257,8 +257,8 @@ void TcpSocket::handleDnsLookupCompleted(std::error_code ec, const std::vector<I
     }
 
     // Extract connection info
-    std::string host = m_pendingConnection->hostname;
-    std::uint16_t port = m_pendingConnection->port;
+    const std::string host = m_pendingConnection->hostname;
+    const std::uint16_t port = m_pendingConnection->port;
 
     // If lookup failed or no addresses returned
     if (ec || addresses.empty()) {
@@ -291,7 +291,7 @@ void TcpSocket::handleDnsLookupCompleted(std::error_code ec, const std::vector<I
     }
 
     // Open the socket with the appropriate family
-    int family = addr.ss_family;
+    const int family = addr.ss_family;
     if (!open(family, SOCK_STREAM, 0)) {
         // error set by open()
         m_pendingConnection.reset();
@@ -302,7 +302,7 @@ void TcpSocket::handleDnsLookupCompleted(std::error_code ec, const std::vector<I
     setState(State::Connecting);
 
     // Socket opened successfully, now attempt non-blocking connect
-    int ret = ::connect(m_socketFd, reinterpret_cast<struct sockaddr *>(&addr), addrLen);
+    const int ret = ::connect(m_socketFd, reinterpret_cast<struct sockaddr *>(&addr), addrLen);
 
     // We no longer need the pending connection data
     m_pendingConnection.reset();
@@ -317,7 +317,7 @@ void TcpSocket::handleDnsLookupCompleted(std::error_code ec, const std::vector<I
         return;
     } else { // ret < 0
 #if defined(KD_PLATFORM_WIN32)
-        int error_code = WSAGetLastError();
+        const int error_code = WSAGetLastError();
         // WSAEWOULDBLOCK is the typical code for non-blocking connect in progress
         if (error_code == WSAEWOULDBLOCK || error_code == WSAEINPROGRESS) { // WSAEINPROGRESS might also occur
             // Connection attempt is in progress asynchronously.
@@ -356,7 +356,7 @@ void TcpSocket::disconnectFromHost()
     if (!isValid() || state() == State::Unconnected)
         return;
 
-    bool wasConnected = (state() == State::Connected || state() == State::Connecting);
+    const bool wasConnected = (state() == State::Connected || state() == State::Connecting);
 
     // Clear pending write data as we are closing abruptly
     m_writeBuffer.clear();
@@ -408,7 +408,7 @@ KDUtils::ByteArray TcpSocket::read(std::int64_t maxSize)
         return KDUtils::ByteArray(); // Nothing to read or invalid size
 
     // Determine actual number of bytes to read
-    int64_t sizeToRead = std::min(maxSize, (int64_t)m_readBuffer.size());
+    const int64_t sizeToRead = std::min(maxSize, (int64_t)m_readBuffer.size());
 
     // Create a ByteArray with the data to return
     KDUtils::ByteArray chunk = m_readBuffer.left(sizeToRead); // Get copy of leftmost bytes
@@ -427,12 +427,12 @@ KDUtils::ByteArray TcpSocket::readAll()
 
 std::int64_t TcpSocket::bytesAvailable() const noexcept
 {
-    return m_readBuffer.size();
+    return static_cast<std::int64_t>(m_readBuffer.size());
 }
 
 std::int64_t TcpSocket::bytesToWrite() const noexcept
 {
-    return m_writeBuffer.size();
+    return static_cast<std::int64_t>(m_writeBuffer.size());
 }
 
 void TcpSocket::onReadReady()
@@ -475,7 +475,7 @@ void TcpSocket::onReadReady()
         } else { // bytesRead < 0
             // An error occurred during recv
 #if defined(KD_PLATFORM_WIN32)
-            int error_code = WSAGetLastError();
+            const int error_code = WSAGetLastError();
             if (error_code == WSAEWOULDBLOCK) {
                 // No more data available right now on the non-blocking socket
                 return; // Finished reading for this notification cycle
@@ -531,7 +531,7 @@ void TcpSocket::handleConnectionResult()
     // On Windows, use getsockopt with SO_ERROR to check connection status
     if (::getsockopt(m_socketFd, SOL_SOCKET, SO_ERROR, reinterpret_cast<char *>(&error), &len) < 0) {
         // Failed to get socket error status - treat as connection error
-        int getsockoptError = WSAGetLastError();
+        const int getsockoptError = WSAGetLastError();
         setError(SocketError::ConnectError, getsockoptError);
         disconnectFromHost(); // Close socket, emit disconnected
         return;
@@ -623,7 +623,7 @@ void TcpSocket::trySend()
         } else { // bytesSentNow < 0
             // An error occurred during send
 #if defined(KD_PLATFORM_WIN32)
-            int error_code = WSAGetLastError();
+            const int error_code = WSAGetLastError();
             if (error_code == WSAEWOULDBLOCK) {
                 // Socket buffer is full, cannot send more now. Need to wait for readyWrite.
                 setWriteNotificationEnabled(true); // Ensure notifier is active

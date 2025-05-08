@@ -246,6 +246,7 @@ TEST_CASE("HttpCookieJar Path matching")
 
         // Verify all three names are present
         std::vector<std::string> names;
+        names.reserve(cookies.size());
         for (const auto &cookie : cookies) {
             names.push_back(cookie.name());
         }
@@ -378,7 +379,7 @@ TEST_CASE("HttpCookieJar Parse Set-Cookie Headers")
 
     SUBCASE("Parse single cookie header")
     {
-        std::vector<std::string> headers = { "name=value; Domain=example.com; Path=/path" };
+        const std::vector<std::string> headers = { "name=value; Domain=example.com; Path=/path" };
 
         int count = jar.parseCookies(Uri("https://example.com/"), headers);
         CHECK(count == 1);
@@ -393,7 +394,7 @@ TEST_CASE("HttpCookieJar Parse Set-Cookie Headers")
 
     SUBCASE("Parse multiple cookie headers")
     {
-        std::vector<std::string> headers = {
+        const std::vector<std::string> headers = {
             "name1=value1; Domain=example.com",
             "name2=value2; Domain=example.org",
             "name3=value3; Domain=example.net"
@@ -417,7 +418,7 @@ TEST_CASE("HttpCookieJar Parse Set-Cookie Headers")
         jar.insertCookie(cookie);
 
         // Then parse a Set-Cookie header with the same name but different value
-        std::vector<std::string> headers = { "name=new-value; Domain=example.com" };
+        const std::vector<std::string> headers = { "name=new-value; Domain=example.com" };
 
         int count = jar.parseCookies(Uri("https://example.com/"), headers);
         CHECK(count == 1);
@@ -431,7 +432,7 @@ TEST_CASE("HttpCookieJar Parse Set-Cookie Headers")
 
     SUBCASE("Ignore invalid cookies")
     {
-        std::vector<std::string> headers = {
+        const std::vector<std::string> headers = {
             "=no-name; Domain=example.com", // No name
             "invalid", // No name=value format
             "name=value; InvalidAttribute" // Valid cookie with invalid attribute
@@ -468,7 +469,7 @@ TEST_CASE("HttpCookieJar Cookie Header Construction")
 
     SUBCASE("Cookie header for matching domain")
     {
-        std::string header = jar.cookieHeaderForUrl(Uri("https://example.com/"));
+        const std::string header = jar.cookieHeaderForUrl(Uri("https://example.com/"));
 
         // Should include both cookies, separated by semicolon and space
         CHECK(header.find("name1=value1") != std::string::npos);
@@ -486,7 +487,7 @@ TEST_CASE("HttpCookieJar Cookie Header Construction")
 
     SUBCASE("Cookie header for non-matching domain")
     {
-        std::string header = jar.cookieHeaderForUrl(Uri("https://unrelated.com/"));
+        const std::string header = jar.cookieHeaderForUrl(Uri("https://unrelated.com/"));
 
         // Should be empty
         CHECK(header.empty());

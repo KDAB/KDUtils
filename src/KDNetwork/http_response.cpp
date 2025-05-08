@@ -61,9 +61,9 @@ std::string HttpResponse::reasonPhrase() const
     return m_reasonPhrase;
 }
 
-void HttpResponse::setReasonPhrase(const std::string &phrase)
+void HttpResponse::setReasonPhrase(const std::string &reason)
 {
-    m_reasonPhrase = phrase;
+    m_reasonPhrase = reason;
 }
 
 std::string HttpResponse::httpVersion() const
@@ -188,18 +188,18 @@ std::optional<KDUtils::Uri> HttpResponse::redirectUrl() const
         return KDUtils::Uri(location);
     } else {
         // Relative URL, need to resolve against original request URL
-        KDUtils::Uri baseUrl = m_request.url();
+        const KDUtils::Uri baseUrl = m_request.url();
         // TODO: Properly resolve relative URLs
         // For now, this is a simple implementation that only handles absolute paths
         if (location.front() == '/') {
-            std::string scheme = baseUrl.scheme();
+            const std::string scheme = baseUrl.scheme();
             std::string host = baseUrl.toString();
 
             // Extract host from base URL
-            size_t schemeEnd = host.find("://");
+            const size_t schemeEnd = host.find("://");
             if (schemeEnd != std::string::npos) {
                 host = host.substr(schemeEnd + 3);
-                size_t pathStart = host.find('/');
+                const size_t pathStart = host.find('/');
                 if (pathStart != std::string::npos) {
                     host = host.substr(0, pathStart);
                 }
@@ -221,7 +221,7 @@ std::string HttpResponse::contentType() const
 
 int64_t HttpResponse::contentLength() const
 {
-    std::string contentLenStr = header("Content-Length");
+    const std::string contentLenStr = header("Content-Length");
     if (contentLenStr.empty()) {
         return -1;
     }
@@ -239,7 +239,7 @@ int64_t HttpResponse::contentLength() const
 
 bool HttpResponse::isChunked() const
 {
-    std::string transferEncoding = header("Transfer-Encoding");
+    const std::string transferEncoding = header("Transfer-Encoding");
     return !transferEncoding.empty() && transferEncoding.find("chunked") != std::string::npos;
 }
 
@@ -247,7 +247,7 @@ bool HttpResponse::isKeepAlive() const
 {
     // HTTP/1.0 defaults to Connection: close
     // HTTP/1.1 defaults to Connection: keep-alive
-    std::string connection = toLower(header("Connection"));
+    const std::string connection = toLower(header("Connection"));
 
     if (m_httpVersion == "1.0") {
         // For HTTP/1.0, need explicit keep-alive

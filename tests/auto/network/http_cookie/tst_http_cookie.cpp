@@ -21,7 +21,7 @@ TEST_CASE("HttpCookie Construction")
 {
     SUBCASE("Default constructor creates an empty cookie")
     {
-        HttpCookie cookie;
+        const HttpCookie cookie;
         CHECK(cookie.name().empty());
         CHECK(cookie.value().empty());
         CHECK(cookie.domain().empty());
@@ -36,7 +36,7 @@ TEST_CASE("HttpCookie Construction")
 
     SUBCASE("Constructor with name and value")
     {
-        HttpCookie cookie("name", "value");
+        const HttpCookie cookie("name", "value");
         CHECK(cookie.name() == "name");
         CHECK(cookie.value() == "value");
         CHECK(cookie.domain().empty());
@@ -108,7 +108,7 @@ TEST_CASE("HttpCookie Parse from Set-Cookie header")
 {
     SUBCASE("Basic cookie")
     {
-        Uri url("https://example.com/path");
+        const Uri url("https://example.com/path");
         auto cookie = HttpCookie::fromSetCookieHeader("name=value", url);
         REQUIRE(cookie.has_value());
         CHECK(cookie->name() == "name");
@@ -123,7 +123,7 @@ TEST_CASE("HttpCookie Parse from Set-Cookie header")
 
     SUBCASE("Cookie with attributes")
     {
-        Uri url("https://example.com/path");
+        const Uri url("https://example.com/path");
         auto cookie = HttpCookie::fromSetCookieHeader(
                 "name=value; Domain=.example.com; Path=/test; Secure; HttpOnly; SameSite=Strict",
                 url);
@@ -139,14 +139,14 @@ TEST_CASE("HttpCookie Parse from Set-Cookie header")
 
     SUBCASE("Invalid cookie")
     {
-        Uri url("https://example.com/path");
+        const Uri url("https://example.com/path");
         auto cookie = HttpCookie::fromSetCookieHeader("invalid_cookie", url);
         CHECK_FALSE(cookie.has_value());
     }
 
     SUBCASE("Cookie with Max-Age")
     {
-        Uri url("https://example.com/path");
+        const Uri url("https://example.com/path");
         auto cookie = HttpCookie::fromSetCookieHeader(
                 "name=value; Max-Age=3600",
                 url);
@@ -159,14 +159,14 @@ TEST_CASE("HttpCookie Parse from Set-Cookie header")
 
     SUBCASE("Cookie with empty name")
     {
-        Uri url("https://example.com/path");
+        const Uri url("https://example.com/path");
         auto cookie = HttpCookie::fromSetCookieHeader("=value", url);
         CHECK_FALSE(cookie.has_value());
     }
 
     SUBCASE("SameSite values")
     {
-        Uri url("https://example.com/path");
+        const Uri url("https://example.com/path");
 
         auto laxCookie = HttpCookie::fromSetCookieHeader("name=value; SameSite=Lax", url);
         REQUIRE(laxCookie.has_value());

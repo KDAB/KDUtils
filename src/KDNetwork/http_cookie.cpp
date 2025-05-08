@@ -21,20 +21,10 @@
 #include <sstream>
 #include <unordered_map>
 
-namespace KDNetwork {
-
-HttpCookie::HttpCookie()
-{
-}
-
-HttpCookie::HttpCookie(const std::string &name, const std::string &value)
-    : m_name(name)
-    , m_value(value)
-{
-}
+namespace {
 
 // Helper function to trim whitespace
-static std::string trim(const std::string &str)
+std::string trim(const std::string &str)
 {
     const auto start = str.find_first_not_of(" \t\r\n");
     if (start == std::string::npos) {
@@ -45,23 +35,23 @@ static std::string trim(const std::string &str)
 }
 
 // Helper function to parse cookie date format (RFC 6265)
-static std::optional<std::chrono::system_clock::time_point> parseDate(const std::string &dateStr)
+std::optional<std::chrono::system_clock::time_point> parseDate(const std::string &dateStr)
 {
     // Implementation of date parsing for cookie expiration
     // This is a simplified implementation; a full implementation would handle
     // all the date formats specified in RFC 6265 section 5.1.1
 
     // Example format: "Wed, 21 Oct 2015 07:28:00 GMT"
-    std::regex dateRegex(R"((\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})\s+(\d{2}):(\d{2}):(\d{2})\s+GMT)");
+    const std::regex dateRegex(R"((\d{1,2})\s+([a-zA-Z]+)\s+(\d{4})\s+(\d{2}):(\d{2}):(\d{2})\s+GMT)");
     std::smatch match;
 
     if (std::regex_search(dateStr, match, dateRegex) && match.size() == 7) {
-        int day = std::stoi(match[1].str());
-        std::string month = match[2].str();
-        int year = std::stoi(match[3].str());
-        int hour = std::stoi(match[4].str());
-        int minute = std::stoi(match[5].str());
-        int second = std::stoi(match[6].str());
+        const int day = std::stoi(match[1].str());
+        const std::string month = match[2].str();
+        const int year = std::stoi(match[3].str());
+        const int hour = std::stoi(match[4].str());
+        const int minute = std::stoi(match[5].str());
+        const int second = std::stoi(match[6].str());
 
         // Convert month name to number
         std::unordered_map<std::string, int> monthMap = {
@@ -103,6 +93,20 @@ static std::optional<std::chrono::system_clock::time_point> parseDate(const std:
     return std::nullopt;
 }
 
+} // namespace
+
+namespace KDNetwork {
+
+HttpCookie::HttpCookie()
+{
+}
+
+HttpCookie::HttpCookie(const std::string &name, const std::string &value)
+    : m_name(name)
+    , m_value(value)
+{
+}
+
 std::optional<HttpCookie> HttpCookie::fromSetCookieHeader(const std::string &setCookieValue, const KDUtils::Uri &url)
 {
     std::istringstream stream(setCookieValue);
@@ -110,7 +114,8 @@ std::optional<HttpCookie> HttpCookie::fromSetCookieHeader(const std::string &set
     std::getline(stream, token, ';');
 
     // Extract name/value pair
-    std::string name, value;
+    std::string name;
+    std::string value;
     auto equalPos = token.find('=');
     if (equalPos != std::string::npos) {
         name = trim(token.substr(0, equalPos));
@@ -131,7 +136,8 @@ std::optional<HttpCookie> HttpCookie::fromSetCookieHeader(const std::string &set
     // Parse attributes
     while (std::getline(stream, token, ';')) {
         auto equalPos = token.find('=');
-        std::string attrName, attrValue;
+        std::string attrName;
+        std::string attrValue;
 
         if (equalPos != std::string::npos) {
             attrName = trim(token.substr(0, equalPos));
@@ -152,7 +158,7 @@ std::optional<HttpCookie> HttpCookie::fromSetCookieHeader(const std::string &set
             }
         } else if (attrName == "max-age") {
             try {
-                int seconds = std::stoi(attrValue);
+                const int seconds = std::stoi(attrValue);
                 auto now = std::chrono::system_clock::now();
                 cookie.m_expirationDate = now + std::chrono::seconds(seconds);
             } catch (...) {
@@ -339,7 +345,7 @@ HttpCookie::SameSitePolicy HttpCookie::sameSitePolicyFromString(const std::strin
 
 bool HttpCookie::isIpAddress(const std::string &domain)
 {
-    KDNetwork::IpAddress ip(domain);
+    const KDNetwork::IpAddress ip(domain);
     return ip.isValid();
 }
 

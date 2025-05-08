@@ -186,7 +186,7 @@ public:
      *
      * @param timeout The timeout in milliseconds
      */
-    void setTimeout(std::chrono::milliseconds timeout);
+    void setTimeout(std::chrono::milliseconds msecs);
 
     /**
      * @brief Get the redirect policy
@@ -261,7 +261,7 @@ public:
      *
      * @param add Whether to add common headers automatically
      */
-    void setAutoAddCommonHeaders(bool add);
+    void setAutoAddCommonHeaders(bool enabled);
 
 private:
     KDUtils::Uri m_url;
