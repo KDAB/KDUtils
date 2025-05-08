@@ -71,7 +71,7 @@ std::string removeDotSegments(const std::string &input)
         }
         // D. If the input begins with "/..", remove it and the last segment from output
         else if (input.substr(pos, 4) == "/../") {
-            size_t lastSlash = output.find_last_of('/');
+            const size_t lastSlash = output.find_last_of('/');
             if (lastSlash != std::string::npos) {
                 output.erase(lastSlash);
             } else {
@@ -87,7 +87,7 @@ std::string removeDotSegments(const std::string &input)
         }
         // F. Move the first segment from input to output
         else {
-            size_t nextSlash = input.find('/', pos + 1);
+            const size_t nextSlash = input.find('/', pos + 1);
             if (nextSlash == std::string::npos) {
                 output += input.substr(pos);
                 break; // No more segments
@@ -122,14 +122,14 @@ std::map<std::string, std::string> parseQueryString(const std::string &query)
 
     // Split by & or ;
     while (std::getline(iss, pair, '&')) {
-        size_t equalsPos = pair.find('=');
+        const size_t equalsPos = pair.find('=');
         if (equalsPos == std::string::npos) {
             // No value, just a key
             params[Uri::decodeComponent(pair)] = "";
         } else {
             // Key=value pair
-            std::string key = Uri::decodeComponent(pair.substr(0, equalsPos));
-            std::string value = Uri::decodeComponent(pair.substr(equalsPos + 1));
+            const std::string key = Uri::decodeComponent(pair.substr(0, equalsPos));
+            const std::string value = Uri::decodeComponent(pair.substr(equalsPos + 1));
             params[key] = value;
         }
     }
@@ -185,7 +185,7 @@ void Uri::parse(const std::string &uriString)
             std::string authority = match[4].str();
 
             // Parse authority: [userinfo@]host[:port]
-            size_t atPos = authority.find('@');
+            const size_t atPos = authority.find('@');
             if (atPos != std::string::npos) {
                 m_userInfo = authority.substr(0, atPos);
                 authority = authority.substr(atPos + 1);
@@ -193,7 +193,7 @@ void Uri::parse(const std::string &uriString)
 
             // Handle IPv6 address in square brackets
             if (!authority.empty() && authority[0] == '[') {
-                size_t closeBracket = authority.find(']');
+                const size_t closeBracket = authority.find(']');
                 if (closeBracket != std::string::npos) {
                     m_host = authority.substr(0, closeBracket + 1);
                     if (closeBracket + 2 < authority.length() && authority[closeBracket + 1] == ':') {
@@ -209,7 +209,7 @@ void Uri::parse(const std::string &uriString)
                 }
             } else {
                 // Regular hostname[:port]
-                size_t colonPos = authority.find(':');
+                const size_t colonPos = authority.find(':');
                 if (colonPos != std::string::npos) {
                     m_host = authority.substr(0, colonPos);
                     try {
@@ -282,7 +282,7 @@ Uri Uri::fromString(const std::string &uriString)
 
 Uri Uri::join(const Uri &base, const std::string &reference)
 {
-    Uri refUri(reference);
+    const Uri refUri(reference);
     return base.resolved(refUri);
 }
 
@@ -409,7 +409,7 @@ Uri &Uri::withQueryParameter(const std::string &key, const std::string &value)
     return *this;
 }
 
-std::string Uri::buildQueryString(const std::map<std::string, std::string> &params) const
+std::string Uri::buildQueryString(const std::map<std::string, std::string> &params)
 {
     if (params.empty()) {
         return "";
@@ -547,7 +547,7 @@ Uri Uri::normalized() const
         const UriSchemeHandler *handler = UriSchemeRegistry::instance().handlerForScheme(result.m_scheme);
         if (handler) {
             try {
-                uint16_t defaultPort = static_cast<uint16_t>(std::stoi(handler->defaultPort()));
+                const uint16_t defaultPort = static_cast<uint16_t>(std::stoi(handler->defaultPort()));
                 if (result.m_port == defaultPort) {
                     result.m_port = 0;
                     result.m_hasExplicitPort = false;
@@ -591,7 +591,7 @@ Uri Uri::resolved(const Uri &relative) const
                 result.m_path = removeDotSegments(relative.m_path);
             } else {
                 // Merge paths
-                size_t lastSlash = result.m_path.find_last_of('/');
+                const size_t lastSlash = result.m_path.find_last_of('/');
                 if (lastSlash == std::string::npos) {
                     result.m_path = relative.m_path;
                 } else {
@@ -614,7 +614,7 @@ std::string Uri::encodeComponent(const std::string &component)
     escaped.fill('0');
     escaped << std::hex;
 
-    for (char c : component) {
+    for (const char c : component) {
         if (isUnreserved(c)) {
             escaped << c;
         } else {
@@ -633,8 +633,8 @@ std::string Uri::decodeComponent(const std::string &component)
     for (size_t i = 0; i < component.length(); ++i) {
         if (component[i] == '%' && i + 2 < component.length()) {
             try {
-                std::string hex = component.substr(i + 1, 2);
-                char decoded = static_cast<char>(std::stoi(hex, nullptr, 16));
+                const std::string hex = component.substr(i + 1, 2);
+                const char decoded = static_cast<char>(std::stoi(hex, nullptr, 16));
                 result += decoded;
                 i += 2;
             } catch (const std::exception &) {
@@ -690,7 +690,7 @@ bool Uri::isValid() const
 
         // Other characters must be letters, digits, +, -, .
         for (size_t i = 1; i < m_scheme.length(); ++i) {
-            char c = m_scheme[i];
+            const char c = m_scheme[i];
             if (!std::isalnum(static_cast<unsigned char>(c)) &&
                 c != '+' && c != '-' && c != '.') {
                 return false;
