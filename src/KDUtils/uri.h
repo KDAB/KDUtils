@@ -345,7 +345,7 @@ private:
     std::string m_fragment;
 
     void parse(const std::string &uriString);
-    std::string buildQueryString(const std::map<std::string, std::string> &params) const;
+    static std::string buildQueryString(const std::map<std::string, std::string> &params);
 };
 
 /**
