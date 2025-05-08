@@ -80,12 +80,12 @@ public:
         ss << toStdString(request.method()) << " ";
 
         // Extract path from URL
-        std::string urlStr = request.url().toString();
+        const std::string urlStr = request.url().toString();
         std::string path = "/";
-        size_t hostStart = urlStr.find("://");
+        const size_t hostStart = urlStr.find("://");
         if (hostStart != std::string::npos) {
-            std::string hostAndPath = urlStr.substr(hostStart + 3);
-            size_t pathStart = hostAndPath.find('/');
+            const std::string hostAndPath = urlStr.substr(hostStart + 3);
+            const size_t pathStart = hostAndPath.find('/');
             if (pathStart != std::string::npos) {
                 path = hostAndPath.substr(pathStart);
             }
@@ -128,7 +128,7 @@ public:
     }
 };
 
-HttpClient::HttpClient(std::shared_ptr<HttpSession> session)
+HttpClient::HttpClient(const std::shared_ptr<HttpSession> &session)
     : m_session(session ? session : std::make_shared<HttpSession>())
 {
     // Set up cleanup timer
@@ -185,14 +185,14 @@ std::future<HttpResponse> HttpClient::sendWithSseClient(
 std::future<HttpResponse> HttpClient::get(const KDUtils::Uri &url,
                                           std::function<void(const HttpResponse &)> callback)
 {
-    HttpRequest request(url, HttpMethod::Get);
+    const HttpRequest request(url, HttpMethod::Get);
     return send(request, callback);
 }
 
 std::future<HttpResponse> HttpClient::head(const KDUtils::Uri &url,
                                            std::function<void(const HttpResponse &)> callback)
 {
-    HttpRequest request(url, HttpMethod::Head);
+    const HttpRequest request(url, HttpMethod::Head);
     return send(request, callback);
 }
 
@@ -230,7 +230,7 @@ std::future<HttpResponse> HttpClient::put(const KDUtils::Uri &url,
 std::future<HttpResponse> HttpClient::deleteResource(const KDUtils::Uri &url,
                                                      std::function<void(const HttpResponse &)> callback)
 {
-    HttpRequest request(url, HttpMethod::Delete);
+    const HttpRequest request(url, HttpMethod::Delete);
     return send(request, callback);
 }
 
@@ -248,7 +248,7 @@ std::future<HttpResponse> HttpClient::patch(const KDUtils::Uri &url,
 std::future<HttpResponse> HttpClient::options(const KDUtils::Uri &url,
                                               std::function<void(const HttpResponse &)> callback)
 {
-    HttpRequest request(url, HttpMethod::Options);
+    const HttpRequest request(url, HttpMethod::Options);
     return send(request, callback);
 }
 
@@ -282,7 +282,7 @@ std::shared_ptr<HttpClient::RequestState> HttpClient::createRequestState(
     const KDUtils::Uri &uri = request.url();
 
     // Get scheme and determine if connection is secure
-    std::string scheme = uri.scheme();
+    const std::string scheme = uri.scheme();
     state->secure = (scheme == "https");
 
     // Get host
@@ -316,7 +316,7 @@ void HttpClient::startRequest(std::shared_ptr<RequestState> state)
     }
 
     // Add cookies if available
-    std::string cookieHeader = m_session->cookieJar().cookieHeaderForUrl(modifiableRequest.url());
+    const std::string cookieHeader = m_session->cookieJar().cookieHeaderForUrl(modifiableRequest.url());
     if (!cookieHeader.empty() && modifiableRequest.header("Cookie").empty()) {
         modifiableRequest.setHeader("Cookie", cookieHeader);
     }
@@ -525,18 +525,18 @@ void HttpClient::followRedirect(std::shared_ptr<RequestState> state)
 
     case HttpRequest::RedirectPolicy::FollowSameHost: {
         // Check if redirect URL has the same host
-        std::string originalHost = state->host;
+        const std::string originalHost = state->host;
         std::string redirectHost;
 
-        std::string redirectUrlStr = redirectUrl->toString();
-        size_t hostStart = redirectUrlStr.find("://");
+        const std::string redirectUrlStr = redirectUrl->toString();
+        const size_t hostStart = redirectUrlStr.find("://");
         if (hostStart != std::string::npos) {
-            std::string hostAndPath = redirectUrlStr.substr(hostStart + 3);
-            size_t pathStart = hostAndPath.find('/');
+            const std::string hostAndPath = redirectUrlStr.substr(hostStart + 3);
+            const size_t pathStart = hostAndPath.find('/');
             redirectHost = (pathStart != std::string::npos) ? hostAndPath.substr(0, pathStart) : hostAndPath;
 
             // Remove port if present
-            size_t portPos = redirectHost.find(':');
+            const size_t portPos = redirectHost.find(':');
             if (portPos != std::string::npos) {
                 redirectHost = redirectHost.substr(0, portPos);
             }
@@ -552,23 +552,23 @@ void HttpClient::followRedirect(std::shared_ptr<RequestState> state)
 
     case HttpRequest::RedirectPolicy::FollowSameHostAndProtocol: {
         // Check if redirect URL has the same host and protocol
-        std::string originalScheme = state->secure ? "https" : "http";
+        const std::string originalScheme = state->secure ? "https" : "http";
         std::string redirectScheme;
         std::string redirectHost;
 
-        std::string redirectUrlStr = redirectUrl->toString();
-        size_t schemeEnd = redirectUrlStr.find("://");
+        const std::string redirectUrlStr = redirectUrl->toString();
+        const size_t schemeEnd = redirectUrlStr.find("://");
         if (schemeEnd != std::string::npos) {
             redirectScheme = redirectUrlStr.substr(0, schemeEnd);
             std::transform(redirectScheme.begin(), redirectScheme.end(), redirectScheme.begin(),
                            [](unsigned char c) { return std::tolower(c); });
 
-            std::string hostAndPath = redirectUrlStr.substr(schemeEnd + 3);
-            size_t pathStart = hostAndPath.find('/');
+            const std::string hostAndPath = redirectUrlStr.substr(schemeEnd + 3);
+            const size_t pathStart = hostAndPath.find('/');
             redirectHost = (pathStart != std::string::npos) ? hostAndPath.substr(0, pathStart) : hostAndPath;
 
             // Remove port if present
-            size_t portPos = redirectHost.find(':');
+            const size_t portPos = redirectHost.find(':');
             if (portPos != std::string::npos) {
                 redirectHost = redirectHost.substr(0, portPos);
             }
@@ -590,28 +590,28 @@ void HttpClient::followRedirect(std::shared_ptr<RequestState> state)
     // Close current connection unless we're redirecting to the same host
     bool needNewConnection = true;
     if (state->socket && state->socket->state() == Socket::State::Connected) {
-        std::string redirectUrlStr = redirectUrl->toString();
+        const std::string redirectUrlStr = redirectUrl->toString();
         std::string redirectScheme;
         std::string redirectHost;
         uint16_t redirectPort = 0;
 
-        size_t schemeEnd = redirectUrlStr.find("://");
+        const size_t schemeEnd = redirectUrlStr.find("://");
         if (schemeEnd != std::string::npos) {
             redirectScheme = redirectUrlStr.substr(0, schemeEnd);
             std::transform(redirectScheme.begin(), redirectScheme.end(), redirectScheme.begin(),
                            [](unsigned char c) { return std::tolower(c); });
 
-            bool redirectSecure = (redirectScheme == "https");
+            const bool redirectSecure = (redirectScheme == "https");
 
-            std::string hostAndPath = redirectUrlStr.substr(schemeEnd + 3);
-            size_t pathStart = hostAndPath.find('/');
-            std::string hostAndPort = (pathStart != std::string::npos) ? hostAndPath.substr(0, pathStart) : hostAndPath;
+            const std::string hostAndPath = redirectUrlStr.substr(schemeEnd + 3);
+            const size_t pathStart = hostAndPath.find('/');
+            const std::string hostAndPort = (pathStart != std::string::npos) ? hostAndPath.substr(0, pathStart) : hostAndPath;
 
             // Check for port in the host
-            size_t portPos = hostAndPort.find(':');
+            const size_t portPos = hostAndPort.find(':');
             if (portPos != std::string::npos) {
                 redirectHost = hostAndPort.substr(0, portPos);
-                std::string portStr = hostAndPort.substr(portPos + 1);
+                const std::string portStr = hostAndPort.substr(portPos + 1);
                 try {
                     redirectPort = std::stoi(portStr);
                 } catch (...) {
@@ -635,7 +635,7 @@ void HttpClient::followRedirect(std::shared_ptr<RequestState> state)
     redirectRequest.setUrl(*redirectUrl);
 
     // For POST redirects to GET (301, 302, 303)
-    int statusCode = state->response.statusCode();
+    const int statusCode = state->response.statusCode();
     if ((statusCode == 301 || statusCode == 302 || statusCode == 303) &&
         redirectRequest.method() == HttpMethod::Post) {
         redirectRequest.setMethod(HttpMethod::Get);
@@ -685,7 +685,7 @@ void HttpClient::onReadyRead(std::shared_ptr<RequestState> state)
     }
 
     // Read available data
-    KDUtils::ByteArray data = tcpSocket->readAll();
+    const KDUtils::ByteArray data = tcpSocket->readAll();
     if (data.empty()) {
         return;
     }
@@ -693,12 +693,12 @@ void HttpClient::onReadyRead(std::shared_ptr<RequestState> state)
     // Process received data
     if (state->parser) {
         // Parse the data
-        bool parseResult = state->parser->parse(data);
+        const bool parseResult = state->parser->parse(data);
 
         if (!parseResult) {
             if (state->websocketUpgrade && state->parser->error() == HttpParser::ParserError::PausedUpgrade) {
                 // Find where the parser paused and store the remaining data so that the WebSocket client can handle it
-                KDUtils::ByteArray excessData = data.mid(state->parser->errorLocation());
+                const KDUtils::ByteArray excessData = data.mid(state->parser->errorLocation());
                 state->response.setExcessData(excessData);
 
                 // Emit completion signals - but don't touch the socket
@@ -716,7 +716,7 @@ void HttpClient::onReadyRead(std::shared_ptr<RequestState> state)
 
         // Update download progress
         state->responseBuffer.append(data);
-        downloadProgress.emit(state->request, state->responseBuffer.size(), state->expectedContentLength);
+        downloadProgress.emit(state->request, static_cast<std::int64_t>(state->responseBuffer.size()), static_cast<std::int64_t>(state->expectedContentLength));
     } else {
         failRequest(state, "Parser not initialized");
     }
@@ -736,7 +736,7 @@ void HttpClient::onSocketConnected(std::shared_ptr<RequestState> state)
         failRequest(state, "Error sending request: socket write error");
     } else {
         // Update upload progress
-        uploadProgress.emit(state->request, state->bytesSent, state->requestData.size());
+        uploadProgress.emit(state->request, static_cast<std::int64_t>(state->bytesSent), static_cast<std::int64_t>(state->requestData.size()));
     }
 }
 
@@ -811,7 +811,9 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
         // Parse status code and reason phrase from first line
         // Example: "HTTP/1.1 200 OK"
         std::istringstream iss(firstLine);
-        std::string httpVersion, statusCodeStr, reasonPhrase;
+        std::string httpVersion;
+        std::string statusCodeStr;
+        std::string reasonPhrase;
         iss >> httpVersion >> statusCodeStr;
 
         // Extract reason phrase (rest of the line)
@@ -909,7 +911,7 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
     // Body data callback
     state->parser->setBodyDataCallback([this, state](const uint8_t *data, size_t length) {
         // Create a chunk from the incoming data
-        KDUtils::ByteArray chunk(data, length);
+        const KDUtils::ByteArray chunk(data, length);
 
         // Append body data to response
         KDUtils::ByteArray currentBody = state->response.body();
@@ -917,7 +919,7 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
         state->response.setBody(currentBody);
 
         // Update download progress
-        downloadProgress.emit(state->request, currentBody.size(), state->expectedContentLength);
+        downloadProgress.emit(state->request, static_cast<std::int64_t>(currentBody.size()), static_cast<std::int64_t>(state->expectedContentLength));
 
         // For SSE streaming mode, send only the new chunk to the associated SseClient
         if (state->streamingMode && state->headersParsed) {
@@ -944,7 +946,7 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
         // Process cookies
         auto cookieHeaders = state->response.headers("Set-Cookie");
         if (!cookieHeaders.empty()) {
-            std::vector<std::string> setCookieValues(cookieHeaders.begin(), cookieHeaders.end());
+            const std::vector<std::string> setCookieValues(cookieHeaders.begin(), cookieHeaders.end());
             m_session->cookieJar().parseCookies(state->request.url(), setCookieValues);
         }
 

@@ -61,7 +61,7 @@ public:
      *
      * @param session Optional session to use. If nullptr, a new session is created.
      */
-    explicit HttpClient(std::shared_ptr<HttpSession> session = nullptr);
+    explicit HttpClient(const std::shared_ptr<HttpSession> &session = nullptr);
 
     /**
      * @brief Destructor

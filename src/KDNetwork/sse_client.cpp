@@ -34,7 +34,6 @@ public:
     {
     public:
         SseParser()
-            : m_lastEvent(SseEvent())
         {
         }
 
@@ -74,13 +73,13 @@ public:
                 }
 
                 // Process the line based on field name
-                size_t colonPos = line.find(':');
+                const size_t colonPos = line.find(':');
                 if (colonPos == std::string::npos) {
                     // Line with no colon is treated as a field name with empty value
                     processField(line, "");
                 } else {
                     // Extract field name and value
-                    std::string fieldName = line.substr(0, colonPos);
+                    const std::string fieldName = line.substr(0, colonPos);
                     std::string fieldValue = colonPos + 1 < line.size() ? line.substr(colonPos + 1) : "";
 
                     // Skip initial space in the value if present
@@ -93,7 +92,7 @@ public:
             }
         }
 
-        std::string getLastEventId() const
+        [[nodiscard]] std::string getLastEventId() const
         {
             return m_lastEventId;
         }
@@ -180,7 +179,7 @@ void SseClient::connect(const HttpRequest &request)
         // Parse the response status
         if (response.statusCode() >= 200 && response.statusCode() < 300) {
             // Successful connection - check content type
-            std::string contentType = response.header("Content-Type");
+            const std::string contentType = response.header("Content-Type");
             if (contentType.find("text/event-stream") != std::string::npos) {
                 // This is a valid SSE stream - set connected state and emit signal
                 if (!d->isConnected) {

@@ -101,7 +101,7 @@ KDUtils::ByteArray WebSocketFrame::encode(bool maskFrame) const
     frame.append(firstByte);
 
     // Second byte: MASK bit (bit 0) + payload length (bits 1-7)
-    size_t payloadLen = m_payload.size();
+    const size_t payloadLen = m_payload.size();
     uint8_t secondByte = 0;
 
     if (maskFrame) {
@@ -167,14 +167,14 @@ std::optional<WebSocketFrame> WebSocketFrame::decode(const KDUtils::ByteArray &d
 
     // Parse first byte
     uint8_t firstByte = data[0];
-    bool fin = (firstByte & 0x80) != 0;
+    const bool fin = (firstByte & 0x80) != 0;
     // uint8_t rsv = (firstByte & 0x70) >> 4; // RSV1-3 bits
-    OpCode opCode = static_cast<OpCode>(firstByte & 0x0F);
+    const OpCode opCode = static_cast<OpCode>(firstByte & 0x0F);
 
     // Parse second byte
-    uint8_t secondByte = data[1];
-    bool masked = (secondByte & 0x80) != 0;
-    uint8_t payloadLenIndicator = secondByte & 0x7F;
+    const uint8_t secondByte = data[1];
+    const bool masked = (secondByte & 0x80) != 0;
+    const uint8_t payloadLenIndicator = secondByte & 0x7F;
 
     // Calculate actual header size
     size_t headerSize = 2;

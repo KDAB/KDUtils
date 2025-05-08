@@ -22,7 +22,7 @@
 #include <atomic>
 #include <csignal>
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char * /*argv*/[])
 {
     KDFoundation::CoreApplication app;
 
@@ -35,11 +35,11 @@ int main(int argc, char *argv[])
     };
 
     // Register signal handlers for Ctrl+C and termination signals
-    std::signal(SIGINT, signalHandler);
-    std::signal(SIGTERM, signalHandler);
+    std::ignore = std::signal(SIGINT, signalHandler);
+    std::ignore = std::signal(SIGTERM, signalHandler);
 
     // Parse command line arguments
-    std::string url = "wss://echo.websocket.events/";
+    const std::string url = "wss://echo.websocket.events/";
     std::cout << "WebSocket Client Example" << std::endl;
     std::cout << "Connecting to: " << url << std::endl;
     std::cout << "Type 'exit' to quit. Press Ctrl+C to force quit." << std::endl;
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 
     std::ignore = client->textMessageReceived.connect([client, requestUserInput](const std::string &message) {
         std::cout << "Received: " << message << std::endl;
-        std::string userMessage = requestUserInput();
+        const std::string userMessage = requestUserInput();
         if (!userMessage.empty()) {
             client->sendTextMessage(userMessage);
         }
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
     client->setReconnectInterval(std::chrono::seconds(2));
 
     // Connect to the WebSocket server
-    KDUtils::Uri wsUrl(url);
+    const KDUtils::Uri wsUrl(url);
     client->connectToUrl(wsUrl);
 
     // Start the application event loop

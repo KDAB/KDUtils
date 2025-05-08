@@ -11,10 +11,10 @@
 #include <KDNetwork/http_request.h>
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <sstream>
 #include <iomanip>
-#include "http_request.h"
 
 namespace KDNetwork {
 
@@ -194,11 +194,15 @@ void HttpRequest::setBasicAuth(const std::string &username, const std::string &p
     std::string encoded;
 
     // Simple base64 encoding (RFC 4648)
-    static const char base64Chars[] =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    static const std::array<char, 64> base64Chars = {
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+        'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+        'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+        'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'
+    };
 
     // Encode in base64
-    size_t authLen = authString.size();
+    const size_t authLen = authString.size();
     encoded.reserve(4 * ((authLen + 2) / 3)); // Reserve space
 
     for (size_t i = 0; i < authLen; i += 3) {
@@ -212,7 +216,7 @@ void HttpRequest::setBasicAuth(const std::string &username, const std::string &p
         }
 
         // Extract 4 base64 characters (6 bits each)
-        for (int j = 0; j < 4; ++j) {
+        for (size_t j = 0; j < 4; ++j) {
             if (i + j / 4 * 3 < authLen) {
                 encoded += base64Chars[(chunk >> (18 - j * 6)) & 0x3F];
             } else {

@@ -27,7 +27,7 @@ IpAddress::IpAddress()
 IpAddress::IpAddress(std::string_view address)
 {
     // Since inet_pton requires a null-terminated string, we need to create a temporary std::string
-    std::string addrStr(address);
+    const std::string addrStr(address);
 
     // Try IPv4 first
     struct in_addr addr4;
@@ -65,10 +65,10 @@ IpAddress::IpAddress(const struct sockaddr *sockaddr, socklen_t len)
     }
 
     if (sockaddr->sa_family == AF_INET && len >= sizeof(struct sockaddr_in)) {
-        const struct sockaddr_in *addr4 = reinterpret_cast<const struct sockaddr_in *>(sockaddr);
+        const auto *addr4 = reinterpret_cast<const sockaddr_in *>(sockaddr);
         m_data = std::uint32_t(ntohl(addr4->sin_addr.s_addr)); // Convert to host byte order
     } else if (sockaddr->sa_family == AF_INET6 && len >= sizeof(struct sockaddr_in6)) {
-        const struct sockaddr_in6 *addr6 = reinterpret_cast<const struct sockaddr_in6 *>(sockaddr);
+        const auto *addr6 = reinterpret_cast<const sockaddr_in6 *>(sockaddr);
         std::array<std::uint8_t, 16> ipv6Data;
         std::memcpy(ipv6Data.data(), addr6->sin6_addr.s6_addr, 16);
         m_data = ipv6Data;
@@ -100,7 +100,8 @@ std::string IpAddress::toString() const
     if (std::holds_alternative<IPv4Data>(m_data)) {
         // IPv4 address
         const std::uint32_t ipv4 = std::get<IPv4Data>(m_data);
-        struct in_addr addr{};
+        struct in_addr addr {
+        };
         addr.s_addr = htonl(ipv4); // Convert to network byte order
 
         char buf[INET_ADDRSTRLEN] = {};
@@ -110,7 +111,8 @@ std::string IpAddress::toString() const
     } else if (std::holds_alternative<IPv6Data>(m_data)) {
         // IPv6 address
         const auto &ipv6 = std::get<IPv6Data>(m_data);
-        struct in6_addr addr{};
+        struct in6_addr addr {
+        };
         std::memcpy(addr.s6_addr, ipv6.data(), 16);
 
         char buf[INET6_ADDRSTRLEN] = {};
@@ -129,7 +131,7 @@ bool IpAddress::isNull() const noexcept
 }
 
 // Checks if address is a loopback address
-bool IpAddress::isLoopback() const noexcept
+bool IpAddress::isLoopback() const
 {
     if (std::holds_alternative<IPv4Data>(m_data)) {
         // IPv4 loopback: 127.0.0.0/8
@@ -152,7 +154,7 @@ bool IpAddress::isLoopback() const noexcept
 }
 
 // Checks if address is a broadcast address (IPv4 only)
-bool IpAddress::isBroadcast() const noexcept
+bool IpAddress::isBroadcast() const
 {
     if (std::holds_alternative<IPv4Data>(m_data)) {
         // IPv4 broadcast: 255.255.255.255
@@ -164,7 +166,7 @@ bool IpAddress::isBroadcast() const noexcept
 }
 
 // Checks if address is a link-local address
-bool IpAddress::isLinkLocal() const noexcept
+bool IpAddress::isLinkLocal() const
 {
     if (std::holds_alternative<IPv4Data>(m_data)) {
         // IPv4 link-local: 169.254.0.0/16
@@ -208,8 +210,8 @@ bool IpAddress::isWithinSubnet(const IpAddress &subnet, int prefixLength) const
         const auto &subnetAddr = std::get<IPv6Data>(subnet.m_data);
 
         // Check each byte according to the prefix length
-        int bytesFullyInPrefix = prefixLength / 8;
-        int remainingBits = prefixLength % 8;
+        const int bytesFullyInPrefix = prefixLength / 8;
+        const int remainingBits = prefixLength % 8;
 
         // Check the fully covered bytes
         for (int i = 0; i < bytesFullyInPrefix; ++i) {
@@ -220,7 +222,7 @@ bool IpAddress::isWithinSubnet(const IpAddress &subnet, int prefixLength) const
 
         // Check the partially covered byte, if any
         if (remainingBits > 0 && bytesFullyInPrefix < 16) {
-            std::uint8_t mask = 0xFF << (8 - remainingBits);
+            const std::uint8_t mask = 0xFF << (8 - remainingBits);
             if ((addr[bytesFullyInPrefix] & mask) != (subnetAddr[bytesFullyInPrefix] & mask)) {
                 return false;
             }
@@ -233,7 +235,7 @@ bool IpAddress::isWithinSubnet(const IpAddress &subnet, int prefixLength) const
 }
 
 // Checks if address is a multicast address
-bool IpAddress::isMulticast() const noexcept
+bool IpAddress::isMulticast() const
 {
     if (std::holds_alternative<IPv4Data>(m_data)) {
         // IPv4 multicast: 224.0.0.0/4
@@ -249,7 +251,7 @@ bool IpAddress::isMulticast() const noexcept
 }
 
 // Checks if address is a private address
-bool IpAddress::isPrivate() const noexcept
+bool IpAddress::isPrivate() const
 {
     if (std::holds_alternative<IPv4Data>(m_data)) {
         const std::uint32_t ipv4 = std::get<IPv4Data>(m_data);
@@ -292,7 +294,7 @@ bool IpAddress::isIPv6() const noexcept
 }
 
 // Returns the IPv4 address as a 32-bit integer
-std::uint32_t IpAddress::toIPv4() const noexcept
+std::uint32_t IpAddress::toIPv4() const
 {
     if (std::holds_alternative<IPv4Data>(m_data)) {
         return std::get<IPv4Data>(m_data);
@@ -301,7 +303,7 @@ std::uint32_t IpAddress::toIPv4() const noexcept
 }
 
 // Returns the IPv6 address as a 16-byte array
-std::array<std::uint8_t, 16> IpAddress::toIPv6() const noexcept
+std::array<std::uint8_t, 16> IpAddress::toIPv6() const
 {
     if (std::holds_alternative<IPv6Data>(m_data)) {
         return std::get<IPv6Data>(m_data);
@@ -322,7 +324,7 @@ bool IpAddress::toSockAddr(struct sockaddr *sockaddr, socklen_t &len, std::uint1
             return false; // Buffer too small
         }
 
-        struct sockaddr_in *addr4 = reinterpret_cast<struct sockaddr_in *>(sockaddr);
+        auto *addr4 = reinterpret_cast<sockaddr_in *>(sockaddr);
         addr4->sin_family = AF_INET;
         addr4->sin_port = htons(port);
         addr4->sin_addr.s_addr = htonl(std::get<IPv4Data>(m_data)); // Convert to network byte order
@@ -338,7 +340,7 @@ bool IpAddress::toSockAddr(struct sockaddr *sockaddr, socklen_t &len, std::uint1
             return false; // Buffer too small
         }
 
-        struct sockaddr_in6 *addr6 = reinterpret_cast<struct sockaddr_in6 *>(sockaddr);
+        auto *addr6 = reinterpret_cast<sockaddr_in6 *>(sockaddr);
         addr6->sin6_family = AF_INET6;
         addr6->sin6_port = htons(port);
         addr6->sin6_flowinfo = 0; // Flow information
