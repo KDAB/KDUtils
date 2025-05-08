@@ -1,136 +1,153 @@
 {
-  "version": 3,
-  "configurePresets": [
-    {
-      "name": "configure-base",
-      "hidden": true,
-      "generator": "Ninja",
-      "cacheVariables": {
-        "KDUTILS_BUILD_TESTS": "OFF",
-        "KDUTILS_CODE_COVERAGE": "OFF",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
-      }
-    },
-    {
-      "name": "msvc_x64",
-      "hidden": true,
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "toolset": {
-        "value": "host=x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl",
-        "CMAKE_CXX_COMPILER": "cl"
-      },
-      "toolchainFile": "${env.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-    },
-    {
-      "name": "debug",
-      "displayName": "Debug",
-      "inherits": ["configure-base"],
-      "binaryDir": "${sourceDir}/build/Debug",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "KDUTILS_BUILD_TESTS": "ON",
-        "KDUTILS_CODE_COVERAGE": "ON"
-      }
-    },
-    {
-      "name": "debug-msvc_x64",
-      "displayName": "Debug (msvc_x64)",
-      "inherits": ["configure-base", "msvc_x64"],
-      "binaryDir": "${sourceDir}/build/Debug",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "KDUTILS_BUILD_TESTS": "ON"
-      }
-    },
-    {
-      "name": "release",
-      "displayName": "Release",
-      "inherits": ["configure-base"],
-      "binaryDir": "${sourceDir}/build/Release",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "release-msvc_x64",
-      "displayName": "Release (msvc_x64)",
-      "inherits": ["configure-base", "msvc_x64"],
-      "binaryDir": "${sourceDir}/build/Release",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "release-clangtidy",
-      "displayName": "Release with clang-tidy",
-      "inherits": ["release"],
-      "binaryDir": "${sourceDir}/build/Release-clangtidy",
-      "cacheVariables": {
-        "CMAKE_CXX_CLANG_TIDY": "clang-tidy",
-        "KDUTILS_BUILD_TESTS": "ON"
-      },
-      "toolchainFile": "${env.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-    },
-    {
-      "name": "profile",
-      "displayName": "Profile",
-      "inherits": ["configure-base"],
-      "binaryDir": "${sourceDir}/build/Profile",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
-    },
-    {
-      "name": "profile-msvc_x64",
-      "displayName": "Profile (msvc_x64)",
-      "inherits": ["configure-base", "msvc_x64"],
-      "binaryDir": "${sourceDir}/build/Profile",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
-      }
-    }
-  ],
-  "buildPresets": [
-    {
-      "name": "debug",
-      "configurePreset": "debug"
-    },
-    {
-      "name": "release",
-      "configurePreset": "release"
-    },
-    {
-      "name": "profile",
-      "configurePreset": "profile"
-    },
-    {
-      "name": "debug-msvc_x64",
-      "configurePreset": "debug-msvc_x64"
-    },
-    {
-      "name": "release-msvc_x64",
-      "configurePreset": "release-msvc_x64"
-    },
-    {
-      "name": "profile-msvc_x64",
-      "configurePreset": "profile-msvc_x64"
-    }
-  ],
-  "testPresets": [
-    {
-      "name": "debug",
-      "configurePreset": "debug"
-    },
-    {
-      "name": "debug-msvc_x64",
-      "configurePreset": "debug-msvc_x64"
-    }
-  ]
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "configure-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "KDUTILS_BUILD_TESTS": "OFF",
+                "KDUTILS_CODE_COVERAGE": "OFF",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+            }
+        },
+        {
+            "name": "msvc_x64",
+            "hidden": true,
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "toolset": {
+                "value": "host=x64",
+                "strategy": "external"
+            },
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl",
+                "CMAKE_CXX_COMPILER": "cl"
+            },
+            "toolchainFile": "${env.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "inherits": [
+                "configure-base"
+            ],
+            "binaryDir": "${sourceDir}/build/Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "KDUTILS_BUILD_TESTS": "ON",
+                "KDUTILS_CODE_COVERAGE": "ON"
+            }
+        },
+        {
+            "name": "debug-msvc_x64",
+            "displayName": "Debug (msvc_x64)",
+            "inherits": [
+                "configure-base",
+                "msvc_x64"
+            ],
+            "binaryDir": "${sourceDir}/build/Debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "KDUTILS_BUILD_TESTS": "ON"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "inherits": [
+                "configure-base"
+            ],
+            "binaryDir": "${sourceDir}/build/Release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "release-msvc_x64",
+            "displayName": "Release (msvc_x64)",
+            "inherits": [
+                "configure-base",
+                "msvc_x64"
+            ],
+            "binaryDir": "${sourceDir}/build/Release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "release-clangtidy",
+            "displayName": "Release with clang-tidy",
+            "inherits": [
+                "release"
+            ],
+            "binaryDir": "${sourceDir}/build/Release-clangtidy",
+            "cacheVariables": {
+                "CMAKE_CXX_CLANG_TIDY": "clang-tidy",
+                "KDUTILS_BUILD_TESTS": "ON"
+            },
+            "toolchainFile": "${env.VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        },
+        {
+            "name": "profile",
+            "displayName": "Profile",
+            "inherits": [
+                "configure-base"
+            ],
+            "binaryDir": "${sourceDir}/build/Profile",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
+            "name": "profile-msvc_x64",
+            "displayName": "Profile (msvc_x64)",
+            "inherits": [
+                "configure-base",
+                "msvc_x64"
+            ],
+            "binaryDir": "${sourceDir}/build/Profile",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        },
+        {
+            "name": "release",
+            "configurePreset": "release"
+        },
+        {
+            "name": "profile",
+            "configurePreset": "profile"
+        },
+        {
+            "name": "debug-msvc_x64",
+            "configurePreset": "debug-msvc_x64"
+        },
+        {
+            "name": "release-msvc_x64",
+            "configurePreset": "release-msvc_x64"
+        },
+        {
+            "name": "profile-msvc_x64",
+            "configurePreset": "profile-msvc_x64"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        },
+        {
+            "name": "debug-msvc_x64",
+            "configurePreset": "debug-msvc_x64"
+        }
+    ]
 }
