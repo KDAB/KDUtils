@@ -21,7 +21,7 @@ using namespace KDNetwork;
 using namespace KDFoundation;
 using namespace KDUtils;
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char * /*argv*/[])
 {
     CoreApplication app;
 
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     }
     OpenAiClient openAiClient(std::getenv("OPENAI_API_KEY"));
 
-    std::string message = "Why is swimming such a good sport?";
+    const std::string message = "Why is swimming such a good sport?";
     std::cout << "Prompt: " << message << std::endl;
 
     auto outputResponse = [&app](const std::string &response) {

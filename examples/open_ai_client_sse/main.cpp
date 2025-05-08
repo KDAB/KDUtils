@@ -21,7 +21,7 @@ using namespace KDNetwork;
 using namespace KDFoundation;
 using namespace KDUtils;
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char * /*argv*/[])
 {
     CoreApplication app;
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         std::cout << std::endl;
 
         // Ask for the next input or exit
-        std::string message = requestUserInput();
+        const std::string message = requestUserInput();
         if (message.empty() || message == "exit") {
             std::cout << "Exiting..." << std::endl;
             app.quit();
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
         std::cerr << "Error: " << error << std::endl;
     });
 
-    std::string message = requestUserInput();
+    const std::string message = requestUserInput();
     if (message.empty() || message == "exit") {
         std::cout << "Exiting..." << std::endl;
         return 0;

@@ -16,12 +16,12 @@
 #include <iostream>
 #include <csignal>
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char * /*argv*/[])
 {
     KDFoundation::CoreApplication app;
 
     // Install signal handler to exit cleanly on Ctrl+C
-    std::signal(SIGINT, [](int signal) {
+    std::ignore = std::signal(SIGINT, [](int /*signal*/) {
         std::cout << "Ctrl+C pressed. Exiting..." << std::endl;
         KDFoundation::CoreApplication::instance()->quit();
     });

@@ -117,14 +117,14 @@ public:
     /**
      * @brief Returns whether the address is a loopback address (127.0.0.1 for IPv4, ::1 for IPv6)
      */
-    bool isLoopback() const noexcept;
+    bool isLoopback() const;
 
     /**
      * @brief Returns whether the address is a broadcast address (255.255.255.255 for IPv4)
      *
      * @note IPv6 does not have a broadcast address, so this will always return false for IPv6
      */
-    bool isBroadcast() const noexcept;
+    bool isBroadcast() const;
 
     /**
      * @brief Returns whether the address is a link-local address
@@ -132,7 +132,7 @@ public:
      * IPv4 link-local addresses are in the range 169.254.0.0/16
      * IPv6 link-local addresses start with fe80::/10
      */
-    bool isLinkLocal() const noexcept;
+    bool isLinkLocal() const;
 
     /**
      * @brief Returns whether the address is within the specified subnet
@@ -149,7 +149,7 @@ public:
      * IPv4 multicast addresses are in the range 224.0.0.0/4
      * IPv6 multicast addresses start with ff00::/8
      */
-    bool isMulticast() const noexcept;
+    bool isMulticast() const;
 
     /**
      * @brief Returns whether the address is a private/local address
@@ -162,7 +162,7 @@ public:
      * IPv6 private addresses:
      *  - fc00::/7 (Unique Local Addresses)
      */
-    bool isPrivate() const noexcept;
+    bool isPrivate() const;
 
     /**
      * @brief Returns whether the address is an IPv4 address
@@ -180,7 +180,7 @@ public:
      * @return The IPv4 address in host byte order
      * @note If this is not an IPv4 address, returns 0
      */
-    std::uint32_t toIPv4() const noexcept;
+    std::uint32_t toIPv4() const;
 
     /**
      * @brief Get the IPv6 address as a 16-byte array
@@ -188,7 +188,7 @@ public:
      * @return The IPv6 address as a 16-byte array
      * @note If this is not an IPv6 address, returns an array of zeros
      */
-    std::array<std::uint8_t, 16> toIPv6() const noexcept;
+    std::array<std::uint8_t, 16> toIPv6() const;
 
     /**
      * @brief Convert the address to a sockaddr_in or sockaddr_in6 structure

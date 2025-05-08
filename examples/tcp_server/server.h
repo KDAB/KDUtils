@@ -21,7 +21,7 @@ public:
     bool start();
 
 private:
-    void newConnection(std::unique_ptr<KDNetwork::TcpSocket> socket);
+    static void newConnection(std::unique_ptr<KDNetwork::TcpSocket> socket);
 
     KDNetwork::TcpServer m_server;
 };

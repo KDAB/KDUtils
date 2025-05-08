@@ -153,7 +153,7 @@ int HttpSession::maxRedirects() const
 
 std::shared_ptr<Socket> HttpSession::getConnection(const std::string &host, uint16_t port, bool secure)
 {
-    ConnectionKey key{ host, port, secure };
+    const ConnectionKey key{ host, port, secure };
 
     auto it = m_connectionPool.find(key);
     if (it == m_connectionPool.end() || it->second.empty()) {
@@ -186,7 +186,7 @@ void HttpSession::returnConnection(const std::string &host, uint16_t port, bool 
         return;
     }
 
-    ConnectionKey key{ host, port, secure };
+    const ConnectionKey key{ host, port, secure };
     auto &connections = m_connectionPool[key];
 
     // Check if we already have enough connections for this host
@@ -213,10 +213,10 @@ void HttpSession::cleanupConnections()
         connections.erase(std::remove_if(connections.begin(), connections.end(),
                                          [&](const ConnectionEntry &entry) {
                                              // Remove if socket is invalid or connection timed out
-                                             bool invalid = !entry.socket ||
+                                             const bool invalid = !entry.socket ||
                                                      entry.socket->state() != Socket::State::Connected;
 
-                                             bool timedOut = (now - entry.lastUsed) > m_idleConnectionTimeout;
+                                             const bool timedOut = (now - entry.lastUsed) > m_idleConnectionTimeout;
 
                                              if ((invalid || timedOut) && entry.socket) {
                                                  entry.socket->close();

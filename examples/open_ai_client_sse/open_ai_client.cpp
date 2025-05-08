@@ -44,10 +44,10 @@ bool OpenAiClient::createResponse(const std::string_view &prompt)
     json message = json::array();
     message.push_back({ { "role", "user" }, { "content", prompt } });
 
-    json body = json::object({ { "model", model() },
-                               { "input", message },
-                               { "instructions", instruction() },
-                               { "stream", true } }); // Enable streaming vis Server Sent Events (SSE)
+    const json body = json::object({ { "model", model() },
+                                     { "input", message },
+                                     { "instructions", instruction() },
+                                     { "stream", true } }); // Enable streaming vis Server Sent Events (SSE)
     const ByteArray bodyPayload(body.dump());
 
     // Set up the request
@@ -77,7 +77,7 @@ void OpenAiClient::setupSseClient()
         if (event.event() == "response.output_text.delta") {
             // Extract the text delta from the event data
             json data = json::parse(event.data());
-            std::string text = data["delta"];
+            const std::string text = data["delta"];
             textReceived.emit(text);
         } else if (event.event() == "response.created") {
             responseCreated.emit();
@@ -89,7 +89,7 @@ void OpenAiClient::setupSseClient()
         } else if (event.event() == "error") {
             // Handle error event
             json data = json::parse(event.data());
-            std::string errorMessage = data["message"];
+            const std::string errorMessage = data["message"];
             errorOccurred.emit(errorMessage);
         } else {
             Logger::logger("OpenAI Client")->warn("Unhandled event type: " + event.event());

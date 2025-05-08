@@ -43,9 +43,9 @@ bool OpenAiClient::createResponse(const std::string_view &prompt, std::function<
     json message = json::array();
     message.push_back({ { "role", "user" }, { "content", prompt } });
 
-    json body = json::object({ { "model", model() },
-                               { "input", message },
-                               { "instructions", instruction() } });
+    const json body = json::object({ { "model", model() },
+                                     { "input", message },
+                                     { "instructions", instruction() } });
     const ByteArray bodyPayload(body.dump());
 
     m_client.post(url, bodyPayload, [callback](const HttpResponse &response) {

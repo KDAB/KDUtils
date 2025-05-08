@@ -5,6 +5,8 @@ clang-diagnostic-*,
 -abseil-*,
 -altera-*,
 -android-*,
+-bugprone-branch-clone,
+-bugprone-easily-swappable-parameters,
 -bugprone-suspicious-include,
 -boost-use-ranges,
 -clang-analyzer-alpha.core.CastToStruct,
@@ -50,7 +52,6 @@ clang-diagnostic-*,
 -readability-uppercase-literal-suffix,
 -readabilty-namespace-comments'
 WarningsAsErrors: ''
-HeaderFilterRegex: ''
 CheckOptions:
   - key:             cert-oop11-cpp.UseCERTSemantics
     value:           '1'

@@ -23,7 +23,7 @@ using namespace KDNetwork;
 bool Server::start()
 {
     m_server.setNewConnectionCallback([this](std::unique_ptr<TcpSocket> socket) {
-        newConnection(std::move(socket));
+        Server::newConnection(std::move(socket));
     });
 
     const auto result = m_server.listen(IpAddress::localhost(), 3001); // Listen on localhost, port 3001
@@ -51,10 +51,10 @@ void Server::newConnection(std::unique_ptr<KDNetwork::TcpSocket> socket)
     // Generate a random index to select a phrase from the vector
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(0, responses.size() - 1);
-    int randomIndex = distrib(gen);
+    std::uniform_int_distribution<> distrib(0, static_cast<int>(responses.size()) - 1);
+    const int randomIndex = distrib(gen);
 
-    std::string message = responses[randomIndex];
+    const std::string message = responses[randomIndex];
     std::cout << "New connection accepted. Sending message: \"" << message << "\"" << std::endl;
 
     socket->write(KDUtils::ByteArray{ message });
