@@ -21,8 +21,9 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os:
-          - macos-latest
+        platform:
+          - os: macos-latest
+            triplet: arm64-osx-release
         shared:
           - ON
           - OFF
@@ -36,11 +37,20 @@ jobs:
           brew tap KDAB/tap
           brew install fmt spdlog KDBindings mosquitto
 
+      - name: Set up vcpkg
+        id: vcpkg
+        uses: johnwason/vcpkg-action@v6
+        with:
+          token: ${{ github.token }}
+          triplet: ${{ matrix.platform.triplet }}
+          manifest-dir: ${{ github.workspace }}
+
       - name: Configure project
         run: >
           cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Debug -G Ninja
           -DKDUTILS_BUILD_TESTS=ON
           -DBUILD_SHARED_LIBS=${{ matrix.shared }}
+          ${{ steps.vcpkg.outputs.vcpkg-cmake-config }}
 
       - name: Check if external dependencies were used
         run: |
