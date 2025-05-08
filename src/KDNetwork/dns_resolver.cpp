@@ -48,12 +48,12 @@ thread_local std::unique_ptr<DnsResolver> t_instance;
 class DnsErrorCategory : public std::error_category
 {
 public:
-    const char *name() const noexcept override
+    [[nodiscard]] const char *name() const noexcept override
     {
         return "dns";
     }
 
-    std::string message(int ev) const override
+    [[nodiscard]] std::string message(int ev) const override
     {
         return ares_strerror(ev);
     }
@@ -84,12 +84,12 @@ DnsResolver::AddressInfoList addrInfoToList(const ares_addrinfo *addrInfo, DnsRe
 
         switch (node->ai_family) {
         case AF_INET: {
-            const sockaddr_in *addr = reinterpret_cast<const sockaddr_in *>(node->ai_addr);
+            const auto *addr = reinterpret_cast<const sockaddr_in *>(node->ai_addr);
             addresses.emplace_back(IpAddress(reinterpret_cast<const struct sockaddr *>(addr), sizeof(sockaddr_in)));
             break;
         }
         case AF_INET6: {
-            const sockaddr_in6 *addr = reinterpret_cast<const sockaddr_in6 *>(node->ai_addr);
+            const auto *addr = reinterpret_cast<const sockaddr_in6 *>(node->ai_addr);
             addresses.emplace_back(IpAddress(reinterpret_cast<const struct sockaddr *>(addr), sizeof(sockaddr_in6)));
             break;
         }
@@ -200,7 +200,7 @@ bool DnsResolver::lookup(const std::string &hostname, AddressFamily family, Look
         }
     }
 
-    uint64_t requestId = m_nextRequestId++;
+    const uint64_t requestId = m_nextRequestId++;
     m_lookupRequests[requestId] = { hostname, family, std::move(callback) };
 
     struct ares_addrinfo_hints hints = {};
@@ -299,7 +299,7 @@ void DnsResolver::cleanupAres()
 // or to stop monitoring a socket.
 void DnsResolver::socketStateCallback(void *data, int socket, int read, int write)
 {
-    DnsResolver *resolver = static_cast<DnsResolver *>(data);
+    auto *resolver = static_cast<DnsResolver *>(data);
     if (!resolver) {
         return;
     }

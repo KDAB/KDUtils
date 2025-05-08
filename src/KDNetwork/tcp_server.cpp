@@ -61,7 +61,7 @@ bool TcpServer::listen(const std::string &host, uint16_t port, int backlog)
     auto &resolver = DnsResolver::instance();
 
     // Start asynchronous DNS lookup for host
-    bool lookupStarted = resolver.lookup(host, [this, port, backlog](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
+    const bool lookupStarted = resolver.lookup(host, [this, port, backlog](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
         this->handleDnsLookupCompleted(ec, addresses, port, backlog);
     });
 
@@ -116,12 +116,12 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
     }
 
     // Create a socket
-    int family = address.isIPv4() ? AF_INET : AF_INET6;
-    m_listeningFd = socket(family, SOCK_STREAM, 0);
+    const int family = address.isIPv4() ? AF_INET : AF_INET6;
+    m_listeningFd = static_cast<int>(socket(family, SOCK_STREAM, 0));
 
     if (m_listeningFd < 0) {
 #if defined(KD_PLATFORM_WIN32)
-        int error = WSAGetLastError();
+        const int error = WSAGetLastError();
 #else
         int error = errno;
 #endif
@@ -133,7 +133,7 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
 #if defined(KD_PLATFORM_WIN32)
     u_long mode = 1; // 1 = non-blocking
     if (ioctlsocket(m_listeningFd, FIONBIO, &mode) != 0) {
-        int error = WSAGetLastError();
+        const int error = WSAGetLastError();
         setError(SocketError::SocketConfigurationError, error);
         closesocket(m_listeningFd);
         m_listeningFd = -1;
@@ -154,7 +154,7 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
     if (setsockopt(m_listeningFd, SOL_SOCKET, SO_REUSEADDR,
                    reinterpret_cast<const char *>(&reuseAddrOption), sizeof(reuseAddrOption)) != 0) {
 #if defined(KD_PLATFORM_WIN32)
-        int error = WSAGetLastError();
+        const int error = WSAGetLastError();
 #else
         int error = errno;
 #endif
@@ -187,7 +187,7 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
     // Bind socket to the specified address and port
     if (bind(m_listeningFd, reinterpret_cast<struct sockaddr *>(&addr), addrLen) != 0) {
 #if defined(KD_PLATFORM_WIN32)
-        int error = WSAGetLastError();
+        const int error = WSAGetLastError();
 #else
         int error = errno;
 #endif
@@ -204,7 +204,7 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
     // Start listening for connections
     if (::listen(m_listeningFd, backlog) != 0) {
 #if defined(KD_PLATFORM_WIN32)
-        int error = WSAGetLastError();
+        const int error = WSAGetLastError();
 #else
         int error = errno;
 #endif
@@ -319,11 +319,11 @@ void TcpServer::onIncomingConnection()
     socklen_t clientAddrLen = sizeof(clientAddr);
 
     // Accept the connection
-    int clientFd = accept(m_listeningFd, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
+    const int clientFd = accept(m_listeningFd, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
 
     if (clientFd < 0) {
 #if defined(KD_PLATFORM_WIN32)
-        int error = WSAGetLastError();
+        const int error = WSAGetLastError();
         // Connection aborted or would block is not a fatal error
         if (error != WSAEINTR && error != WSAEWOULDBLOCK && error != WSAECONNABORTED) {
             setError(SocketError::ServerAcceptError, error);

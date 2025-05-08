@@ -17,7 +17,7 @@
 Client::Client()
 {
     std::ignore = m_socket.bytesReceived.connect([this]() {
-        std::string data = m_socket.readAll().toStdString();
+        const std::string data = m_socket.readAll().toStdString();
         std::cout << "Received message: \"" << data << "\"" << std::endl;
 
         // Now quit the application after receiving the message
@@ -27,7 +27,7 @@ Client::Client()
 
 bool Client::connectToServer(const KDNetwork::IpAddress &host, std::uint16_t port)
 {
-    bool connected = m_socket.connectToHost(host, port);
+    const bool connected = m_socket.connectToHost(host, port);
     if (!connected) {
         std::cout << "Failed to connect. Error code: " << m_socket.lastError() << std::endl;
     }

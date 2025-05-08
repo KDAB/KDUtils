@@ -23,7 +23,7 @@ HttpCookieJar::HttpCookieJar()
 HttpCookieJar::HttpCookieJar(const HttpCookieJar &other)
 {
     // Copy cookies while holding the other's mutex
-    std::lock_guard<std::mutex> lock(other.m_mutex);
+    const std::lock_guard<std::mutex> lock(other.m_mutex);
     m_cookies = other.m_cookies;
     // The mutex is automatically created and doesn't need to be copied
 }
@@ -34,8 +34,8 @@ HttpCookieJar &HttpCookieJar::operator=(const HttpCookieJar &other)
         // Lock both mutexes to prevent deadlock
         // Always lock mutexes in the same order to avoid deadlock
         std::lock(m_mutex, other.m_mutex);
-        std::lock_guard<std::mutex> lockThis(m_mutex, std::adopt_lock);
-        std::lock_guard<std::mutex> lockOther(other.m_mutex, std::adopt_lock);
+        const std::lock_guard<std::mutex> lockThis(m_mutex, std::adopt_lock);
+        const std::lock_guard<std::mutex> lockOther(other.m_mutex, std::adopt_lock);
 
         m_cookies = other.m_cookies;
     }
@@ -44,13 +44,13 @@ HttpCookieJar &HttpCookieJar::operator=(const HttpCookieJar &other)
 
 std::vector<HttpCookie> HttpCookieJar::allCookies() const
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    const std::lock_guard<std::mutex> lock(m_mutex);
     return m_cookies;
 }
 
 std::vector<HttpCookie> HttpCookieJar::cookiesForUrl(const KDUtils::Uri &url)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    const std::lock_guard<std::mutex> lock(m_mutex);
 
     // Remove expired cookies without calling removeExpiredCookies()
     removeExpiredCookiesInternal();
@@ -68,7 +68,7 @@ std::vector<HttpCookie> HttpCookieJar::cookiesForUrl(const KDUtils::Uri &url)
 
 bool HttpCookieJar::insertCookie(const HttpCookie &cookie)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    const std::lock_guard<std::mutex> lock(m_mutex);
 
     // Check if cookie is already in the jar
     auto existingIdx = findCookie(cookie);
@@ -83,7 +83,7 @@ bool HttpCookieJar::insertCookie(const HttpCookie &cookie)
 
 bool HttpCookieJar::updateCookie(const HttpCookie &cookie)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    const std::lock_guard<std::mutex> lock(m_mutex);
 
     // Try to find existing cookie
     auto existingIdx = findCookie(cookie);
@@ -100,7 +100,7 @@ bool HttpCookieJar::updateCookie(const HttpCookie &cookie)
 
 bool HttpCookieJar::removeCookie(const HttpCookie &cookie)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    const std::lock_guard<std::mutex> lock(m_mutex);
 
     auto existingIdx = findCookie(cookie);
     if (!existingIdx) {
@@ -114,7 +114,7 @@ bool HttpCookieJar::removeCookie(const HttpCookie &cookie)
 
 int HttpCookieJar::removeCookies(const std::string &name, const std::string &domain)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    const std::lock_guard<std::mutex> lock(m_mutex);
 
     int count = 0;
     auto it = m_cookies.begin();
@@ -132,7 +132,7 @@ int HttpCookieJar::removeCookies(const std::string &name, const std::string &dom
 
 void HttpCookieJar::clear()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    const std::lock_guard<std::mutex> lock(m_mutex);
     m_cookies.clear();
 }
 
@@ -156,7 +156,7 @@ int HttpCookieJar::removeExpiredCookiesInternal()
 
 int HttpCookieJar::removeExpiredCookies()
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+    const std::lock_guard<std::mutex> lock(m_mutex);
     return removeExpiredCookiesInternal();
 }
 

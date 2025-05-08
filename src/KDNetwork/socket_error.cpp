@@ -17,8 +17,8 @@ namespace KDNetwork {
 class SocketErrorCategoryImpl : public std::error_category
 {
 public:
-    const char *name() const noexcept override { return "KDFoundation::Net::Socket"; }
-    std::string message(int ev) const override
+    [[nodiscard]] const char *name() const noexcept override { return "KDFoundation::Net::Socket"; }
+    [[nodiscard]] std::string message(int ev) const override
     {
         switch (static_cast<SocketError>(ev)) {
         case SocketError::NoError:

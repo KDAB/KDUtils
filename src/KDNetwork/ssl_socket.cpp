@@ -419,7 +419,7 @@ bool SslSocket::addCaCertificate(const std::vector<uint8_t> &certData)
     }
 
     // Add the certificate
-    int result = X509_STORE_add_cert(store, cert);
+    const int result = X509_STORE_add_cert(store, cert);
     X509_free(cert);
 
     return result == 1;
@@ -474,7 +474,7 @@ bool SslSocket::setClientCertificate(const std::vector<uint8_t> &certData,
     }
 
     // Set the certificate and key
-    int result = SSL_CTX_use_certificate(d->ctx, cert) &&
+    const int result = SSL_CTX_use_certificate(d->ctx, cert) &&
             SSL_CTX_use_PrivateKey(d->ctx, key) &&
             SSL_CTX_check_private_key(d->ctx);
 
@@ -608,7 +608,8 @@ bool SslSocket::startHandshake()
     }
 
     // Create a BIO pair for handling SSL I/O
-    BIO *internal_bio, *network_bio;
+    BIO *internal_bio;
+    BIO *network_bio;
     if (BIO_new_bio_pair(&internal_bio, 0, &network_bio, 0) != 1) {
         KDUtils::Logger::logger("KDNetwork")->error("Failed to create BIO pair: " + getOpenSslErrorString());
         SSL_free(d->ssl);
@@ -641,8 +642,8 @@ void SslSocket::continueHandshake()
     // Try to read any available data before proceeding with handshake
     handleSslRead();
 
-    int result = SSL_do_handshake(d->ssl);
-    int sslError = SSL_get_error(d->ssl, result);
+    const int result = SSL_do_handshake(d->ssl);
+    const int sslError = SSL_get_error(d->ssl, result);
 
     // Always try to flush encrypted handshake data
     flushNetworkBIO();
@@ -655,7 +656,7 @@ void SslSocket::continueHandshake()
         // Verify certification if required
         if (d->verificationMode != VerificationMode::VerifyNone) {
             if (!verifySslCertificate()) {
-                std::string error = "Certificate verification failed: " + d->verificationError;
+                const std::string error = "Certificate verification failed: " + d->verificationError;
                 KDUtils::Logger::logger("KDNetwork")->error(error);
                 setError(SocketError::SslCertificateError);
                 handshakeError.emit(error);
@@ -691,7 +692,7 @@ void SslSocket::continueHandshake()
         setWriteNotificationEnabled(true);
     } else {
         // Handshake failed
-        std::string errorMsg = getOpenSslErrorString();
+        const std::string errorMsg = getOpenSslErrorString();
 
         // Get certificate details if available, even if verification failed
         X509 *cert = SSL_get_peer_certificate(d->ssl);
@@ -702,7 +703,7 @@ void SslSocket::continueHandshake()
             KDUtils::Logger::logger("KDNetwork")->debug("No server certificate received");
         }
 
-        std::string error = "SSL handshake failed: " + errorMsg;
+        const std::string error = "SSL handshake failed: " + errorMsg;
         KDUtils::Logger::logger("KDNetwork")->error(error);
         setError(SocketError::SslError);
         handshakeError.emit(error);
@@ -722,14 +723,14 @@ void SslSocket::handleSslRead()
     ssize_t bytesRead = 0;
 #if defined(KD_PLATFORM_WIN32)
     bytesRead = ::recv(m_socketFd, reinterpret_cast<char *>(d->readBufferEncrypted.data()),
-                       d->readBufferEncrypted.size(), 0);
+                       static_cast<int>(d->readBufferEncrypted.size()), 0);
 #else
     bytesRead = ::read(m_socketFd, d->readBufferEncrypted.data(), d->readBufferEncrypted.size());
 #endif
 
     if (bytesRead > 0) {
         // Write the encrypted data to the network BIO
-        int written = BIO_write(d->networkBio, d->readBufferEncrypted.data(), bytesRead);
+        const int written = BIO_write(d->networkBio, d->readBufferEncrypted.data(), static_cast<int>(bytesRead));
 
         if (written <= 0) {
             // Error writing to BIO
@@ -751,14 +752,14 @@ void SslSocket::handleSslRead()
         // Try to decrypt and process data
         while (true) {
             char buffer[4096];
-            int decrypted = SSL_read(d->ssl, buffer, sizeof(buffer));
+            const int decrypted = SSL_read(d->ssl, buffer, sizeof(buffer));
 
             if (decrypted > 0) {
                 // Process decrypted data - add to TcpSocket's read buffer
-                KDUtils::ByteArray decryptedData(reinterpret_cast<const uint8_t *>(buffer), decrypted);
+                const KDUtils::ByteArray decryptedData(reinterpret_cast<const uint8_t *>(buffer), decrypted);
                 TcpSocket::processReceivedData(decryptedData.constData(), decryptedData.size());
             } else {
-                int sslError = SSL_get_error(d->ssl, decrypted);
+                const int sslError = SSL_get_error(d->ssl, decrypted);
                 if (sslError == SSL_ERROR_WANT_READ) {
                     // Need more data
                     break;
@@ -792,7 +793,7 @@ void SslSocket::handleSslRead()
     } else {
         // Error
 #if defined(KD_PLATFORM_WIN32)
-        int error_code = WSAGetLastError();
+        const int error_code = WSAGetLastError();
         if (error_code == WSAEWOULDBLOCK) {
             // No data available, normal for non-blocking socket
             return;
@@ -823,11 +824,11 @@ bool SslSocket::handleSslWrite()
 
     // First, try to write any data in the pendingWriteBuffer through SSL
     while (!d->pendingWriteBuffer.isEmpty()) {
-        int written = SSL_write(d->ssl, d->pendingWriteBuffer.constData(), d->pendingWriteBuffer.size());
+        const int written = SSL_write(d->ssl, d->pendingWriteBuffer.constData(), d->pendingWriteBuffer.size());
 
         if (written > 0) {
             // Successfully encrypted some data
-            int bytesWritten = written;
+            const int bytesWritten = written;
             d->pendingWriteBuffer.remove(0, bytesWritten);
 
             // Now flush the network BIO to get the encrypted data
@@ -836,7 +837,7 @@ bool SslSocket::handleSslWrite()
             // Emit signal for successful write
             TcpSocket::bytesWritten.emit(bytesWritten);
         } else {
-            int sslError = SSL_get_error(d->ssl, written);
+            const int sslError = SSL_get_error(d->ssl, written);
             if (sslError == SSL_ERROR_WANT_WRITE) {
                 // Need to flush the network BIO first
                 flushNetworkBIO();
@@ -878,8 +879,8 @@ void SslSocket::flushNetworkBIO()
     int pending = BIO_pending(d->networkBio);
 
     while (pending > 0) {
-        int readSize = std::min(pending, static_cast<int>(sizeof(buffer)));
-        int read = BIO_read(d->networkBio, buffer, readSize);
+        const int readSize = std::min(pending, static_cast<int>(sizeof(buffer)));
+        const int read = BIO_read(d->networkBio, buffer, readSize);
 
         if (read <= 0) {
             // No more data or error
@@ -893,14 +894,14 @@ void SslSocket::flushNetworkBIO()
 
         // Write the encrypted data to the socket
 #if defined(KD_PLATFORM_WIN32)
-        int sent = ::send(m_socketFd, buffer, read, 0);
+        const int sent = ::send(m_socketFd, buffer, read, 0);
 #else
         int sent = ::send(m_socketFd, buffer, read, MSG_NOSIGNAL);
 #endif
 
         if (sent <= 0) {
 #if defined(KD_PLATFORM_WIN32)
-            int error_code = WSAGetLastError();
+            const int error_code = WSAGetLastError();
             if (error_code == WSAEWOULDBLOCK) {
                 // Would block, retry later
                 // Put the data back into the BIO for later
@@ -951,7 +952,7 @@ std::int64_t SslSocket::write(const std::uint8_t *data, std::int64_t size)
     }
 
     // Try to write directly through SSL
-    int bytesWritten = SSL_write(d->ssl, data, static_cast<int>(size));
+    const int bytesWritten = SSL_write(d->ssl, data, static_cast<int>(size));
 
     if (bytesWritten > 0) {
         // Successful write, flush the network BIO to send the actual encrypted data
@@ -961,7 +962,7 @@ std::int64_t SslSocket::write(const std::uint8_t *data, std::int64_t size)
         TcpSocket::bytesWritten.emit(bytesWritten);
         return bytesWritten;
     } else {
-        int sslError = SSL_get_error(d->ssl, bytesWritten);
+        const int sslError = SSL_get_error(d->ssl, bytesWritten);
         if (sslError == SSL_ERROR_WANT_WRITE || sslError == SSL_ERROR_WANT_READ) {
             // Connection would block, queue the data
             d->pendingWriteBuffer.append(data, size);
@@ -1006,7 +1007,7 @@ bool SslSocket::verifySslCertificate()
     KDUtils::Logger::logger("KDNetwork")->debug("Server certificate details:\n" + formatCertificateDetails(cert));
 
     // Check verification result
-    long verifyResult = SSL_get_verify_result(d->ssl);
+    const long verifyResult = SSL_get_verify_result(d->ssl);
     if (verifyResult != X509_V_OK) {
         d->verificationError = X509_verify_cert_error_string(verifyResult);
 

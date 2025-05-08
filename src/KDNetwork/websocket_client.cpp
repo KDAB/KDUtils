@@ -118,13 +118,13 @@ std::future<bool> WebSocketClient::connectToUrl(const KDUtils::Uri &url)
             response.hasHeader("Sec-WebSocket-Accept")) {
 
             // Verify the Sec-WebSocket-Accept header
-            std::string expectedAccept = calculateAcceptKey(key);
+            const std::string expectedAccept = calculateAcceptKey(key);
             if (response.header("Sec-WebSocket-Accept") == expectedAccept) {
                 // Take ownership of the socket from HttpClient
                 auto socket = response.takeSocket();
                 if (socket) {
                     // Check if there's any excess data from the HTTP response (might contain initial WebSocket frames)
-                    KDUtils::ByteArray excessData = response.takeExcessData();
+                    const KDUtils::ByteArray excessData = response.takeExcessData();
 
                     setupSocket(socket, excessData);
                     promise->set_value(true);
@@ -355,7 +355,7 @@ void WebSocketClient::handleFrame(const WebSocketFrame &frame)
 
 void WebSocketClient::handleCloseFrame(const WebSocketFrame &frame)
 {
-    uint16_t code = static_cast<uint16_t>(WebSocket::CloseCode::NoStatusReceived);
+    auto code = static_cast<uint16_t>(WebSocket::CloseCode::NoStatusReceived);
     std::string reason = "No reason provided";
 
     // Extract code and reason if available
@@ -388,7 +388,7 @@ void WebSocketClient::sendFrame(const WebSocketFrame &frame)
         return;
     }
 
-    KDUtils::ByteArray encodedFrame = frame.encode();
+    const KDUtils::ByteArray encodedFrame = frame.encode();
 
     // Send the frame
     if (m_socket->type() == Socket::SocketType::Tcp) {
@@ -466,7 +466,7 @@ void WebSocketClient::startPingTimer()
         auto now = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_lastPongReceived);
 
-        if (elapsed.count() > WebSocket::DEFAULT_PING_INTERVAL_MS * 2.5) {
+        if (static_cast<double>(elapsed.count()) > WebSocket::DEFAULT_PING_INTERVAL_MS * 2.5) {
             // No pong received for a long time, connection might be dead
             KDUtils::Logger::logger("WebsocketClient")->warn("No pong response received, closing connection");
             handleSocketError(std::make_error_code(std::errc::connection_aborted));
@@ -482,10 +482,10 @@ void WebSocketClient::startPingTimer()
 std::string WebSocketClient::calculateAcceptKey(const std::string &key)
 {
     // Concatenate with the WebSocket GUID
-    std::string concat = key + WebSocket::GUID;
+    const std::string concat = key + WebSocket::GUID;
 
     // Calculate SHA-1 hash
-    KDUtils::ByteArray hash = sha1(concat);
+    const KDUtils::ByteArray hash = sha1(concat);
 
     // Convert to base64
     return hash.toBase64().toStdString();

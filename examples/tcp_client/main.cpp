@@ -17,7 +17,7 @@
 #include <iostream>
 #include <csignal>
 
-int main(int argc, char *argv[])
+int main(int /*argc*/, char * /*argv*/[])
 {
     KDFoundation::CoreApplication app;
 

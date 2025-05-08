@@ -15,45 +15,48 @@
 #include <algorithm>
 #include <cctype>
 #include <sstream>
-#include "http_parser.h"
 
-namespace KDNetwork {
+namespace {
 
 // Conversion from llhttp method enum to our HttpMethod enum
-static HttpMethod convertLlhttpMethod(llhttp_method_t method)
+KDNetwork::HttpMethod convertLlhttpMethod(llhttp_method_t method)
 {
     switch (method) {
     case HTTP_GET:
-        return HttpMethod::Get;
+        return KDNetwork::HttpMethod::Get;
     case HTTP_HEAD:
-        return HttpMethod::Head;
+        return KDNetwork::HttpMethod::Head;
     case HTTP_POST:
-        return HttpMethod::Post;
+        return KDNetwork::HttpMethod::Post;
     case HTTP_PUT:
-        return HttpMethod::Put;
+        return KDNetwork::HttpMethod::Put;
     case HTTP_DELETE:
-        return HttpMethod::Delete;
+        return KDNetwork::HttpMethod::Delete;
     case HTTP_CONNECT:
-        return HttpMethod::Connect;
+        return KDNetwork::HttpMethod::Connect;
     case HTTP_OPTIONS:
-        return HttpMethod::Options;
+        return KDNetwork::HttpMethod::Options;
     case HTTP_TRACE:
-        return HttpMethod::Trace;
+        return KDNetwork::HttpMethod::Trace;
     case HTTP_PATCH:
-        return HttpMethod::Patch;
+        return KDNetwork::HttpMethod::Patch;
     default:
-        return HttpMethod::Get; // Default to GET for unknown methods
+        return KDNetwork::HttpMethod::Get; // Default to GET for unknown methods
     }
 }
 
 // Convert a string to lowercase for case-insensitive header comparison
-static std::string toLower(const std::string &str)
+std::string toLower(const std::string &str)
 {
     std::string result = str;
     std::transform(result.begin(), result.end(), result.begin(),
                    [](unsigned char c) { return std::tolower(c); });
     return result;
 }
+
+} // namespace
+
+namespace KDNetwork {
 
 // Private implementation (PIMPL pattern)
 struct HttpParser::Private {
@@ -101,7 +104,7 @@ struct HttpParser::Private {
         settings.on_chunk_complete = HttpParser::onChunkComplete;
 
         // Initialize the parser
-        llhttp_type_t llhttpType = (type == Type::Request) ? HTTP_REQUEST : HTTP_RESPONSE;
+        const llhttp_type_t llhttpType = (type == Type::Request) ? HTTP_REQUEST : HTTP_RESPONSE;
         llhttp_init(parser, llhttpType, &settings);
 
         // Store the this pointer for callbacks
@@ -176,7 +179,7 @@ void HttpParser::setErrorCallback(ErrorCallback callback)
 
 bool HttpParser::parse(const uint8_t *data, size_t length)
 {
-    enum llhttp_errno err = llhttp_execute(d->parser, reinterpret_cast<const char *>(data), length);
+    const llhttp_errno err = llhttp_execute(d->parser, reinterpret_cast<const char *>(data), length);
     if (err != HPE_OK) {
         d->error = static_cast<ParserError>(err);
         d->errorString = llhttp_get_error_reason(d->parser);
@@ -238,7 +241,7 @@ int64_t HttpParser::contentLength() const
     auto it = d->headers.find("content-length");
     if (it != d->headers.end()) {
         try {
-            return std::stoull(it->second);
+            return static_cast<std::int64_t>(std::stoull(it->second));
         } catch (...) {
             return -1;
         }
@@ -373,29 +376,15 @@ int HttpParser::onMessageComplete(llhttp_t *parser)
     return 0;
 }
 
-int HttpParser::onChunkHeader(llhttp_t *parser)
+int HttpParser::onChunkHeader(llhttp_t * /*parser*/)
 {
-    // Store chunk size information if needed
-    // We can use this for more granular progress reporting
-    auto *p = static_cast<Private *>(parser->data);
-
-    // Access chunk size if needed
-    // size_t chunkSize = parser->content_length;
-
+    // We don't need to do anything special here for now
     return 0;
 }
 
-int HttpParser::onChunkComplete(llhttp_t *parser)
+int HttpParser::onChunkComplete(llhttp_t * /*parser*/)
 {
-    auto *p = static_cast<Private *>(parser->data);
-
-    // For SSE streaming, we want to process complete chunks as they arrive
-    // rather than waiting for the full message to complete
-
-    // If we're in streaming mode, notify that a chunk is complete
-    // This is particularly useful for SSE where we want to process each chunk
-    // even before the entire response is complete
-
+    // We don't need to do anything special here for now
     return 0;
 }
 
