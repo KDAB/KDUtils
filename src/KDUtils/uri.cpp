@@ -286,17 +286,17 @@ Uri Uri::join(const Uri &base, const std::string &reference)
     return base.resolved(refUri);
 }
 
-std::string Uri::scheme() const
+const std::string &Uri::scheme() const
 {
     return m_scheme;
 }
 
-std::string Uri::userInfo() const
+const std::string &Uri::userInfo() const
 {
     return m_userInfo;
 }
 
-std::string Uri::host() const
+const std::string &Uri::host() const
 {
     return m_host;
 }
@@ -339,17 +339,17 @@ std::string Uri::authority() const
     return result;
 }
 
-std::string Uri::path() const
+const std::string &Uri::path() const
 {
     return m_path;
 }
 
-std::string Uri::query() const
+const std::string &Uri::query() const
 {
     return m_query;
 }
 
-std::string Uri::fragment() const
+const std::string &Uri::fragment() const
 {
     return m_fragment;
 }
@@ -611,7 +611,7 @@ Uri Uri::resolved(const Uri &relative) const
 std::string Uri::encodeComponent(const std::string &component)
 {
     std::ostringstream escaped;
-    escaped.fill('0');
+    std::ignore = escaped.fill('0');
     escaped << std::hex;
 
     for (const char c : component) {

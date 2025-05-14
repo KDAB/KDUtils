@@ -71,7 +71,7 @@ public:
     /**
      * @brief Get the reason phrase (e.g., "OK" for 200)
      */
-    std::string reasonPhrase() const;
+    const std::string &reasonPhrase() const;
 
     /**
      * @brief Set the reason phrase
@@ -83,7 +83,7 @@ public:
     /**
      * @brief Get the HTTP version (e.g., "1.1")
      */
-    std::string httpVersion() const;
+    const std::string &httpVersion() const;
 
     /**
      * @brief Set the HTTP version
@@ -146,7 +146,7 @@ public:
      *
      * @return A multimap of header names to values
      */
-    std::multimap<std::string, std::string> allHeaders() const;
+    const std::multimap<std::string, std::string> &allHeaders() const;
 
     /**
      * @brief Get the response body
@@ -222,7 +222,7 @@ public:
     /**
      * @brief Get the error message, if any
      */
-    std::string error() const;
+    const std::string &error() const;
 
     /**
      * @brief Set an error message
