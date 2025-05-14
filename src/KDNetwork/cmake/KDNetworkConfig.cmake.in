@@ -1,0 +1,14 @@
+# This file is part of KDUtils.
+#
+# SPDX-FileCopyrightText: 2025 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+# Author: Sean Harmer <sean.harmer@kdab.com>
+#
+# SPDX-License-Identifier: MIT
+#
+# Contact KDAB at <info@kdab.com> for commercial licensing options.
+#
+
+include(CMakeFindDependencyMacro)
+find_dependency(KDFoundation)
+
+include("${CMAKE_CURRENT_LIST_DIR}/KDNetworkConfigTargets.cmake")

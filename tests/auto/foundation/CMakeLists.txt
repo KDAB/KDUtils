@@ -40,6 +40,7 @@ add_subdirectory(core_application)
 add_subdirectory(event)
 add_subdirectory(event_queue)
 add_subdirectory(object)
+add_subdirectory(timer)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_subdirectory(linux_platform_event_loop)

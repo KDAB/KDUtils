@@ -51,6 +51,12 @@ ByteArray::ByteArray(size_t size, uint8_t c)
     std::memset(m_data.data(), c, size);
 }
 
+ByteArray::ByteArray(const std::string &data)
+{
+    m_data.resize(data.size());
+    std::memcpy(m_data.data(), data.data(), data.size());
+}
+
 ByteArray::ByteArray(const ByteArray &other)
     : m_data(other.m_data)
 {
@@ -83,13 +89,13 @@ ByteArray ByteArray::mid(size_t pos, size_t len) const
     if (len == 0)
         len = size() - pos;
     len = std::min(len, size());
-    return ByteArray({ m_data.begin() + int64_t(pos), m_data.begin() + int64_t(pos + len) });
+    return ByteArray(std::vector<uint8_t>{ m_data.begin() + int64_t(pos), m_data.begin() + int64_t(pos + len) });
 }
 
 ByteArray ByteArray::left(size_t left) const
 {
     left = std::min(left, size());
-    return ByteArray({ m_data.begin(), m_data.begin() + int64_t(left) });
+    return ByteArray(std::vector<uint8_t>{ m_data.begin(), m_data.begin() + int64_t(left) });
 }
 
 int64_t ByteArray::indexOf(uint8_t v) const
@@ -113,6 +119,30 @@ ByteArray &ByteArray::operator+=(const ByteArray &other)
 {
     m_data.insert(m_data.end(), other.m_data.begin(), other.m_data.end());
     return *this;
+}
+
+void ByteArray::append(const ByteArray &other)
+{
+    m_data.insert(m_data.end(), other.m_data.begin(), other.m_data.end());
+}
+
+void ByteArray::append(const uint8_t *data, size_t size)
+{
+    if (data == nullptr || size == 0)
+        return;
+    m_data.insert(m_data.end(), data, data + size);
+}
+
+void ByteArray::append(uint8_t c)
+{
+    m_data.push_back(c);
+}
+
+void ByteArray::append(const std::string &data)
+{
+    if (data.empty())
+        return;
+    m_data.insert(m_data.end(), data.data(), data.data() + data.size());
 }
 
 void ByteArray::clear()

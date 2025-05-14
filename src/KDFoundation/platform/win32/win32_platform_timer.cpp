@@ -54,7 +54,8 @@ void Win32PlatformTimer::callback(HWND /*hwnd*/, UINT /*uMsg*/, UINT_PTR timerId
     auto timer = eventLoop()->timers[timerId];
     assert(timer);
 
-    timer->m_timer->timeout.emit();
+    // Use handleTimeout instead of directly emitting the timeout signal
+    timer->m_timer->handleTimeout();
 }
 
 void Win32PlatformTimer::arm(std::chrono::microseconds us)
