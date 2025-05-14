@@ -34,10 +34,12 @@ class HttpClient::RequestState
 {
 public:
     RequestState(const HttpRequest &req, std::function<void(const HttpResponse &)> callback, std::promise<HttpResponse> promise)
-        : request(req), userCallback(std::move(callback)), responsePromise(std::move(promise))
+        : request(req)
+        , response(req)
+        , userCallback(std::move(callback))
+        , responsePromise(std::move(promise))
+        , startTime(std::chrono::steady_clock::now())
     {
-        response = HttpResponse(req);
-        startTime = std::chrono::steady_clock::now();
     }
 
     HttpRequest request;
@@ -538,7 +540,7 @@ void HttpClient::followRedirect(std::shared_ptr<RequestState> state)
             // Remove port if present
             const size_t portPos = redirectHost.find(':');
             if (portPos != std::string::npos) {
-                redirectHost = redirectHost.substr(0, portPos);
+                redirectHost.resize(portPos);
             }
         }
 
@@ -570,7 +572,7 @@ void HttpClient::followRedirect(std::shared_ptr<RequestState> state)
             // Remove port if present
             const size_t portPos = redirectHost.find(':');
             if (portPos != std::string::npos) {
-                redirectHost = redirectHost.substr(0, portPos);
+                redirectHost.resize(portPos);
             }
         }
 
