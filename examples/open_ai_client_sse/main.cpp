@@ -9,7 +9,7 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 
-#include "open_ai_client.h"
+#include "open_ai_client_sse.h"
 
 #include <KDFoundation/core_application.h>
 
@@ -30,7 +30,7 @@ int main(int /*argc*/, char * /*argv*/[])
         std::cerr << "Please set the OPENAI_API_KEY environment variable." << std::endl;
         return 1;
     }
-    OpenAiClient openAiClient(std::getenv("OPENAI_API_KEY"));
+    OpenAiClientSse openAiClient(std::getenv("OPENAI_API_KEY"));
 
     std::cout << "Welcome to the KDNetwork OpenAI ChatGPT client! Now with streaming!" << std::endl;
 

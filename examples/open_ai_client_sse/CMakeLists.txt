@@ -11,7 +11,7 @@ project(open_ai_client_sse LANGUAGES CXX)
 
 add_executable(
     ${PROJECT_NAME}
-    main.cpp open_ai_client.cpp open_ai_client.h
+    main.cpp open_ai_client_sse.cpp open_ai_client_sse.h
 )
 
 target_link_libraries(

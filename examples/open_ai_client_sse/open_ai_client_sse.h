@@ -18,7 +18,7 @@
 
 #include <memory>
 
-class OpenAiClient
+class OpenAiClientSse
 {
 public:
     KDBindings::Property<std::string> model{ "gpt-4o" };
@@ -29,8 +29,8 @@ public:
     KDBindings::Signal<> responseCompleted;
     KDBindings::Signal<std::string> errorOccurred;
 
-    OpenAiClient(const std::string_view &apiKey);
-    ~OpenAiClient();
+    OpenAiClientSse(const std::string_view &apiKey);
+    ~OpenAiClientSse();
 
     bool createResponse(const std::string_view &prompt);
 
