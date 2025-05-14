@@ -25,10 +25,10 @@ public:
 
     bool isLocalFile() const;
     std::string toLocalFile() const;
-    std::string scheme() const;
-    std::string fileName() const;
-    std::string path() const;
-    std::string url() const;
+    const std::string &scheme() const;
+    const std::string &fileName() const;
+    const std::string &path() const;
+    const std::string &url() const;
     bool empty() const { return m_url.empty(); }
     bool isEmpty() const { return empty(); }
 
