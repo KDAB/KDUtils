@@ -92,7 +92,7 @@ public:
             }
         }
 
-        [[nodiscard]] std::string getLastEventId() const
+        [[nodiscard]] const std::string &getLastEventId() const
         {
             return m_lastEventId;
         }

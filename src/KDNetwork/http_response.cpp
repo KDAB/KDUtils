@@ -56,7 +56,7 @@ void HttpResponse::setStatusCode(int code)
     m_statusCode = code;
 }
 
-std::string HttpResponse::reasonPhrase() const
+const std::string &HttpResponse::reasonPhrase() const
 {
     return m_reasonPhrase;
 }
@@ -66,7 +66,7 @@ void HttpResponse::setReasonPhrase(const std::string &reason)
     m_reasonPhrase = reason;
 }
 
-std::string HttpResponse::httpVersion() const
+const std::string &HttpResponse::httpVersion() const
 {
     return m_httpVersion;
 }
@@ -125,7 +125,7 @@ std::vector<std::string> HttpResponse::headers(const std::string &name) const
     return values;
 }
 
-std::multimap<std::string, std::string> HttpResponse::allHeaders() const
+const std::multimap<std::string, std::string> &HttpResponse::allHeaders() const
 {
     return m_headers;
 }
@@ -201,7 +201,7 @@ std::optional<KDUtils::Uri> HttpResponse::redirectUrl() const
                 host = host.substr(schemeEnd + 3);
                 const size_t pathStart = host.find('/');
                 if (pathStart != std::string::npos) {
-                    host = host.substr(0, pathStart);
+                    host.resize(pathStart);
                 }
             }
 
@@ -283,7 +283,7 @@ bool HttpResponse::isError() const
     return m_isError;
 }
 
-std::string HttpResponse::error() const
+const std::string &HttpResponse::error() const
 {
     return m_errorString;
 }

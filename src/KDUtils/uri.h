@@ -109,19 +109,19 @@ public:
      * @brief Returns the scheme component of the URI
      * @return The scheme component
      */
-    std::string scheme() const;
+    const std::string &scheme() const;
 
     /**
      * @brief Returns the user info component of the URI
      * @return The user info component
      */
-    std::string userInfo() const;
+    const std::string &userInfo() const;
 
     /**
      * @brief Returns the host component of the URI
      * @return The host component
      */
-    std::string host() const;
+    const std::string &host() const;
 
     /**
      * @brief Returns the port component of the URI
@@ -145,19 +145,19 @@ public:
      * @brief Returns the path component of the URI
      * @return The path component
      */
-    std::string path() const;
+    const std::string &path() const;
 
     /**
      * @brief Returns the query component of the URI
      * @return The query component
      */
-    std::string query() const;
+    const std::string &query() const;
 
     /**
      * @brief Returns the fragment component of the URI
      * @return The fragment component
      */
-    std::string fragment() const;
+    const std::string &fragment() const;
 
     /**
      * @brief Returns the path and query components combined
