@@ -119,6 +119,47 @@ struct HttpParser::Private {
         }
     }
 
+    // Not copyable
+    Private(const Private &) = delete;
+    Private &operator=(const Private &) = delete;
+
+    // Is movable
+    Private(Private &&) = default;
+    Private &operator=(Private &&other) noexcept
+    {
+        if (this != &other) {
+            // Clean up existing resources
+            if (parser) {
+                delete parser;
+            }
+
+            // Move resources from the other object
+            parser = other.parser;
+            settings = other.settings;
+            parserType = other.parserType;
+            parsingHeaders = other.parsingHeaders;
+            parsingBody = other.parsingBody;
+            currentHeaderField = std::move(other.currentHeaderField);
+            currentHeaderValue = std::move(other.currentHeaderValue);
+            url = std::move(other.url);
+            statusMessage = std::move(other.statusMessage);
+            statusCode = other.statusCode;
+            firstLine = std::move(other.firstLine);
+            error = other.error;
+            errorString = std::move(other.errorString);
+            errorLocation = other.errorLocation;
+            headers = std::move(other.headers);
+            headerCompleteCallback = std::move(other.headerCompleteCallback);
+            bodyDataCallback = std::move(other.bodyDataCallback);
+            messageCompleteCallback = std::move(other.messageCompleteCallback);
+            errorCallback = std::move(other.errorCallback);
+
+            // Nullify the other object's parser pointer
+            other.parser = nullptr;
+        }
+        return *this;
+    }
+
     void reset()
     {
         llhttp_reset(parser);

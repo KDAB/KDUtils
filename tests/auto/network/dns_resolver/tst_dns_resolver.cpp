@@ -494,21 +494,23 @@ TEST_CASE("DNS Resolver Real Network Tests")
         });
 
         // Process events until the lookup completes or timeout
-        auto startTime = std::chrono::steady_clock::now();
-        std::unique_lock<std::mutex> lock(mutex);
+        {
+            auto startTime = std::chrono::steady_clock::now();
+            std::unique_lock<std::mutex> lock(mutex);
 
-        while (!lookupCompleted) {
-            // Process events in the loop
-            app.processEvents();
+            while (!lookupCompleted) {
+                // Process events in the loop
+                app.processEvents();
 
-            // Check for timeout
-            auto now = std::chrono::steady_clock::now();
-            if (now - startTime > std::chrono::seconds(5)) {
-                break;
+                // Check for timeout
+                auto now = std::chrono::steady_clock::now();
+                if (now - startTime > std::chrono::seconds(5)) {
+                    break;
+                }
+
+                // Wait for the callback with timeout
+                cv.wait_for(lock, std::chrono::milliseconds(100), [&lookupCompleted] { return lookupCompleted.load(); });
             }
-
-            // Wait for the callback with timeout
-            cv.wait_for(lock, std::chrono::milliseconds(100), [&lookupCompleted] { return lookupCompleted.load(); });
         }
 
         CHECK(lookupCompleted);
