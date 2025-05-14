@@ -4,7 +4,13 @@
 
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -23,9 +29,9 @@ jobs:
         build_type:
           - Debug
           - Release
-        shared:
-          - ON
-          - OFF
+        link_type:
+          - static
+          - shared
 
     env:
       MOSQUITTO_VERSION: 2.0.20
@@ -48,7 +54,7 @@ jobs:
           sudo apt install -y libxkbcommon-dev libxcb-xkb-dev \
           libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
           libwayland-dev xvfb ninja-build \
-          libmosquitto-dev
+          libmosquitto-dev gcovr
 
       - name: Download mosquitto (MacOS)
         if: runner.os == 'macOS'
@@ -66,8 +72,9 @@ jobs:
         run: >
           cmake -S . -B ./build -G Ninja
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DKDUTILS_CODE_COVERAGE=${{ matrix.build_type == 'Debug' && runner.os == 'Linux' }}
           -DKDUTILS_BUILD_TESTS=${{ matrix.build_type == 'Debug' }}
-          -DBUILD_SHARED_LIBS=${{ matrix.shared }}
+          -DBUILD_SHARED_LIBS=${{ matrix.link_type == 'shared' }}
 
       - name: Build Project
         run: cmake --build ./build
