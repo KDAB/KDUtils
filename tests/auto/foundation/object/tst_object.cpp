@@ -99,6 +99,17 @@ public:
     }
 };
 
+class ObjectThatTakesInRef : public Object
+{
+public:
+    ObjectThatTakesInRef(Object &obj)
+        : ref(obj)
+    {
+    }
+
+    Object &ref;
+};
+
 TEST_CASE("Object construction")
 {
     SUBCASE("can create an object with no parent")
@@ -129,6 +140,29 @@ TEST_CASE("Object construction")
         REQUIRE(childAddedSpy.count() == 1);
         REQUIRE(std::get<0>(childAddedSpy.args()) == parent.get());
         REQUIRE(std::get<1>(childAddedSpy.args()) == child);
+    }
+
+    SUBCASE("can create an object that takes in a ref with a parent")
+    {
+        // GIVEN
+        auto parent = std::make_unique<Object>();
+        SignalSpy<Object *, Object *> childAddedSpy(parent->childAdded);
+
+        // THEN
+        REQUIRE(childAddedSpy.count() == 0);
+
+        // WHEN
+        {
+            auto child = parent->createChild<ObjectThatTakesInRef>(*parent);
+
+            // THEN
+            REQUIRE(child != nullptr);
+            REQUIRE(child->parent() == parent.get());
+            REQUIRE(parent->children().size() == 1);
+            REQUIRE(childAddedSpy.count() == 1);
+            REQUIRE(std::get<0>(childAddedSpy.args()) == parent.get());
+            REQUIRE(std::get<1>(childAddedSpy.args()) == child);
+        }
     }
 
     SUBCASE("can create a subclass of Object taking an argument")
