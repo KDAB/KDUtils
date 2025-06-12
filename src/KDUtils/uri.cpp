@@ -202,6 +202,7 @@ void Uri::parse(const std::string &uriString)
                             m_hasExplicitPort = true;
                         } catch (const std::exception &) {
                             // If port is invalid, ignore it
+                            m_hasExplicitPort = false;
                         }
                     }
                 } else {
@@ -217,6 +218,7 @@ void Uri::parse(const std::string &uriString)
                         m_hasExplicitPort = true;
                     } catch (const std::exception &) {
                         // If port is invalid, ignore it
+                        m_hasExplicitPort = false;
                     }
                 } else {
                     m_host = authority;
@@ -554,6 +556,7 @@ Uri Uri::normalized() const
                 }
             } catch (...) {
                 // Ignore conversion errors
+                result.m_hasExplicitPort = false;
             }
         }
     }
