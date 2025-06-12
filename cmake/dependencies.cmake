@@ -118,7 +118,7 @@ if(KDUTILS_BUILD_NETWORK_SUPPORT)
         FetchContent_Declare(
             c-ares
             GIT_REPOSITORY https://github.com/c-ares/c-ares.git
-            GIT_TAG b82840329a4081a1f1b125e6e6b760d4e1237b52 # v1.34.4
+            GIT_TAG 42ddbc14ec008e738fa44aa2c16e74cad93742c2 # Includes fix for building with clang on Windows
         )
         set(CARES_STATIC ON)
         set(CARES_SHARED OFF)
