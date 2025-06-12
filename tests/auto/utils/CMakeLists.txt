@@ -8,6 +8,21 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
+if(KDUTILS_CODE_COVERAGE)
+    include(${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
+    setup_target_for_coverage_gcovr_html(
+        NAME
+        KDUtils_coverage
+        EXECUTABLE
+        ctest
+        -L
+        "KDUtils"
+        EXCLUDE
+        "${CMAKE_BINARY_DIR}/_deps/*"
+        "${CMAKE_BINARY_DIR}/src/*"
+    )
+endif()
+
 project(KDUtils-Tests)
 
 # Create a test executable linking to the KDUtils library
@@ -36,18 +51,3 @@ add_subdirectory(uri)
 add_subdirectory(url)
 
 add_feature_info(KDUtils-Test ON "Build KDUtils Tests")
-
-if(KDUTILS_CODE_COVERAGE)
-    include(${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
-    setup_target_for_coverage_gcovr_html(
-        NAME
-        KDUtils_coverage
-        EXECUTABLE
-        ctest
-        -L
-        "KDUtils"
-        EXCLUDE
-        "${CMAKE_BINARY_DIR}/_deps/*"
-        "${CMAKE_BINARY_DIR}/src/*"
-    )
-endif()
