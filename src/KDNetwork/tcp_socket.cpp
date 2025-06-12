@@ -18,7 +18,7 @@
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
 #else
-#include <errno.h>
+#include <cerrno>
 #include <netdb.h> // For getaddrinfo (used as placeholder)
 #include <sys/socket.h> // For getsockopt, SO_ERROR, send flags (MSG_NOSIGNAL)
 #include <sys/types.h> // For ssize_t
@@ -88,6 +88,7 @@ TcpSocket::~TcpSocket()
 {
 }
 
+// NOLINTBEGIN(bugprone-use-after-move)
 TcpSocket::TcpSocket(TcpSocket &&other) noexcept
     : Socket(std::move(other))
     , connected(std::move(other.connected)) // Move the connected signal
@@ -118,6 +119,7 @@ TcpSocket &TcpSocket::operator=(TcpSocket &&other) noexcept
     }
     return *this;
 }
+// NOLINTEND(bugprone-use-after-move)
 
 /**
  * @brief Connect to a host using a hostname and port
@@ -257,7 +259,6 @@ void TcpSocket::handleDnsLookupCompleted(std::error_code ec, const std::vector<I
     }
 
     // Extract connection info
-    const std::string host = m_pendingConnection->hostname;
     const std::uint16_t port = m_pendingConnection->port;
 
     // If lookup failed or no addresses returned
