@@ -39,21 +39,6 @@ jobs:
         link_type:
           - static
           - shared
-        config:
-          - os: ubuntu-24.04
-            vcpkg_triplet: x64-linux-release
-          - os: ubuntu-22.04
-            vcpkg_triplet: x64-linux-release
-          - os: ubuntu-24.04-arm
-            vcpkg_triplet: arm64-linux-release
-          - os: macos-13
-            vcpkg_triplet: x64-osx-release
-          - os: macos-14
-            vcpkg_triplet: x64-osx-release
-          - os: macos-15
-            vcpkg_triplet: x64-osx-release
-          - os: windows-2022
-            vcpkg_triplet: x64-windows-release
 
     env:
       MOSQUITTO_VERSION: 2.0.20
@@ -107,7 +92,7 @@ jobs:
           -DKDUTILS_BUILD_TESTS=${{ matrix.build_type == 'Debug' }}
           -DBUILD_SHARED_LIBS=${{ matrix.link_type == 'shared' }}
           -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
-          -DVCPKG_TARGET_TRIPLET=${{ matrix.config.vcpkg_triplet }}
+          -DVCPKG_TARGET_TRIPLET=${{ matrix.platform.triplet }}
           -DVCPKG_MANIFEST_MODE=OFF
           ${{ steps.vcpkg.outputs.vcpkg-cmake-config }}
 
