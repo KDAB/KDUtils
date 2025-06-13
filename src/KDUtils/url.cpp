@@ -42,22 +42,22 @@ std::string Url::toLocalFile() const
     return m_path + m_fileName;
 }
 
-std::string Url::scheme() const
+const std::string &Url::scheme() const
 {
     return m_scheme;
 }
 
-std::string Url::fileName() const
+const std::string &Url::fileName() const
 {
     return m_fileName;
 }
 
-std::string Url::path() const
+const std::string &Url::path() const
 {
     return m_path;
 }
 
-std::string Url::url() const
+const std::string &Url::url() const
 {
     return m_url;
 }

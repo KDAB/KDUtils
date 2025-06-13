@@ -8,19 +8,13 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-add_executable(
-    tst_signal
-    tst_signal.cpp
+project(
+    test-utils-signal
+    VERSION 0.1
+    LANGUAGES CXX
 )
+add_utils_test(${PROJECT_NAME} tst_signal.cpp)
 target_link_libraries(
-    tst_signal
-    PRIVATE KDUtils KDUtils::KDFoundation doctest::doctest
-)
-doctest_discover_tests(
-    tst_signal
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
+    ${PROJECT_NAME}
+    PRIVATE KDUtils::KDFoundation
 )
