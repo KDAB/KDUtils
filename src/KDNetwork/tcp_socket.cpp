@@ -467,7 +467,7 @@ void TcpSocket::onReadReady()
 
         if (bytesRead > 0) {
             // Successfully read some data
-            processReceivedData(tempBuffer.data(), bytesRead);
+            processReceivedData(tempBuffer.data(), static_cast<size_t>(bytesRead));
         } else if (bytesRead == 0) {
             // Peer has performed an orderly shutdown (EOF)
             setError(SocketError::NoError); // This is not an application error
@@ -663,7 +663,7 @@ void TcpSocket::trySend()
         setWriteNotificationEnabled(false); // Disable notifier, no more data to write
 }
 
-void TcpSocket::processReceivedData(const std::uint8_t *buffer, int size)
+void TcpSocket::processReceivedData(const std::uint8_t *buffer, size_t size)
 {
     if (size <= 0)
         return;
