@@ -72,7 +72,7 @@ protected:
 
     // Processes data received from the socket.
     // Appends data to the read buffer and emits bytesReceived signal.
-    void processReceivedData(const std::uint8_t *buffer, int size);
+    void processReceivedData(const std::uint8_t *buffer, size_t size);
 
 private:
     // Called from onReadReady/onWriteReady when state is Connecting. Sets state, emits signals.
