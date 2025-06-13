@@ -62,7 +62,7 @@ public:
     }
 
     template<typename T, typename... Ts>
-    T *createChild(Ts... args)
+    T *createChild(Ts &&...args)
     {
         auto child = std::make_unique<T>(std::forward<Ts>(args)...);
         return static_cast<T *>(this->addChild(std::move(child)));
