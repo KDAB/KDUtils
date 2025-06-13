@@ -98,7 +98,7 @@ TcpSocket::TcpSocket(TcpSocket &&other) noexcept
     , m_readBuffer(std::move(other.m_readBuffer)) // Move the read buffer
     , m_writeBuffer(std::move(other.m_writeBuffer)) // Move the write buffer
     , m_pendingConnection(std::move(other.m_pendingConnection)) // Move the pending connection info
-    , m_peerAddress(std::move(other.m_peerAddress)) // Move the peer address
+    , m_peerAddress(other.m_peerAddress) // Copy the peer address (trivially copyable)
     , m_peerPort(other.m_peerPort) // Copy the port
 {
 }
@@ -114,7 +114,7 @@ TcpSocket &TcpSocket::operator=(TcpSocket &&other) noexcept
         m_readBuffer = std::move(other.m_readBuffer); // Move the read buffer
         m_writeBuffer = std::move(other.m_writeBuffer); // Move the write buffer
         m_pendingConnection = std::move(other.m_pendingConnection); // Move the pending connection info
-        m_peerAddress = std::move(other.m_peerAddress); // Move the peer address
+        m_peerAddress = other.m_peerAddress; // Copy the peer address (trivially copyable)
         m_peerPort = other.m_peerPort; // Copy the port
     }
     return *this;
@@ -455,19 +455,19 @@ void TcpSocket::onReadReady()
 
     // Read data in a loop as readiness notification is level-triggered
     constexpr int tempBufferSize = 4096; // Sensible chunk size
-    std::uint8_t tempBuffer[tempBufferSize];
+    std::array<std::uint8_t, tempBufferSize> tempBuffer;
     ssize_t bytesRead = 0;
 
     while (isValid()) { // Loop while socket is valid
 #if defined(KD_PLATFORM_WIN32)
-        bytesRead = ::recv(m_socketFd, reinterpret_cast<char *>(tempBuffer), tempBufferSize, 0);
+        bytesRead = ::recv(m_socketFd, reinterpret_cast<char *>(tempBuffer.data()), tempBufferSize, 0);
 #else
-        bytesRead = ::recv(m_socketFd, reinterpret_cast<char *>(tempBuffer), tempBufferSize, 0);
+        bytesRead = ::recv(m_socketFd, reinterpret_cast<char *>(tempBuffer.data()), tempBufferSize, 0);
 #endif
 
         if (bytesRead > 0) {
             // Successfully read some data
-            processReceivedData(tempBuffer, bytesRead);
+            processReceivedData(tempBuffer.data(), bytesRead);
         } else if (bytesRead == 0) {
             // Peer has performed an orderly shutdown (EOF)
             setError(SocketError::NoError); // This is not an application error
@@ -598,10 +598,10 @@ void TcpSocket::trySend()
         return;
     }
 
-    int bytesSentTotal = 0; // Track bytes sent in this call
+    ssize_t bytesSentTotal = 0; // Track bytes sent in this call
 
     while (!m_writeBuffer.isEmpty()) {
-        int bytesSentNow = 0;
+        ssize_t bytesSentNow = 0;
 #if defined(KD_PLATFORM_WIN32)
         bytesSentNow = ::send(m_socketFd, reinterpret_cast<const char *>(m_writeBuffer.constData()),
                               static_cast<int>(std::min((int64_t)m_writeBuffer.size(), (int64_t)INT_MAX)), // Windows send takes int size
