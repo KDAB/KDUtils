@@ -675,7 +675,7 @@ void TcpSocket::processReceivedData(const std::uint8_t *buffer, size_t size)
     // Emit the bytesReceived signal with the size of the chunk of received data.
     // The user can then call bytesAvailable() to check how much data is available
     // in total. Or they can call read() or readAll() to consume the data.
-    bytesReceived.emit(size);
+    bytesReceived.emit(static_cast<int64_t>(size));
 }
 
 /**
