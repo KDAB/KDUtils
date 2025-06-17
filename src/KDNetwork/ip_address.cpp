@@ -103,9 +103,9 @@ std::string IpAddress::toString() const
         struct in_addr addr{};
         addr.s_addr = htonl(ipv4); // Convert to network byte order
 
-        char buf[INET_ADDRSTRLEN] = {};
-        if (inet_ntop(AF_INET, &addr, buf, sizeof(buf))) {
-            return buf;
+        std::array<char, INET_ADDRSTRLEN> buf{};
+        if (inet_ntop(AF_INET, &addr, buf.data(), buf.size())) {
+            return buf.data();
         }
     } else if (std::holds_alternative<IPv6Data>(m_data)) {
         // IPv6 address
@@ -113,9 +113,9 @@ std::string IpAddress::toString() const
         struct in6_addr addr{};
         std::memcpy(addr.s6_addr, ipv6.data(), 16);
 
-        char buf[INET6_ADDRSTRLEN] = {};
-        if (inet_ntop(AF_INET6, &addr, buf, sizeof(buf))) {
-            return buf;
+        std::array<char, INET6_ADDRSTRLEN> buf{};
+        if (inet_ntop(AF_INET6, &addr, buf.data(), buf.size())) {
+            return buf.data();
         }
     }
 
