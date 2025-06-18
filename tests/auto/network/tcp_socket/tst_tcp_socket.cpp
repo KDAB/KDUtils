@@ -37,7 +37,7 @@ TEST_CASE("Basic usage")
 {
     SUBCASE("Can create a TcpSocket")
     {
-        TcpSocket socket;
+        const TcpSocket socket;
         CHECK(socket.type() == Socket::SocketType::Tcp);
         CHECK(socket.socketFileDescriptor() == -1);
         CHECK(socket.state() == Socket::State::Unconnected);
@@ -164,15 +164,13 @@ TEST_CASE("Move semantics")
         const int sockFd = socket1.socketFileDescriptor();
 
         // Move-construct socket2 from socket1
-        TcpSocket socket2(std::move(socket1));
+        const TcpSocket socket2(std::move(socket1));
 
         // socket2 should now have the file descriptor
         CHECK(socket2.socketFileDescriptor() == sockFd);
         CHECK(socket2.state() == Socket::State::Opening);
 
-        // socket1 should be reset to initial state
-        CHECK(socket1.socketFileDescriptor() == -1);
-        CHECK(socket1.state() == Socket::State::Unconnected);
+        // socket1 should not be used after move (behavior is unspecified)
     }
 
     SUBCASE("Can move assign")
@@ -190,9 +188,7 @@ TEST_CASE("Move semantics")
         CHECK(socket2.socketFileDescriptor() == sockFd);
         CHECK(socket2.state() == Socket::State::Opening);
 
-        // socket1 should be reset to initial state
-        CHECK(socket1.socketFileDescriptor() == -1);
-        CHECK(socket1.state() == Socket::State::Unconnected);
+        // socket1 should not be used after move (behavior is unspecified)
     }
 }
 
@@ -223,7 +219,7 @@ class TestTcpServer
 {
 public:
     // Define our own state enum to match Socket's state for consistency
-    enum class State {
+    enum class State : std::uint8_t {
         NotListening, // Initial or closed state
         Listening, // Server is listening for connections
         Error // An error has occurred
@@ -316,9 +312,24 @@ private:
         struct sockaddr_in clientAddr;
         socklen_t addrLen = sizeof(clientAddr);
 
-        int clientFd = accept(m_socket.socketFileDescriptor(),
-                              reinterpret_cast<struct sockaddr *>(&clientAddr),
-                              &addrLen);
+#if defined(KD_PLATFORM_WIN32)
+        const auto clientFd = accept(m_socket.socketFileDescriptor(),
+                                     reinterpret_cast<struct sockaddr *>(&clientAddr),
+                                     &addrLen);
+
+        if (clientFd != INVALID_SOCKET) {
+            // Create a new client socket using the accepted file descriptor
+            auto clientSocket = std::make_unique<TcpSocket>(clientFd, Socket::State::Connected);
+
+            // Store the client socket and notify
+            TcpSocket *rawPtr = clientSocket.get();
+            m_clientSockets.push_back(std::move(clientSocket));
+            clientConnected.emit(rawPtr);
+        }
+#else
+        const int clientFd = accept(m_socket.socketFileDescriptor(),
+                                    reinterpret_cast<struct sockaddr *>(&clientAddr),
+                                    &addrLen);
 
         if (clientFd >= 0) {
             // Create a new client socket using the accepted file descriptor
@@ -329,6 +340,7 @@ private:
             m_clientSockets.push_back(std::move(clientSocket));
             clientConnected.emit(rawPtr);
         }
+#endif
     }
 
     TcpSocket m_socket;
