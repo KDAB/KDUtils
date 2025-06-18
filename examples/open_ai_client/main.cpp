@@ -15,22 +15,36 @@
 
 #include <KDUtils/uri.h>
 
+#include <cstdlib>
 #include <iostream>
 
 using namespace KDNetwork;
 using namespace KDFoundation;
 using namespace KDUtils;
 
-int main(int /*argc*/, char * /*argv*/[])
+namespace {
+// NOLINTBEGIN(concurrency-mt-unsafe)
+std::string getOpenAiKey()
+{
+    if (std::getenv("OPENAI_API_KEY") == nullptr) {
+        std::cerr << "Please set the OPENAI_API_KEY environment variable." << std::endl;
+        return {};
+    }
+    return std::getenv("OPENAI_API_KEY");
+}
+// NOLINTEND(concurrency-mt-unsafe)
+} // namespace
+
+int main(int /*argc*/, char * /*argv*/[]) // NOLINT(bugprone-exception-escape)
 {
     CoreApplication app;
 
     // Check if the OpenAI API key is set
-    if (std::getenv("OPENAI_API_KEY") == nullptr) {
-        std::cerr << "Please set the OPENAI_API_KEY environment variable." << std::endl;
-        return 1;
+    const std::string openAiKey = getOpenAiKey();
+    if (openAiKey.empty()) {
+        return 1; // Exit if the API key is not set
     }
-    OpenAiClient openAiClient(std::getenv("OPENAI_API_KEY"));
+    OpenAiClient openAiClient(openAiKey);
 
     const std::string message = "Why is swimming such a good sport?";
     std::cout << "Prompt: " << message << std::endl;
