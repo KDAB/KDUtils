@@ -20,6 +20,7 @@
 #include <openssl/bio.h>
 #include <openssl/x509_vfy.h>
 
+#include <array>
 #include <iomanip>
 #include <mutex>
 #include <sstream>
@@ -50,8 +51,8 @@ public:
 };
 
 // Ensure OpenSSL is initialized once
-static std::once_flag opensslInitFlag;
-static OpenSslInitializer *opensslInit = nullptr;
+std::once_flag opensslInitFlag;
+OpenSslInitializer *opensslInit = nullptr;
 
 void ensureOpenSslInitialized()
 {
@@ -67,11 +68,11 @@ std::string getOpenSslErrorString()
     unsigned long err;
 
     while ((err = ERR_get_error()) != 0) {
-        char buf[256];
-        ERR_error_string_n(err, buf, sizeof(buf));
+        std::array<char, 256> buf;
+        ERR_error_string_n(err, buf.data(), buf.size());
         if (!result.empty())
             result += "; ";
-        result += buf;
+        result += buf.data();
     }
 
     return result.empty() ? "Unknown SSL error" : result;
@@ -87,7 +88,7 @@ std::string x509ToPem(X509 *cert)
     PEM_write_bio_X509(bio, cert);
 
     char *data = nullptr;
-    long length = BIO_get_mem_data(bio, &data);
+    const long length = BIO_get_mem_data(bio, &data);
     std::string result(data, length);
 
     BIO_free(bio);
@@ -104,14 +105,16 @@ std::string formatCertificateDetails(X509 *cert)
     std::stringstream ss;
 
     // Get subject
-    char subjectName[256];
-    X509_NAME_oneline(X509_get_subject_name(cert), subjectName, sizeof(subjectName));
-    ss << "Subject: " << subjectName << "\n";
+    char *subjectName = X509_NAME_oneline(X509_get_subject_name(cert), nullptr, 0);
+    ss << "Subject: " << (subjectName ? subjectName : "Unknown") << "\n";
+    if (subjectName)
+        OPENSSL_free(subjectName);
 
     // Get issuer
-    char issuerName[256];
-    X509_NAME_oneline(X509_get_issuer_name(cert), issuerName, sizeof(issuerName));
-    ss << "Issuer: " << issuerName << "\n";
+    char *issuerName = X509_NAME_oneline(X509_get_issuer_name(cert), nullptr, 0);
+    ss << "Issuer: " << (issuerName ? issuerName : "Unknown") << "\n";
+    if (issuerName)
+        OPENSSL_free(issuerName);
 
     // Get validity period
     ASN1_TIME *notBefore = X509_get_notBefore(cert);
@@ -135,9 +138,9 @@ std::string formatCertificateDetails(X509 *cert)
     }
 
     // Get fingerprint
-    unsigned char md[EVP_MAX_MD_SIZE];
+    std::array<unsigned char, EVP_MAX_MD_SIZE> md{};
     unsigned int md_len;
-    if (X509_digest(cert, EVP_sha256(), md, &md_len)) {
+    if (X509_digest(cert, EVP_sha256(), md.data(), &md_len)) {
         ss << "SHA-256 fingerprint: ";
         for (unsigned int i = 0; i < md_len; i++) {
             ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(md[i]);
@@ -148,12 +151,12 @@ std::string formatCertificateDetails(X509 *cert)
     }
 
     // Get Subject Alternative Names (SANs)
-    GENERAL_NAMES *sans = static_cast<GENERAL_NAMES *>(
+    auto *sans = static_cast<GENERAL_NAMES *>(
             X509_get_ext_d2i(cert, NID_subject_alt_name, nullptr, nullptr));
 
     if (sans) {
         ss << "Subject Alternative Names:\n";
-        int num_sans = sk_GENERAL_NAME_num(sans);
+        const int num_sans = sk_GENERAL_NAME_num(sans);
 
         for (int i = 0; i < num_sans; i++) {
             GENERAL_NAME *current = sk_GENERAL_NAME_value(sans, i);
@@ -246,8 +249,7 @@ public:
 };
 
 SslSocket::SslSocket()
-    : TcpSocket()
-    , d(std::make_unique<SslSocketPrivate>())
+    : d(std::make_unique<SslSocketPrivate>())
 {
     m_type = SocketType::SslTcp;
     ensureOpenSslInitialized();
@@ -256,9 +258,12 @@ SslSocket::SslSocket()
 
 SslSocket::~SslSocket()
 {
-    disconnectFromHost();
+    // Clean up SSL resources without calling disconnectFromHost() recursively
+    d->cleanup();
+    // TcpSocket base destructor will handle socket closure
 }
 
+// NOLINTBEGIN(bugprone-use-after-move)
 SslSocket::SslSocket(SslSocket &&other) noexcept
     : TcpSocket(std::move(other))
     , handshakeCompleted(std::move(other.handshakeCompleted))
@@ -278,6 +283,7 @@ SslSocket &SslSocket::operator=(SslSocket &&other) noexcept
     }
     return *this;
 }
+// NOLINTEND(bugprone-use-after-move)
 
 bool SslSocket::initSsl()
 {
@@ -338,7 +344,7 @@ void SslSocket::disconnectFromHost()
     // If we have an SSL connection, attempt a clean shutdown
     if (d->ssl && d->handshakeComplete) {
         // Non-blocking SSL_shutdown
-        int ret = SSL_shutdown(d->ssl);
+        const int ret = SSL_shutdown(d->ssl);
         if (ret == 0) {
             // First stage of shutdown completed, ideally wait for second stage
             // but we'll complete immediately for simplicity
@@ -751,12 +757,12 @@ void SslSocket::handleSslRead()
 
         // Try to decrypt and process data
         while (true) {
-            char buffer[4096];
-            const int decrypted = SSL_read(d->ssl, buffer, sizeof(buffer));
+            std::array<char, 4096> buffer;
+            const int decrypted = SSL_read(d->ssl, buffer.data(), buffer.size());
 
             if (decrypted > 0) {
                 // Process decrypted data - add to TcpSocket's read buffer
-                const KDUtils::ByteArray decryptedData(reinterpret_cast<const uint8_t *>(buffer), decrypted);
+                const KDUtils::ByteArray decryptedData(reinterpret_cast<const uint8_t *>(buffer.data()), decrypted);
                 TcpSocket::processReceivedData(decryptedData.constData(), decryptedData.size());
             } else {
                 const int sslError = SSL_get_error(d->ssl, decrypted);
@@ -824,7 +830,7 @@ bool SslSocket::handleSslWrite()
 
     // First, try to write any data in the pendingWriteBuffer through SSL
     while (!d->pendingWriteBuffer.isEmpty()) {
-        const int written = SSL_write(d->ssl, d->pendingWriteBuffer.constData(), d->pendingWriteBuffer.size());
+        const int written = SSL_write(d->ssl, d->pendingWriteBuffer.constData(), static_cast<int>(d->pendingWriteBuffer.size()));
 
         if (written > 0) {
             // Successfully encrypted some data
@@ -875,12 +881,12 @@ void SslSocket::flushNetworkBIO()
         return;
     }
 
-    char buffer[4096];
+    std::array<char, 4096> buffer;
     int pending = BIO_pending(d->networkBio);
 
     while (pending > 0) {
-        const int readSize = std::min(pending, static_cast<int>(sizeof(buffer)));
-        const int read = BIO_read(d->networkBio, buffer, readSize);
+        const int readSize = std::min(pending, static_cast<int>(buffer.size()));
+        const int read = BIO_read(d->networkBio, buffer.data(), readSize);
 
         if (read <= 0) {
             // No more data or error
@@ -894,9 +900,9 @@ void SslSocket::flushNetworkBIO()
 
         // Write the encrypted data to the socket
 #if defined(KD_PLATFORM_WIN32)
-        const int sent = ::send(m_socketFd, buffer, read, 0);
+        const int sent = ::send(m_socketFd, buffer.data(), read, 0);
 #else
-        int sent = ::send(m_socketFd, buffer, read, MSG_NOSIGNAL);
+        int sent = ::send(m_socketFd, buffer.data(), read, MSG_NOSIGNAL);
 #endif
 
         if (sent <= 0) {
@@ -905,7 +911,7 @@ void SslSocket::flushNetworkBIO()
             if (error_code == WSAEWOULDBLOCK) {
                 // Would block, retry later
                 // Put the data back into the BIO for later
-                BIO_write(d->networkBio, buffer, read);
+                BIO_write(d->networkBio, buffer.data(), read);
                 setWriteNotificationEnabled(true);
                 break;
             }
@@ -1018,9 +1024,9 @@ bool SslSocket::verifySslCertificate()
             // Extract the Common Name (CN) from the certificate for comparison
             X509_NAME *subject = X509_get_subject_name(cert);
             if (subject) {
-                char commonName[256];
-                if (X509_NAME_get_text_by_NID(subject, NID_commonName, commonName, sizeof(commonName)) > 0) {
-                    d->verificationError += " (Certificate CN: " + std::string(commonName) + ")";
+                std::array<char, 256> commonName{};
+                if (X509_NAME_get_text_by_NID(subject, NID_commonName, commonName.data(), static_cast<int>(commonName.size())) > 0) {
+                    d->verificationError += " (Certificate CN: " + std::string(commonName.data()) + ")";
                 }
             }
         } else if (verifyResult == X509_V_ERR_CERT_NOT_YET_VALID || verifyResult == X509_V_ERR_CERT_HAS_EXPIRED) {
@@ -1049,9 +1055,9 @@ bool SslSocket::verifySslCertificate()
             // Get the issuer name to help identify missing CA certificates
             X509_NAME *issuer = X509_get_issuer_name(cert);
             if (issuer) {
-                char issuerName[256];
-                X509_NAME_oneline(issuer, issuerName, sizeof(issuerName));
-                d->verificationError += " (Certificate issuer: " + std::string(issuerName) + ")";
+                std::array<char, 256> issuerName{};
+                X509_NAME_oneline(issuer, issuerName.data(), static_cast<int>(issuerName.size()));
+                d->verificationError += " (Certificate issuer: " + std::string(issuerName.data()) + ")";
             }
         }
 
@@ -1086,9 +1092,9 @@ std::string SslSocket::sslCipher() const
     if (d->ssl && d->handshakeComplete) {
         const SSL_CIPHER *cipher = SSL_get_current_cipher(d->ssl);
         if (cipher) {
-            char buf[128];
-            SSL_CIPHER_description(cipher, buf, sizeof(buf));
-            return buf;
+            std::array<char, 128> buf{};
+            SSL_CIPHER_description(cipher, buf.data(), buf.size());
+            return buf.data();
         }
     }
     return {};
