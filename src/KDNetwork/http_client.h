@@ -76,7 +76,7 @@ public:
      * @return A future that will be set to the response when completed
      */
     std::future<HttpResponse> send(const HttpRequest &request,
-                                   std::function<void(const HttpResponse &)> callback = nullptr);
+                                   const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Convenience method to send a GET request
@@ -86,13 +86,13 @@ public:
      * @return A future that will be set to the response when completed
      */
     std::future<HttpResponse> get(const KDUtils::Uri &url,
-                                  std::function<void(const HttpResponse &)> callback = nullptr);
+                                  const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Convenience method to send a HEAD request
      */
     std::future<HttpResponse> head(const KDUtils::Uri &url,
-                                   std::function<void(const HttpResponse &)> callback = nullptr);
+                                   const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Convenience method to send a POST request
@@ -106,7 +106,7 @@ public:
     std::future<HttpResponse> post(const KDUtils::Uri &url,
                                    const KDUtils::ByteArray &data,
                                    const std::string &contentType = "application/x-www-form-urlencoded",
-                                   std::function<void(const HttpResponse &)> callback = nullptr);
+                                   const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Convenience method to send a POST request. Caller is responsible for setting the content type.
@@ -118,7 +118,7 @@ public:
      */
     std::future<HttpResponse> post(const KDUtils::Uri &url,
                                    const KDUtils::ByteArray &data,
-                                   std::function<void(const HttpResponse &)> callback = nullptr);
+                                   const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Convenience method to send a PUT request
@@ -126,13 +126,13 @@ public:
     std::future<HttpResponse> put(const KDUtils::Uri &url,
                                   const KDUtils::ByteArray &data,
                                   const std::string &contentType = "application/x-www-form-urlencoded",
-                                  std::function<void(const HttpResponse &)> callback = nullptr);
+                                  const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Convenience method to send a DELETE request
      */
     std::future<HttpResponse> deleteResource(const KDUtils::Uri &url,
-                                             std::function<void(const HttpResponse &)> callback = nullptr);
+                                             const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Convenience method to send a PATCH request
@@ -140,13 +140,13 @@ public:
     std::future<HttpResponse> patch(const KDUtils::Uri &url,
                                     const KDUtils::ByteArray &data,
                                     const std::string &contentType = "application/x-www-form-urlencoded",
-                                    std::function<void(const HttpResponse &)> callback = nullptr);
+                                    const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Convenience method to send a OPTIONS request
      */
     std::future<HttpResponse> options(const KDUtils::Uri &url,
-                                      std::function<void(const HttpResponse &)> callback = nullptr);
+                                      const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Cancel all pending requests
@@ -161,7 +161,7 @@ public:
     /**
      * @brief Set a new session
      */
-    void setSession(std::shared_ptr<HttpSession> session);
+    void setSession(const std::shared_ptr<HttpSession> &session);
 
     /**
      * @brief Create a Server-Sent Events client
@@ -186,7 +186,7 @@ public:
      */
     std::future<HttpResponse> sendWithSseClient(const HttpRequest &request,
                                                 std::shared_ptr<SseClient> sseClient,
-                                                std::function<void(const HttpResponse &)> callback = nullptr);
+                                                const std::function<void(const HttpResponse &)> &callback = nullptr);
 
     /**
      * @brief Signal emitted when a request is about to be sent
@@ -217,21 +217,21 @@ private:
     // Internal request state
     class RequestState;
     std::shared_ptr<RequestState> createRequestState(const HttpRequest &request,
-                                                     std::function<void(const HttpResponse &)> callback,
+                                                     const std::function<void(const HttpResponse &)> &callback,
                                                      std::promise<HttpResponse> promise);
 
-    void startRequest(std::shared_ptr<RequestState> state);
-    void finishRequest(std::shared_ptr<RequestState> state);
-    void failRequest(std::shared_ptr<RequestState> state, const std::string &errorString);
-    void followRedirect(std::shared_ptr<RequestState> state);
+    void startRequest(const std::shared_ptr<RequestState> &state);
+    void finishRequest(const std::shared_ptr<RequestState> &state);
+    void failRequest(const std::shared_ptr<RequestState> &state, const std::string &errorString);
+    void followRedirect(const std::shared_ptr<RequestState> &state);
 
-    void setupSocketCallbacks(std::shared_ptr<RequestState> state);
-    void onReadyRead(std::shared_ptr<RequestState> state);
-    void onSocketConnected(std::shared_ptr<RequestState> state);
-    void onSocketError(std::shared_ptr<RequestState> state, std::error_code ec);
-    void onTimeout(std::shared_ptr<RequestState> state);
+    void setupSocketCallbacks(const std::shared_ptr<RequestState> &state);
+    void onReadyRead(const std::shared_ptr<RequestState> &state);
+    void onSocketConnected(const std::shared_ptr<RequestState> &state);
+    void onSocketError(const std::shared_ptr<RequestState> &state, std::error_code ec);
+    void onTimeout(const std::shared_ptr<RequestState> &state);
 
-    void setupParserCallbacks(std::shared_ptr<RequestState> state);
+    void setupParserCallbacks(const std::shared_ptr<RequestState> &state);
 
     std::shared_ptr<KDNetwork::Socket> createSocket(bool secure, const std::string &host = {});
 
