@@ -18,6 +18,7 @@
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/timer.h>
 
+#include <KDUtils/logger.h>
 #include <KDUtils/uri.h>
 
 #include <chrono>
@@ -144,7 +145,12 @@ HttpClient::HttpClient(const std::shared_ptr<HttpSession> &session)
 
 HttpClient::~HttpClient()
 {
-    cancelAll();
+    try {
+        cancelAll();
+    } catch (...) {
+        // Suppress all exceptions in destructor but log them
+        KDUtils::Logger::logger("HttpClient").error("Exception during HttpClient destruction");
+    }
 }
 
 std::future<HttpResponse> HttpClient::send(const HttpRequest &request,
@@ -465,6 +471,7 @@ void HttpClient::finishRequest(std::shared_ptr<RequestState> state)
         state->responsePromise.set_value(state->response);
     } catch (const std::future_error &) {
         // Promise might already be set (e.g., on timeout)
+        KDUtils::Logger::logger("HttpClient").warning("Promise already set for request, ignoring");
     }
 }
 
@@ -507,6 +514,7 @@ void HttpClient::failRequest(std::shared_ptr<RequestState> state, const std::str
         state->responsePromise.set_value(state->response);
     } catch (const std::future_error &) {
         // Promise might already be set (e.g., on timeout or cancellation)
+        KDUtils::Logger::logger("HttpClient").warning("Promise already set for request, ignoring");
     }
 }
 
@@ -883,6 +891,7 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
                 state->responsePromise.set_value(state->response);
             } catch (const std::future_error &) {
                 // Promise might already be set
+                KDUtils::Logger::logger("HttpClient").warning("Promise already set for WebSocket upgrade request, ignoring");
             }
 
             // Stop the timer
