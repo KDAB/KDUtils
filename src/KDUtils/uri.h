@@ -37,14 +37,14 @@ public:
     /**
      * @brief Returns the default port for this scheme
      */
-    virtual std::string defaultPort() const = 0;
+    [[nodiscard]] virtual std::string defaultPort() const = 0;
 
     /**
      * @brief Validates if the given URI conforms to scheme-specific rules
      * @param uri The URI to validate
      * @return true if the URI is valid for this scheme, false otherwise
      */
-    virtual bool validate(const Uri &uri) const = 0;
+    [[nodiscard]] virtual bool validate(const Uri &uri) const = 0;
 };
 
 /**
@@ -354,8 +354,8 @@ private:
 class KDUTILS_API HttpUriHandler : public UriSchemeHandler
 {
 public:
-    std::string defaultPort() const override;
-    bool validate(const Uri &uri) const override;
+    [[nodiscard]] std::string defaultPort() const override;
+    [[nodiscard]] bool validate(const Uri &uri) const override;
 };
 
 /**
@@ -364,8 +364,8 @@ public:
 class KDUTILS_API HttpsUriHandler : public UriSchemeHandler
 {
 public:
-    std::string defaultPort() const override;
-    bool validate(const Uri &uri) const override;
+    [[nodiscard]] std::string defaultPort() const override;
+    [[nodiscard]] bool validate(const Uri &uri) const override;
 };
 
 /**
@@ -374,8 +374,8 @@ public:
 class KDUTILS_API FtpUriHandler : public UriSchemeHandler
 {
 public:
-    std::string defaultPort() const override;
-    bool validate(const Uri &uri) const override;
+    [[nodiscard]] std::string defaultPort() const override;
+    [[nodiscard]] bool validate(const Uri &uri) const override;
 };
 
 /**

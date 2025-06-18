@@ -34,7 +34,7 @@ TEST_SUITE("Uri")
         static_assert(std::is_move_assignable<Uri>{},
                       "Uri should be move assignable");
 
-        Uri uri;
+        const Uri uri;
         CHECK(uri.isEmpty());
         CHECK(uri.isRelative());
         CHECK(!uri.isAbsolute());
@@ -42,7 +42,7 @@ TEST_SUITE("Uri")
 
     TEST_CASE("basic parsing")
     {
-        Uri uri("https://user:pass@example.com:8080/path/to/resource?query=value#fragment");
+        const Uri uri("https://user:pass@example.com:8080/path/to/resource?query=value#fragment");
 
         CHECK(uri.scheme() == "https");
         CHECK(uri.userInfo() == "user:pass");
@@ -99,9 +99,9 @@ TEST_SUITE("Uri")
         CHECK(uri.fragment() == "results");
 
         // Test toString
-        std::string expected = "https://api.example.com:443/v1/users?limit=10&page=1#results";
+        // std::string expected = "https://api.example.com:443/v1/users?limit=10&page=1#results";
         // Note: Query parameters might be in different order, so we'll check parts separately
-        std::string actual = uri.toString();
+        const std::string actual = uri.toString();
         CHECK(actual.find("https://api.example.com:443/v1/users?") == 0);
         CHECK(actual.find("limit=10") != std::string::npos);
         CHECK(actual.find("page=1") != std::string::npos);
@@ -127,48 +127,48 @@ TEST_SUITE("Uri")
     TEST_CASE("normalization")
     {
         // Test case normalization
-        Uri uri1("HTTP://ExAmPle.CoM/path");
-        Uri normalized1 = uri1.normalized();
+        const Uri uri1("HTTP://ExAmPle.CoM/path");
+        const Uri normalized1 = uri1.normalized();
         CHECK(normalized1.scheme() == "http");
         CHECK(normalized1.host() == "example.com");
 
         // Test port normalization (remove default ports)
-        Uri uri2("http://example.com:80/path");
-        Uri normalized2 = uri2.normalized();
+        const Uri uri2("http://example.com:80/path");
+        const Uri normalized2 = uri2.normalized();
         CHECK(!normalized2.hasExplicitPort());
 
         // Test path normalization
-        Uri uri3("http://example.com/a/b/../c/./d");
-        Uri normalized3 = uri3.normalized();
+        const Uri uri3("http://example.com/a/b/../c/./d");
+        const Uri normalized3 = uri3.normalized();
         CHECK(normalized3.path() == "/a/c/d");
     }
 
     TEST_CASE("resolving relative URIs")
     {
-        Uri base("http://example.com/a/b/c");
+        const Uri base("http://example.com/a/b/c");
 
         // Relative path
-        Uri rel1 = base.resolved(Uri("d"));
+        const Uri rel1 = base.resolved(Uri("d"));
         CHECK(rel1.toString() == "http://example.com/a/b/d");
 
         // Absolute path
-        Uri rel2 = base.resolved(Uri("/x/y/z"));
+        const Uri rel2 = base.resolved(Uri("/x/y/z"));
         CHECK(rel2.toString() == "http://example.com/x/y/z");
 
         // Up-level reference
-        Uri rel3 = base.resolved(Uri("../e/f"));
+        const Uri rel3 = base.resolved(Uri("../e/f"));
         CHECK(rel3.toString() == "http://example.com/a/e/f");
 
         // Authority component
-        Uri rel4 = base.resolved(Uri("//other.example.com/path"));
+        const Uri rel4 = base.resolved(Uri("//other.example.com/path"));
         CHECK(rel4.toString() == "http://other.example.com/path");
 
         // Fragment only
-        Uri rel5 = base.resolved(Uri("#fragment"));
+        const Uri rel5 = base.resolved(Uri("#fragment"));
         CHECK(rel5.toString() == "http://example.com/a/b/c#fragment");
 
         // Query only
-        Uri rel6 = base.resolved(Uri("?query=value"));
+        const Uri rel6 = base.resolved(Uri("?query=value"));
         CHECK(rel6.toString() == "http://example.com/a/b/c?query=value");
     }
 
@@ -176,18 +176,18 @@ TEST_SUITE("Uri")
     {
 #ifdef _WIN32
         // Windows paths
-        Uri winFile = Uri::fromLocalFile("C:\\folder\\file.txt");
+        const Uri winFile = Uri::fromLocalFile("C:\\folder\\file.txt");
         CHECK(winFile.isLocalFile());
         CHECK(winFile.scheme() == "file");
         CHECK(winFile.path() == "/C:/folder/file.txt");
         CHECK(winFile.toLocalFile() == "C:/folder/file.txt");
 
-        Uri winFileUNC = Uri::fromLocalFile("\\\\server\\share\\file.txt");
+        const Uri winFileUNC = Uri::fromLocalFile("\\\\server\\share\\file.txt");
         CHECK(winFileUNC.isLocalFile());
         CHECK(winFileUNC.path().find("//server/share/file.txt") != std::string::npos);
 #else
         // Unix paths
-        Uri unixFile = Uri::fromLocalFile("/usr/local/bin/app");
+        const Uri unixFile = Uri::fromLocalFile("/usr/local/bin/app");
         CHECK(unixFile.isLocalFile());
         CHECK(unixFile.scheme() == "file");
         CHECK(unixFile.path() == "/usr/local/bin/app");
@@ -195,7 +195,7 @@ TEST_SUITE("Uri")
 #endif
 
         // Relative path
-        Uri relativeFile = Uri::fromLocalFile("folder/file.txt");
+        const Uri relativeFile = Uri::fromLocalFile("folder/file.txt");
         CHECK(relativeFile.isLocalFile());
         CHECK(relativeFile.toLocalFile() == "/folder/file.txt"); // Will have added leading slash
     }
@@ -209,19 +209,19 @@ TEST_SUITE("Uri")
         CHECK(httpHandler->defaultPort() == "80");
 
         // Valid HTTP URI
-        Uri validHttpUri("http://example.com");
+        const Uri validHttpUri("http://example.com");
         CHECK(httpHandler->validate(validHttpUri));
 
         // Invalid HTTP URI (no host)
-        Uri invalidHttpUri("http:");
+        const Uri invalidHttpUri("http:");
         CHECK_FALSE(httpHandler->validate(invalidHttpUri));
 
         // Register custom handler
         class CustomSchemeHandler : public UriSchemeHandler
         {
         public:
-            std::string defaultPort() const override { return "9000"; }
-            bool validate(const Uri &uri) const override
+            [[nodiscard]] std::string defaultPort() const override { return "9000"; }
+            [[nodiscard]] bool validate(const Uri &uri) const override
             {
                 return !uri.host().empty() && uri.path().find("/api") == 0;
             }
@@ -235,8 +235,8 @@ TEST_SUITE("Uri")
         REQUIRE(customHandler != nullptr);
 
         // Check custom handler behavior
-        Uri validCustomUri("custom://example.com/api/resource");
-        Uri invalidCustomUri("custom://example.com/invalid");
+        const Uri validCustomUri("custom://example.com/api/resource");
+        const Uri invalidCustomUri("custom://example.com/invalid");
 
         CHECK(customHandler->validate(validCustomUri));
         CHECK_FALSE(customHandler->validate(invalidCustomUri));
@@ -245,22 +245,22 @@ TEST_SUITE("Uri")
     TEST_CASE("compatibility with existing Url class")
     {
         // Test conversion from Url to Uri
-        Url oldUrl("https://example.com/path");
-        Uri newUri(oldUrl.url());
+        const Url oldUrl("https://example.com/path");
+        const Uri newUri(oldUrl.url());
 
         CHECK(newUri.scheme() == oldUrl.scheme());
         // CHECK(newUri.path() == oldUrl.path());
         CHECK(newUri.host() + newUri.path() == oldUrl.fileName()); // Url mistakenly joins the host and path parts as fileName
 
         // Test conversion from Uri to Url
-        Uri uri("https://example.com/path?query=value#fragment");
-        Url url(uri.toString());
+        const Uri uri("https://example.com/path?query=value#fragment");
+        const Url url(uri.toString());
 
         CHECK(url.scheme() == uri.scheme());
 
         // Local file compatibility
-        Url oldFileUrl = Url::fromLocalFile("/path/to/file.txt");
-        Uri newFileUri = Uri::fromLocalFile("/path/to/file.txt");
+        const Url oldFileUrl = Url::fromLocalFile("/path/to/file.txt");
+        const Uri newFileUri = Uri::fromLocalFile("/path/to/file.txt");
 
         CHECK(oldFileUrl.isLocalFile());
         CHECK(newFileUri.isLocalFile());
@@ -270,12 +270,12 @@ TEST_SUITE("Uri")
     TEST_CASE("uri validation")
     {
         // Valid URIs
-        Uri validHttpUri("http://example.com/path");
-        Uri validHttpsUri("https://user:pass@example.com:8443/path?query=value#fragment");
-        Uri validFtpUri("ftp://example.com:21/");
-        Uri validFileUri = Uri::fromLocalFile("/path/to/file.txt");
-        Uri validRelativeUri("/relative/path");
-        Uri validPathOnlyUri("path/to/resource");
+        const Uri validHttpUri("http://example.com/path");
+        const Uri validHttpsUri("https://user:pass@example.com:8443/path?query=value#fragment");
+        const Uri validFtpUri("ftp://example.com:21/");
+        const Uri validFileUri = Uri::fromLocalFile("/path/to/file.txt");
+        const Uri validRelativeUri("/relative/path");
+        const Uri validPathOnlyUri("path/to/resource");
 
         CHECK(validHttpUri.isValid());
         CHECK(validHttpsUri.isValid());
@@ -285,9 +285,9 @@ TEST_SUITE("Uri")
         CHECK(validPathOnlyUri.isValid());
 
         // Invalid URIs
-        Uri emptyUri;
-        Uri invalidSchemeUri("inv@lid://example.com"); // Invalid scheme characters
-        Uri noHostHttpUri("http://"); // HTTP requires a host
+        const Uri emptyUri;
+        const Uri invalidSchemeUri("inv@lid://example.com"); // Invalid scheme characters
+        const Uri noHostHttpUri("http://"); // HTTP requires a host
 
         CHECK_FALSE(emptyUri.isValid());
         CHECK_FALSE(invalidSchemeUri.isValid());
@@ -297,8 +297,8 @@ TEST_SUITE("Uri")
         class CustomSchemeHandler : public UriSchemeHandler
         {
         public:
-            std::string defaultPort() const override { return "1234"; }
-            bool validate(const Uri &uri) const override
+            [[nodiscard]] std::string defaultPort() const override { return "1234"; }
+            [[nodiscard]] bool validate(const Uri &uri) const override
             {
                 return uri.path().find(".custom") != std::string::npos;
             }
@@ -307,8 +307,8 @@ TEST_SUITE("Uri")
         UriSchemeRegistry::instance().registerSchemeHandler(
                 "custom", std::make_unique<CustomSchemeHandler>());
 
-        Uri validCustomUri("custom://example.com/file.custom");
-        Uri invalidCustomUri("custom://example.com/file.txt");
+        const Uri validCustomUri("custom://example.com/file.custom");
+        const Uri invalidCustomUri("custom://example.com/file.txt");
 
         CHECK(validCustomUri.isValid());
         CHECK_FALSE(invalidCustomUri.isValid());
