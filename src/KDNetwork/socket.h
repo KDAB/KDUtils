@@ -79,7 +79,7 @@ public:
     inline std::error_code lastErrorCode() const noexcept { return m_lastErrorCode; }
 
     inline bool isBlocking() const noexcept { return m_isBlocking; }
-    bool setBlocking(bool enabled) noexcept;
+    bool setBlocking(bool enabled);
 
     enum class SocketType : std::uint8_t {
         Unknown = 0,

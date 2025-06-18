@@ -42,7 +42,12 @@ Socket::Socket(SocketType type)
 
 Socket::~Socket()
 {
-    cleanupSocket();
+    try {
+        cleanupSocket();
+    } catch (...) {
+        // Destructors must not throw; swallow all exceptions.
+        KDUtils::Logger::logger("Socket")->error("Socket destructor threw an exception");
+    }
 }
 
 Socket::Socket(Socket &&other) noexcept
@@ -162,7 +167,7 @@ bool Socket::bind(const sockaddr *addr, socklen_t addrlen)
     return true;
 }
 
-bool Socket::setBlocking(bool enabled) noexcept
+bool Socket::setBlocking(bool enabled)
 {
     if (!isValid()) {
         setError(SocketError::InvalidSocketError);
