@@ -52,6 +52,7 @@ public:
     int m_y;
 };
 
+namespace {
 void populateEventQueueWithNEvents(EventQueue &eventQueue, int n, std::vector<PayloadEvent *> &events, std::vector<std::unique_ptr<Object>> &targets)
 {
     for (int i = 0; i < n; ++i) {
