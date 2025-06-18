@@ -24,7 +24,7 @@ public:
     OpenAiClient(const std::string_view &apiKey);
     ~OpenAiClient();
 
-    bool createResponse(const std::string_view &prompt, std::function<void(const std::string &)> callback);
+    bool createResponse(const std::string_view &prompt, const std::function<void(const std::string &)> &callback);
 
 private:
     const KDUtils::Uri m_baseUrl{ "https://api.openai.com/v1/" };

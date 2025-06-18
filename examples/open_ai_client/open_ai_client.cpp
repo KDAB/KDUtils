@@ -36,7 +36,7 @@ OpenAiClient::~OpenAiClient()
     m_client.cancelAll();
 }
 
-bool OpenAiClient::createResponse(const std::string_view &prompt, std::function<void(const std::string &)> callback)
+bool OpenAiClient::createResponse(const std::string_view &prompt, const std::function<void(const std::string &)> &callback)
 {
     const Uri url = m_baseUrl.resolved(Uri{ "responses" });
 
