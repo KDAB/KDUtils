@@ -32,7 +32,7 @@ TEST_CASE("HttpRequest construction and basic methods")
 {
     SUBCASE("Default constructor")
     {
-        HttpRequest request;
+        const HttpRequest request;
         CHECK(request.url().toString() == "");
         CHECK(request.method() == HttpMethod::Get);
         CHECK(request.timeout() == std::chrono::milliseconds(30000));
@@ -46,7 +46,7 @@ TEST_CASE("HttpRequest construction and basic methods")
     SUBCASE("Constructor with URL and method")
     {
         Uri url("https://example.com/api");
-        HttpRequest request(url, HttpMethod::Post);
+        const HttpRequest request(url, HttpMethod::Post);
         CHECK(request.url() == url);
         CHECK(request.method() == HttpMethod::Post);
     }
