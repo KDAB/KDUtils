@@ -37,7 +37,7 @@ bool Server::start()
 
 void Server::newConnection(std::unique_ptr<KDNetwork::TcpSocket> socket)
 {
-    static std::vector<std::string> responses = {
+    static const std::vector<std::string> responses = {
         "Good news, everyone!",
         "Why not Zoidberg?",
         "Bite my shiny metal ass!",
@@ -54,7 +54,7 @@ void Server::newConnection(std::unique_ptr<KDNetwork::TcpSocket> socket)
     std::uniform_int_distribution<> distrib(0, static_cast<int>(responses.size()) - 1);
     const int randomIndex = distrib(gen);
 
-    const std::string message = responses[randomIndex];
+    const std::string &message = responses[randomIndex];
     std::cout << "New connection accepted. Sending message: \"" << message << "\"" << std::endl;
 
     socket->write(KDUtils::ByteArray{ message });
