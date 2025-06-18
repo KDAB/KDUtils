@@ -12,6 +12,7 @@
 #include <KDNetwork/websocket_common.h>
 
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <random>
 
@@ -128,7 +129,7 @@ KDUtils::ByteArray WebSocketFrame::encode(bool maskFrame) const
     }
 
     // Add masking key if needed
-    uint8_t maskingKey[4] = { 0 };
+    std::array<uint8_t, 4> maskingKey = { 0 };
     if (maskFrame) {
         // Generate random masking key
         std::random_device rd;
@@ -139,7 +140,7 @@ KDUtils::ByteArray WebSocketFrame::encode(bool maskFrame) const
             maskingKey[i] = static_cast<uint8_t>(dist(gen));
         }
 
-        frame.append(maskingKey, 4);
+        frame.append(maskingKey.data(), 4);
     }
 
     // Add payload (masked if required)
@@ -166,10 +167,10 @@ std::optional<WebSocketFrame> WebSocketFrame::decode(const KDUtils::ByteArray &d
     }
 
     // Parse first byte
-    uint8_t firstByte = data[0];
+    const uint8_t firstByte = data[0];
     const bool fin = (firstByte & 0x80) != 0;
     // uint8_t rsv = (firstByte & 0x70) >> 4; // RSV1-3 bits
-    const OpCode opCode = static_cast<OpCode>(firstByte & 0x0F);
+    const auto opCode = static_cast<OpCode>(firstByte & 0x0F);
 
     // Parse second byte
     const uint8_t secondByte = data[1];
@@ -221,9 +222,9 @@ std::optional<WebSocketFrame> WebSocketFrame::decode(const KDUtils::ByteArray &d
     }
 
     // Extract the masking key if present
-    uint8_t maskingKey[4] = { 0 };
+    std::array<uint8_t, 4> maskingKey = { 0 };
     if (masked) {
-        std::memcpy(maskingKey, data.data() + headerSize - 4, 4);
+        std::memcpy(maskingKey.data(), data.data() + headerSize - 4, 4);
     }
 
     // Extract and unmask the payload if necessary
