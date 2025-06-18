@@ -17,3 +17,8 @@ add_executable(
 target_link_libraries(
     ${PROJECT_NAME} KDUtils::KDNetwork nlohmann_json::nlohmann_json
 )
+
+# On windows, define _CRT_SECURE_NO_WARNINGS to avoid warnings about std::getenv
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
+endif()
