@@ -59,7 +59,7 @@ public:
      *
      * @param session Optional session to use. If nullptr, a new session is created.
      */
-    explicit WebSocketClient(std::shared_ptr<HttpSession> session = nullptr);
+    explicit WebSocketClient(const std::shared_ptr<HttpSession> &session = nullptr);
 
     /**
      * @brief Destructor
@@ -179,7 +179,7 @@ public:
 
 private:
     // Setup socket after successful connection
-    void setupSocket(std::shared_ptr<Socket> socket, const KDUtils::ByteArray &excessData = KDUtils::ByteArray());
+    void setupSocket(const std::shared_ptr<Socket> &socket, const KDUtils::ByteArray &excessData = KDUtils::ByteArray());
 
     // Process incoming data from the socket
     void processIncomingData();
@@ -206,7 +206,7 @@ private:
     void startPingTimer();
 
     // Calculate the Accept key for WebSocket handshake
-    std::string calculateAcceptKey(const std::string &key);
+    static std::string calculateAcceptKey(const std::string &key);
 
     // State
     State m_state = State::Closed;
