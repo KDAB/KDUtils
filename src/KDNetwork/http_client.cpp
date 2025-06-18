@@ -18,7 +18,7 @@
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/timer.h>
 
-#include <KDUtils/logger.h>
+#include <KDUtils/logging.h>
 #include <KDUtils/uri.h>
 
 #include <chrono>
@@ -149,16 +149,16 @@ HttpClient::~HttpClient()
         cancelAll();
     } catch (...) {
         // Suppress all exceptions in destructor but log them
-        KDUtils::Logger::logger("HttpClient").error("Exception during HttpClient destruction");
+        KDUtils::Logger::logger("HttpClient")->error("Exception during HttpClient destruction");
     }
 }
 
 std::future<HttpResponse> HttpClient::send(const HttpRequest &request,
-                                           std::function<void(const HttpResponse &)> callback)
+                                           const std::function<void(const HttpResponse &)> &callback)
 {
     // Create promise for the future
     std::promise<HttpResponse> promise;
-    std::future<HttpResponse> future = promise.get_future();
+    std::future<HttpResponse> future = promise.get_future(); // NOLINT(bugprone-unused-local-non-trivial-variable)
 
     // Create request state
     auto state = createRequestState(request, callback, std::move(promise));
@@ -172,17 +172,17 @@ std::future<HttpResponse> HttpClient::send(const HttpRequest &request,
 std::future<HttpResponse> HttpClient::sendWithSseClient(
         const HttpRequest &request,
         std::shared_ptr<SseClient> sseClient,
-        std::function<void(const HttpResponse &)> callback)
+        const std::function<void(const HttpResponse &)> &callback)
 {
     // Create promise for the future
     std::promise<HttpResponse> promise;
-    std::future<HttpResponse> future = promise.get_future();
+    std::future<HttpResponse> future = promise.get_future(); // NOLINT(bugprone-unused-local-non-trivial-variable)
 
     // Create request state
     auto state = createRequestState(request, callback, std::move(promise));
 
     // Store the reference to the SSE client
-    state->sseClient = sseClient;
+    state->sseClient = std::move(sseClient);
 
     // Start the request (async)
     startRequest(state);
@@ -190,15 +190,16 @@ std::future<HttpResponse> HttpClient::sendWithSseClient(
     return future;
 }
 
+// NOLINTBEGIN(readability-convert-member-functions-to-static)
 std::future<HttpResponse> HttpClient::get(const KDUtils::Uri &url,
-                                          std::function<void(const HttpResponse &)> callback)
+                                          const std::function<void(const HttpResponse &)> &callback)
 {
     const HttpRequest request(url, HttpMethod::Get);
     return send(request, callback);
 }
 
 std::future<HttpResponse> HttpClient::head(const KDUtils::Uri &url,
-                                           std::function<void(const HttpResponse &)> callback)
+                                           const std::function<void(const HttpResponse &)> &callback)
 {
     const HttpRequest request(url, HttpMethod::Head);
     return send(request, callback);
@@ -207,7 +208,7 @@ std::future<HttpResponse> HttpClient::head(const KDUtils::Uri &url,
 std::future<HttpResponse> HttpClient::post(const KDUtils::Uri &url,
                                            const KDUtils::ByteArray &data,
                                            const std::string &contentType,
-                                           std::function<void(const HttpResponse &)> callback)
+                                           const std::function<void(const HttpResponse &)> &callback)
 {
     HttpRequest request(url, HttpMethod::Post);
     request.setBody(data);
@@ -217,7 +218,7 @@ std::future<HttpResponse> HttpClient::post(const KDUtils::Uri &url,
 
 std::future<HttpResponse> HttpClient::post(const KDUtils::Uri &url,
                                            const KDUtils::ByteArray &data,
-                                           std::function<void(const HttpResponse &)> callback)
+                                           const std::function<void(const HttpResponse &)> &callback)
 {
     HttpRequest request(url, HttpMethod::Post);
     request.setBody(data);
@@ -227,7 +228,7 @@ std::future<HttpResponse> HttpClient::post(const KDUtils::Uri &url,
 std::future<HttpResponse> HttpClient::put(const KDUtils::Uri &url,
                                           const KDUtils::ByteArray &data,
                                           const std::string &contentType,
-                                          std::function<void(const HttpResponse &)> callback)
+                                          const std::function<void(const HttpResponse &)> &callback)
 {
     HttpRequest request(url, HttpMethod::Put);
     request.setBody(data);
@@ -236,7 +237,7 @@ std::future<HttpResponse> HttpClient::put(const KDUtils::Uri &url,
 }
 
 std::future<HttpResponse> HttpClient::deleteResource(const KDUtils::Uri &url,
-                                                     std::function<void(const HttpResponse &)> callback)
+                                                     const std::function<void(const HttpResponse &)> &callback)
 {
     const HttpRequest request(url, HttpMethod::Delete);
     return send(request, callback);
@@ -245,7 +246,7 @@ std::future<HttpResponse> HttpClient::deleteResource(const KDUtils::Uri &url,
 std::future<HttpResponse> HttpClient::patch(const KDUtils::Uri &url,
                                             const KDUtils::ByteArray &data,
                                             const std::string &contentType,
-                                            std::function<void(const HttpResponse &)> callback)
+                                            const std::function<void(const HttpResponse &)> &callback)
 {
     HttpRequest request(url, HttpMethod::Patch);
     request.setBody(data);
@@ -254,11 +255,12 @@ std::future<HttpResponse> HttpClient::patch(const KDUtils::Uri &url,
 }
 
 std::future<HttpResponse> HttpClient::options(const KDUtils::Uri &url,
-                                              std::function<void(const HttpResponse &)> callback)
+                                              const std::function<void(const HttpResponse &)> &callback)
 {
     const HttpRequest request(url, HttpMethod::Options);
     return send(request, callback);
 }
+// NOLINTEND(readability-convert-member-functions-to-static)
 
 void HttpClient::cancelAll()
 {
@@ -274,14 +276,14 @@ std::shared_ptr<HttpSession> HttpClient::session() const
     return m_session;
 }
 
-void HttpClient::setSession(std::shared_ptr<HttpSession> session)
+void HttpClient::setSession(const std::shared_ptr<HttpSession> &session)
 {
     m_session = session ? session : std::make_shared<HttpSession>();
 }
 
 std::shared_ptr<HttpClient::RequestState> HttpClient::createRequestState(
         const HttpRequest &request,
-        std::function<void(const HttpResponse &)> callback,
+        const std::function<void(const HttpResponse &)> &callback,
         std::promise<HttpResponse> promise)
 {
     auto state = std::make_shared<RequestState>(request, callback, std::move(promise));
@@ -315,7 +317,7 @@ std::shared_ptr<HttpClient::RequestState> HttpClient::createRequestState(
     return state;
 }
 
-void HttpClient::startRequest(std::shared_ptr<RequestState> state)
+void HttpClient::startRequest(const std::shared_ptr<RequestState> &state)
 {
     // Apply session defaults
     auto modifiableRequest = state->request;
@@ -422,7 +424,7 @@ void HttpClient::startRequest(std::shared_ptr<RequestState> state)
     }
 }
 
-void HttpClient::finishRequest(std::shared_ptr<RequestState> state)
+void HttpClient::finishRequest(const std::shared_ptr<RequestState> &state)
 {
     // Stop timeout timer
     if (state->timeoutTimer) {
@@ -471,11 +473,11 @@ void HttpClient::finishRequest(std::shared_ptr<RequestState> state)
         state->responsePromise.set_value(state->response);
     } catch (const std::future_error &) {
         // Promise might already be set (e.g., on timeout)
-        KDUtils::Logger::logger("HttpClient").warning("Promise already set for request, ignoring");
+        KDUtils::Logger::logger("HttpClient")->warn("Promise already set for request, ignoring");
     }
 }
 
-void HttpClient::failRequest(std::shared_ptr<RequestState> state, const std::string &errorString)
+void HttpClient::failRequest(const std::shared_ptr<RequestState> &state, const std::string &errorString)
 {
     // Stop timeout timer
     if (state->timeoutTimer) {
@@ -514,11 +516,11 @@ void HttpClient::failRequest(std::shared_ptr<RequestState> state, const std::str
         state->responsePromise.set_value(state->response);
     } catch (const std::future_error &) {
         // Promise might already be set (e.g., on timeout or cancellation)
-        KDUtils::Logger::logger("HttpClient").warning("Promise already set for request, ignoring");
+        KDUtils::Logger::logger("HttpClient")->warn("Promise already set for request, ignoring");
     }
 }
 
-void HttpClient::followRedirect(std::shared_ptr<RequestState> state)
+void HttpClient::followRedirect(const std::shared_ptr<RequestState> &state)
 {
     auto redirectUrl = state->response.redirectUrl();
     if (!redirectUrl) {
@@ -686,7 +688,7 @@ void HttpClient::followRedirect(std::shared_ptr<RequestState> state)
     startRequest(state);
 }
 
-void HttpClient::onReadyRead(std::shared_ptr<RequestState> state)
+void HttpClient::onReadyRead(const std::shared_ptr<RequestState> &state)
 {
     auto tcpSocket = std::dynamic_pointer_cast<TcpSocket>(state->socket);
     if (!tcpSocket) {
@@ -732,7 +734,7 @@ void HttpClient::onReadyRead(std::shared_ptr<RequestState> state)
     }
 }
 
-void HttpClient::onSocketConnected(std::shared_ptr<RequestState> state)
+void HttpClient::onSocketConnected(const std::shared_ptr<RequestState> &state)
 {
     auto tcpSocket = std::dynamic_pointer_cast<TcpSocket>(state->socket);
     if (!tcpSocket) {
@@ -750,12 +752,12 @@ void HttpClient::onSocketConnected(std::shared_ptr<RequestState> state)
     }
 }
 
-void HttpClient::onSocketError(std::shared_ptr<RequestState> state, std::error_code ec)
+void HttpClient::onSocketError(const std::shared_ptr<RequestState> &state, std::error_code ec)
 {
     failRequest(state, "Socket error: " + ec.message());
 }
 
-void HttpClient::onTimeout(std::shared_ptr<RequestState> state)
+void HttpClient::onTimeout(const std::shared_ptr<RequestState> &state)
 {
     failRequest(state, "Request timeout");
 }
@@ -790,7 +792,7 @@ std::shared_ptr<Socket> HttpClient::createSocket(bool secure, const std::string 
     }
 }
 
-void HttpClient::setupSocketCallbacks(std::shared_ptr<RequestState> state)
+void HttpClient::setupSocketCallbacks(const std::shared_ptr<RequestState> &state)
 {
     auto tcpSocket = std::dynamic_pointer_cast<TcpSocket>(state->socket);
     if (!tcpSocket) {
@@ -811,7 +813,7 @@ void HttpClient::setupSocketCallbacks(std::shared_ptr<RequestState> state)
     });
 }
 
-void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
+void HttpClient::setupParserCallbacks(const std::shared_ptr<RequestState> &state)
 {
     // Header complete callback
     state->parser->setHeaderCompleteCallback([this, state](const std::string &firstLine,
@@ -891,7 +893,7 @@ void HttpClient::setupParserCallbacks(std::shared_ptr<RequestState> state)
                 state->responsePromise.set_value(state->response);
             } catch (const std::future_error &) {
                 // Promise might already be set
-                KDUtils::Logger::logger("HttpClient").warning("Promise already set for WebSocket upgrade request, ignoring");
+                KDUtils::Logger::logger("HttpClient")->warn("Promise already set for WebSocket upgrade request, ignoring");
             }
 
             // Stop the timer
