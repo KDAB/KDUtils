@@ -38,7 +38,12 @@ TcpServer::TcpServer()
 
 TcpServer::~TcpServer()
 {
-    close();
+    try {
+        close();
+    } catch (...) {
+        // Suppress all exceptions in destructor but log them
+        KDUtils::Logger::logger("TcpServer")->error("Exception in TcpServer destructor");
+    }
 }
 
 void TcpServer::setNewConnectionCallback(NewConnectionCallback callback)
