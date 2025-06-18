@@ -108,7 +108,7 @@ bool HttpCookieJar::removeCookie(const HttpCookie &cookie)
     }
 
     // Remove the cookie
-    m_cookies.erase(m_cookies.begin() + *existingIdx);
+    m_cookies.erase(m_cookies.begin() + static_cast<std::vector<HttpCookie>::difference_type>(*existingIdx));
     return true;
 }
 
