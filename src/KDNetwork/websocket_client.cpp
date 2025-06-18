@@ -23,6 +23,7 @@
 #include <openssl/sha.h>
 
 #include <algorithm>
+#include <array>
 #include <iomanip>
 #include <random>
 #include <sstream>
@@ -30,9 +31,9 @@
 namespace {
 KDUtils::ByteArray sha1(const KDUtils::ByteArray &data)
 {
-    unsigned char hash[SHA_DIGEST_LENGTH];
-    SHA1(data.data(), data.size(), hash);
-    return KDUtils::ByteArray(hash, SHA_DIGEST_LENGTH);
+    std::array<unsigned char, SHA_DIGEST_LENGTH> hash;
+    SHA1(data.data(), data.size(), hash.data());
+    return KDUtils::ByteArray(hash.data(), SHA_DIGEST_LENGTH);
 }
 
 KDUtils::ByteArray sha1(const std::string &data)
@@ -43,7 +44,7 @@ KDUtils::ByteArray sha1(const std::string &data)
 
 namespace KDNetwork {
 
-WebSocketClient::WebSocketClient(std::shared_ptr<HttpSession> session)
+WebSocketClient::WebSocketClient(const std::shared_ptr<HttpSession> &session)
     : m_state(State::Closed)
     , m_httpClient(std::make_shared<HttpClient>(session))
     , m_lastPongReceived(std::chrono::steady_clock::now())
@@ -52,7 +53,12 @@ WebSocketClient::WebSocketClient(std::shared_ptr<HttpSession> session)
 
 WebSocketClient::~WebSocketClient()
 {
-    forceClose();
+    try {
+        forceClose();
+    } catch (...) {
+        // Suppress all exceptions in destructor but log it
+        KDUtils::Logger::logger("WebsocketClient")->error("Exception in WebSocketClient destructor");
+    }
 }
 
 std::future<bool> WebSocketClient::connectToUrl(const KDUtils::Uri &url)
@@ -110,37 +116,50 @@ std::future<bool> WebSocketClient::connectToUrl(const KDUtils::Uri &url)
     request.setHeader("Sec-WebSocket-Key", key);
 
     // Send the request
+    // Disable the clang-tidy check for bugprone-exception-escape (seems buggy)
+    // NOLINTBEGIN(bugprone-exception-escape)
     m_httpClient->send(request, [this, promise, key](const HttpResponse &response) {
-        // Check if upgrade was successful
-        if (response.statusCode() == 101 &&
-            response.hasHeader("Upgrade") &&
-            response.header("Upgrade").find("websocket") != std::string::npos &&
-            response.hasHeader("Sec-WebSocket-Accept")) {
+        try {
+            // Check if upgrade was successful
+            if (response.statusCode() == 101 &&
+                response.hasHeader("Upgrade") &&
+                response.header("Upgrade").find("websocket") != std::string::npos &&
+                response.hasHeader("Sec-WebSocket-Accept")) {
 
-            // Verify the Sec-WebSocket-Accept header
-            const std::string expectedAccept = calculateAcceptKey(key);
-            if (response.header("Sec-WebSocket-Accept") == expectedAccept) {
-                // Take ownership of the socket from HttpClient
-                auto socket = response.takeSocket();
-                if (socket) {
-                    // Check if there's any excess data from the HTTP response (might contain initial WebSocket frames)
-                    const KDUtils::ByteArray excessData = response.takeExcessData();
+                // Verify the Sec-WebSocket-Accept header
+                const std::string expectedAccept = calculateAcceptKey(key);
+                if (response.header("Sec-WebSocket-Accept") == expectedAccept) {
+                    // Take ownership of the socket from HttpClient
+                    auto socket = response.takeSocket();
+                    if (socket) {
+                        // Check if there's any excess data from the HTTP response (might contain initial WebSocket frames)
+                        const KDUtils::ByteArray excessData = response.takeExcessData();
 
-                    setupSocket(socket, excessData);
-                    promise->set_value(true);
-                    return;
+                        setupSocket(socket, excessData);
+                        promise->set_value(true);
+                        return;
+                    }
+                } else {
+                    KDUtils::Logger::logger("WebsocketClient")->warn("Invalid Sec-WebSocket-Accept header");
                 }
             } else {
-                KDUtils::Logger::logger("WebsocketClient")->warn("Invalid Sec-WebSocket-Accept header");
+                KDUtils::Logger::logger("WebsocketClient")->warn("Handshake failed, server returned status", response.statusCode());
             }
-        } else {
-            KDUtils::Logger::logger("WebsocketClient")->warn("Handshake failed, server returned status", response.statusCode());
-        }
 
-        // If we get here, the connection failed
-        m_state = State::Closed;
-        promise->set_value(false);
+            // If we get here, the connection failed
+            m_state = State::Closed;
+            promise->set_value(false);
+        } catch (const std::exception &ex) {
+            KDUtils::Logger::logger("WebsocketClient")->warn("Exception in WebSocket handshake lambda:", ex.what());
+            m_state = State::Closed;
+            promise->set_value(false);
+        } catch (...) {
+            KDUtils::Logger::logger("WebsocketClient")->warn("Unknown exception in WebSocket handshake lambda");
+            m_state = State::Closed;
+            promise->set_value(false);
+        }
     });
+    // NOLINTEND(bugprone-exception-escape)
 
     return future;
 }
@@ -215,7 +234,7 @@ void WebSocketClient::setAutoReconnect(bool enabled)
     m_autoReconnect = enabled;
 }
 
-void WebSocketClient::setupSocket(std::shared_ptr<Socket> socket, const KDUtils::ByteArray &excessData)
+void WebSocketClient::setupSocket(const std::shared_ptr<Socket> &socket, const KDUtils::ByteArray &excessData)
 {
     auto tcpSocket = std::dynamic_pointer_cast<TcpSocket>(socket);
     if (!tcpSocket) {
