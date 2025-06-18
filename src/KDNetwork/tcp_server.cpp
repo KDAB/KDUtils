@@ -319,23 +319,26 @@ void TcpServer::onIncomingConnection()
     socklen_t clientAddrLen = sizeof(clientAddr);
 
     // Accept the connection
-    const int clientFd = accept(m_listeningFd, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
-
-    if (clientFd < 0) {
 #if defined(KD_PLATFORM_WIN32)
+    const auto clientFd = accept(m_listeningFd, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
+    if (clientFd == INVALID_SOCKET) {
         const int error = WSAGetLastError();
         // Connection aborted or would block is not a fatal error
         if (error != WSAEINTR && error != WSAEWOULDBLOCK && error != WSAECONNABORTED) {
             setError(SocketError::ServerAcceptError, error);
         }
+        return; // Wait for next incoming connection
+    }
 #else
+    const int clientFd = accept(m_listeningFd, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
+    if (clientFd < 0) {
         // EAGAIN, EWOULDBLOCK, or EINTR means we should try again later, not a real error
         if (errno != EAGAIN && errno != EWOULDBLOCK && errno != EINTR) {
             setError(SocketError::ServerAcceptError, errno);
         }
-#endif
         return; // Wait for next incoming connection
     }
+#endif
 
     // Creating a socket for the new connection
     auto newSocket = std::make_unique<TcpSocket>(clientFd, Socket::State::Connected);
