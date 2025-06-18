@@ -110,7 +110,10 @@ TEST_CASE("HttpCookie Parse from Set-Cookie header")
     {
         const Uri url("https://example.com/path");
         auto cookie = HttpCookie::fromSetCookieHeader("name=value", url);
-        REQUIRE(cookie.has_value());
+        if (!cookie.has_value()) {
+            FAIL("Failed to parse cookie");
+            return;
+        }
         CHECK(cookie->name() == "name");
         CHECK(cookie->value() == "value");
         CHECK(cookie->domain() == "example.com");
@@ -127,7 +130,10 @@ TEST_CASE("HttpCookie Parse from Set-Cookie header")
         auto cookie = HttpCookie::fromSetCookieHeader(
                 "name=value; Domain=.example.com; Path=/test; Secure; HttpOnly; SameSite=Strict",
                 url);
-        REQUIRE(cookie.has_value());
+        if (!cookie.has_value()) {
+            FAIL("Failed to parse cookie");
+            return;
+        }
         CHECK(cookie->name() == "name");
         CHECK(cookie->value() == "value");
         CHECK(cookie->domain() == "example.com");
@@ -150,7 +156,10 @@ TEST_CASE("HttpCookie Parse from Set-Cookie header")
         auto cookie = HttpCookie::fromSetCookieHeader(
                 "name=value; Max-Age=3600",
                 url);
-        REQUIRE(cookie.has_value());
+        if (!cookie.has_value()) {
+            FAIL("Failed to parse cookie");
+            return;
+        }
         CHECK(cookie->name() == "name");
         CHECK(cookie->value() == "value");
         CHECK(cookie->expirationDate().has_value());
@@ -169,20 +178,32 @@ TEST_CASE("HttpCookie Parse from Set-Cookie header")
         const Uri url("https://example.com/path");
 
         auto laxCookie = HttpCookie::fromSetCookieHeader("name=value; SameSite=Lax", url);
-        REQUIRE(laxCookie.has_value());
+        if (!laxCookie.has_value()) {
+            FAIL("Failed to parse cookie");
+            return;
+        }
         CHECK(laxCookie->sameSite() == HttpCookie::SameSitePolicy::Lax);
 
         auto strictCookie = HttpCookie::fromSetCookieHeader("name=value; SameSite=Strict", url);
-        REQUIRE(strictCookie.has_value());
+        if (!strictCookie.has_value()) {
+            FAIL("Failed to parse cookie");
+            return;
+        }
         CHECK(strictCookie->sameSite() == HttpCookie::SameSitePolicy::Strict);
 
         auto noneCookie = HttpCookie::fromSetCookieHeader("name=value; SameSite=None", url);
-        REQUIRE(noneCookie.has_value());
+        if (!noneCookie.has_value()) {
+            FAIL("Failed to parse cookie");
+            return;
+        }
         CHECK(noneCookie->sameSite() == HttpCookie::SameSitePolicy::None);
 
         // Invalid SameSite value should default to None
         auto invalidCookie = HttpCookie::fromSetCookieHeader("name=value; SameSite=Invalid", url);
-        REQUIRE(invalidCookie.has_value());
+        if (!invalidCookie.has_value()) {
+            FAIL("Failed to parse cookie");
+            return;
+        }
         CHECK(invalidCookie->sameSite() == HttpCookie::SameSitePolicy::None);
     }
 }
