@@ -33,13 +33,26 @@ struct StringMaker<KDNetwork::IpAddress> {
 };
 } // namespace doctest
 
+namespace {
 // Environment variable to control whether to run network tests
 // Set KDUTILS_RUN_NETWORK_TESTS=1 to enable tests with real network requests
 bool shouldRunNetworkTests()
 {
+#if defined(_WIN32)
+    char *env = nullptr;
+    size_t len = 0;
+    const errno_t err = _dupenv_s(&env, &len, "KDUTILS_RUN_NETWORK_TESTS");
+    const bool result = (err == 0 && env != nullptr && std::string(env) == "1");
+    if (env) {
+        free(env);
+    }
+    return result;
+#else
     const char *env = std::getenv("KDUTILS_RUN_NETWORK_TESTS");
     return env != nullptr && std::string(env) == "1";
+#endif
 }
+} // namespace
 
 using namespace KDFoundation;
 using namespace KDNetwork;
@@ -54,7 +67,7 @@ public:
     bool publicInitializeAres() { return initializeAres(); }
 
     // Mock functions to simulate c-ares behavior without actual network calls
-    bool mockLookup(const std::string &hostname, LookupCallback callback)
+    bool mockLookup(const std::string &hostname, const LookupCallback &callback)
     {
         if (m_failNextLookup) {
             return false;
@@ -62,26 +75,36 @@ public:
 
         if (m_simulateDelayedResponse) {
             // Schedule a future response
+            // Disable the bugprone-exception-escape clang-tidy check here. It seems to be a bug in clang-tidy
+            // as we catch all exceptions in the thread.
+            // NOLINTBEGIN(bugprone-exception-escape)
             std::thread([this, hostname, callback]() {
-                std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                try {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-                std::error_code ec;
-                AddressInfoList addresses;
+                    std::error_code ec;
+                    AddressInfoList addresses;
 
-                if (m_simulateError) {
-                    ec = std::error_code(1, std::generic_category());
-                } else {
-                    if (hostname == "localhost" || hostname == "127.0.0.1") {
-                        addresses.push_back(IpAddress{ "127.0.0.1" });
-                    } else if (hostname == "example.com") {
-                        addresses.push_back(IpAddress{ "93.184.216.34" });
+                    if (m_simulateError) {
+                        ec = std::error_code(1, std::generic_category());
                     } else {
-                        addresses.push_back(IpAddress{ "192.168.1.1" });
+                        if (hostname == "localhost" || hostname == "127.0.0.1") {
+                            addresses.push_back(IpAddress{ "127.0.0.1" });
+                        } else if (hostname == "example.com") {
+                            addresses.push_back(IpAddress{ "93.184.216.34" });
+                        } else {
+                            addresses.push_back(IpAddress{ "192.168.1.1" });
+                        }
                     }
-                }
 
-                callback(ec, addresses);
+                    callback(ec, addresses);
+                } catch (const std::exception &e) {
+                    std::cerr << "Exception in mockLookup thread: " << e.what() << std::endl;
+                } catch (...) {
+                    std::cerr << "Unknown exception in mockLookup thread." << std::endl;
+                }
             }).detach();
+            // NOLINTEND(bugprone-exception-escape)
 
             return true;
         }
@@ -127,8 +150,8 @@ TEST_CASE("DNS Resolver Basic Tests")
 {
     SUBCASE("Can create a DnsResolver")
     {
-        CoreApplication app;
-        DnsResolver resolver;
+        const CoreApplication app;
+        const DnsResolver resolver;
 
         // The resolver should be created successfully without any errors
         CHECK_MESSAGE(true, "DnsResolver was created successfully");
@@ -136,7 +159,7 @@ TEST_CASE("DNS Resolver Basic Tests")
 
     SUBCASE("Mock initialization test")
     {
-        CoreApplication app;
+        const CoreApplication app;
         MockDnsResolver resolver;
 
         // Test the initialization of the c-ares library
@@ -146,7 +169,7 @@ TEST_CASE("DNS Resolver Basic Tests")
 
 TEST_CASE("DNS Resolution Tests with Mock")
 {
-    CoreApplication app;
+    const CoreApplication app;
 
     SUBCASE("Successful synchronous lookup")
     {
@@ -158,7 +181,7 @@ TEST_CASE("DNS Resolution Tests with Mock")
 
         // Perform a lookup that will complete immediately
         bool result = resolver.mockLookup("example.com", [&promise](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
-            bool success = !ec && !addresses.empty();
+            const bool success = !ec && !addresses.empty();
             promise.set_value(success);
         });
 
@@ -171,7 +194,7 @@ TEST_CASE("DNS Resolution Tests with Mock")
         MockDnsResolver resolver;
         resolver.setFailNextLookup(true);
 
-        bool result = resolver.mockLookup("example.com", [](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
+        bool result = resolver.mockLookup("example.com", [](std::error_code /*ec*/, const DnsResolver::AddressInfoList & /*addresses*/) {
             // This callback should not be called
             REQUIRE(false);
         });
@@ -187,8 +210,8 @@ TEST_CASE("DNS Resolution Tests with Mock")
         std::promise<bool> promise;
         std::future<bool> future = promise.get_future();
 
-        bool result = resolver.mockLookup("example.com", [&promise](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
-            bool hasError = ec.value() != 0;
+        bool result = resolver.mockLookup("example.com", [&promise](std::error_code ec, const DnsResolver::AddressInfoList & /*addresses*/) {
+            const bool hasError = ec.value() != 0;
             promise.set_value(hasError);
         });
 
@@ -205,7 +228,7 @@ TEST_CASE("DNS Resolution Tests with Mock")
         std::future<bool> future = promise.get_future();
 
         bool result = resolver.mockLookup("example.com", [&promise](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
-            bool success = !ec && !addresses.empty();
+            const bool success = !ec && !addresses.empty();
             promise.set_value(success);
         });
 
@@ -227,12 +250,12 @@ TEST_CASE("DNS Resolution Tests with Mock")
         std::future<bool> future2 = promise2.get_future();
 
         bool result1 = resolver.mockLookup("example.com", [&promise1](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
-            bool success = !ec && !addresses.empty();
+            const bool success = !ec && !addresses.empty();
             promise1.set_value(success);
         });
 
         bool result2 = resolver.mockLookup("localhost", [&promise2](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
-            bool success = !ec && !addresses.empty();
+            const bool success = !ec && !addresses.empty();
             promise2.set_value(success);
         });
 
@@ -255,7 +278,7 @@ TEST_CASE("DNS Resolver Callback Context Tests")
     // This test case specifically tests our main fix: passing both DnsResolver* and requestId
     // as context to the c-ares callback
 
-    CoreApplication app;
+    const CoreApplication app;
 
     SUBCASE("Mock CallbackContext usage")
     {
@@ -271,11 +294,11 @@ TEST_CASE("DNS Resolver Callback Context Tests")
         resolver1.setSimulateDelayedResponse(true);
         resolver2.setSimulateDelayedResponse(true);
 
-        resolver1.mockLookup("example.com", [&promise1](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
+        resolver1.mockLookup("example.com", [&promise1](std::error_code /*ec*/, const DnsResolver::AddressInfoList & /*addresses*/) {
             promise1.set_value(1); // Resolver 1 callback
         });
 
-        resolver2.mockLookup("example.com", [&promise2](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
+        resolver2.mockLookup("example.com", [&promise2](std::error_code /*ec*/, const DnsResolver::AddressInfoList & /*addresses*/) {
             promise2.set_value(2); // Resolver 2 callback
         });
 
@@ -287,7 +310,7 @@ TEST_CASE("DNS Resolver Callback Context Tests")
 
 TEST_CASE("DNS Resolver Error Handling")
 {
-    CoreApplication app;
+    const CoreApplication app;
 
     SUBCASE("Handling network errors")
     {
@@ -341,7 +364,7 @@ TEST_CASE("DNS Resolver Real Network Tests")
         bool lookupStarted = false;
 
         lookupStarted = resolver.lookup("example.com", [&promise, &app](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
-            bool success = !ec && !addresses.empty();
+            const bool success = !ec && !addresses.empty();
 
             if (success) {
                 // Let's check if we have valid addresses
@@ -411,9 +434,9 @@ TEST_CASE("DNS Resolver Real Network Tests")
         std::promise<bool> promise;
         std::future<bool> future = promise.get_future();
 
-        resolver.lookup("non-existent-domain-kdutils-test.local", [&promise, &app](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
+        resolver.lookup("non-existent-domain-kdutils-test.local", [&promise, &app](std::error_code ec, const DnsResolver::AddressInfoList & /*addresses*/) {
             // This should fail with an error
-            bool hasError = ec.value() != 0;
+            const bool hasError = ec.value() != 0;
             MESSAGE("Non-existent domain lookup error: " << ec.message());
             promise.set_value(hasError);
 
@@ -439,7 +462,7 @@ TEST_CASE("DNS Resolver Real Network Tests")
         std::future<bool> future2 = promise2.get_future();
 
         resolver.lookup("example.com", [&promise1, &future2, &app](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
-            bool success = !ec && !addresses.empty();
+            const bool success = !ec && !addresses.empty();
             promise1.set_value(success);
 
             // Quit the application event loop if future2 is also ready
@@ -449,7 +472,7 @@ TEST_CASE("DNS Resolver Real Network Tests")
         });
 
         resolver.lookup("github.com", [&promise2, &future1, &app](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
-            bool success = !ec && !addresses.empty();
+            const bool success = !ec && !addresses.empty();
             promise2.set_value(success);
 
             // Quit the application event loop if future1 is also ready
@@ -481,7 +504,7 @@ TEST_CASE("DNS Resolver Real Network Tests")
 
         resolver.lookup("example.org", [&](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
             // This should be called from the event loop
-            bool success = !ec && !addresses.empty();
+            const bool success = !ec && !addresses.empty();
             if (success) {
                 MESSAGE("Successfully resolved example.org");
                 for (const auto &address : addresses) {
@@ -521,7 +544,7 @@ TEST_CASE("DNS Resolver Real Network Tests")
         DnsResolver resolver;
         std::atomic<bool> callbackCalled(false);
 
-        resolver.lookup("example.net", [&callbackCalled](std::error_code ec, const DnsResolver::AddressInfoList &addresses) {
+        resolver.lookup("example.net", [&callbackCalled](std::error_code /*ec*/, const DnsResolver::AddressInfoList & /*addresses*/) {
             // This callback might or might not be called depending on timing
             // If called after cancel, it should have an error
             callbackCalled = true;
