@@ -54,7 +54,7 @@ std::optional<std::chrono::system_clock::time_point> parseDate(const std::string
         const int second = std::stoi(match[6].str());
 
         // Convert month name to number
-        std::unordered_map<std::string, int> monthMap = {
+        const std::unordered_map<std::string, int> monthMap = {
             { "Jan", 0 }, { "Feb", 1 }, { "Mar", 2 }, { "Apr", 3 }, { "May", 4 }, { "Jun", 5 }, { "Jul", 6 }, { "Aug", 7 }, { "Sep", 8 }, { "Oct", 9 }, { "Nov", 10 }, { "Dec", 11 }
         };
 
@@ -87,6 +87,7 @@ std::optional<std::chrono::system_clock::time_point> parseDate(const std::string
         return std::chrono::system_clock::from_time_t(seconds);
     } catch (...) {
         // Not a valid number
+        return std::nullopt;
     }
 
     // Failed to parse
@@ -163,6 +164,7 @@ std::optional<HttpCookie> HttpCookie::fromSetCookieHeader(const std::string &set
                 cookie.m_expirationDate = now + std::chrono::seconds(seconds);
             } catch (...) {
                 // Invalid max-age, ignore
+                cookie.m_expirationDate = std::nullopt;
             }
         } else if (attrName == "domain") {
             std::string domain = attrValue;
@@ -292,9 +294,9 @@ bool HttpCookie::isExpired() const
 bool HttpCookie::matchesUrl(const KDUtils::Uri &url) const
 {
     // Extract host and path from URL
-    const std::string scheme = url.scheme();
-    const std::string host = url.host();
-    const std::string path = url.path();
+    const std::string &scheme = url.scheme();
+    const std::string &host = url.host();
+    const std::string &path = url.path();
 
     // Secure cookies only match HTTPS URLs
     if (m_secure && scheme != "https") {
