@@ -24,11 +24,11 @@ using namespace KDFoundation;
 
 TEST_CASE("Timer Basic Tests")
 {
-    CoreApplication app;
+    const CoreApplication app;
 
     SUBCASE("Timer Initial State")
     {
-        Timer timer;
+        const Timer timer;
         CHECK_FALSE(timer.running());
         CHECK_EQ(timer.interval(), std::chrono::microseconds(0));
         CHECK_FALSE(timer.singleShot());
@@ -207,7 +207,7 @@ TEST_CASE("C++ Style Timer Convenience Functions")
         timer->running = false;
 
         // Store the current count
-        int previousCount = callCount;
+        const int previousCount = callCount;
 
         // Wait again and process events
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -225,7 +225,7 @@ TEST_CASE("JavaScript Style Timer Functions")
     SUBCASE("setTimeout Basic Usage")
     {
         bool timeoutCalled = false;
-        Timer::TimerId id = Timer::setTimeout(std::chrono::milliseconds(50), [&timeoutCalled]() {
+        const Timer::TimerId id = Timer::setTimeout(std::chrono::milliseconds(50), [&timeoutCalled]() {
             timeoutCalled = true;
         });
 
@@ -249,7 +249,7 @@ TEST_CASE("JavaScript Style Timer Functions")
     SUBCASE("setRecurring Basic Usage")
     {
         int callCount = 0;
-        Timer::TimerId id = Timer::setRecurring(std::chrono::milliseconds(50), [&callCount]() {
+        const Timer::TimerId id = Timer::setRecurring(std::chrono::milliseconds(50), [&callCount]() {
             callCount++;
         });
 
@@ -262,7 +262,7 @@ TEST_CASE("JavaScript Style Timer Functions")
         app.processEvents();
 
         // Store the current count (should be at least 1)
-        int firstCheckCount = callCount;
+        const int firstCheckCount = callCount;
         CHECK_GT(firstCheckCount, 0);
 
         // Timer should still be active
@@ -283,7 +283,7 @@ TEST_CASE("JavaScript Style Timer Functions")
     SUBCASE("cancelTimer")
     {
         bool timeoutCalled = false;
-        Timer::TimerId id = Timer::setTimeout(std::chrono::milliseconds(100), [&timeoutCalled]() {
+        const Timer::TimerId id = Timer::setTimeout(std::chrono::milliseconds(100), [&timeoutCalled]() {
             timeoutCalled = true;
         });
 
@@ -314,15 +314,15 @@ TEST_CASE("JavaScript Style Timer Functions")
         int timer3Calls = 0;
 
         // Create three timers with different intervals
-        Timer::TimerId id1 = Timer::setTimeout(std::chrono::milliseconds(50), [&timer1Calls]() {
+        const Timer::TimerId id1 = Timer::setTimeout(std::chrono::milliseconds(50), [&timer1Calls]() {
             timer1Calls++;
         });
 
-        Timer::TimerId id2 = Timer::setRecurring(std::chrono::milliseconds(30), [&timer2Calls]() {
+        const Timer::TimerId id2 = Timer::setRecurring(std::chrono::milliseconds(30), [&timer2Calls]() {
             timer2Calls++;
         });
 
-        Timer::TimerId id3 = Timer::setTimeout(std::chrono::milliseconds(150), [&timer3Calls]() {
+        const Timer::TimerId id3 = Timer::setTimeout(std::chrono::milliseconds(150), [&timer3Calls]() {
             timer3Calls++;
         });
 
