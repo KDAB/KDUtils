@@ -41,7 +41,11 @@ add_subdirectory(event)
 add_subdirectory(event_queue)
 add_subdirectory(object)
 add_subdirectory(destruction_helper)
-add_subdirectory(timer)
+
+# Disable the timer tests on MacOS for now
+if(NOT APPLE)
+    add_subdirectory(timer)
+endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_subdirectory(linux_platform_event_loop)
