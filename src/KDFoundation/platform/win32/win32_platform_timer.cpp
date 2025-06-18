@@ -19,10 +19,12 @@
 
 using namespace KDFoundation;
 
+namespace {
 inline Win32PlatformEventLoop *eventLoop()
 {
     return static_cast<Win32PlatformEventLoop *>(CoreApplication::instance()->eventLoop());
 }
+} // namespace
 
 Win32PlatformTimer::Win32PlatformTimer(Timer *timer)
     : m_timer(timer)
