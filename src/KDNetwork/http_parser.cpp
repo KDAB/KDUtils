@@ -124,14 +124,12 @@ struct HttpParser::Private {
     Private &operator=(const Private &) = delete;
 
     // Is movable
-    Private(Private &&) = default;
+    Private(Private &&) noexcept = default;
     Private &operator=(Private &&other) noexcept
     {
         if (this != &other) {
             // Clean up existing resources
-            if (parser) {
-                delete parser;
-            }
+            delete parser;
 
             // Move resources from the other object
             parser = other.parser;
