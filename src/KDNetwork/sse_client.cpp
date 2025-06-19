@@ -12,6 +12,8 @@
 #include <KDNetwork/http_client.h>
 #include <KDNetwork/http_response.h>
 
+#include <KDUtils/logging.h>
+
 namespace KDNetwork {
 
 class SseClient::Private
@@ -121,6 +123,7 @@ public:
                     }
                 } catch (const std::exception &) {
                     // Invalid retry value, ignore
+                    KDUtils::Logger::logger("SseClient")->warn("Invalid retry value: {}", fieldValue);
                 }
             }
             // Ignore other field names as per the spec
@@ -141,7 +144,12 @@ SseClient::SseClient(std::shared_ptr<HttpClient> httpClient)
 
 SseClient::~SseClient()
 {
-    disconnect();
+    try {
+        disconnect();
+    } catch (...) {
+        // Suppress all exceptions to ensure noexcept destructor but log the error
+        KDUtils::Logger::logger("SseClient")->error("Exception in SseClient destructor");
+    }
 }
 
 void SseClient::connect(const HttpRequest &request)
@@ -214,7 +222,7 @@ void SseClient::connect(const HttpRequest &request)
 
     // Send the request using the special method that associates this SseClient with the request
     // This allows the HttpClient to call our processDataChunk method directly with each new chunk
-    auto future = d->httpClient->sendWithSseClient(sseRequest, shared_from_this(), responseCallback);
+    std::ignore = d->httpClient->sendWithSseClient(sseRequest, shared_from_this(), responseCallback);
 }
 
 void SseClient::disconnect()
