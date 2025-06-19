@@ -192,7 +192,7 @@ std::optional<KDUtils::Uri> HttpResponse::redirectUrl() const
         // TODO: Properly resolve relative URLs
         // For now, this is a simple implementation that only handles absolute paths
         if (location.front() == '/') {
-            const std::string scheme = baseUrl.scheme();
+            const std::string &scheme = baseUrl.scheme();
             std::string host = baseUrl.toString();
 
             // Extract host from base URL
@@ -301,7 +301,7 @@ std::shared_ptr<Socket> HttpResponse::takeSocket() const
     return socket;
 }
 
-void HttpResponse::setSocket(std::shared_ptr<Socket> socket)
+void HttpResponse::setSocket(const std::shared_ptr<Socket> &socket)
 {
     m_socket = socket;
 }

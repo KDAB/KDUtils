@@ -280,7 +280,7 @@ private:
      *
      * @param socket The socket to associate with this response
      */
-    void setSocket(std::shared_ptr<Socket> socket);
+    void setSocket(const std::shared_ptr<Socket> &socket);
 
     /**
      * @brief Store excess data (data beyond HTTP response headers/body) for WebSocket
