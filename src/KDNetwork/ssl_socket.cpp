@@ -920,7 +920,7 @@ void SslSocket::flushNetworkBIO()
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 // Would block, retry later
                 // Put the data back into the BIO for later
-                BIO_write(d->networkBio, buffer, read);
+                BIO_write(d->networkBio, buffer.data(), read);
                 setWriteNotificationEnabled(true);
                 break;
             }
