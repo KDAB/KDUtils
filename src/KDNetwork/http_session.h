@@ -180,7 +180,7 @@ public:
      * @param secure Whether the connection uses SSL
      * @param socket The connection to return to the pool
      */
-    void returnConnection(const std::string &host, uint16_t port, bool secure, std::shared_ptr<Socket> socket);
+    void returnConnection(const std::string &host, uint16_t port, bool secure, const std::shared_ptr<Socket> &socket);
 
     /**
      * @brief Clean up idle connections

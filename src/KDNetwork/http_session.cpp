@@ -179,7 +179,7 @@ std::shared_ptr<Socket> HttpSession::getConnection(const std::string &host, uint
     return connection.socket;
 }
 
-void HttpSession::returnConnection(const std::string &host, uint16_t port, bool secure, std::shared_ptr<Socket> socket)
+void HttpSession::returnConnection(const std::string &host, uint16_t port, bool secure, const std::shared_ptr<Socket> &socket)
 {
     // Don't return invalid or disconnected sockets
     if (!socket || socket->state() != Socket::State::Connected) {
