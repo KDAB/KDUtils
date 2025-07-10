@@ -292,9 +292,7 @@ void LinuxWaylandPlatformWindow::updateScaleFactor()
     float factor = 1;
     for (auto *output : m_enteredOutputs) {
         const auto outputScaleFactor = float(output->scaleFactor());
-        if (outputScaleFactor > factor) {
-            factor = outputScaleFactor;
-        }
+        factor = std::max(factor, outputScaleFactor);
     }
     window()->scaleFactor = factor;
 }
