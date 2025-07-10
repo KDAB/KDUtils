@@ -26,11 +26,12 @@ namespace {
 // NOLINTBEGIN(concurrency-mt-unsafe)
 std::string getOpenAiKey()
 {
-    if (std::getenv("OPENAI_API_KEY") == nullptr) {
+    const char *envKey = std::getenv("OPENAI_API_KEY");
+    if (envKey == nullptr) {
         std::cerr << "Please set the OPENAI_API_KEY environment variable." << std::endl;
         return {};
     }
-    return std::getenv("OPENAI_API_KEY");
+    return std::string(envKey);
 }
 // NOLINTEND(concurrency-mt-unsafe)
 } // namespace
