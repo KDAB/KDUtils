@@ -30,7 +30,8 @@ add_executable(
 
 target_include_directories(
     ${PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/tests/auto/foundation/common ${CMAKE_BINARY_DIR}/tests/auto
+    PRIVATE ${CMAKE_SOURCE_DIR}/src/KDMqtt ${CMAKE_SOURCE_DIR}/tests/auto/foundation/common
+            ${CMAKE_BINARY_DIR}/tests/auto
 )
 
 target_link_libraries(
