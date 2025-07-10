@@ -902,7 +902,7 @@ void SslSocket::flushNetworkBIO()
 #if defined(KD_PLATFORM_WIN32)
         const int sent = ::send(m_socketFd, buffer.data(), read, 0);
 #else
-        int sent = ::send(m_socketFd, buffer.data(), read, MSG_NOSIGNAL);
+        const ssize_t sent = ::send(m_socketFd, buffer.data(), read, MSG_NOSIGNAL);
 #endif
 
         if (sent <= 0) {

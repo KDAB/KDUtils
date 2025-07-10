@@ -122,13 +122,13 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
 
     // Create a socket
     const int family = address.isIPv4() ? AF_INET : AF_INET6;
-    m_listeningFd = static_cast<int>(socket(family, SOCK_STREAM, 0));
+    m_listeningFd = static_cast<int>(socket(family, SOCK_STREAM, 0)); // NOLINT(readability-redundant-casting)
 
     if (m_listeningFd < 0) {
 #if defined(KD_PLATFORM_WIN32)
         const int error = WSAGetLastError();
 #else
-        int error = errno;
+        const int error = errno;
 #endif
         setError(SocketError::SocketCreationError, error);
         return false;
@@ -145,7 +145,7 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
         return false;
     }
 #else
-    int flags = fcntl(m_listeningFd, F_GETFL, 0);
+    const int flags = fcntl(m_listeningFd, F_GETFL, 0);
     if (flags < 0 || fcntl(m_listeningFd, F_SETFL, flags | O_NONBLOCK) < 0) {
         setError(SocketError::SocketConfigurationError, errno);
         ::close(m_listeningFd);
@@ -161,7 +161,7 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
 #if defined(KD_PLATFORM_WIN32)
         const int error = WSAGetLastError();
 #else
-        int error = errno;
+        const int error = errno;
 #endif
         setError(SocketError::SocketConfigurationError, error);
 #if defined(KD_PLATFORM_WIN32)
@@ -194,7 +194,7 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
 #if defined(KD_PLATFORM_WIN32)
         const int error = WSAGetLastError();
 #else
-        int error = errno;
+        const int error = errno;
 #endif
         setError(SocketError::BindError, error);
 #if defined(KD_PLATFORM_WIN32)
@@ -211,7 +211,7 @@ bool TcpServer::listenOnAddress(const IpAddress &address, uint16_t port, int bac
 #if defined(KD_PLATFORM_WIN32)
         const int error = WSAGetLastError();
 #else
-        int error = errno;
+        const int error = errno;
 #endif
         setError(SocketError::ListenError, error);
 #if defined(KD_PLATFORM_WIN32)
