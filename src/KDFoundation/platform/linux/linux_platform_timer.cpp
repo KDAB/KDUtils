@@ -68,7 +68,7 @@ void LinuxPlatformTimer::arm(std::chrono::microseconds us)
         .it_interval = time,
         .it_value = time
     };
-    timerfd_settime(m_notifier.fileDescriptor(), 0, &spec, nullptr);
+    std::ignore = timerfd_settime(m_notifier.fileDescriptor(), 0, &spec, nullptr);
 }
 
 void LinuxPlatformTimer::disarm()
@@ -78,5 +78,5 @@ void LinuxPlatformTimer::disarm()
         .it_interval = time,
         .it_value = time
     };
-    timerfd_settime(m_notifier.fileDescriptor(), 0, &spec, nullptr);
+    std::ignore = timerfd_settime(m_notifier.fileDescriptor(), 0, &spec, nullptr);
 }
