@@ -24,7 +24,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h> // For close()
 #include <fcntl.h> // For fcntl() O_NONBLOCK
-#include <errno.h> // For errno
+#include <cerrno> // For errno
 #include <netinet/in.h> // For sockaddr_in etc. (needed for bind example)
 #include <arpa/inet.h> // For inet_pton etc.
 #endif // KD_PLATFORM_WIN32

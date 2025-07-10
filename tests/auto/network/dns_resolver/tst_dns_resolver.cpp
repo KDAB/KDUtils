@@ -48,7 +48,7 @@ bool shouldRunNetworkTests()
     }
     return result;
 #else
-    const char *env = std::getenv("KDUTILS_RUN_NETWORK_TESTS");
+    const char *env = std::getenv("KDUTILS_RUN_NETWORK_TESTS"); // NOLINT(concurrency-mt-unsafe)
     return env != nullptr && std::string(env) == "1";
 #endif
 }
