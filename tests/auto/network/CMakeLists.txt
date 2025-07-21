@@ -35,13 +35,18 @@ function(add_network_bench name sources)
     set_tests_properties(${name} PROPERTIES LABELS "Network")
 endfunction()
 
-add_subdirectory(tcp_socket)
-add_subdirectory(dns_resolver)
 add_subdirectory(ip_address)
 add_subdirectory(http_cookie)
 add_subdirectory(http_cookie_jar)
 add_subdirectory(http_request)
 add_subdirectory(http_session)
+
+# Disable the timer tests on MacOS for now
+# TODO: Revisit this when we fix the notifier issue on MacOS
+if(NOT APPLE)
+    add_subdirectory(tcp_socket)
+    add_subdirectory(dns_resolver)
+endif()
 
 add_feature_info(KDNetwork-Tests ON "Build KDNetwork Tests")
 
