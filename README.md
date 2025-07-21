@@ -52,14 +52,15 @@ of this project to see which dependencies we use to build KDMqtt.
 
 ## KDNetwork
 
-KDNetwork provides an experimental event-driven networking library on top of raw BSD sockets, KDFoundation
-and KDBindings.
+KDNetwork provides an experimental event-driven networking library on top of raw BSD sockets,
+KDFoundation and KDBindings.
 
-This library is still considered unstable and in development. As such we do not make any promises for API
-or ABI stability at this time. Please do feel free to take it for a test drive on Windows or Linux.
+This library is still considered unstable and in development. As such we do not make any promises
+for API or ABI stability at this time. Please do feel free to take it for a test drive on Windows
+or Linux.
 
-KDNetwork offers support for TCP and SSL/TLS socket communications; non-blocking DNS resolution queries;
-higher-level protocols such as HTTPS, Server Sent Events and WebSockets.
+KDNetwork offers support for TCP and SSL/TLS socket communications; non-blocking DNS resolution
+queries; higher-level protocols such as HTTPS, Server Sent Events and WebSockets.
 
 ## KDUtils/KDUtils
 
