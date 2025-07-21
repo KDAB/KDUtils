@@ -14,6 +14,7 @@ set(SOURCES
     elapsedtimer.cpp
     file_mapper.cpp
     logging.cpp
+    uri.cpp
     url.cpp
 )
 
@@ -27,6 +28,7 @@ set(HEADERS
     flags.h
     logging.h
     tailwind_colors.h
+    uri.h
     url.h
     kdutils_global.h
 )

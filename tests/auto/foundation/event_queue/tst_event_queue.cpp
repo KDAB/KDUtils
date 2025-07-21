@@ -51,6 +51,7 @@ public:
     int m_y;
 };
 
+namespace {
 void populateEventQueueWithNEvents(EventQueue &eventQueue, int n, std::vector<PayloadEvent *> &events, std::vector<std::unique_ptr<Object>> &targets)
 {
     for (int i = 0; i < n; ++i) {
@@ -63,6 +64,7 @@ void populateEventQueueWithNEvents(EventQueue &eventQueue, int n, std::vector<Pa
         eventQueue.push(target, std::move(ev));
     }
 }
+} // namespace
 
 TEST_CASE("Single-threaded use")
 {
