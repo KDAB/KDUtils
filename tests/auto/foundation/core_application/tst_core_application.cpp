@@ -189,6 +189,7 @@ TEST_CASE("Event handling")
     }
 }
 
+namespace {
 /// macOS on GitHub runners is super slow and timeouts
 template<typename T>
 inline T adjustTimeout(T timeout)
@@ -200,6 +201,7 @@ inline T adjustTimeout(T timeout)
 
     return timeout;
 }
+} // namespace
 
 TEST_CASE("Timer handling" * doctest::timeout(120))
 {
