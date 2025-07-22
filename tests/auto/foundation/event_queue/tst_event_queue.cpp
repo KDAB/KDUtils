@@ -28,6 +28,7 @@ static_assert(!std::is_copy_assignable<EventQueue>{});
 static_assert(!std::is_move_constructible<EventQueue>{});
 static_assert(!std::is_move_assignable<EventQueue>{});
 
+namespace {
 class MyEvent : public Event
 {
 public:
@@ -63,6 +64,7 @@ void populateEventQueueWithNEvents(EventQueue &eventQueue, int n, std::vector<Pa
         eventQueue.push(target, std::move(ev));
     }
 }
+} // namespace
 
 TEST_CASE("Single-threaded use")
 {
