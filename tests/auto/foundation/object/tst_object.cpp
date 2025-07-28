@@ -408,6 +408,27 @@ TEST_CASE("Deferred object destruction")
         REQUIRE(objectDestroyedSpy.count() == 1);
         REQUIRE(std::get<0>(objectDestroyedSpy.args()) == obj);
     }
+
+    SUBCASE("Can call deleteLater from worker thread")
+    {
+        CoreApplication app;
+
+        auto runWorkerThread = []() {
+            EventLoop loop;
+            auto obj = new Object();
+
+            SignalSpy<Object *> objectDestroyedSpy(obj->destroyed);
+            obj->deleteLater();
+
+            REQUIRE(objectDestroyedSpy.count() == 0);
+            loop.processEvents();
+            REQUIRE(objectDestroyedSpy.count() == 1);
+            REQUIRE(std::get<0>(objectDestroyedSpy.args()) == obj);
+        };
+        std::thread t1(runWorkerThread);
+
+        t1.join();
+    }
 }
 
 TEST_CASE("Event delivery")
@@ -428,5 +449,36 @@ TEST_CASE("Event delivery")
         object->event(object.get(), ev.get());
 
         REQUIRE(object->m_timerEventDelivered == true);
+    }
+
+    SUBCASE("Object destruction cleans up event queue")
+    {
+        CoreApplication app;
+
+        class EventObject : public KDFoundation::Object
+        {
+        public:
+            void event(EventReceiver *, Event *ev) override
+            {
+                if (ev->type() == KDFoundation::Event::Type::Update) {
+                    REQUIRE(false);
+                }
+            }
+        };
+
+        auto runWorkerThread = [&app]() {
+            EventLoop loop;
+
+            auto obj = std::make_unique<EventObject>();
+            app.postEvent(obj.get(), std::make_unique<KDFoundation::UpdateEvent>());
+            loop.postEvent(obj.get(), std::make_unique<KDFoundation::UpdateEvent>());
+
+            obj.reset();
+
+            loop.processEvents();
+        };
+        std::thread t1(runWorkerThread);
+
+        t1.join();
     }
 }

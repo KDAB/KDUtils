@@ -25,31 +25,29 @@ FileDescriptorNotifier::FileDescriptorNotifier(int fd, NotificationType type)
 {
     assert(m_fd >= 0);
 
-    // TODO: Handle this on other threads by getting the event loop from
-    //       some thread local storage.
-    // Get hold of the event loop from the application
-    auto app = CoreApplication::instance();
-    if (!app) {
-        SPDLOG_WARN("No application object exists yet. The notifier for fd {} will not be registered", m_fd);
+    // Get hold of the current thread's event loop
+    auto eventLoop = EventLoop::instance();
+    if (!eventLoop) {
+        SPDLOG_WARN("No event loop exists on the current thread. The notifier for fd {} will not be registered", m_fd);
         return;
     }
 
-    auto eventLoop = app->eventLoop();
-    if (eventLoop)
-        eventLoop->registerNotifier(this);
+    auto platformEventLoop = eventLoop->platformEventLoop();
+    if (platformEventLoop)
+        platformEventLoop->registerNotifier(this);
 }
 
 FileDescriptorNotifier::~FileDescriptorNotifier()
 {
-    auto app = CoreApplication::instance();
-    if (!app) {
-        SPDLOG_WARN("No application object exists yet we still have a notifier for fd {} alive", m_fd);
+    auto eventLoop = EventLoop::instance();
+    if (!eventLoop) {
+        SPDLOG_WARN("No event loop exists on the current thread, yet we still have a notifier for fd {} alive", m_fd);
         return;
     }
 
-    auto eventLoop = app->eventLoop();
-    if (eventLoop)
-        eventLoop->unregisterNotifier(this);
+    auto platformEventLoop = eventLoop->platformEventLoop();
+    if (platformEventLoop)
+        platformEventLoop->unregisterNotifier(this);
 }
 
 void FileDescriptorNotifier::event(EventReceiver *target, Event *ev)

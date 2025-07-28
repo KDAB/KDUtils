@@ -12,6 +12,7 @@ find_package(Threads)
 
 set(SOURCES
     core_application.cpp
+    event_loop.cpp
     event_receiver.cpp
     event.cpp
     file_descriptor_notifier.cpp
@@ -25,6 +26,7 @@ set(HEADERS
     constexpr_sort.h
     core_application.h
     destruction_helpers.h
+    event_loop.h
     event_queue.h
     event_receiver.h
     event.h

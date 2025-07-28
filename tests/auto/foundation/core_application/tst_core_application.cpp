@@ -9,6 +9,8 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 
+#include "../common/event_mockups.h"
+
 #include <KDFoundation/config.h>
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/timer.h>
@@ -33,79 +35,6 @@ static_assert(!std::is_copy_constructible<CoreApplication>{});
 static_assert(!std::is_copy_assignable<CoreApplication>{});
 static_assert(!std::is_move_constructible<CoreApplication>{});
 static_assert(!std::is_move_assignable<CoreApplication>{});
-
-class PayloadEvent : public Event
-{
-public:
-    PayloadEvent(int x, int y)
-        : Event(static_cast<Event::Type>(static_cast<uint16_t>(Event::Type::UserType) + 2))
-        , m_x{ x }
-        , m_y{ y }
-    {
-    }
-
-    int m_x;
-    int m_y;
-};
-
-class EventObject : public Object
-{
-public:
-    EventObject(int expectedX, int expectedY)
-        : m_expectedX{ expectedX }
-        , m_expectedY{ expectedY }
-    {
-    }
-
-    bool userEventDelivered() const { return m_userEventDelivered; }
-
-protected:
-    void userEvent(Event *ev) override
-    {
-        if (ev->type() == static_cast<Event::Type>(static_cast<uint16_t>(Event::Type::UserType) + 2)) {
-            auto e = static_cast<PayloadEvent *>(ev);
-            if (e->m_x == m_expectedX && e->m_y == m_expectedY) {
-                e->setAccepted(true);
-                m_userEventDelivered = true;
-            }
-        }
-    }
-
-private:
-    int m_expectedX;
-    int m_expectedY;
-    bool m_userEventDelivered = false;
-};
-
-class RecursiveEventPosterObject : public Object
-{
-public:
-    RecursiveEventPosterObject()
-    {
-    }
-
-    size_t eventsProcessed() const { return m_eventsProcessed; }
-
-    void requestUpdate()
-    {
-        CoreApplication::instance()->postEvent(this, std::make_unique<UpdateEvent>());
-    }
-
-protected:
-    void event(EventReceiver *target, Event *ev) override
-    {
-        if (target == this && ev->type() == Event::Type::Update) {
-            ++m_eventsProcessed;
-            ev->setAccepted(true);
-            requestUpdate();
-        }
-
-        Object::event(target, ev);
-    }
-
-private:
-    size_t m_eventsProcessed{ 0 };
-};
 
 TEST_CASE("Creation")
 {
@@ -277,6 +206,55 @@ TEST_CASE("Timer handling" * doctest::timeout(120))
         app.processEvents(adjustTimeout(100));
         REQUIRE(fired == true);
     }
+
+    SUBCASE("Timer fires on correct thread")
+    {
+        using namespace std::literals::chrono_literals;
+
+        CoreApplication app;
+
+        std::mutex mutex;
+        std::condition_variable cond;
+        bool ready = false;
+        int timeoutCount = 0;
+
+        auto runWorkerThread = [&mutex, &cond, &ready, &app, &timeoutCount]() {
+            SPDLOG_INFO("Launched worker thread");
+            std::unique_lock lock(mutex);
+            cond.wait(lock, [&ready] { return ready; });
+
+            EventLoop loop;
+
+            auto workerThreadId = std::this_thread::get_id();
+            Timer timer;
+            timer.interval = adjustTimeout(100ms);
+            timer.running = true;
+
+            std::ignore = timer.timeout.connect([&]() {
+                CHECK(std::this_thread::get_id() == workerThreadId);
+                timeoutCount++;
+                timer.running = false;
+                loop.quit();
+                app.quit();
+            });
+
+            loop.exec();
+        };
+        std::thread t1(runWorkerThread);
+
+        {
+            SPDLOG_INFO("Waking up worker thread");
+            const std::unique_lock lock(mutex);
+            ready = true;
+            cond.notify_all();
+        }
+
+        // std::this_thread::sleep_for(5000ms);
+        app.exec();
+        REQUIRE(timeoutCount == 1);
+
+        t1.join();
+    }
 }
 
 TEST_CASE("Main event loop")
@@ -319,6 +297,198 @@ TEST_CASE("Main event loop")
         REQUIRE(elapsedTime < 1000);
 
         t1.join();
+    }
+
+    SUBCASE("Main event loop shall not outlive CoreApplication")
+    {
+        class EventObject : public KDFoundation::Object
+        {
+        public:
+            void event(EventReceiver *, Event *ev) override
+            {
+                if (ev->type() == KDFoundation::Event::Type::Update) {
+                    ev->setAccepted(true);
+                    ++eventsProcessed;
+                    REQUIRE(CoreApplication::instance());
+
+                    auto ev = std::make_unique<KDFoundation::UpdateEvent>();
+                    CoreApplication::instance()->postEvent(this, std::move(ev));
+                }
+            }
+
+            size_t eventsProcessed = 0;
+        };
+        std::unique_ptr<EventObject> obj;
+
+        {
+            CoreApplication app;
+
+            obj = std::make_unique<EventObject>();
+            auto ev = std::make_unique<KDFoundation::UpdateEvent>();
+            app.postEvent(obj.get(), std::move(ev));
+        }
+
+        CHECK(obj->eventsProcessed == 1);
+    }
+}
+
+TEST_CASE("Worker thread event loop")
+{
+    spdlog::set_level(spdlog::level::debug);
+
+    SUBCASE("Can create and execute an event loop in a worker thread")
+    {
+        CoreApplication app;
+
+        std::mutex mutex;
+        std::condition_variable cond;
+        bool ready = false;
+
+        auto runWorkerThread = [&mutex, &cond, &ready, &app]() {
+            SPDLOG_INFO("Launched worker thread");
+            std::unique_lock lock(mutex);
+            cond.wait(lock, [&ready] { return ready; });
+
+            EventLoop loop;
+
+            auto ev = std::make_unique<PayloadEvent>(5, 6);
+            auto obj = app.createChild<EventObject>(5, 6);
+            loop.postEvent(obj, std::move(ev));
+            REQUIRE(loop.eventQueueSize() == 1);
+            REQUIRE(app.eventQueueSize() == 0);
+
+            loop.processEvents();
+            REQUIRE(obj->userEventDelivered() == true);
+            REQUIRE(app.eventQueueSize() == 0);
+
+            loop.quit();
+            const auto startTime = std::chrono::steady_clock::now();
+            SPDLOG_INFO("Worker thread entering event loop");
+            loop.exec();
+            const auto endTime = std::chrono::steady_clock::now();
+
+            auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+            SPDLOG_INFO("elapsedTime = {}", elapsedTime);
+            REQUIRE(elapsedTime < 1000);
+        };
+        std::thread t1(runWorkerThread);
+
+        {
+            SPDLOG_INFO("Waking up worker thread");
+            const std::unique_lock lock(mutex);
+            ready = true;
+            cond.notify_all();
+        }
+
+        t1.join();
+    }
+
+    SUBCASE("Can run main loop and worker thread event loop simultaneously")
+    {
+        CoreApplication app;
+
+        std::mutex mutex;
+        std::condition_variable cond;
+        bool ready = false;
+
+        auto runWorkerThread = [&mutex, &cond, &ready, &app]() {
+            SPDLOG_INFO("Launched worker thread");
+            std::unique_lock lock(mutex);
+            cond.wait(lock, [&ready] { return ready; });
+
+            EventLoop loop;
+
+            auto obj = std::make_unique<RecursiveEventPosterObject>(std::this_thread::get_id(), 16);
+            obj->requestUpdate();
+
+            // Check that event is posted on current thread's event loop
+            loop.processEvents();
+            CHECK(obj->eventsProcessed() == 1);
+
+            const auto startTime = std::chrono::steady_clock::now();
+            SPDLOG_INFO("Worker thread entering event loop");
+            loop.exec();
+            const auto endTime = std::chrono::steady_clock::now();
+
+            auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+            SPDLOG_INFO("Worker thread: elapsedTime = {}", elapsedTime);
+            REQUIRE(elapsedTime < 1000);
+
+            CHECK(obj->eventsProcessed() == 16);
+
+            SPDLOG_INFO("Worker thread requesting the app to quit");
+            app.quit();
+        };
+        std::thread t1(runWorkerThread);
+
+        {
+            SPDLOG_INFO("Waking up helper thread");
+            const std::unique_lock lock(mutex);
+            ready = true;
+            cond.notify_all();
+        }
+
+        auto obj = std::make_unique<RecursiveEventPosterObject>(std::this_thread::get_id(), 5);
+        obj->requestUpdate();
+
+        const auto startTime = std::chrono::steady_clock::now();
+        SPDLOG_INFO("Main thread entering event loop");
+        app.exec();
+        const auto endTime = std::chrono::steady_clock::now();
+
+        auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+        SPDLOG_INFO("Main thread: elapsedTime = {}", elapsedTime);
+        REQUIRE(elapsedTime < 1000);
+
+        CHECK(obj->eventsProcessed() == 5);
+
+        t1.join();
+    }
+
+    SUBCASE("Worker thread's event loop can outlive CoreApplication")
+    {
+        std::mutex mutex;
+        std::condition_variable cond;
+        bool ready = false;
+
+        std::thread worker_thread;
+
+        {
+            CoreApplication app;
+
+            auto runWorkerThread = [&mutex, &cond, &ready]() {
+                SPDLOG_INFO("Launched worker thread");
+
+                EventLoop loop;
+
+                auto obj = std::make_unique<RecursiveEventPosterObject>(std::this_thread::get_id(), 128);
+                obj->requestUpdate();
+
+                {
+                    SPDLOG_INFO("Waking up main thread");
+                    const std::unique_lock lock(mutex);
+                    ready = true;
+                    cond.notify_all();
+                }
+
+                const auto startTime = std::chrono::steady_clock::now();
+                SPDLOG_INFO("Worker thread entering event loop");
+                loop.exec();
+                const auto endTime = std::chrono::steady_clock::now();
+
+                auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+                SPDLOG_INFO("Worker thread: elapsedTime = {}", elapsedTime);
+                REQUIRE(elapsedTime < 1000);
+
+                CHECK(obj->eventsProcessed() == 128);
+            };
+            worker_thread = std::thread(runWorkerThread);
+
+            std::unique_lock lock(mutex);
+            cond.wait(lock, [&ready] { return ready; });
+        }
+
+        worker_thread.join();
     }
 }
 

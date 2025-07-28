@@ -34,6 +34,11 @@ class KDFOUNDATION_API AbstractPlatformIntegration
 public:
     virtual ~AbstractPlatformIntegration() { }
 
+    /**
+     * Finalize initialization of the platform integration.
+     *
+     * @warning This is called before CoreApplication and its subclasses are fully initialized.
+     */
     virtual void init() { }
     std::unique_ptr<AbstractPlatformEventLoop> createPlatformEventLoop()
     {
@@ -44,6 +49,11 @@ public:
     virtual KDUtils::Dir standardDir(const CoreApplication &app, StandardDir type) const = 0;
 
 private:
+    /**
+     * Create and return a platform event loop.
+     *
+     * @warning Might be called before @e AbstractPlatformIntegration::init.
+     */
     virtual AbstractPlatformEventLoop *createPlatformEventLoopImpl() = 0;
 };
 
