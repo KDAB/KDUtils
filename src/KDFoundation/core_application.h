@@ -13,6 +13,7 @@
 
 #include <KDFoundation/kdfoundation_global.h>
 #include <KDFoundation/object.h>
+#include <KDFoundation/event_loop.h>
 #include <KDFoundation/event_queue.h>
 #include <KDFoundation/platform/abstract_platform_integration.h>
 
@@ -42,14 +43,17 @@ public:
 
     static inline CoreApplication *instance() { return ms_application; }
 
-    const AbstractPlatformEventLoop *eventLoop() const { return m_platformEventLoop.get(); }
-    AbstractPlatformEventLoop *eventLoop() { return m_platformEventLoop.get(); }
+    const EventLoop *eventLoop() const { return &m_eventLoop; }
+    EventLoop *eventLoop() { return &m_eventLoop; }
 
-    Postman *postman() { return m_postman.get(); }
+    const AbstractPlatformEventLoop *platformEventLoop() const { return m_eventLoop.platformEventLoop(); }
+    AbstractPlatformEventLoop *platformEventLoop() { return m_eventLoop.platformEventLoop(); }
+
+    Postman *postman() { return m_eventLoop.postman(); }
 
     void postEvent(EventReceiver *target, std::unique_ptr<Event> &&event);
-    void removeAllEventsTargeting(EventReceiver &evReceiver) { m_eventQueue.removeAllEventsTargeting(evReceiver); }
-    EventQueue::size_type eventQueueSize() const { return m_eventQueue.size(); }
+    void removeAllEventsTargeting(EventReceiver &evReceiver) { m_eventLoop.removeAllEventsTargeting(evReceiver); }
+    EventQueue::size_type eventQueueSize() const { return m_eventLoop.eventQueueSize(); }
 
     void sendEvent(EventReceiver *target, Event *event);
 
@@ -68,14 +72,10 @@ public:
     std::shared_ptr<spdlog::logger> m_defaultLogger;
 
 private:
-    void init();
     void event(EventReceiver *target, Event *event) override;
 
-    EventQueue m_eventQueue;
-    bool m_quitRequested{ false };
     std::unique_ptr<AbstractPlatformIntegration> m_platformIntegration;
-    std::unique_ptr<AbstractPlatformEventLoop> m_platformEventLoop;
-    std::unique_ptr<Postman> m_postman;
+    EventLoop m_eventLoop;
     std::shared_ptr<spdlog::logger> m_logger;
 };
 

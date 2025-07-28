@@ -16,6 +16,11 @@ using namespace KDFoundation;
 
 EventReceiver::~EventReceiver() noexcept
 {
-    if (CoreApplication::instance() != nullptr)
+    // Clear this thread's and the main event loop from events targeting this receiver
+    // FIXME Events posted to other threads' event loops are not cleared
+    if (EventLoop::instance() != nullptr)
+        EventLoop::instance()->removeAllEventsTargeting(*this);
+
+    if (CoreApplication::instance() != nullptr && CoreApplication::instance()->eventLoop() != EventLoop::instance())
         CoreApplication::instance()->removeAllEventsTargeting(*this);
 }

@@ -21,7 +21,7 @@ using namespace KDFoundation;
 
 inline Win32PlatformEventLoop *eventLoop()
 {
-    return static_cast<Win32PlatformEventLoop *>(CoreApplication::instance()->eventLoop());
+    return static_cast<Win32PlatformEventLoop *>(EventLoop::instance()->platformEventLoop());
 }
 
 Win32PlatformTimer::Win32PlatformTimer(Timer *timer)
