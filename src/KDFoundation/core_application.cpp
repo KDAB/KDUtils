@@ -30,16 +30,16 @@ CoreApplication *CoreApplication::ms_application = nullptr;
 namespace {
 std::unique_ptr<AbstractPlatformIntegration> createPlatformIntegration()
 {
-    // Create a platform integration
-    #if defined(PLATFORM_LINUX)
+// Create a platform integration
+#if defined(PLATFORM_LINUX)
     return std::make_unique<LinuxPlatformIntegration>();
-    #elif defined(PLATFORM_WIN32)
+#elif defined(PLATFORM_WIN32)
     return std::make_unique<Win32PlatformIntegration>();
-    #elif defined(PLATFORM_MACOS)
+#elif defined(PLATFORM_MACOS)
     return std::make_unique<MacOSPlatformIntegration>();
-    #else
+#else
     static_assert(false, "No valid platform integration could be found.");
-    #endif
+#endif
 }
 } // namespace
 

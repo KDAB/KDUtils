@@ -451,7 +451,6 @@ TEST_CASE("Event delivery")
         REQUIRE(object->m_timerEventDelivered == true);
     }
 
-
     SUBCASE("Object destruction cleans up event queue")
     {
         CoreApplication app;
@@ -479,7 +478,6 @@ TEST_CASE("Event delivery")
             loop.processEvents();
         };
         std::thread t1(runWorkerThread);
-
 
         t1.join();
     }

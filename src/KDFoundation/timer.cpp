@@ -20,11 +20,11 @@ using namespace KDFoundation;
 namespace {
 std::unique_ptr<AbstractPlatformTimer> createPlatformTimer(Timer *instance)
 {
-  auto eventLoop = EventLoop::instance();
-  assert(eventLoop && "Current thread must have an event loop. Create an instance of KDFoundation::EventLoop on the local thread to use a timer.");
-  return eventLoop->platformEventLoop()->createPlatformTimer(instance);
+    auto eventLoop = EventLoop::instance();
+    assert(eventLoop && "Current thread must have an event loop. Create an instance of KDFoundation::EventLoop on the local thread to use a timer.");
+    return eventLoop->platformEventLoop()->createPlatformTimer(instance);
 }
-}
+} // namespace
 
 Timer::Timer()
     : m_platformTimer(createPlatformTimer(this))

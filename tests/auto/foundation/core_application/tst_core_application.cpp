@@ -36,7 +36,6 @@ static_assert(!std::is_copy_assignable<CoreApplication>{});
 static_assert(!std::is_move_constructible<CoreApplication>{});
 static_assert(!std::is_move_assignable<CoreApplication>{});
 
-
 TEST_CASE("Creation")
 {
     SUBCASE("default construction")
@@ -206,11 +205,9 @@ TEST_CASE("Timer handling" * doctest::timeout(120))
         REQUIRE(fired == true);
     }
 
-
     SUBCASE("Timer fires on correct thread")
     {
         using namespace std::literals::chrono_literals;
-
 
         CoreApplication app;
 
@@ -300,7 +297,6 @@ TEST_CASE("Main event loop")
         t1.join();
     }
 
-
     SUBCASE("Main event loop shall not outlive CoreApplication")
     {
         class EventObject : public KDFoundation::Object
@@ -385,7 +381,6 @@ TEST_CASE("Worker thread event loop")
         t1.join();
     }
 
-
     SUBCASE("Can run main loop and worker thread event loop simultaneously")
     {
         CoreApplication app;
@@ -431,7 +426,6 @@ TEST_CASE("Worker thread event loop")
             cond.notify_all();
         }
 
-
         auto obj = std::make_unique<RecursiveEventPosterObject>(std::this_thread::get_id(), 5);
         obj->requestUpdate();
 
@@ -448,7 +442,6 @@ TEST_CASE("Worker thread event loop")
 
         t1.join();
     }
-
 
     SUBCASE("Worker thread's event loop can outlive CoreApplication")
     {

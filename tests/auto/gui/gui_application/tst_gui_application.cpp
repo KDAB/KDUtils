@@ -50,7 +50,6 @@ TEST_CASE("Timer handling" * doctest::timeout(120))
     {
         using namespace std::literals::chrono_literals;
 
-
         CoreApplication app;
 
         std::mutex mutex;
@@ -191,7 +190,6 @@ TEST_CASE("Worker thread event loop")
         t1.join();
     }
 
-
     SUBCASE("Can run main loop and worker thread event loop simultaneously")
     {
         GuiApplication app;
@@ -236,7 +234,6 @@ TEST_CASE("Worker thread event loop")
             ready = true;
             cond.notify_all();
         }
-
 
         auto obj = std::make_unique<RecursiveEventPosterObject>(std::this_thread::get_id(), 5);
         obj->requestUpdate();

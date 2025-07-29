@@ -43,7 +43,7 @@ std::unique_ptr<AbstractPlatformEventLoop> createPlatformEventLoop()
     assert(platformIntegration);
     return platformIntegration->createPlatformEventLoop();
 }
-}
+} // namespace
 
 EventLoop::EventLoop(std::unique_ptr<AbstractPlatformEventLoop> platformEventLoop)
     : m_platformEventLoop(platformEventLoop ? std::move(platformEventLoop) : createPlatformEventLoop())

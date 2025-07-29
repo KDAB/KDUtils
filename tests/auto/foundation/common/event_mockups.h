@@ -24,9 +24,9 @@ class PayloadEvent : public KDFoundation::Event
 {
 public:
     PayloadEvent(int x, int y)
-    : Event(static_cast<KDFoundation::Event::Type>(static_cast<uint16_t>(KDFoundation::Event::Type::UserType) + 2))
-    , m_x{ x }
-    , m_y{ y }
+        : Event(static_cast<KDFoundation::Event::Type>(static_cast<uint16_t>(KDFoundation::Event::Type::UserType) + 2))
+        , m_x{ x }
+        , m_y{ y }
     {
     }
 
@@ -38,8 +38,8 @@ class EventObject : public KDFoundation::Object
 {
 public:
     EventObject(int expectedX, int expectedY)
-    : m_expectedX{ expectedX }
-    , m_expectedY{ expectedY }
+        : m_expectedX{ expectedX }
+        , m_expectedY{ expectedY }
     {
     }
 
@@ -67,8 +67,8 @@ class RecursiveEventPosterObject : public KDFoundation::Object
 {
 public:
     RecursiveEventPosterObject(std::thread::id expectedThreadId = {}, size_t maxEvents = 1000)
-    : m_expectedThreadId(expectedThreadId)
-    , m_maxEvents{ maxEvents }
+        : m_expectedThreadId(expectedThreadId)
+        , m_maxEvents{ maxEvents }
     {
     }
 

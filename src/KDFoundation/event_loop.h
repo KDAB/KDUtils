@@ -28,41 +28,41 @@
 
 namespace KDFoundation {
 
-    class AbstractPlatformEventLoop;
-    class Postman;
+class AbstractPlatformEventLoop;
+class Postman;
 
-    class KDFOUNDATION_API EventLoop
-    {
-    public:
-        EventLoop(std::unique_ptr<AbstractPlatformEventLoop> platformEventLoop = nullptr);
-        ~EventLoop();
+class KDFOUNDATION_API EventLoop
+{
+public:
+    EventLoop(std::unique_ptr<AbstractPlatformEventLoop> platformEventLoop = nullptr);
+    ~EventLoop();
 
-        static EventLoop *instance();
+    static EventLoop *instance();
 
-        const AbstractPlatformEventLoop *platformEventLoop() const { return m_platformEventLoop.get(); }
-        AbstractPlatformEventLoop *platformEventLoop() { return m_platformEventLoop.get(); }
+    const AbstractPlatformEventLoop *platformEventLoop() const { return m_platformEventLoop.get(); }
+    AbstractPlatformEventLoop *platformEventLoop() { return m_platformEventLoop.get(); }
 
-        Postman *postman() { return m_postman.get(); }
+    Postman *postman() { return m_postman.get(); }
 
-        void postEvent(EventReceiver *target, std::unique_ptr<Event> &&event);
-        void removeAllEventsTargeting(EventReceiver &evReceiver) { m_eventQueue.removeAllEventsTargeting(evReceiver); }
-        EventQueue::size_type eventQueueSize() const { return m_eventQueue.size(); }
+    void postEvent(EventReceiver *target, std::unique_ptr<Event> &&event);
+    void removeAllEventsTargeting(EventReceiver &evReceiver) { m_eventQueue.removeAllEventsTargeting(evReceiver); }
+    EventQueue::size_type eventQueueSize() const { return m_eventQueue.size(); }
 
-        void sendEvent(EventReceiver *target, Event *event);
+    void sendEvent(EventReceiver *target, Event *event);
 
-        void processEvents(int timeout = 0);
+    void processEvents(int timeout = 0);
 
-        int exec();
-        void quit();
+    int exec();
+    void quit();
 
-        std::shared_ptr<KDBindings::ConnectionEvaluator> connectionEvaluator();
+    std::shared_ptr<KDBindings::ConnectionEvaluator> connectionEvaluator();
 
-    private:
-        thread_local static EventLoop *ms_instance;
-        EventQueue m_eventQueue;
-        bool m_quitRequested = false;
-        std::unique_ptr<AbstractPlatformEventLoop> m_platformEventLoop;
-        std::unique_ptr<Postman> m_postman;
-    };
+private:
+    thread_local static EventLoop *ms_instance;
+    EventQueue m_eventQueue;
+    bool m_quitRequested = false;
+    std::unique_ptr<AbstractPlatformEventLoop> m_platformEventLoop;
+    std::unique_ptr<Postman> m_postman;
+};
 
 } // namespace KDFoundation
