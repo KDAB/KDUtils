@@ -261,7 +261,7 @@ TEST_CASE("Worker thread event loop")
         std::thread worker_thread;
 
         {
-            GuiApplication app;
+            const GuiApplication app;
 
             auto runWorkerThread = [&mutex, &cond, &ready]() {
                 SPDLOG_INFO("Launched worker thread");

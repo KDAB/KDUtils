@@ -26,11 +26,13 @@
 
 using namespace KDFoundation;
 
-thread_local EventLoop *EventLoop::ms_instance = nullptr;
+namespace {
+thread_local EventLoop *s_eventLoopInstance = nullptr;
+}
 
 EventLoop *EventLoop::instance()
 {
-    return ms_instance;
+    return s_eventLoopInstance;
 }
 
 namespace {
@@ -52,15 +54,15 @@ EventLoop::EventLoop(std::unique_ptr<AbstractPlatformEventLoop> platformEventLoo
     m_postman = std::make_unique<Postman>();
     m_platformEventLoop->setPostman(m_postman.get());
 
-    assert(ms_instance == nullptr && "Cannot have more than one event loop per thread. Nested event loops are not supported.");
-    ms_instance = this;
+    assert(s_eventLoopInstance == nullptr && "Cannot have more than one event loop per thread. Nested event loops are not supported.");
+    s_eventLoopInstance = this;
 }
 
 EventLoop::~EventLoop()
 {
     // Destroy the platform event loop before removing the event loop instance
     m_platformEventLoop.reset();
-    ms_instance = nullptr;
+    s_eventLoopInstance = nullptr;
 }
 
 std::shared_ptr<KDBindings::ConnectionEvaluator> EventLoop::connectionEvaluator()

@@ -454,7 +454,7 @@ TEST_CASE("Worker thread event loop")
         std::thread worker_thread;
 
         {
-            CoreApplication app;
+            const CoreApplication app;
 
             auto runWorkerThread = [&mutex, &cond, &ready]() {
                 SPDLOG_INFO("Launched worker thread");

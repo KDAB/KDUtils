@@ -58,7 +58,6 @@ public:
     std::shared_ptr<KDBindings::ConnectionEvaluator> connectionEvaluator();
 
 private:
-    thread_local static EventLoop *ms_instance;
     EventQueue m_eventQueue;
     bool m_quitRequested = false;
     std::unique_ptr<AbstractPlatformEventLoop> m_platformEventLoop;
