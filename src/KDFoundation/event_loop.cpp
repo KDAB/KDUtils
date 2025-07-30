@@ -27,7 +27,7 @@
 using namespace KDFoundation;
 
 namespace {
-    thread_local EventLoop *s_eventLoopInstance = nullptr;
+thread_local EventLoop *s_eventLoopInstance = nullptr;
 }
 
 EventLoop *EventLoop::instance()
