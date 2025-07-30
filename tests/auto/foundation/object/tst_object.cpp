@@ -411,7 +411,7 @@ TEST_CASE("Deferred object destruction")
 
     SUBCASE("Can call deleteLater from worker thread")
     {
-        CoreApplication app;
+        const CoreApplication app;
 
         auto runWorkerThread = []() {
             EventLoop loop;
