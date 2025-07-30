@@ -26,8 +26,8 @@ Object::Object()
 
 void Object::deleteLater()
 {
-    if (CoreApplication::instance() == nullptr) {
-        SPDLOG_ERROR("No CoreApplication object to schedule deferred deletion of object with.");
+    if (EventLoop::instance() == nullptr) {
+        SPDLOG_ERROR("No EventLoop to schedule deferred deletion of object with.");
         return;
     }
 
@@ -37,7 +37,7 @@ void Object::deleteLater()
     }
 
     auto ev = std::make_unique<DeferredDeleteEvent>();
-    CoreApplication::instance()->postEvent(this, std::move(ev));
+    EventLoop::instance()->postEvent(this, std::move(ev));
 }
 
 Object::~Object()
