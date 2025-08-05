@@ -313,13 +313,13 @@ private:
         socklen_t addrLen = sizeof(clientAddr);
 
 #if defined(KD_PLATFORM_WIN32)
-        const auto clientFd = accept(m_socket.socketFileDescriptor(),
-                                     reinterpret_cast<struct sockaddr *>(&clientAddr),
-                                     &addrLen);
+        const SOCKET clientFd = accept(m_socket.socketFileDescriptor(),
+                                       reinterpret_cast<struct sockaddr *>(&clientAddr),
+                                       &addrLen);
 
         if (clientFd != INVALID_SOCKET) {
             // Create a new client socket using the accepted file descriptor
-            auto clientSocket = std::make_unique<TcpSocket>(clientFd, Socket::State::Connected);
+            auto clientSocket = std::make_unique<TcpSocket>(static_cast<int>(clientFd), Socket::State::Connected);
 
             // Store the client socket and notify
             TcpSocket *rawPtr = clientSocket.get();

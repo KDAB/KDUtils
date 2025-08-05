@@ -28,7 +28,6 @@ static_assert(!std::is_copy_assignable<EventQueue>{});
 static_assert(!std::is_move_constructible<EventQueue>{});
 static_assert(!std::is_move_assignable<EventQueue>{});
 
-namespace {
 class MyEvent : public Event
 {
 public:

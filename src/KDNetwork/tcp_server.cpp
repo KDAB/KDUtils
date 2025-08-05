@@ -334,6 +334,9 @@ void TcpServer::onIncomingConnection()
         }
         return; // Wait for next incoming connection
     }
+
+    // Creating a socket for the new connection
+    auto newSocket = std::make_unique<TcpSocket>(static_cast<int>(clientFd), Socket::State::Connected);
 #else
     const int clientFd = accept(m_listeningFd, reinterpret_cast<struct sockaddr *>(&clientAddr), &clientAddrLen);
     if (clientFd < 0) {
@@ -343,10 +346,10 @@ void TcpServer::onIncomingConnection()
         }
         return; // Wait for next incoming connection
     }
-#endif
 
     // Creating a socket for the new connection
     auto newSocket = std::make_unique<TcpSocket>(clientFd, Socket::State::Connected);
+#endif
 
     // Call the callback with the new socket
     if (m_newConnectionCallback) {
