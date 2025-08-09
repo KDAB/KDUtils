@@ -30,11 +30,11 @@
 namespace {
 auto shouldFailOnMacOS()
 {
-    #if defined(PLATFORM_MACOS)
+#if defined(PLATFORM_MACOS)
     return doctest::should_fail(true);
-    #else
+#else
     return doctest::should_fail(false);
-    #endif
+#endif
 }
 } // namespace
 

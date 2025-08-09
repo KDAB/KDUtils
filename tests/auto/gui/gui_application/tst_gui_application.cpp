@@ -29,11 +29,11 @@ using namespace KDGui;
 namespace {
 auto shouldFailOnMacOS()
 {
-    #if defined(PLATFORM_MACOS)
+#if defined(PLATFORM_MACOS)
     return doctest::should_fail(true);
-    #else
+#else
     return doctest::should_fail(false);
-    #endif
+#endif
 }
 } // namespace
 
@@ -57,7 +57,6 @@ TEST_CASE("Creation")
 
 TEST_CASE("Timer handling" * doctest::timeout(120))
 {
-
 }
 
 TEST_CASE("Main event loop")
