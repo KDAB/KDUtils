@@ -28,7 +28,7 @@ using namespace KDFoundation;
 
 inline MacOSPlatformEventLoop *eventLoop()
 {
-    return static_cast<MacOSPlatformEventLoop *>(CoreApplication::instance()->eventLoop());
+    return static_cast<MacOSPlatformEventLoop *>(EventLoop::instance()->platformEventLoop());
 }
 
 MacOSPlatformTimer::MacOSPlatformTimer(Timer *timer)
