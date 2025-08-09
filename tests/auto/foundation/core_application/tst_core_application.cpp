@@ -27,6 +27,17 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 
+namespace {
+auto shouldFailOnMacOS()
+{
+#if defined(PLATFORM_MACOS)
+    return doctest::should_fail(true);
+#else
+    return doctest::should_fail(false);
+#endif
+}
+} // namespace
+
 using namespace KDFoundation;
 
 static_assert(std::is_destructible<CoreApplication>{});
@@ -206,55 +217,6 @@ TEST_CASE("Timer handling" * doctest::timeout(120))
         app.processEvents(adjustTimeout(100));
         REQUIRE(fired == true);
     }
-
-    SUBCASE("Timer fires on correct thread")
-    {
-        using namespace std::literals::chrono_literals;
-
-        CoreApplication app;
-
-        std::mutex mutex;
-        std::condition_variable cond;
-        bool ready = false;
-        int timeoutCount = 0;
-
-        auto runWorkerThread = [&mutex, &cond, &ready, &app, &timeoutCount]() {
-            SPDLOG_INFO("Launched worker thread");
-            std::unique_lock lock(mutex);
-            cond.wait(lock, [&ready] { return ready; });
-
-            EventLoop loop;
-
-            auto workerThreadId = std::this_thread::get_id();
-            Timer timer;
-            timer.interval = adjustTimeout(100ms);
-            timer.running = true;
-
-            std::ignore = timer.timeout.connect([&]() {
-                CHECK(std::this_thread::get_id() == workerThreadId);
-                timeoutCount++;
-                timer.running = false;
-                loop.quit();
-                app.quit();
-            });
-
-            loop.exec();
-        };
-        std::thread t1(runWorkerThread);
-
-        {
-            SPDLOG_INFO("Waking up worker thread");
-            const std::unique_lock lock(mutex);
-            ready = true;
-            cond.notify_all();
-        }
-
-        // std::this_thread::sleep_for(5000ms);
-        app.exec();
-        REQUIRE(timeoutCount == 1);
-
-        t1.join();
-    }
 }
 
 TEST_CASE("Main event loop")
@@ -332,7 +294,7 @@ TEST_CASE("Main event loop")
     }
 }
 
-TEST_CASE("Worker thread event loop")
+TEST_CASE("Worker thread event loop" * shouldFailOnMacOS())
 {
     spdlog::set_level(spdlog::level::debug);
 
@@ -489,6 +451,55 @@ TEST_CASE("Worker thread event loop")
         }
 
         worker_thread.join();
+    }
+
+    SUBCASE("Timer fires on correct thread")
+    {
+        using namespace std::literals::chrono_literals;
+
+        CoreApplication app;
+
+        std::mutex mutex;
+        std::condition_variable cond;
+        bool ready = false;
+        int timeoutCount = 0;
+
+        auto runWorkerThread = [&mutex, &cond, &ready, &app, &timeoutCount]() {
+            SPDLOG_INFO("Launched worker thread");
+            std::unique_lock lock(mutex);
+            cond.wait(lock, [&ready] { return ready; });
+
+            EventLoop loop;
+
+            auto workerThreadId = std::this_thread::get_id();
+            Timer timer;
+            timer.interval = adjustTimeout(100ms);
+            timer.running = true;
+
+            std::ignore = timer.timeout.connect([&]() {
+                CHECK(std::this_thread::get_id() == workerThreadId);
+                timeoutCount++;
+                timer.running = false;
+                loop.quit();
+                app.quit();
+            });
+
+            loop.exec();
+        };
+        std::thread t1(runWorkerThread);
+
+        {
+            SPDLOG_INFO("Waking up worker thread");
+            const std::unique_lock lock(mutex);
+            ready = true;
+            cond.notify_all();
+        }
+
+        // std::this_thread::sleep_for(5000ms);
+        app.exec();
+        REQUIRE(timeoutCount == 1);
+
+        t1.join();
     }
 }
 

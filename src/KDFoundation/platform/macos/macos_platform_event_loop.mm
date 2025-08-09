@@ -24,6 +24,7 @@ namespace KDFoundation {
 
 MacOSPlatformEventLoop::MacOSPlatformEventLoop()
 {
+    NSAssert([NSThread isMainThread], @"Running an event loop on a secondary thread, is not yet supported on mac OS.");
     @autoreleasepool {
         // make sure there's a NSApp
         [NSApplication sharedApplication];
