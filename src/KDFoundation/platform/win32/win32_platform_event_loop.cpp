@@ -25,6 +25,15 @@ namespace {
 auto s_msgWindowClassName = L"Win32PlatformEventLoop_msgWindow";
 
 constexpr UINT WM_KD_SOCKETEVENT = WM_USER;
+
+HMODULE GetCurrentModule()
+{
+    HMODULE hModule = nullptr;
+    GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                      reinterpret_cast<LPCWSTR>(&GetCurrentModule), &hModule);
+    return hModule;
+}
+
 } // namespace
 
 LRESULT CALLBACK Win32PlatformEventLoop::messageWindowProc(HWND hwnd, UINT msgId, WPARAM wp, LPARAM lp)
@@ -49,6 +58,7 @@ Win32PlatformEventLoop::Win32PlatformEventLoop()
     WNDCLASS wc = {};
     wc.lpfnWndProc = messageWindowProc;
     wc.lpszClassName = s_msgWindowClassName;
+    wc.hInstance = GetCurrentModule();
 
     const ATOM atom = RegisterClass(&wc);
     if (!atom)
@@ -62,7 +72,7 @@ Win32PlatformEventLoop::Win32PlatformEventLoop()
             nullptr, 0, 0, 0, 0, 0,
             HWND_MESSAGE,
             nullptr,
-            GetModuleHandle(nullptr),
+            GetCurrentModule(),
             nullptr);
 
     if (!m_msgWindow)
@@ -76,7 +86,7 @@ Win32PlatformEventLoop::~Win32PlatformEventLoop()
         CloseHandle(m_wakeUpEvent);
     if (m_msgWindow)
         DestroyWindow(m_msgWindow);
-    if (!UnregisterClass(s_msgWindowClassName, GetModuleHandle(nullptr)))
+    if (!UnregisterClass(s_msgWindowClassName, GetCurrentModule()))
         SPDLOG_WARN("Failed to unregister message window class");
 }
 
