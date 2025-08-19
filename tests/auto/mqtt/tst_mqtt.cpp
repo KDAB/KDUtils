@@ -11,6 +11,7 @@
 #include <KDFoundation/core_application.h>
 #include <KDMqtt/mqtt.h>
 #include <memory>
+#include "mosquitto_wrapper.h"
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest/doctest.h>
