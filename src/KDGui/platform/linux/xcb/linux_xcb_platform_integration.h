@@ -51,7 +51,8 @@ public:
     KDUtils::Dir standardDir(const KDFoundation::CoreApplication &app, KDFoundation::StandardDir type) const override;
 
 private:
-    LinuxXcbPlatformEventLoop *createPlatformEventLoopImpl() override;
+    LinuxXcbPlatformEventLoop *createGuiEventLoopImpl() override;
+    KDFoundation::LinuxPlatformEventLoop *createPlatformEventLoopImpl() override;
     LinuxXcbPlatformWindow *createPlatformWindowImpl(Window *window) override;
 
     bool initializeXkbExtension();

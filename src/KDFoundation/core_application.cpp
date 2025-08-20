@@ -43,11 +43,11 @@ std::unique_ptr<AbstractPlatformIntegration> createPlatformIntegration()
 }
 } // namespace
 
-CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration)
+CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration, std::unique_ptr<KDFoundation::AbstractPlatformEventLoop> &&platformEventLoop)
     : m_defaultLogger{ KDUtils::Logger::logger("default_log", spdlog::level::info) }
     , m_platformIntegration{ platformIntegration ? std::move(platformIntegration) : createPlatformIntegration() }
     , m_logger{ KDUtils::Logger::logger("core_application") }
-    , m_eventLoop{ m_platformIntegration->createPlatformEventLoop() }
+    , m_eventLoop{ platformEventLoop ? std::move(platformEventLoop) : m_platformIntegration->createPlatformEventLoop() }
 {
     assert(ms_application == nullptr);
     ms_application = this;
@@ -67,7 +67,7 @@ CoreApplication::~CoreApplication()
     // and immediately return after processing events (timeout = 0).
     processEvents(0);
 
-    // Destroy the event loop and platform integration before removing the app instance
+    // Destroy the platform integration before removing the app instance
     m_platformIntegration.reset();
     ms_application = nullptr;
 }
@@ -99,7 +99,7 @@ int CoreApplication::exec()
 
 void CoreApplication::quit()
 {
-    m_eventLoop.quit();
+    postEvent(this, std::make_unique<QuitEvent>());
 }
 
 AbstractPlatformIntegration *CoreApplication::platformIntegration()
@@ -110,10 +110,6 @@ AbstractPlatformIntegration *CoreApplication::platformIntegration()
 void CoreApplication::event(EventReceiver *target, Event *event)
 {
     if (event->type() == Event::Type::Quit) {
-        // After setting the quit flag to true, we must wake up the event loop once more,
-        // because processEvents() goes back into waitForEvents() after processing the
-        // queued events. Without the wakeUp() call it would wait until some other event
-        // woke it up again. Let's kick it ourselves.
         m_eventLoop.quit();
         event->setAccepted(true);
     }

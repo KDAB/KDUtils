@@ -1,7 +1,7 @@
 # This file is part of KDUtils.
 #
 # SPDX-FileCopyrightText: 2021 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
-# Author: Paul Lemire <paul.lemire@kdab.com>
+# Author: Anton Kreuzkamp <anton.kreuzkamp@kdab.com>
 #
 # SPDX-License-Identifier: MIT
 #

@@ -48,7 +48,7 @@ public:
     // Return a directory, at one of the standard directory locations
     virtual KDUtils::Dir standardDir(const CoreApplication &app, StandardDir type) const = 0;
 
-private:
+protected:
     /**
      * Create and return a platform event loop.
      *

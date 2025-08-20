@@ -38,7 +38,7 @@ public:
     KDBindings::Property<std::string> applicationName{};
     KDBindings::Property<std::string> organizationName{};
 
-    CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration = {});
+    CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration = {}, std::unique_ptr<KDFoundation::AbstractPlatformEventLoop> &&platformEventLoop = {});
     ~CoreApplication() override;
 
     static inline CoreApplication *instance() { return ms_application; }

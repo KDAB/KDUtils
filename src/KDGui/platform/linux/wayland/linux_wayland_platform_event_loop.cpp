@@ -25,10 +25,6 @@ LinuxWaylandPlatformEventLoop::LinuxWaylandPlatformEventLoop(LinuxWaylandPlatfor
     registerFileDescriptor(fd, FileDescriptorNotifier::NotificationType::Read);
 }
 
-void LinuxWaylandPlatformEventLoop::init()
-{
-}
-
 LinuxWaylandPlatformEventLoop::~LinuxWaylandPlatformEventLoop()
 {
 }

@@ -74,7 +74,12 @@ LinuxXcbPlatformWindow *LinuxXcbPlatformIntegration::window(xcb_window_t xcbWind
     return it->second;
 }
 
-LinuxXcbPlatformEventLoop *LinuxXcbPlatformIntegration::createPlatformEventLoopImpl()
+KDFoundation::LinuxPlatformEventLoop *LinuxXcbPlatformIntegration::createPlatformEventLoopImpl()
+{
+    return new KDFoundation::LinuxPlatformEventLoop();
+}
+
+LinuxXcbPlatformEventLoop *LinuxXcbPlatformIntegration::createGuiEventLoopImpl()
 {
     return new LinuxXcbPlatformEventLoop(this);
 }

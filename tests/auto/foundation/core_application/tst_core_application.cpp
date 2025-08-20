@@ -9,8 +9,6 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 
-#include "../common/event_mockups.h"
-
 #include <KDFoundation/config.h>
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/timer.h>
@@ -26,6 +24,7 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
+#include "../common/event_mockups.h"
 
 namespace {
 auto shouldFailOnMacOS()
