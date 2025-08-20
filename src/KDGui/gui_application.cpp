@@ -63,12 +63,11 @@ GuiApplication::GuiApplicationConstructionParams GuiApplication::createPlatformI
     }
     auto eventLoop = integration->createGuiEventLoop();
 
-    return GuiApplication::GuiApplicationConstructionParams {
+    return GuiApplication::GuiApplicationConstructionParams{
         std::move(integration),
         std::move(eventLoop)
     };
 }
-
 
 GuiApplication::GuiApplication(GuiApplication::GuiApplicationConstructionParams params)
     : CoreApplication(std::move(params.platformIntegration), std::move(params.platformEventLoop))

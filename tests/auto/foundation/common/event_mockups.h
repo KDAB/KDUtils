@@ -37,13 +37,13 @@ class CallbackEvent : public KDFoundation::Event
 {
 public:
     CallbackEvent(const std::function<void()> &callback)
-    : Event(static_cast<KDFoundation::Event::Type>(static_cast<uint16_t>(KDFoundation::Event::Type::UserType) + 1))
-    , callback(callback)
-    {}
+        : Event(static_cast<KDFoundation::Event::Type>(static_cast<uint16_t>(KDFoundation::Event::Type::UserType) + 1))
+        , callback(callback)
+    {
+    }
 
     std::function<void()> callback;
 };
-
 
 class EventObject : public KDFoundation::Object
 {

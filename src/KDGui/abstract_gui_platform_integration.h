@@ -36,7 +36,6 @@ public:
         return std::unique_ptr<KDFoundation::AbstractPlatformEventLoop>(this->createGuiEventLoopImpl());
     }
 
-
     virtual AbstractClipboard *clipboard() = 0;
 
 private:

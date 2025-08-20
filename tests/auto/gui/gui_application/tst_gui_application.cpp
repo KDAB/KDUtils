@@ -10,7 +10,6 @@
  *  Contact KDAB at <info@kdab.com> for commercial licensing options.
  */
 
-
 #include <KDFoundation/event_loop.h>
 #include <KDFoundation/timer.h>
 #include <KDGui/gui_application.h>
@@ -245,7 +244,6 @@ TEST_CASE("Worker thread event loop" * doctest::timeout(120 /* seconds */) * sho
                     worker_ready = true;
                     cond.notify_all();
                 }
-
 
                 obj->requestCallback([&]() {
                     SPDLOG_INFO("Got pause event. Waiting for main thread to wake us up.");
