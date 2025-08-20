@@ -55,7 +55,7 @@ EventLoop::EventLoop(std::unique_ptr<AbstractPlatformEventLoop> platformEventLoo
     m_postman = std::make_unique<Postman>();
     m_platformEventLoop->setPostman(m_postman.get());
 
-    assert(s_eventLoopInstance == nullptr && "Cannot have more than one event loop per thread. Nested event loops are not supported.");
+    assert(s_eventLoopInstance == nullptr && "Cannot have more than one event loop per thread.");
     s_eventLoopInstance = this;
 }
 
