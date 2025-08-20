@@ -17,7 +17,6 @@
 #include <KDFoundation/event_receiver.h>
 #include <KDFoundation/object.h>
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
 
 class PayloadEvent : public KDFoundation::Event
@@ -34,6 +33,18 @@ public:
     int m_y;
 };
 
+class CallbackEvent : public KDFoundation::Event
+{
+public:
+    CallbackEvent(const std::function<void()> &callback)
+        : Event(static_cast<KDFoundation::Event::Type>(static_cast<uint16_t>(KDFoundation::Event::Type::UserType) + 1))
+        , callback(callback)
+    {
+    }
+
+    std::function<void()> callback;
+};
+
 class EventObject : public KDFoundation::Object
 {
 public:
@@ -48,6 +59,11 @@ public:
 protected:
     void userEvent(KDFoundation::Event *ev) override
     {
+        if (ev->type() == static_cast<KDFoundation::Event::Type>(static_cast<uint16_t>(KDFoundation::Event::Type::UserType) + 1)) {
+            auto e = static_cast<CallbackEvent *>(ev);
+            e->setAccepted(true);
+            e->callback();
+        }
         if (ev->type() == static_cast<KDFoundation::Event::Type>(static_cast<uint16_t>(KDFoundation::Event::Type::UserType) + 2)) {
             auto e = static_cast<PayloadEvent *>(ev);
             if (e->m_x == m_expectedX && e->m_y == m_expectedY) {
@@ -78,20 +94,34 @@ public:
     {
         KDFoundation::EventLoop::instance()->postEvent(this, std::make_unique<KDFoundation::UpdateEvent>());
     }
+    void requestCallback(const std::function<void()> &callback)
+    {
+        KDFoundation::EventLoop::instance()->postEvent(this, std::make_unique<CallbackEvent>(callback));
+    }
+
+    void quit()
+    {
+        m_stopRequested = true;
+    }
 
 protected:
     void event(KDFoundation::EventReceiver *target, KDFoundation::Event *ev) override
     {
+        if (ev->type() == static_cast<KDFoundation::Event::Type>(static_cast<uint16_t>(KDFoundation::Event::Type::UserType) + 1)) {
+            auto e = static_cast<CallbackEvent *>(ev);
+            e->setAccepted(true);
+            e->callback();
+        }
         if (target == this && ev->type() == KDFoundation::Event::Type::Update) {
             if (m_expectedThreadId != std::thread::id{}) {
                 CHECK(std::this_thread::get_id() == m_expectedThreadId);
             }
             ++m_eventsProcessed;
             ev->setAccepted(true);
-            if (m_eventsProcessed != m_maxEvents) {
-                requestUpdate();
-            } else {
+            if (m_stopRequested || m_eventsProcessed == m_maxEvents) {
                 KDFoundation::EventLoop::instance()->quit();
+            } else {
+                requestUpdate();
             }
         }
 
@@ -99,6 +129,7 @@ protected:
     }
 
 private:
+    std::atomic_bool m_stopRequested = false;
     std::thread::id m_expectedThreadId;
     size_t m_maxEvents{ 0 };
     size_t m_eventsProcessed{ 0 };

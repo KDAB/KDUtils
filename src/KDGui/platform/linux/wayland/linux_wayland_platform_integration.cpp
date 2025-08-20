@@ -13,6 +13,7 @@
 
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/platform/linux/linux_platform_integration.h>
+#include <KDFoundation/platform/linux/linux_platform_event_loop.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_input.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_output.h>
 #include <KDUtils/logging.h>
@@ -120,7 +121,12 @@ LinuxWaylandPlatformWindow *LinuxWaylandPlatformIntegration::window(wl_surface *
     return it->second;
 }
 
-LinuxWaylandPlatformEventLoop *LinuxWaylandPlatformIntegration::createPlatformEventLoopImpl()
+KDFoundation::LinuxPlatformEventLoop *LinuxWaylandPlatformIntegration::createPlatformEventLoopImpl()
+{
+    return new KDFoundation::LinuxPlatformEventLoop();
+}
+
+LinuxWaylandPlatformEventLoop *LinuxWaylandPlatformIntegration::createGuiEventLoopImpl()
 {
     return new LinuxWaylandPlatformEventLoop(this);
 }

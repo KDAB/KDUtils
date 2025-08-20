@@ -15,6 +15,10 @@
 
 #include <KDGui/abstract_platform_window.h>
 
+namespace KDFoundation {
+class AbstractPlatformEventLoop;
+}
+
 namespace KDGui {
 
 class Window;
@@ -27,11 +31,19 @@ public:
     {
         return std::unique_ptr<AbstractPlatformWindow>(this->createPlatformWindowImpl(window));
     }
+    std::unique_ptr<KDFoundation::AbstractPlatformEventLoop> createGuiEventLoop()
+    {
+        return std::unique_ptr<KDFoundation::AbstractPlatformEventLoop>(this->createGuiEventLoopImpl());
+    }
 
     virtual AbstractClipboard *clipboard() = 0;
 
 private:
     virtual AbstractPlatformWindow *createPlatformWindowImpl(Window *window) = 0;
+    virtual KDFoundation::AbstractPlatformEventLoop *createGuiEventLoopImpl()
+    {
+        return createPlatformEventLoopImpl();
+    }
 };
 
 } // namespace KDGui

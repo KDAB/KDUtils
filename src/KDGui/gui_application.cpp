@@ -46,23 +46,35 @@ std::unique_ptr<KDGui::AbstractGuiPlatformIntegration> createLinuxIntegration()
         return std::make_unique<LinuxXcbPlatformIntegration>();
 }
 #endif
-
-std::unique_ptr<AbstractGuiPlatformIntegration> createPlatformIntegration()
-{
-#if defined(ANDROID)
-    return std::make_unique<AndroidPlatformIntegration>();
-#elif defined(PLATFORM_LINUX)
-    return createLinuxIntegration();
-#elif defined(PLATFORM_WIN32)
-    return std::make_unique<Win32GuiPlatformIntegration>();
-#elif defined(PLATFORM_MACOS)
-    return std::make_unique<CocoaPlatformIntegration>();
-#endif
-    return {};
-}
 } // namespace
 
-GuiApplication::GuiApplication(std::unique_ptr<AbstractGuiPlatformIntegration> &&platformIntegration)
-    : CoreApplication(platformIntegration ? std::move(platformIntegration) : createPlatformIntegration())
+GuiApplication::GuiApplicationConstructionParams GuiApplication::createPlatformIntegration(std::unique_ptr<AbstractGuiPlatformIntegration> integration)
+{
+    if (!integration) {
+#if defined(ANDROID)
+        integration = std::make_unique<AndroidPlatformIntegration>();
+#elif defined(PLATFORM_LINUX)
+        integration = createLinuxIntegration();
+#elif defined(PLATFORM_WIN32)
+        integration = std::make_unique<Win32GuiPlatformIntegration>();
+#elif defined(PLATFORM_MACOS)
+        integration = std::make_unique<CocoaPlatformIntegration>();
+#endif
+    }
+    auto eventLoop = integration->createGuiEventLoop();
+
+    return GuiApplication::GuiApplicationConstructionParams{
+        std::move(integration),
+        std::move(eventLoop)
+    };
+}
+
+GuiApplication::GuiApplication(GuiApplication::GuiApplicationConstructionParams params)
+    : CoreApplication(std::move(params.platformIntegration), std::move(params.platformEventLoop))
+{
+}
+
+GuiApplication::GuiApplication(std::unique_ptr<AbstractGuiPlatformIntegration> platformIntegration)
+    : GuiApplication(createPlatformIntegration(std::move(platformIntegration)))
 {
 }
