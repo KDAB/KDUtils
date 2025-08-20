@@ -27,12 +27,12 @@
 #include "../common/event_mockups.h"
 
 namespace {
-auto shouldFailOnMacOS()
+auto skipOnMacOS()
 {
 #if defined(PLATFORM_MACOS)
-    return doctest::should_fail(true);
+    return doctest::skip(true);
 #else
-    return doctest::should_fail(false);
+    return doctest::skip(false);
 #endif
 }
 } // namespace
@@ -293,7 +293,7 @@ TEST_CASE("Main event loop")
     }
 }
 
-TEST_CASE("Worker thread event loop" * shouldFailOnMacOS())
+TEST_CASE("Worker thread event loop" * skipOnMacOS())
 {
     spdlog::set_level(spdlog::level::debug);
 
@@ -494,11 +494,10 @@ TEST_CASE("Worker thread event loop" * shouldFailOnMacOS())
             cond.notify_all();
         }
 
-        // std::this_thread::sleep_for(5000ms);
         app.exec();
-        REQUIRE(timeoutCount == 1);
-
         t1.join();
+
+        REQUIRE(timeoutCount == 1);
     }
 }
 

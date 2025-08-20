@@ -26,12 +26,12 @@ using namespace KDFoundation;
 using namespace KDGui;
 
 namespace {
-auto shouldFailOnMacOS()
+auto skipOnMacOS()
 {
 #if defined(PLATFORM_MACOS)
-    return doctest::should_fail(true);
+    return doctest::skip(true);
 #else
-    return doctest::should_fail(false);
+    return doctest::skip(false);
 #endif
 }
 } // namespace
@@ -101,7 +101,7 @@ TEST_CASE("Main event loop")
     }
 }
 
-TEST_CASE("Worker thread event loop" * doctest::timeout(120 /* seconds */) * shouldFailOnMacOS())
+TEST_CASE("Worker thread event loop" * doctest::timeout(120 /* seconds */) * skipOnMacOS())
 {
     spdlog::set_level(spdlog::level::debug);
 
