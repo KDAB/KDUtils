@@ -433,27 +433,6 @@ TEST_CASE("Threaded object destruction" * skipOnMacOS())
 
         t1.join();
     }
-}
-
-TEST_CASE("Event delivery")
-{
-    SUBCASE("custom user event gets delivered to userEvent virtual function")
-    {
-        auto ev = std::make_unique<UserEvent>();
-        auto object = std::make_unique<EventObject>();
-        object->event(object.get(), ev.get());
-
-        REQUIRE(object->m_userEventDelivered == true);
-    }
-
-    SUBCASE("timer event gets delivered to timerEvent virtual function")
-    {
-        auto ev = std::make_unique<TimerEvent>();
-        auto object = std::make_unique<EventObject>();
-        object->event(object.get(), ev.get());
-
-        REQUIRE(object->m_timerEventDelivered == true);
-    }
 
     SUBCASE("Object destruction cleans up event queue")
     {
@@ -484,5 +463,26 @@ TEST_CASE("Event delivery")
         std::thread t1(runWorkerThread);
 
         t1.join();
+    }
+}
+
+TEST_CASE("Event delivery")
+{
+    SUBCASE("custom user event gets delivered to userEvent virtual function")
+    {
+        auto ev = std::make_unique<UserEvent>();
+        auto object = std::make_unique<EventObject>();
+        object->event(object.get(), ev.get());
+
+        REQUIRE(object->m_userEventDelivered == true);
+    }
+
+    SUBCASE("timer event gets delivered to timerEvent virtual function")
+    {
+        auto ev = std::make_unique<TimerEvent>();
+        auto object = std::make_unique<EventObject>();
+        object->event(object.get(), ev.get());
+
+        REQUIRE(object->m_timerEventDelivered == true);
     }
 }
