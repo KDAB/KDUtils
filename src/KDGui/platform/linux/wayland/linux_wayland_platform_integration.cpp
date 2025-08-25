@@ -13,6 +13,7 @@
 
 #include <KDFoundation/core_application.h>
 #include <KDFoundation/platform/linux/linux_platform_integration.h>
+#include <KDFoundation/platform/linux/linux_platform_event_loop.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_input.h>
 #include <KDGui/platform/linux/wayland/linux_wayland_platform_output.h>
 #include <KDUtils/logging.h>
@@ -32,24 +33,6 @@ using namespace KDGui;
 LinuxWaylandPlatformIntegration::LinuxWaylandPlatformIntegration()
     : m_logger{ KDUtils::Logger::logger("wayland", spdlog::level::info) }
     , m_clipboard{ new LinuxWaylandClipboard{ this } }
-{
-}
-
-LinuxWaylandPlatformIntegration::~LinuxWaylandPlatformIntegration()
-{
-    m_outputs.clear();
-    m_inputs.clear();
-
-    xdg_wm_base_destroy(m_xdgShell.object);
-    wl_compositor_destroy(m_compositor.object);
-    wl_shm_destroy(m_shm.object);
-
-    wl_registry_destroy(m_registry);
-    wl_display_disconnect(m_display);
-    SPDLOG_LOGGER_DEBUG(m_logger, "Destroyed wl_display");
-}
-
-void LinuxWaylandPlatformIntegration::init()
 {
     SPDLOG_LOGGER_INFO(m_logger, "Wayland display is: {}", std::getenv("WAYLAND_DISPLAY")); // NOLINT(concurrency-mt-unsafe)
 
@@ -79,6 +62,24 @@ void LinuxWaylandPlatformIntegration::init()
         wrapWlCallback<&LinuxWaylandPlatformIntegration::globalRemove>
     };
     wl_registry_add_listener(m_registry, &listener, this);
+}
+
+LinuxWaylandPlatformIntegration::~LinuxWaylandPlatformIntegration()
+{
+    m_outputs.clear();
+    m_inputs.clear();
+
+    xdg_wm_base_destroy(m_xdgShell.object);
+    wl_compositor_destroy(m_compositor.object);
+    wl_shm_destroy(m_shm.object);
+
+    wl_registry_destroy(m_registry);
+    wl_display_disconnect(m_display);
+    SPDLOG_LOGGER_DEBUG(m_logger, "Destroyed wl_display");
+}
+
+void LinuxWaylandPlatformIntegration::init()
+{
     wl_display_roundtrip_queue(m_display, m_queue);
 
     if (!m_compositor.object) {
@@ -95,7 +96,6 @@ void LinuxWaylandPlatformIntegration::init()
     }
 
     m_cursorTheme = wl_cursor_theme_load(nullptr, 24, m_shm.object);
-    static_cast<LinuxWaylandPlatformEventLoop *>(KDFoundation::CoreApplication::instance()->eventLoop())->init();
 }
 
 bool LinuxWaylandPlatformIntegration::checkAvailable()
@@ -121,7 +121,12 @@ LinuxWaylandPlatformWindow *LinuxWaylandPlatformIntegration::window(wl_surface *
     return it->second;
 }
 
-LinuxWaylandPlatformEventLoop *LinuxWaylandPlatformIntegration::createPlatformEventLoopImpl()
+KDFoundation::LinuxPlatformEventLoop *LinuxWaylandPlatformIntegration::createPlatformEventLoopImpl()
+{
+    return new KDFoundation::LinuxPlatformEventLoop();
+}
+
+LinuxWaylandPlatformEventLoop *LinuxWaylandPlatformIntegration::createGuiEventLoopImpl()
 {
     return new LinuxWaylandPlatformEventLoop(this);
 }

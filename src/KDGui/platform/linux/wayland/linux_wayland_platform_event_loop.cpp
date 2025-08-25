@@ -21,10 +21,6 @@ LinuxWaylandPlatformEventLoop::LinuxWaylandPlatformEventLoop(LinuxWaylandPlatfor
     : m_logger{ platformIntegration->logger() }
     , m_platformIntegration{ platformIntegration }
 {
-}
-
-void LinuxWaylandPlatformEventLoop::init()
-{
     const int fd = wl_display_get_fd(m_platformIntegration->display());
     registerFileDescriptor(fd, FileDescriptorNotifier::NotificationType::Read);
 }

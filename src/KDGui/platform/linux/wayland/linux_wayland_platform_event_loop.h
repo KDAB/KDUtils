@@ -27,7 +27,6 @@ public:
     explicit LinuxWaylandPlatformEventLoop(LinuxWaylandPlatformIntegration *platformIntegration);
     ~LinuxWaylandPlatformEventLoop();
 
-    void init();
     void waitForEventsImpl(int timeout) override;
 
 private:

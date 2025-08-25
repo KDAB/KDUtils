@@ -80,7 +80,8 @@ public:
     KDUtils::Dir standardDir(const KDFoundation::CoreApplication &app, KDFoundation::StandardDir type) const override;
 
 private:
-    LinuxWaylandPlatformEventLoop *createPlatformEventLoopImpl() override;
+    KDFoundation::LinuxPlatformEventLoop *createPlatformEventLoopImpl() override;
+    LinuxWaylandPlatformEventLoop *createGuiEventLoopImpl() override;
     LinuxWaylandPlatformWindow *createPlatformWindowImpl(Window *window) override;
 
     void init() final;

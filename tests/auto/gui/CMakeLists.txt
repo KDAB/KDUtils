@@ -10,8 +10,9 @@
 
 project(KDGui-Tests)
 
-include_directories(../KDFoundation/common)
+include_directories(../common)
 
+add_subdirectory(gui_application)
 add_subdirectory(position)
 add_subdirectory(window)
 
