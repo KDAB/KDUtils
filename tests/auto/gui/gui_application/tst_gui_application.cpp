@@ -91,7 +91,7 @@ TEST_CASE("Main event loop")
     }
 }
 
-TEST_CASE("Worker thread event loop" * doctest::timeout(120 /* seconds */) * shouldFailOnMacOS())
+TEST_CASE("Worker thread event loop" * doctest::timeout(120 /* seconds */) * skipOnMacOS())
 {
     spdlog::set_level(spdlog::level::debug);
 
