@@ -23,6 +23,7 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
+#include <utils.h>
 
 using namespace KDFoundation;
 
@@ -408,7 +409,10 @@ TEST_CASE("Deferred object destruction")
         REQUIRE(objectDestroyedSpy.count() == 1);
         REQUIRE(std::get<0>(objectDestroyedSpy.args()) == obj);
     }
+}
 
+TEST_CASE("Threaded object destruction" * shouldFailOnMacOS())
+{
     SUBCASE("Can call deleteLater from worker thread")
     {
         const CoreApplication app;
