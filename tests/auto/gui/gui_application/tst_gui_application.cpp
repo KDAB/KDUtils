@@ -26,7 +26,6 @@
 using namespace KDFoundation;
 using namespace KDGui;
 
-
 TEST_CASE("Creation")
 {
     SUBCASE("default construction")

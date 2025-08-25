@@ -27,7 +27,6 @@
 #include <event_mockups.h>
 #include <utils.h>
 
-
 using namespace KDFoundation;
 
 static_assert(std::is_destructible<CoreApplication>{});
