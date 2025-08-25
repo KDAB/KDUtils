@@ -283,7 +283,7 @@ TEST_CASE("Main event loop")
     }
 }
 
-TEST_CASE("Worker thread event loop" * shouldFailOnMacOS())
+TEST_CASE("Worker thread event loop" * skipOnMacOS())
 {
     spdlog::set_level(spdlog::level::debug);
 

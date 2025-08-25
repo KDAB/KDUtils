@@ -18,11 +18,11 @@
 
 #include <doctest.h>
 
-auto shouldFailOnMacOS()
+auto skipOnMacOS()
 {
 #if defined(PLATFORM_MACOS)
-    return doctest::should_fail(true);
+    return doctest::skip(true);
 #else
-    return doctest::should_fail(false);
+    return doctest::skip(false);
 #endif
 }

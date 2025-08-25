@@ -411,7 +411,7 @@ TEST_CASE("Deferred object destruction")
     }
 }
 
-TEST_CASE("Threaded object destruction" * shouldFailOnMacOS())
+TEST_CASE("Threaded object destruction" * skipOnMacOS())
 {
     SUBCASE("Can call deleteLater from worker thread")
     {
