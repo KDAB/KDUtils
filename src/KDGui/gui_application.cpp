@@ -59,6 +59,8 @@ GuiApplication::GuiApplicationConstructionParams GuiApplication::createPlatformI
         integration = std::make_unique<Win32GuiPlatformIntegration>();
 #elif defined(PLATFORM_MACOS)
         integration = std::make_unique<CocoaPlatformIntegration>();
+#else
+        static_assert(false, "No valid platform integration could be found.");
 #endif
     }
     auto eventLoop = integration->createGuiEventLoop();
