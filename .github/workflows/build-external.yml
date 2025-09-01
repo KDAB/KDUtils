@@ -33,6 +33,9 @@ jobs:
 
       - name: Install dependencies
         run: |
+          (brew list cmake > /dev/null && brew uninstall cmake) # Workaround for https://github.com/actions/runner-images/issues/12912
+                                                                # We remove the pinned CMake if it's installed so commands below can succeed
+                                                                # TODO: remove when not needed anymore
           brew tap KDAB/tap
           brew install fmt spdlog KDBindings mosquitto
 
