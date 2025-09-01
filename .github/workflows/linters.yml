@@ -77,7 +77,6 @@ jobs:
           cppcheck --quiet --language=c++ --force --inline-suppr
           --enable=warning,performance,portability,information
           --disable=missingInclude  --check-level=exhaustive
-          --suppress="ctuOneDefinitionRuleViolation:tests/*"
           -i build --library=std.cfg --error-exitcode=42 .
 
           if($LASTEXITCODE -eq 42) {
