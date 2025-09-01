@@ -1,5 +1,5 @@
 [codespell]
-skip = ./build-*,.git
+skip = ./build*,.git,*fakeit.hpp
 interactive = 3
 #ignore camelCase, regardless. also mixed case words with correct spelling
 ignore-regex = \b([a-z]+[A-Z0-9][a-z0-9]*|te|fo)\b

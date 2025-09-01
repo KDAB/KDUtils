@@ -12,11 +12,6 @@ project(KDMqtt-Tests)
 
 include_directories(../KDFoundation/common)
 
-file(DOWNLOAD https://raw.githubusercontent.com/eranpeer/FakeIt/refs/tags/2.4.1/single_header/doctest/fakeit.hpp
-     "${CMAKE_BINARY_DIR}/tests/auto/fakeit.h"
-     EXPECTED_HASH SHA256=09be612875c0dd0c0692256739eb859e66f6e82c1f1082d50eacb670f471f63b
-)
-
 project(
     test-mqtt
     VERSION 0.1
@@ -30,7 +25,7 @@ add_executable(
 
 target_include_directories(
     ${PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/tests/auto/foundation/common ${CMAKE_BINARY_DIR}/tests/auto
+    PRIVATE ${CMAKE_SOURCE_DIR}/tests/auto/foundation/common ${CMAKE_SOURCE_DIR}/3rdparty/fakeit
 )
 
 target_link_libraries(
