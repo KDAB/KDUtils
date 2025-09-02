@@ -1,7 +1,7 @@
 /*
  *  This file is part of KDUtils.
  *
- *  SPDX-FileCopyrightText: 2018 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+ *  SPDX-FileCopyrightText: 2025 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
  *  Author: Anton Kreuzkamp <anton.kreuzkamp@kdab.com>
  *  Author: Paul Lemire <paul.lemire@kdab.com>
  *

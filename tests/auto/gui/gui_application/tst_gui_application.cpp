@@ -1,7 +1,7 @@
 /*
  *  This file is part of KDUtils.
  *
- *  SPDX-FileCopyrightText: 2018 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
+ *  SPDX-FileCopyrightText: 2025 Klarälvdalens Datakonsult AB, a KDAB Group company <info@kdab.com>
  *  Author: Paul Lemire <paul.lemire@kdab.com>
  *  Author: Anton Kreuzkamp <anton.kreuzkamp@kdab.com>
  *
@@ -20,21 +20,11 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include "../../foundation/common/event_mockups.h"
+#include <event_mockups.h>
+#include <utils.h>
 
 using namespace KDFoundation;
 using namespace KDGui;
-
-namespace {
-auto skipOnMacOS()
-{
-#if defined(PLATFORM_MACOS)
-    return doctest::skip(true);
-#else
-    return doctest::skip(false);
-#endif
-}
-} // namespace
 
 TEST_CASE("Creation")
 {
@@ -101,7 +91,7 @@ TEST_CASE("Main event loop")
     }
 }
 
-TEST_CASE("Worker thread event loop" * doctest::timeout(120 /* seconds */) * skipOnMacOS())
+TEST_CASE("Worker thread event loop" * doctest::timeout(120 /* seconds */) * shouldFailOnMacOS())
 {
     spdlog::set_level(spdlog::level::debug);
 

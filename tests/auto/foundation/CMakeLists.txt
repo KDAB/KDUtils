@@ -10,7 +10,7 @@
 
 project(KDFoundation-Tests)
 
-include_directories(./common)
+include_directories(../common)
 
 # add a test with the specified name
 function(add_core_test name sources)

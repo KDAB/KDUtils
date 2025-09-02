@@ -24,18 +24,8 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
-#include "../common/event_mockups.h"
-
-namespace {
-auto skipOnMacOS()
-{
-#if defined(PLATFORM_MACOS)
-    return doctest::skip(true);
-#else
-    return doctest::skip(false);
-#endif
-}
-} // namespace
+#include <event_mockups.h>
+#include <utils.h>
 
 using namespace KDFoundation;
 
@@ -293,7 +283,7 @@ TEST_CASE("Main event loop")
     }
 }
 
-TEST_CASE("Worker thread event loop" * skipOnMacOS())
+TEST_CASE("Worker thread event loop" * shouldFailOnMacOS())
 {
     spdlog::set_level(spdlog::level::debug);
 
