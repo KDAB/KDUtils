@@ -27,10 +27,27 @@ using namespace KDFoundation;
 
 CoreApplication *CoreApplication::ms_application = nullptr;
 
-CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration)
+namespace {
+std::unique_ptr<AbstractPlatformIntegration> createPlatformIntegration()
+{
+// Create a platform integration
+#if defined(PLATFORM_LINUX)
+    return std::make_unique<LinuxPlatformIntegration>();
+#elif defined(PLATFORM_WIN32)
+    return std::make_unique<Win32PlatformIntegration>();
+#elif defined(PLATFORM_MACOS)
+    return std::make_unique<MacOSPlatformIntegration>();
+#else
+    static_assert(false, "No valid platform integration could be found.");
+#endif
+}
+} // namespace
+
+CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration, std::unique_ptr<KDFoundation::AbstractPlatformEventLoop> &&platformEventLoop)
     : m_defaultLogger{ KDUtils::Logger::logger("default_log", spdlog::level::info) }
-    , m_platformIntegration{ std::move(platformIntegration) }
+    , m_platformIntegration{ platformIntegration ? std::move(platformIntegration) : createPlatformIntegration() }
     , m_logger{ KDUtils::Logger::logger("core_application") }
+    , m_eventLoop{ platformEventLoop ? std::move(platformEventLoop) : m_platformIntegration->createPlatformEventLoop() }
 {
     assert(ms_application == nullptr);
     ms_application = this;
@@ -41,25 +58,7 @@ CoreApplication::CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&
     if (const char *display = std::getenv("DISPLAY")) // NOLINT(concurrency-mt-unsafe)
         SPDLOG_LOGGER_INFO(m_logger, "DISPLAY={}", display);
 
-    // Create a default postman object
-    m_postman = std::make_unique<Postman>();
-
-    // Create a platform integration
-    if (!m_platformIntegration) {
-#if defined(PLATFORM_LINUX)
-        m_platformIntegration = std::make_unique<LinuxPlatformIntegration>();
-#elif defined(PLATFORM_WIN32)
-        m_platformIntegration = std::make_unique<Win32PlatformIntegration>();
-#elif defined(PLATFORM_MACOS)
-        m_platformIntegration = std::make_unique<MacOSPlatformIntegration>();
-#endif
-    }
-
-    // Ask the platform integration to create us a suitable event loop
-    assert(m_platformIntegration);
-    m_platformEventLoop = m_platformIntegration->createPlatformEventLoop();
     m_platformIntegration->init();
-    m_platformEventLoop->setPostman(m_postman.get());
 }
 
 CoreApplication::~CoreApplication()
@@ -68,60 +67,34 @@ CoreApplication::~CoreApplication()
     // and immediately return after processing events (timeout = 0).
     processEvents(0);
 
-    // Destroy the event loop and platform integration before removing the app instance
-    m_platformEventLoop = std::unique_ptr<AbstractPlatformEventLoop>();
-    m_platformIntegration = std::unique_ptr<AbstractPlatformIntegration>();
+    // Destroy the platform integration before removing the app instance
+    m_platformIntegration.reset();
     ms_application = nullptr;
 }
 
 std::shared_ptr<KDBindings::ConnectionEvaluator> CoreApplication::connectionEvaluator()
 {
-    return eventLoop()->connectionEvaluator();
+    return m_eventLoop.connectionEvaluator();
 }
 
 void CoreApplication::postEvent(EventReceiver *target, std::unique_ptr<Event> &&event)
 {
-    assert(target != nullptr);
-    assert(event->type() != Event::Type::Invalid);
-    m_eventQueue.push(target, std::forward<std::unique_ptr<Event>>(event));
-    m_platformEventLoop->wakeUp();
+    m_eventLoop.postEvent(target, std::forward<std::unique_ptr<Event>>(event));
 }
 
 void CoreApplication::sendEvent(EventReceiver *target, Event *event)
 {
-    SPDLOG_LOGGER_TRACE(m_logger, "{}()", __FUNCTION__);
-    m_postman->deliverEvent(target, event);
+    m_eventLoop.sendEvent(target, event);
 }
 
 void CoreApplication::processEvents(int timeout)
 {
-    // Deliver any events that have already been posted
-    for (size_t eventIndex = 0, eventCount = m_eventQueue.size(); eventIndex < eventCount; ++eventIndex) {
-        auto postedEvent = m_eventQueue.tryPop();
-        if (!postedEvent)
-            break;
-        const auto target = postedEvent->target();
-        const auto ev = postedEvent->wrappedEvent();
-
-        m_postman->deliverEvent(target, ev);
-    }
-
-    // Poll/wait for new events
-    if (!m_platformEventLoop)
-        return;
-    m_platformEventLoop->waitForEvents(timeout);
+    m_eventLoop.processEvents(timeout);
 }
 
 int CoreApplication::exec()
 {
-    if (!m_platformEventLoop)
-        return 1;
-
-    while (!m_quitRequested)
-        processEvents(-1);
-    m_quitRequested = false;
-
-    return 0;
+    return m_eventLoop.exec();
 }
 
 void CoreApplication::quit()
@@ -137,12 +110,7 @@ AbstractPlatformIntegration *CoreApplication::platformIntegration()
 void CoreApplication::event(EventReceiver *target, Event *event)
 {
     if (event->type() == Event::Type::Quit) {
-        // After setting the quit flag to true, we must wake up the event loop once more,
-        // because processEvents() goes back into waitForEvents() after processing the
-        // queued events. Without the wakeUp() call it would wait until some other event
-        // woke it up again. Let's kick it ourselves.
-        m_quitRequested = true;
-        m_platformEventLoop->wakeUp();
+        m_eventLoop.quit();
         event->setAccepted(true);
     }
 

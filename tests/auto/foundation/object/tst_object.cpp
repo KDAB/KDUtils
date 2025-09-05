@@ -23,6 +23,7 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <doctest.h>
+#include <utils.h>
 
 using namespace KDFoundation;
 
@@ -407,6 +408,61 @@ TEST_CASE("Deferred object destruction")
         delete app;
         REQUIRE(objectDestroyedSpy.count() == 1);
         REQUIRE(std::get<0>(objectDestroyedSpy.args()) == obj);
+    }
+}
+
+TEST_CASE("Threaded object destruction" * skipOnMacOS())
+{
+    SUBCASE("Can call deleteLater in worker thread")
+    {
+        const CoreApplication app;
+
+        auto runWorkerThread = []() {
+            EventLoop loop;
+            auto obj = new Object();
+
+            SignalSpy<Object *> objectDestroyedSpy(obj->destroyed);
+            obj->deleteLater();
+
+            REQUIRE(objectDestroyedSpy.count() == 0);
+            loop.processEvents();
+            REQUIRE(objectDestroyedSpy.count() == 1);
+            REQUIRE(std::get<0>(objectDestroyedSpy.args()) == obj);
+        };
+        std::thread t1(runWorkerThread);
+
+        t1.join();
+    }
+
+    SUBCASE("Object destruction cleans up event queue")
+    {
+        CoreApplication app;
+
+        class EventObject : public KDFoundation::Object
+        {
+        public:
+            void event(EventReceiver *, Event *ev) override
+            {
+                if (ev->type() == KDFoundation::Event::Type::Update) {
+                    REQUIRE(false);
+                }
+            }
+        };
+
+        auto runWorkerThread = [&app]() {
+            EventLoop loop;
+
+            auto obj = std::make_unique<EventObject>();
+            app.postEvent(obj.get(), std::make_unique<KDFoundation::UpdateEvent>());
+            loop.postEvent(obj.get(), std::make_unique<KDFoundation::UpdateEvent>());
+
+            obj.reset();
+
+            loop.processEvents();
+        };
+        std::thread t1(runWorkerThread);
+
+        t1.join();
     }
 }
 
