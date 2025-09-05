@@ -413,7 +413,7 @@ TEST_CASE("Deferred object destruction")
 
 TEST_CASE("Threaded object destruction" * skipOnMacOS())
 {
-    SUBCASE("Can call deleteLater from worker thread")
+    SUBCASE("Can call deleteLater in worker thread")
     {
         const CoreApplication app;
 
