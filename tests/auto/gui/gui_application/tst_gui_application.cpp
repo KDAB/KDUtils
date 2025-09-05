@@ -225,7 +225,6 @@ TEST_CASE("Worker thread event loop" * doctest::timeout(120 /* seconds */) * ski
                 EventLoop loop;
 
                 auto obj = std::make_unique<RecursiveEventPosterObject>(std::this_thread::get_id());
-                // obj->requestUpdate();
                 eventPosterObj = obj.get();
 
                 {
