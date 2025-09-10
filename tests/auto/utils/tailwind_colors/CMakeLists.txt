@@ -8,19 +8,9 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-add_executable(
-    tst_tailwind_colors
-    tst_tailwind_colors.cpp
+project(
+    test-utils-tailwind-colors
+    VERSION 0.1
+    LANGUAGES CXX
 )
-target_link_libraries(
-    tst_tailwind_colors
-    PRIVATE KDUtils doctest::doctest
-)
-doctest_discover_tests(
-    tst_tailwind_colors
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
-)
+add_utils_test(${PROJECT_NAME} tst_tailwind_colors.cpp)
