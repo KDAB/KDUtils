@@ -22,6 +22,7 @@
 #endif
 
 #include <cassert>
+#include <stdexcept>
 
 using namespace KDFoundation;
 
@@ -37,6 +38,8 @@ std::unique_ptr<AbstractPlatformIntegration> createPlatformIntegration()
     return std::make_unique<Win32PlatformIntegration>();
 #elif defined(PLATFORM_MACOS)
     return std::make_unique<MacOSPlatformIntegration>();
+#elif defined(PLATFORM_ANDROID)
+    throw std::runtime_error("Direct creation of CoreApplication not supported on android. Use KDGui::GuiApplication");
 #else
     static_assert(false, "No valid platform integration could be found.");
 #endif
