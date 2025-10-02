@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.16)
 
 # vcpkg manifest mode
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
 endif()
 
 option(KDUTILS_BUILD_EXAMPLES "Build examples" ON)
