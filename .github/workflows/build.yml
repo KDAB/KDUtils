@@ -32,10 +32,6 @@ jobs:
         link_type:
           - static
           - shared
-
-    env:
-      MOSQUITTO_VERSION: 2.0.20
-
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -56,19 +52,7 @@ jobs:
           sudo apt install -y libxkbcommon-dev libxcb-xkb-dev \
           libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
           libwayland-dev xvfb ninja-build \
-          libmosquitto-dev gcovr
-
-      - name: Download mosquitto (MacOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew install mosquitto
-
-      - name: Download mosquitto (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          curl --no-progress-meter --location --remote-name `
-            https://mosquitto.org/files/binary/win64/mosquitto-$env:MOSQUITTO_VERSION-install-windows-x64.exe
-          & .\mosquitto-$env:MOSQUITTO_VERSION-install-windows-x64.exe /S
+          gcovr
 
       - name: Configure project
         run: >
