@@ -39,6 +39,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Install ninja-build tool
         if: ${{ runner.os != 'Linux' }}

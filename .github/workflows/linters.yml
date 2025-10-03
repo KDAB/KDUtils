@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Install ninja-build tool
         if: runner.os == 'Windows'
@@ -66,6 +68,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Install Cppcheck
         run: sudo apt update -qq && sudo apt install -y cppcheck
