@@ -11,6 +11,8 @@
 cmake_minimum_required(VERSION 3.16)
 
 # vcpkg manifest mode
+include(cmake/KDUtilsFunctions.cmake)
+kdutils_check_submodule_exists(vcpkg vcpkg)
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
 endif()
