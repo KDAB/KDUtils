@@ -26,6 +26,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Checkout ci-release-tools
         run: |
