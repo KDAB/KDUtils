@@ -77,7 +77,7 @@ jobs:
           cppcheck --quiet --language=c++ --force --inline-suppr
           --enable=warning,performance,portability,information
           --disable=missingInclude  --check-level=exhaustive
-          -i build --library=std.cfg --error-exitcode=42 .
+          -i build -i vcpkg --library=std.cfg --error-exitcode=42 .
 
           if($LASTEXITCODE -eq 42) {
             echo "::error title=Cppcheck failed::See job log for details"
