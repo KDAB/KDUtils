@@ -37,12 +37,13 @@ jobs:
                                                                 # We remove the pinned CMake if it's installed so commands below can succeed
                                                                 # TODO: remove when not needed anymore
           brew tap KDAB/tap
-          brew install fmt spdlog KDBindings mosquitto
+          brew install doctest fmt spdlog KDBindings mosquitto
 
       - name: Configure project
         run: >
           cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Debug -G Ninja
           -DKDUTILS_BUILD_TESTS=ON
+          -DKDUTILS_USE_EXTERNAL_DEPENDENCIES=ON
           -DBUILD_SHARED_LIBS=${{ matrix.shared }}
 
       - name: Check if external dependencies were used

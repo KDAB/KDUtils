@@ -47,7 +47,7 @@ add_library(
 target_link_libraries(
     KDUtils
     PUBLIC spdlog::spdlog
-    PRIVATE mio::mio whereami::whereami
+    PRIVATE mio::mio
 )
 
 if(ANDROID)
@@ -58,6 +58,13 @@ target_include_directories(
     KDUtils
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../> $<INSTALL_INTERFACE:include/>
 )
+
+if(NOT TARGET whereami::whereami)
+    target_include_directories(KDUtils PRIVATE ${whereami_SOURCE_DIR}/src)
+    target_sources(KDUtils PRIVATE ${whereami_SOURCE_DIR}/src/whereami.c)
+else()
+    target_link_libraries(KDUtils PRIVATE whereami::whereami)
+endif()
 
 set_target_properties(
     KDUtils

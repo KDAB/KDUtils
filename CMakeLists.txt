@@ -10,11 +10,17 @@
 
 cmake_minimum_required(VERSION 3.16)
 
+option(KDUTILS_USE_EXTERNAL_DEPENDENCIES
+       "Assume all project dependencies are available on the system. Don't fetch through vcpkg." OFF
+)
+
 # vcpkg manifest mode
-include(cmake/KDUtilsFunctions.cmake)
-kdutils_check_submodule_exists(vcpkg vcpkg)
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
+if(NOT KDUTILS_USE_EXTERNAL_DEPENDENCIES)
+    if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+        include(cmake/KDUtilsFunctions.cmake)
+        kdutils_check_submodule_exists(vcpkg vcpkg)
+        set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
+    endif()
 endif()
 
 option(KDUTILS_BUILD_EXAMPLES "Build examples" ON)
