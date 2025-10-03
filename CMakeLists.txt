@@ -9,13 +9,14 @@
 #
 
 cmake_minimum_required(VERSION 3.16)
-project(
-    KDUtils
-    DESCRIPTION "A set of C++ helpers and wrappers around the C++ standard library"
-    LANGUAGES CXX C
-    VERSION 0.1.10
-    HOMEPAGE_URL "https://github.com/KDAB/KDUtils"
-)
+
+# vcpkg manifest mode
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake)
+endif()
+
+option(KDUTILS_BUILD_EXAMPLES "Build examples" ON)
+option(KDUTILS_BUILD_MQTT_SUPPORT "EXPERIMENTAL: Build KDMqtt" OFF)
 
 if(ANDROID)
     option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
@@ -39,7 +40,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 cmake_policy(SET CMP0090 NEW) # Stop export(PACKAGE) from modifying the system-wide cmake package system
 cmake_policy(SET CMP0117 NEW) # Do not add /GR to CMAKE_CXX_FLAGS
 
-option(KDUTILS_BUILD_EXAMPLES "Build examples" ON)
+# VCPKG manifest must be set before the call to project
+if(KDUTILS_BUILD_MQTT_SUPPORT)
+    list(APPEND VCPKG_MANIFEST_FEATURES "mqtt")
+endif()
+
+if(KDUTILS_BUILD_TESTS)
+    list(APPEND VCPKG_MANIFEST_FEATURES "testing")
+endif()
+
+project(
+    KDUtils
+    DESCRIPTION "A set of C++ helpers and wrappers around the C++ standard library"
+    LANGUAGES CXX C
+    VERSION 0.1.10
+    HOMEPAGE_URL "https://github.com/KDAB/KDUtils"
+)
 
 include(FeatureSummary)
 include(CMakeDependentOption)
@@ -47,18 +63,6 @@ include(cmake/dependencies.cmake)
 include(GenerateExportHeader)
 include(GNUInstallDirs)
 include(CTest)
-
-if(UNIX)
-    cmake_dependent_option(
-        KDUTILS_BUILD_MQTT_SUPPORT
-        "EXPERIMENTAL: Build KDMqtt"
-        ON
-        "Mosquitto_FOUND"
-        OFF
-    )
-else()
-    option(KDUTILS_BUILD_MQTT_SUPPORT "EXPERIMENTAL: Build KDMqtt" OFF)
-endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     option(KDUTILS_CODE_COVERAGE "Code Coverage" OFF)
