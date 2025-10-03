@@ -23,7 +23,7 @@ add_library(
 
 target_link_libraries(
     KDMqtt
-    PUBLIC KDUtils::KDFoundation Mosquitto::Mosquitto
+    PUBLIC KDUtils::KDFoundation ${MOSQUITTO_LIBRARIES}
 )
 
 target_include_directories(
