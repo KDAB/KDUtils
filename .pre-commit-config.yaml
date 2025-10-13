@@ -33,6 +33,6 @@ repos:
     exclude: ^(3rdParty/|common/ui/resources/licenses/)
     files: \.(md|mdown|markdown)$
 - repo: https://github.com/fsfe/reuse-tool
-  rev: v5.1.1
+  rev: v6.1.2
   hooks:
   - id: reuse
