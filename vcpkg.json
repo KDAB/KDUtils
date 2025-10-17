@@ -4,7 +4,7 @@
     "description": "KD Utilities Library - Core utilities and helper functions",
     "homepage": "https://github.com/KDAB/kdutils",
     "license": "MIT",
-    "supports": "!(uwp | arm)",
+    "supports": "(windows | linux | android | osx) & (arm | x86 | x64)",
     "dependencies": [
         {
             "name": "spdlog",
