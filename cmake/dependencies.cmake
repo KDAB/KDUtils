@@ -104,3 +104,54 @@ endif()
 
 # mosquitto library
 find_package(Mosquitto QUIET)
+
+# OpenSSL library
+if(KDUTILS_BUILD_NETWORK_SUPPORT)
+    find_package(OpenSSL 3.0.0 QUIET)
+    if(NOT TARGET OpenSSL::SSL)
+        message(FATAL_ERROR "OpenSSL 3.0.0 or higher not found. Please install OpenSSL 3.0.0 or later.")
+    endif()
+
+    # c-ares library for asynchronous DNS resolution
+    find_package(c-ares QUIET)
+    if(NOT TARGET c-ares::cares)
+        FetchContent_Declare(
+            c-ares
+            GIT_REPOSITORY https://github.com/c-ares/c-ares.git
+            GIT_TAG 42ddbc14ec008e738fa44aa2c16e74cad93742c2 # Includes fix for building with clang on Windows
+        )
+        set(CARES_STATIC ON)
+        set(CARES_SHARED OFF)
+        set(CARES_BUILD_TOOLS OFF)
+        set(CARES_INSTALL ON)
+        FetchContent_MakeAvailable(c-ares)
+    endif()
+
+    # llhttp library
+    find_package(llhttp QUIET)
+    if(NOT TARGET llhttp)
+        FetchContent_Declare(llhttp URL "https://github.com/nodejs/llhttp/archive/refs/tags/release/v9.2.1.tar.gz")
+
+        set(BUILD_SHARED_LIBS
+            OFF
+            CACHE INTERNAL ""
+        )
+        set(BUILD_STATIC_LIBS
+            ON
+            CACHE INTERNAL ""
+        )
+
+        FetchContent_MakeAvailable(llhttp)
+    endif()
+
+    # nlohmann json library
+    find_package(nlohmann_json QUIET)
+    if(NOT TARGET nlohmann_json)
+        FetchContent_Declare(
+            json
+            GIT_REPOSITORY https://github.com/nlohmann/json.git
+            GIT_TAG 9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03 # v3.11.3
+        )
+        FetchContent_MakeAvailable(json)
+    endif()
+endif()

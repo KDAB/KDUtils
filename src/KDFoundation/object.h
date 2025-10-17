@@ -95,7 +95,7 @@ public:
     void deleteLater();
 
     void setObjectName(const std::string &objectName) { m_objectName = objectName; }
-    std::string objectName() const { return m_objectName; }
+    const std::string &objectName() const { return m_objectName; }
 
     void event(EventReceiver *target, Event *ev) override;
 

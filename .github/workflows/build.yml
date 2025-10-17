@@ -14,18 +14,25 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.platform.os }}
     strategy:
       fail-fast: true
       matrix:
-        os:
-          - ubuntu-24.04
-          - ubuntu-22.04
-          - ubuntu-24.04-arm
-          - windows-2022
-          - macos-13
-          - macos-14
-          - macos-15
+        platform:
+          - os: ubuntu-24.04
+            triplet: x64-linux-release
+          - os: ubuntu-22.04
+            triplet: x64-linux-release
+          - os: ubuntu-24.04-arm
+            triplet: arm64-linux-release
+          - os: windows-2022
+            triplet: x64-windows-release
+          - os: macos-13
+            triplet: x64-osx-release
+          - os: macos-14
+            triplet: arm64-osx-release
+          - os: macos-15
+            triplet: arm64-osx-release
         build_type:
           - Debug
           - Release
@@ -54,7 +61,8 @@ jobs:
           sudo apt install -y libxkbcommon-dev libxcb-xkb-dev \
           libxkbcommon-x11-dev wayland-scanner++ wayland-protocols \
           libwayland-dev xvfb ninja-build \
-          libmosquitto-dev gcovr
+          libmosquitto-dev gcovr \
+          linux-libc-dev
 
       - name: Download mosquitto (MacOS)
         if: runner.os == 'macOS'
@@ -68,6 +76,14 @@ jobs:
             https://mosquitto.org/files/binary/win64/mosquitto-$env:MOSQUITTO_VERSION-install-windows-x64.exe
           & .\mosquitto-$env:MOSQUITTO_VERSION-install-windows-x64.exe /S
 
+      - name: Set up vcpkg
+        id: vcpkg
+        uses: johnwason/vcpkg-action@v6
+        with:
+          token: ${{ github.token }}
+          triplet: ${{ matrix.platform.triplet }}
+          manifest-dir: ${{ github.workspace }}
+
       - name: Configure project
         run: >
           cmake -S . -B ./build -G Ninja
@@ -75,6 +91,10 @@ jobs:
           -DKDUTILS_CODE_COVERAGE=${{ matrix.build_type == 'Debug' && runner.os == 'Linux' }}
           -DKDUTILS_BUILD_TESTS=${{ matrix.build_type == 'Debug' }}
           -DBUILD_SHARED_LIBS=${{ matrix.link_type == 'shared' }}
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+          -DVCPKG_TARGET_TRIPLET=${{ matrix.platform.triplet }}
+          -DVCPKG_MANIFEST_MODE=OFF
+          ${{ steps.vcpkg.outputs.vcpkg-cmake-config }}
 
       - name: Build Project
         run: cmake --build ./build

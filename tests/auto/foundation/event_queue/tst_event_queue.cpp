@@ -28,7 +28,6 @@ static_assert(!std::is_copy_assignable<EventQueue>{});
 static_assert(!std::is_move_constructible<EventQueue>{});
 static_assert(!std::is_move_assignable<EventQueue>{});
 
-namespace {
 class MyEvent : public Event
 {
 public:
@@ -52,6 +51,7 @@ public:
     int m_y;
 };
 
+namespace {
 void populateEventQueueWithNEvents(EventQueue &eventQueue, int n, std::vector<PayloadEvent *> &events, std::vector<std::unique_ptr<Object>> &targets)
 {
     for (int i = 0; i < n; ++i) {

@@ -8,20 +8,6 @@
 # Contact KDAB at <info@kdab.com> for commercial licensing options.
 #
 
-add_feature_info(KDUtils-Test ON "Build KDUtils Tests")
-
-include(doctest)
-
-add_subdirectory(bytearray)
-add_subdirectory(color)
-add_subdirectory(file)
-add_subdirectory(dir)
-add_subdirectory(elapsedtimer)
-add_subdirectory(flags)
-add_subdirectory(signal)
-add_subdirectory(url)
-add_subdirectory(tailwind_colors)
-
 if(KDUTILS_CODE_COVERAGE)
     include(${PROJECT_SOURCE_DIR}/cmake/CodeCoverage.cmake)
     setup_target_for_coverage_gcovr_html(
@@ -36,3 +22,32 @@ if(KDUTILS_CODE_COVERAGE)
         "${CMAKE_BINARY_DIR}/src/*"
     )
 endif()
+
+project(KDUtils-Tests)
+
+# Create a test executable linking to the KDUtils library
+function(add_utils_test name sources)
+    add_executable(${name} ${sources})
+
+    target_link_libraries(${name} PRIVATE KDUtils::KDUtils doctest::doctest)
+
+    add_test(NAME ${name} COMMAND $<TARGET_FILE:${name}>)
+    set_tests_properties(${name} PROPERTIES LABELS "Utils")
+
+    if(APPLE)
+        target_compile_options(${name} PRIVATE -Wno-deprecated-declarations)
+    endif()
+endfunction()
+
+add_subdirectory(bytearray)
+add_subdirectory(color)
+add_subdirectory(dir)
+add_subdirectory(elapsedtimer)
+add_subdirectory(file)
+add_subdirectory(flags)
+add_subdirectory(signal)
+add_subdirectory(tailwind_colors)
+add_subdirectory(uri)
+add_subdirectory(url)
+
+add_feature_info(KDUtils-Test ON "Build KDUtils Tests")
