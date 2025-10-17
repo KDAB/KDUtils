@@ -97,21 +97,21 @@ TEST_SUITE("Url")
     {
         {
             // GIVEN
-            KC::Url url = KC::Url::fromLocalFile(StringLiteral("file.txt"));
+            const KC::Url url = KC::Url::fromLocalFile(StringLiteral("file.txt"));
 
             // THEN
             CHECK(url == KC::Url(StringLiteral("file:file.txt")));
         }
         {
             // GIVEN
-            KC::Url url = KC::Url::fromLocalFile(StringLiteral("/home/bruce_w/file.txt"));
+            const KC::Url url = KC::Url::fromLocalFile(StringLiteral("/home/bruce_w/file.txt"));
 
             // THEN
             CHECK(url == KC::Url(StringLiteral("file:///home/bruce_w/file.txt")));
         }
         {
             // GIVEN
-            KC::Url url = KC::Url::fromLocalFile(StringLiteral("file:file.txt"));
+            const KC::Url url = KC::Url::fromLocalFile(StringLiteral("file:file.txt"));
 
             // THEN -> Nothing since url has already a scheme
             CHECK(url == KC::Url(StringLiteral("file:file.txt")));

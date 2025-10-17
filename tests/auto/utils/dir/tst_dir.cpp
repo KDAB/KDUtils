@@ -197,14 +197,14 @@ TEST_SUITE("Dir")
         CHECK(!d.exists());
 
         // WHEN
-        bool wasCreated = d.mkdir();
+        const bool wasCreated = d.mkdir();
 
         // THEN
         CHECK(wasCreated);
         CHECK(d.exists());
 
         // WHEN
-        bool wasRemoved = d.rmdir();
+        const bool wasRemoved = d.rmdir();
 
         // THEN
         CHECK(wasRemoved);
