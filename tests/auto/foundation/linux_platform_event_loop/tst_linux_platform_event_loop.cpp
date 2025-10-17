@@ -49,7 +49,7 @@ TEST_CASE("Register and unregister for events")
     SUBCASE("can register a file descriptor for read notifications")
     {
         LinuxPlatformEventLoop loop;
-        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
+        const bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
 
         REQUIRE(result == true);
     }
@@ -58,7 +58,7 @@ TEST_CASE("Register and unregister for events")
     {
         LinuxPlatformEventLoop loop;
         loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
-        bool result = loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
+        const bool result = loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
 
         REQUIRE(result == true);
     }
@@ -68,7 +68,7 @@ TEST_CASE("Register and unregister for events")
         LinuxPlatformEventLoop loop;
         loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
         loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
-        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
+        const bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Read);
 
         REQUIRE(result == true);
     }
@@ -76,7 +76,7 @@ TEST_CASE("Register and unregister for events")
     SUBCASE("can register a file descriptor for write notifications")
     {
         LinuxPlatformEventLoop loop;
-        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
+        const bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
 
         REQUIRE(result == true);
     }
@@ -85,7 +85,7 @@ TEST_CASE("Register and unregister for events")
     {
         LinuxPlatformEventLoop loop;
         loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
-        bool result = loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
+        const bool result = loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
 
         REQUIRE(result == true);
     }
@@ -95,7 +95,7 @@ TEST_CASE("Register and unregister for events")
         LinuxPlatformEventLoop loop;
         loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
         loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
-        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
+        const bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Write);
 
         REQUIRE(result == true);
     }
@@ -103,7 +103,7 @@ TEST_CASE("Register and unregister for events")
     SUBCASE("can register a file descriptor for exception notifications")
     {
         LinuxPlatformEventLoop loop;
-        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
+        const bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
 
         REQUIRE(result == true);
     }
@@ -112,7 +112,7 @@ TEST_CASE("Register and unregister for events")
     {
         LinuxPlatformEventLoop loop;
         loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
-        bool result = loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
+        const bool result = loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
 
         REQUIRE(result == true);
     }
@@ -122,7 +122,7 @@ TEST_CASE("Register and unregister for events")
         LinuxPlatformEventLoop loop;
         loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
         loop.unregisterFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
-        bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
+        const bool result = loop.registerFileDescriptor(0, FileDescriptorNotifier::NotificationType::Exception);
 
         REQUIRE(result == true);
     }
@@ -131,7 +131,7 @@ TEST_CASE("Register and unregister for events")
     {
         LinuxPlatformEventLoop loop;
         auto notifier = std::make_unique<FileDescriptorNotifier>(0, FileDescriptorNotifier::NotificationType::Read);
-        bool result = loop.registerNotifier(notifier.get());
+        const bool result = loop.registerNotifier(notifier.get());
 
         REQUIRE(result == true);
         REQUIRE(loop.registeredFileDescriptorCount() == 1);
@@ -142,7 +142,7 @@ TEST_CASE("Register and unregister for events")
         LinuxPlatformEventLoop loop;
         auto notifier = std::make_unique<FileDescriptorNotifier>(0, FileDescriptorNotifier::NotificationType::Read);
         loop.registerNotifier(notifier.get());
-        bool result = loop.unregisterNotifier(notifier.get());
+        const bool result = loop.unregisterNotifier(notifier.get());
 
         REQUIRE(result == true);
         REQUIRE(loop.registeredFileDescriptorCount() == 0);
@@ -154,7 +154,7 @@ TEST_CASE("Register and unregister for events")
         auto notifier = std::make_unique<FileDescriptorNotifier>(0, FileDescriptorNotifier::NotificationType::Read);
         loop.registerNotifier(notifier.get());
         loop.unregisterNotifier(notifier.get());
-        bool result = loop.registerNotifier(notifier.get());
+        const bool result = loop.registerNotifier(notifier.get());
 
         REQUIRE(result == true);
         REQUIRE(loop.registeredFileDescriptorCount() == 1);
@@ -179,7 +179,7 @@ TEST_CASE("Register and unregister for events")
             SPDLOG_DEBUG("Failed to create pipe. errno = {}", errno);
             REQUIRE(false);
         }
-        bool result = loop.registerNotifier(notifier.get());
+        const bool result = loop.registerNotifier(notifier.get());
 
         REQUIRE(result == true);
         REQUIRE(loop.registeredFileDescriptorCount() == 1);

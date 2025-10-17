@@ -95,7 +95,7 @@ TEST_SUITE("Flags")
     {
         // GIVEN
         const Flags<Enum> a;
-        Flags<Enum> b(A);
+        const Flags<Enum> b(A);
 
         // THEN
         CHECK(!a);

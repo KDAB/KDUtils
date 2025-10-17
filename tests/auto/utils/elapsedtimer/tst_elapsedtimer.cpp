@@ -38,7 +38,7 @@ TEST_SUITE("ElaspedTimer")
 
         // WHEN
         std::this_thread::sleep_for(500ms);
-        ElapsedTimer::NsecDuration elapsed = t.elapsed();
+        const ElapsedTimer::NsecDuration elapsed = t.elapsed();
 
         // THEN
         CHECK(elapsed >= 500ms);

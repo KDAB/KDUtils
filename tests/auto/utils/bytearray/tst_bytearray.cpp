@@ -82,8 +82,8 @@ TEST_SUITE("ByteArray")
     TEST_CASE("checkCopyCtor")
     {
         // GIVEN
-        ByteArray b(4, 2);
-        ByteArray b2(b);
+        const ByteArray b(4, 2);
+        const ByteArray b2(b); // NOLINT(performance-unnecessary-copy-initialization)
 
         // THEN
         CHECK(b == b2);
@@ -103,8 +103,8 @@ TEST_SUITE("ByteArray")
     TEST_CASE("checkCopyAssigmentOperator")
     {
         // GIVEN
-        ByteArray b(4, 2);
-        ByteArray b2 = b;
+        const ByteArray b(4, 2);
+        const ByteArray b2 = b; // NOLINT(performance-unnecessary-copy-initialization)
 
         // THEN
         CHECK(b == b2);
@@ -290,13 +290,13 @@ TEST_SUITE("ByteArray")
         const ByteArray b("hello");
 
         // WHEN
-        int64_t iu = b.indexOf('u');
+        const int64_t iu = b.indexOf('u');
 
         // THEN
         CHECK(iu == -1);
 
         // WHEN
-        int64_t il = b.indexOf('l');
+        const int64_t il = b.indexOf('l');
 
         // THEN
         CHECK(il == 2);
