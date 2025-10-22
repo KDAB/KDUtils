@@ -11,4 +11,21 @@
 include(CMakeFindDependencyMacro)
 find_dependency(KDFoundation)
 
+# Find Wayland dependencies if needed (KDGui may link against them on Linux)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # Wayland in vcpkg is found via PkgConfig, not CMake config
+    find_dependency(PkgConfig)
+    if(PkgConfig_FOUND)
+        pkg_check_modules(WAYLAND_CLIENT QUIET wayland-client IMPORTED_TARGET)
+        pkg_check_modules(WAYLAND_CURSOR QUIET wayland-cursor IMPORTED_TARGET)
+        # Create aliases to match the expected target names
+        if(WAYLAND_CLIENT_FOUND AND TARGET PkgConfig::WAYLAND_CLIENT)
+            add_library(Wayland::Client ALIAS PkgConfig::WAYLAND_CLIENT)
+        endif()
+        if(WAYLAND_CURSOR_FOUND AND TARGET PkgConfig::WAYLAND_CURSOR)
+            add_library(Wayland::Cursor ALIAS PkgConfig::WAYLAND_CURSOR)
+        endif()
+    endif()
+endif()
+
 include("${CMAKE_CURRENT_LIST_DIR}/KDGuiConfigTargets.cmake")
