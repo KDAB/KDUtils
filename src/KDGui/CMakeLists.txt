@@ -185,7 +185,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
         target_sources(KDGui PRIVATE ${WAYLAND_SOURCES} ${WAYLAND_HEADERS})
         target_include_directories(KDGui PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-        target_link_libraries(KDGui PRIVATE Wayland::Client Wayland::Cursor)
+        target_link_libraries(KDGui PRIVATE $<BUILD_INTERFACE:Wayland::Client> $<BUILD_INTERFACE:Wayland::Cursor>)
 
         list(APPEND HEADERS ${WAYLAND_HEADERS})
         set(KDGUI_PLATFORM_WAYLAND ON)

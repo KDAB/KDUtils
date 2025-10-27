@@ -47,7 +47,7 @@ add_library(
 target_link_libraries(
     KDUtils
     PUBLIC spdlog::spdlog
-    PRIVATE mio::mio
+    PRIVATE $<BUILD_INTERFACE:mio::mio>
 )
 
 if(ANDROID)
@@ -63,7 +63,7 @@ if(NOT TARGET whereami::whereami)
     target_include_directories(KDUtils PRIVATE ${whereami_SOURCE_DIR}/src)
     target_sources(KDUtils PRIVATE ${whereami_SOURCE_DIR}/src/whereami.c)
 else()
-    target_link_libraries(KDUtils PRIVATE whereami::whereami)
+    target_link_libraries(KDUtils PRIVATE $<BUILD_INTERFACE::whereami::whereami>)
 endif()
 
 set_target_properties(
