@@ -13,6 +13,32 @@ on:
       - main
 
 jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    container:
+      image: saschpe/android-ndk:35-jdk23.0.2_7-ndk28.0.13004108-cmake3.31.5
+
+    steps:
+      - name: Install dependencies
+        run: |
+          export CMAKE_TOOLCHAIN_FILE=/opt/android-sdk-linux/ndk/28.0.13004108/build/cmake/android.toolchain.cmake
+          export PATH="/opt/android-sdk-linux/cmake/3.31.5/bin/:/opt/android-sdk-linux/ndk/28.0.13004108/prebuilt/linux-x86_64/bin/:$PATH"
+          export CMAKE_GENERATOR="Ninja"
+          git clone https://github.com/gabime/spdlog && cd spdlog && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/opt/android-sdk-linux/ndk/28.0.13004108/prebuilt/linux-x86_64/ && cd build && ninja install
+          git clone https://github.com/KDAB/KDBindings && cd KDBindings && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/opt/android-sdk-linux/ndk/28.0.13004108/prebuilt/linux-x86_64/ && cd build && ninja install
+
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Build KDUtils
+        run: |
+          export CMAKE_TOOLCHAIN_FILE=/opt/android-sdk-linux/ndk/28.0.13004108/build/cmake/android.toolchain.cmake
+          export PATH="/opt/android-sdk-linux/cmake/3.31.5/bin/:/opt/android-sdk-linux/ndk/28.0.13004108/prebuilt/linux-x86_64/bin/:$PATH"
+          export CMAKE_GENERATOR="Ninja"
+          cmake -S . -B build -DANDROID=ON -DKDUTILS_USE_EXTERNAL_DEPENDENCIES=ON && cmake --build build
+
   build:
     runs-on: ${{ matrix.os }}
     strategy:
