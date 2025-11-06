@@ -157,7 +157,7 @@ void android_main(struct android_app *app)
     KDGui::AndroidPlatformIntegration::s_androidApp = app;
     android_poll_source *source;
     do {
-        if (ALooper_pollAll(0, nullptr, nullptr, (void **)&source) >= 0) {
+        if (ALooper_pollOnce(0, nullptr, nullptr, (void **)&source) >= 0) {
             if (source != nullptr)
                 source->process(app, source);
         }
