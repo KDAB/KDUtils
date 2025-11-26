@@ -26,7 +26,7 @@ struct KDFOUNDATION_API fmt::formatter<glm::vec3> {
     }
 
     template<typename FormatContext>
-    auto format(glm::vec3 const &v, FormatContext &ctx)
+    auto format(glm::vec3 const &v, FormatContext &ctx) const
     {
         return fmt::format_to(ctx.out(), "Vec3({:f}, {:f}, {:f})", v[0], v[1], v[2]);
     }
@@ -41,7 +41,7 @@ struct KDFOUNDATION_API fmt::formatter<glm::vec4> {
     }
 
     template<typename FormatContext>
-    auto format(glm::vec4 const &v, FormatContext &ctx)
+    auto format(glm::vec4 const &v, FormatContext &ctx) const
     {
         return fmt::format_to(ctx.out(), "Vec4({:f}, {:f}, {:f} {:f})", v[0], v[1], v[2], v[3]);
     }
@@ -56,7 +56,7 @@ struct KDFOUNDATION_API fmt::formatter<glm::quat> {
     }
 
     template<typename FormatContext>
-    auto format(glm::quat const &v, FormatContext &ctx)
+    auto format(glm::quat const &v, FormatContext &ctx) const
     {
         return fmt::format_to(ctx.out(), "Quat({:f}, {:f}, {:f} {:f})", v[0], v[1], v[2], v[3]);
     }
@@ -71,7 +71,7 @@ struct KDFOUNDATION_API fmt::formatter<glm::mat4> {
     }
 
     template<typename FormatContext>
-    auto format(glm::mat4 const &v, FormatContext &ctx)
+    auto format(glm::mat4 const &v, FormatContext &ctx) const
     {
         return fmt::format_to(ctx.out(), "Mat4({:f}, {:f}, {:f} {:f}\n     {:f}, {:f}, {:f} {:f}\n     {:f}, {:f}, {:f} {:f}\n     {:f}, {:f}, {:f} {:f})",
                               v[0][0], v[1][0], v[2][0], v[3][0],
