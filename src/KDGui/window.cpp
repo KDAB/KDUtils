@@ -222,9 +222,8 @@ void Window::resizeEvent(ResizeEvent *ev)
     ev->setAccepted(true);
 }
 
-void Window::mousePressEvent(MousePressEvent *ev)
+void Window::mousePressEvent([[maybe_unused]] MousePressEvent *ev)
 {
-    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
@@ -233,9 +232,8 @@ void Window::mousePressEvent(MousePressEvent *ev)
                         ev->yPos());
 }
 
-void Window::mouseReleaseEvent(MouseReleaseEvent *ev)
+void Window::mouseReleaseEvent([[maybe_unused]] MouseReleaseEvent *ev)
 {
-    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
@@ -244,9 +242,8 @@ void Window::mouseReleaseEvent(MouseReleaseEvent *ev)
                         ev->yPos());
 }
 
-void Window::mouseMoveEvent(MouseMoveEvent *ev)
+void Window::mouseMoveEvent([[maybe_unused]] MouseMoveEvent *ev)
 {
-    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() buttons = {} at pos = ({}, {})",
                         __FUNCTION__,
@@ -255,9 +252,8 @@ void Window::mouseMoveEvent(MouseMoveEvent *ev)
                         ev->yPos());
 }
 
-void Window::mouseWheelEvent(MouseWheelEvent *ev)
+void Window::mouseWheelEvent([[maybe_unused]] MouseWheelEvent *ev)
 {
-    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger,
                         "{}() xDelta = {} yDelta = {}",
                         __FUNCTION__,
@@ -265,14 +261,12 @@ void Window::mouseWheelEvent(MouseWheelEvent *ev)
                         ev->yDelta());
 }
 
-void Window::keyPressEvent(KeyPressEvent *ev)
+void Window::keyPressEvent([[maybe_unused]] KeyPressEvent *ev)
 {
-    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger, "{}() key = {}", __FUNCTION__, ev->key());
 }
 
-void Window::keyReleaseEvent(KeyReleaseEvent *ev)
+void Window::keyReleaseEvent([[maybe_unused]] KeyReleaseEvent *ev)
 {
-    KD_UNUSED(ev); // for release builds, debug log isn't compiled in
     SPDLOG_LOGGER_DEBUG(m_logger, "{}() key = {}", __FUNCTION__, ev->key());
 }
