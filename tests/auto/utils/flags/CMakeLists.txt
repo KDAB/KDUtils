@@ -16,11 +16,5 @@ target_link_libraries(
     tst_flags
     PRIVATE KDUtils doctest::doctest
 )
-doctest_discover_tests(
-    tst_flags
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
-)
+add_test(NAME tst_flags COMMAND tst_flags)
+set_tests_properties(tst_flags PROPERTIES LABELS "KDUtils")

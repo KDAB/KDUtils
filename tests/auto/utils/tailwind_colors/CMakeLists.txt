@@ -16,11 +16,5 @@ target_link_libraries(
     tst_tailwind_colors
     PRIVATE KDUtils doctest::doctest
 )
-doctest_discover_tests(
-    tst_tailwind_colors
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
-)
+add_test(NAME tst_tailwind_colors COMMAND tst_tailwind_colors)
+set_tests_properties(tst_tailwind_colors PROPERTIES LABELS "KDUtils")

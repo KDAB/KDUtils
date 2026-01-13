@@ -20,11 +20,5 @@ get_filename_component(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../assets/ ABSO
 target_compile_definitions(
     tst_dir PRIVATE TST_DIR="${CMAKE_RUNTIME_OUTPUT_DIRECTORY}" EXECUTABLE_DIR="$<TARGET_FILE_DIR:tst_dir>"
 )
-doctest_discover_tests(
-    tst_dir
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
-)
+add_test(NAME tst_dir COMMAND tst_dir)
+set_tests_properties(tst_dir PROPERTIES LABELS "KDUtils")
