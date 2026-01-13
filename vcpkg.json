@@ -16,7 +16,7 @@
         },
         {
             "name": "whereami",
-            "version>=": "0.0.1"
+            "version>=": "2024-08-26"
         },
         {
             "name": "mio",
@@ -41,6 +41,13 @@
                     "version>=": "2.0.20"
                 }
             ]
+        }
+    },
+    "configuration": {
+        "default-registry": {
+            "kind": "git",
+            "baseline": "58bb6778689746b6a48c2ee4a2dfdb0b70f681df",
+            "repository": "https://github.com/microsoft/vcpkg"
         }
     }
 }

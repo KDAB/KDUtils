@@ -19,7 +19,11 @@ find_package(KDBindings REQUIRED)
 # available in brew on macOS so the non-vcpkg build would be hard to set up there
 
 # whereami library
-find_package(whereami QUIET)
+find_package(unofficial-whereami QUIET) # vcpkg unofficial package
+if(TARGET unofficial::whereami::whereami)
+    add_library(whereami::whereami ALIAS unofficial::whereami::whereami)
+endif()
+
 if(NOT TARGET whereami::whereami)
     fetchcontent_declare(
         whereami
