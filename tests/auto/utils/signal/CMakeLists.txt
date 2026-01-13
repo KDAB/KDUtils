@@ -16,11 +16,5 @@ target_link_libraries(
     tst_signal
     PRIVATE KDUtils KDUtils::KDFoundation doctest::doctest
 )
-doctest_discover_tests(
-    tst_signal
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
-)
+add_test(NAME tst_signal COMMAND tst_signal)
+set_tests_properties(tst_signal PROPERTIES LABELS "KDUtils")

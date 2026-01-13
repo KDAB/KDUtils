@@ -18,11 +18,5 @@ target_link_libraries(
 )
 get_filename_component(ASSETS_ELAPSEDTIMER ../assets/ ABSOLUTE)
 target_compile_definitions(tst_elapsedtimer PRIVATE ASSETS="${ASSETS_ELAPSEDTIMER}/")
-doctest_discover_tests(
-    tst_elapsedtimer
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
-)
+add_test(NAME tst_elapsedtimer COMMAND tst_elapsedtimer)
+set_tests_properties(tst_elapsedtimer PROPERTIES LABELS "KDUtils")

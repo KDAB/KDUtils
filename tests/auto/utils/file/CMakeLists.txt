@@ -18,11 +18,5 @@ target_link_libraries(
 )
 get_filename_component(ASSETS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../assets/ ABSOLUTE)
 target_compile_definitions(tst_file PRIVATE ASSETS="${ASSETS_DIR}/" TST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/")
-doctest_discover_tests(
-    tst_file
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
-)
+add_test(NAME tst_file COMMAND tst_file)
+set_tests_properties(tst_file PROPERTIES LABELS "KDUtils")

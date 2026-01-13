@@ -16,11 +16,5 @@ target_link_libraries(
     tst_bytearray
     PRIVATE KDUtils doctest::doctest
 )
-doctest_discover_tests(
-    tst_bytearray
-    ADD_LABELS
-    1
-    PROPERTIES
-    LABELS
-    "KDUtils"
-)
+add_test(NAME tst_bytearray COMMAND tst_bytearray)
+set_tests_properties(tst_bytearray PROPERTIES LABELS "KDUtils")
