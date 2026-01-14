@@ -31,7 +31,7 @@ public:
 private:
     void arm(std::chrono::microseconds us);
     void disarm();
-    static void callback(HWND hwnd, UINT uMsg, UINT_PTR timerId, DWORD dwTime);
+    static void CALLBACK callback(HWND hwnd, UINT uMsg, UINT_PTR timerId, DWORD dwTime);
 
     Timer *m_timer;
     KDBindings::ScopedConnection m_timerRunningConnection;

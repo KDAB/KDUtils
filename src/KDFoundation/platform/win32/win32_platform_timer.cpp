@@ -51,7 +51,7 @@ Win32PlatformTimer::~Win32PlatformTimer()
 }
 
 // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
-void Win32PlatformTimer::callback(HWND /*hwnd*/, UINT /*uMsg*/, UINT_PTR timerId, DWORD /*dwTime*/)
+void CALLBACK Win32PlatformTimer::callback(HWND /*hwnd*/, UINT /*uMsg*/, UINT_PTR timerId, DWORD /*dwTime*/)
 {
     auto timer = eventLoop()->timers[timerId];
     assert(timer);
