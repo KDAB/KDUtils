@@ -9,6 +9,7 @@
   Contact KDAB at <info@kdab.com> for commercial licensing options.
 */
 #include "mqtt.h"
+#include "mosquitto_wrapper.h"
 #include <memory>
 #include <spdlog/spdlog.h>
 
@@ -330,16 +331,16 @@ void MqttClient::onPublished(int msgId)
     msgPublished.emit(msgId);
 }
 
-void MqttClient::onMessage(const mosquitto_message *msg)
+void MqttClient::onMessage(const ::mosquitto_message *msg)
 {
     SPDLOG_LOGGER_TRACE(m_logger, "msgId: {}, topic: {}", msg->mid, msg->topic);
 
     Message message{
-        .msgId = msg->mid,
-        .topic = msg->topic,
-        .payload = ByteArray(static_cast<char *>(msg->payload), msg->payloadlen),
-        .qos = static_cast<QOS>(msg->qos),
-        .retain = msg->retain
+        /*.msgId =*/msg->mid,
+        /*.topic =*/msg->topic,
+        /*.payload =*/ByteArray(static_cast<char *>(msg->payload), msg->payloadlen),
+        /*.qos =*/static_cast<QOS>(msg->qos),
+        /*.retain =*/msg->retain
     };
     msgReceived.emit(std::move(message));
 }

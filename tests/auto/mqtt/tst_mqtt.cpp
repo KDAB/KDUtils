@@ -10,6 +10,7 @@
 */
 #include <KDFoundation/core_application.h>
 #include <KDMqtt/mqtt.h>
+#include <KDMqtt/mosquitto_wrapper.h>
 #include <memory>
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
@@ -866,12 +867,12 @@ TEST_SUITE("Mqtt")
             // WHEN
             char topic[]{ "testTopic" }; // NOLINT(modernize-avoid-c-arrays)
             const mosquitto_message msg{
-                .mid = 0,
-                .topic = topic,
-                .payload = nullptr,
-                .payloadlen = 0,
-                .qos = 0,
-                .retain = false,
+                /*.mid =*/0,
+                /*.topic =*/topic,
+                /*.payload =*/nullptr,
+                /*.payloadlen =*/0,
+                /*.qos =*/0,
+                /*.retain =*/false,
             };
             MqttUnitTestHarness::onMessage(mqttClient.get(), &msg);
 

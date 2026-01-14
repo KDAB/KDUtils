@@ -23,8 +23,15 @@ add_library(
 
 target_link_libraries(
     KDMqtt
-    PUBLIC KDUtils::KDFoundation ${MOSQUITTO_LIBRARIES}
+    PUBLIC KDUtils::KDFoundation
 )
+
+if(TARGET unofficial::mosquitto::mosquitto)
+    target_link_libraries(KDMqtt PUBLIC unofficial::mosquitto::mosquitto unofficial::mosquitto::mosquittopp)
+else()
+    target_link_libraries(KDMqtt PUBLIC ${MOSQUITTO_LIBRARIES})
+    target_include_directories(KDMqtt PRIVATE ${MOSQUITTO_INCLUDE_DIRS})
+endif()
 
 target_include_directories(
     KDMqtt

@@ -29,7 +29,7 @@ target_include_directories(
 )
 
 target_link_libraries(
-    ${PROJECT_NAME} KDMqtt doctest::doctest
+    ${PROJECT_NAME} KDUtils::KDMqtt doctest::doctest
 )
 
 add_test(NAME ${PROJECT_NAME} COMMAND $<TARGET_FILE:${PROJECT_NAME}>)

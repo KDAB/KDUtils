@@ -45,5 +45,8 @@ if(NOT TARGET mio::mio)
 endif()
 
 if(KDUTILS_BUILD_MQTT_SUPPORT)
-    find_package(mosquitto REQUIRED)
+    find_package(unofficial-mosquitto QUIET) # vcpkg unofficial package
+    if(NOT TARGET unofficial::mosquitto::mosquitto)
+        find_package(mosquitto REQUIRED) # try to use system package
+    endif()
 endif()

@@ -13,7 +13,6 @@
 #include <KDFoundation/file_descriptor_notifier.h>
 #include <KDFoundation/timer.h>
 #include <KDMqtt/kdmqtt_global.h>
-#include <KDMqtt/mosquitto_wrapper.h>
 #include <KDUtils/bytearray.h>
 #include <KDUtils/file.h>
 #include <KDUtils/flags.h>
@@ -28,10 +27,15 @@
 using namespace KDFoundation;
 using namespace KDUtils;
 
+struct mosquitto_message;
+
 namespace KDMqtt {
 
 constexpr int c_defaultPort = 1883;
 constexpr std::chrono::duration c_defaultKeepAlive = std::chrono::minutes(1);
+
+class MosquittoLib;
+class MosquittoClient;
 
 class IMqttClient;
 
@@ -252,7 +256,7 @@ private:
      * using FileDescriptorNotifiers and having an additional
      * timer to trigger cyclic misc tasks.
      */
-    struct EventLoopHook {
+    struct KDMQTT_TEST_EXPORT EventLoopHook {
     public:
         void init(std::chrono::milliseconds miscTaskInterval, MqttClient *parent);
 
@@ -279,7 +283,7 @@ private:
      * This is also relevant when passing a mosquitto client mock
      * for unit testing.
      */
-    struct MosquittoClientDependency {
+    struct KDMQTT_TEST_EXPORT MosquittoClientDependency {
     public:
         void init(std::unique_ptr<MosquittoClient> &&client, MqttClient *parent);
         MosquittoClient *client();

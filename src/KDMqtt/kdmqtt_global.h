@@ -14,3 +14,4 @@
 #include <KDMqtt/kdmqtt_export.h>
 
 #define KDMQTT_API KDMQTT_EXPORT
+#define KDMQTT_TEST_EXPORT KDMQTT_EXPORT
