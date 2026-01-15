@@ -1,3 +1,5 @@
+* v0.1.13
+  - Fix KDUtilsConfig.cmake dependencies
 * v0.1.12
   - Will be first release to be packaged officially into vpckg
 * v1.0.0 (NOT RELEASED YET)
