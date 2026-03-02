@@ -19,12 +19,12 @@
 
 using namespace KDFoundation;
 
-static_assert(std::is_destructible<Event>{});
-static_assert(!std::is_default_constructible<Event>{});
-static_assert(!std::is_copy_constructible<Event>{});
-static_assert(!std::is_copy_assignable<Event>{});
-static_assert(std::is_nothrow_move_constructible<Event>{});
-static_assert(std::is_nothrow_move_assignable<Event>{});
+static_assert(std::is_destructible<Event>{ });
+static_assert(!std::is_default_constructible<Event>{ });
+static_assert(!std::is_copy_constructible<Event>{ });
+static_assert(!std::is_copy_assignable<Event>{ });
+static_assert(std::is_nothrow_move_constructible<Event>{ });
+static_assert(std::is_nothrow_move_assignable<Event>{ });
 
 class MyEvent : public Event
 {

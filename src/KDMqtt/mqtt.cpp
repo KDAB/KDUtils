@@ -69,7 +69,7 @@ std::shared_ptr<IMqttClient> MqttManager::createClient(const std::string &client
 {
     if (!m_isInitialized) {
         SPDLOG_LOGGER_ERROR(m_logger, "MqttManager is not initialized. Call MqttManager::init() before attempting to create MqttClient objects.");
-        return {};
+        return { };
     }
     auto client = new MqttClient(m_logger, clientId, options);
     return std::shared_ptr<IMqttClient>(client);
@@ -466,8 +466,8 @@ void MqttClient::EventLoopHook::disengage()
     readOpNotifier->triggered.disconnectAll();
     writeOpNotifier->triggered.disconnectAll();
 
-    readOpNotifier = {};
-    writeOpNotifier = {};
+    readOpNotifier = { };
+    writeOpNotifier = { };
 }
 
 bool MqttClient::EventLoopHook::isSetup() const
@@ -524,7 +524,7 @@ std::string MqttClient::SubscriptionsRegistry::registerTopicSubscriptionAndRetur
     auto it = topicByMsgIdOfPendingOperations.find(msgId);
     if (it == topicByMsgIdOfPendingOperations.end()) {
         SPDLOG_LOGGER_ERROR(parent->m_logger, "No pending operation with msgId: {}.", msgId);
-        return {};
+        return { };
     }
 
     const auto topic = it->second;
@@ -542,7 +542,7 @@ std::string MqttClient::SubscriptionsRegistry::unregisterTopicSubscriptionAndRet
     auto it = topicByMsgIdOfPendingOperations.find(msgId);
     if (it == topicByMsgIdOfPendingOperations.end()) {
         SPDLOG_LOGGER_ERROR(parent->m_logger, "No pending operation with msgId: {}.", msgId);
-        return {};
+        return { };
     }
 
     const auto topic = it->second;

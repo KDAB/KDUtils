@@ -81,7 +81,7 @@ public:
 
         // Didn't find a matching child?
         if (childIt == m_children.end())
-            return {};
+            return { };
 
         // Unparent the child and return it along with ownership!
         auto takenChild = std::move(*childIt);

@@ -372,7 +372,7 @@ void LinuxWaylandPlatformInput::pointerFrame(wl_pointer * /*pointer*/)
     if (ev.delta != Position(0, 0)) {
         if (window)
             window->handleMouseMoveRelative(ev.time, ev.delta.x, ev.delta.y);
-        ev.delta = {};
+        ev.delta = { };
     }
 
     if (ev.focusChange && !ev.focus) {
