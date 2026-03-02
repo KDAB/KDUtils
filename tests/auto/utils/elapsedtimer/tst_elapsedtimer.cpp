@@ -23,12 +23,12 @@ TEST_SUITE("ElaspedTimer")
 
     TEST_CASE("init")
     {
-        static_assert(std::is_destructible<ElapsedTimer>{}, "ElapsedTimer should be destructible");
-        static_assert(std::is_default_constructible<ElapsedTimer>{}, "ElapsedTimer should be default constructible");
-        static_assert(std::is_copy_constructible<ElapsedTimer>{}, "ElapsedTimer should be copy constructible");
-        static_assert(std::is_copy_assignable<ElapsedTimer>{}, "ElapsedTimer should copy assignable");
-        static_assert(std::is_move_constructible<ElapsedTimer>{}, "ElapsedTimer should  move constructible");
-        static_assert(std::is_move_assignable<ElapsedTimer>{}, "ElapsedTimer should move assignable");
+        static_assert(std::is_destructible<ElapsedTimer>{ }, "ElapsedTimer should be destructible");
+        static_assert(std::is_default_constructible<ElapsedTimer>{ }, "ElapsedTimer should be default constructible");
+        static_assert(std::is_copy_constructible<ElapsedTimer>{ }, "ElapsedTimer should be copy constructible");
+        static_assert(std::is_copy_assignable<ElapsedTimer>{ }, "ElapsedTimer should copy assignable");
+        static_assert(std::is_move_constructible<ElapsedTimer>{ }, "ElapsedTimer should  move constructible");
+        static_assert(std::is_move_assignable<ElapsedTimer>{ }, "ElapsedTimer should move assignable");
     }
 
     TEST_CASE("checkAutoStarts")

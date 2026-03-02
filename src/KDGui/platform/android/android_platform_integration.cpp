@@ -50,7 +50,7 @@ KDUtils::Dir AndroidPlatformIntegration::standardDir(const KDFoundation::CoreApp
         return KDUtils::Dir("", KDUtils::StorageType::Asset);
     default:
         SPDLOG_WARN("Unsupported standard directory requested");
-        return {};
+        return { };
     }
 }
 

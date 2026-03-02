@@ -70,7 +70,7 @@ ByteArray &ByteArray::operator=(const ByteArray &other)
 ByteArray &ByteArray::operator=(const char *s)
 {
     const size_t len = std::strlen(s);
-    m_data = {};
+    m_data = { };
     m_data.resize(len);
     std::memcpy(m_data.data(), s, len);
     return *this;
@@ -79,7 +79,7 @@ ByteArray &ByteArray::operator=(const char *s)
 ByteArray ByteArray::mid(size_t pos, size_t len) const
 {
     if (pos >= size())
-        return {};
+        return { };
     if (len == 0)
         len = size() - pos;
     len = std::min(len, size());

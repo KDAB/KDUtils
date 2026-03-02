@@ -47,6 +47,6 @@ KDUtils::Dir CocoaPlatformIntegration::standardDir(const KDFoundation::CoreAppli
         return KDUtils::Dir(KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
     default:
         SPDLOG_WARN("Unsupported standard directory requested");
-        return {};
+        return { };
     }
 }

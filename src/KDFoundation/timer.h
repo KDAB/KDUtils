@@ -30,7 +30,7 @@ public:
     KDBindings::Signal<> timeout;
 
     KDBindings::Property<bool> running{ false };
-    KDBindings::Property<std::chrono::microseconds> interval{};
+    KDBindings::Property<std::chrono::microseconds> interval{ };
 
 private:
     std::unique_ptr<AbstractPlatformTimer> m_platformTimer;
