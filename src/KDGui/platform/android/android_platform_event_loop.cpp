@@ -158,7 +158,7 @@ AndroidPlatformIntegration *AndroidPlatformEventLoop::androidPlatformIntegration
 std::unique_ptr<KDFoundation::AbstractPlatformTimer>
 AndroidPlatformEventLoop::createPlatformTimerImpl(KDFoundation::Timer * /*timer*/)
 {
-    return {};
+    return { };
 }
 
 int AndroidPlatformEventLoop::ALooperCallback(int fd, int events, void *data)

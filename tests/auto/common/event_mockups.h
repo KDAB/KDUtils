@@ -82,7 +82,7 @@ private:
 class RecursiveEventPosterObject : public KDFoundation::Object
 {
 public:
-    RecursiveEventPosterObject(std::thread::id expectedThreadId = {}, size_t maxEvents = 1000)
+    RecursiveEventPosterObject(std::thread::id expectedThreadId = { }, size_t maxEvents = 1000)
         : m_expectedThreadId(expectedThreadId)
         , m_maxEvents{ maxEvents }
     {
@@ -113,7 +113,7 @@ protected:
             e->callback();
         }
         if (target == this && ev->type() == KDFoundation::Event::Type::Update) {
-            if (m_expectedThreadId != std::thread::id{}) {
+            if (m_expectedThreadId != std::thread::id{ }) {
                 CHECK(std::this_thread::get_id() == m_expectedThreadId);
             }
             ++m_eventsProcessed;

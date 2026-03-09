@@ -36,7 +36,7 @@ KDUtils::Dir MacOSPlatformIntegration::standardDir(const CoreApplication &app, K
         return KDUtils::Dir(KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
     default:
         SPDLOG_WARN("Unsupported standard directory requested");
-        return {};
+        return { };
     }
 }
 
@@ -49,7 +49,7 @@ std::string KDFoundation::MacOSPlatformIntegration::macAppDataPath(const CoreApp
     auto appName = app.applicationName();
     if (appName.empty()) {
         SPDLOG_CRITICAL("Application name is required to be set in order to generate an Application Data directory path");
-        return {};
+        return { };
     }
 
     const auto orgName = app.organizationName();

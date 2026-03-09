@@ -29,12 +29,12 @@
 
 using namespace KDFoundation;
 
-static_assert(std::is_destructible<CoreApplication>{});
-static_assert(std::is_default_constructible<CoreApplication>{});
-static_assert(!std::is_copy_constructible<CoreApplication>{});
-static_assert(!std::is_copy_assignable<CoreApplication>{});
-static_assert(!std::is_move_constructible<CoreApplication>{});
-static_assert(!std::is_move_assignable<CoreApplication>{});
+static_assert(std::is_destructible<CoreApplication>{ });
+static_assert(std::is_default_constructible<CoreApplication>{ });
+static_assert(!std::is_copy_constructible<CoreApplication>{ });
+static_assert(!std::is_copy_assignable<CoreApplication>{ });
+static_assert(!std::is_move_constructible<CoreApplication>{ });
+static_assert(!std::is_move_assignable<CoreApplication>{ });
 
 TEST_CASE("Creation")
 {

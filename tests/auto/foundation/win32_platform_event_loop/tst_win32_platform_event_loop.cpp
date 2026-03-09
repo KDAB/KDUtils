@@ -32,12 +32,12 @@
 
 using namespace KDFoundation;
 
-static_assert(std::is_destructible<Win32PlatformEventLoop>{});
-static_assert(std::is_default_constructible<Win32PlatformEventLoop>{});
-static_assert(!std::is_copy_constructible<Win32PlatformEventLoop>{});
-static_assert(!std::is_copy_assignable<Win32PlatformEventLoop>{});
-static_assert(!std::is_move_constructible<Win32PlatformEventLoop>{});
-static_assert(!std::is_move_assignable<Win32PlatformEventLoop>{});
+static_assert(std::is_destructible<Win32PlatformEventLoop>{ });
+static_assert(std::is_default_constructible<Win32PlatformEventLoop>{ });
+static_assert(!std::is_copy_constructible<Win32PlatformEventLoop>{ });
+static_assert(!std::is_copy_assignable<Win32PlatformEventLoop>{ });
+static_assert(!std::is_move_constructible<Win32PlatformEventLoop>{ });
+static_assert(!std::is_move_assignable<Win32PlatformEventLoop>{ });
 
 TEST_CASE("Wait for events")
 {
@@ -195,7 +195,7 @@ TEST_CASE("Wait for events")
         // Set up read notifier to receive the data
         FileDescriptorNotifier readNotifier(static_cast<int>(clientSock), FileDescriptorNotifier::NotificationType::Read);
         std::ignore = readNotifier.triggered.connect([&dataReceived](int fd) {
-            std::array<char, 128> buf = {};
+            std::array<char, 128> buf = { };
             recv(fd, buf.data(), 128, 0);
             const int recvSize = recv(fd, buf.data(), buf.size(), 0);
             SPDLOG_INFO("socket test: received {} bytes from the server", recvSize);

@@ -21,12 +21,12 @@ TEST_SUITE("Dir")
 
     TEST_CASE("init")
     {
-        static_assert(std::is_destructible<Dir>{}, "Dir should be destructible");
-        static_assert(std::is_default_constructible<Dir>{}, "Dir should be default constructible");
-        static_assert(std::is_copy_constructible<Dir>{}, "Dir should be copy constructible");
-        static_assert(std::is_copy_assignable<Dir>{}, "Dir should copy assignable");
-        static_assert(std::is_move_constructible<Dir>{}, "Dir should  move constructible");
-        static_assert(std::is_move_assignable<Dir>{}, "Dir should move assignable");
+        static_assert(std::is_destructible<Dir>{ }, "Dir should be destructible");
+        static_assert(std::is_default_constructible<Dir>{ }, "Dir should be default constructible");
+        static_assert(std::is_copy_constructible<Dir>{ }, "Dir should be copy constructible");
+        static_assert(std::is_copy_assignable<Dir>{ }, "Dir should copy assignable");
+        static_assert(std::is_move_constructible<Dir>{ }, "Dir should  move constructible");
+        static_assert(std::is_move_assignable<Dir>{ }, "Dir should move assignable");
     }
 
     TEST_CASE("checkExists")
