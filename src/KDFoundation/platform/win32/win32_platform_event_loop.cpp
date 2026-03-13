@@ -55,7 +55,7 @@ Win32PlatformEventLoop::Win32PlatformEventLoop()
     if (!m_wakeUpEvent)
         SPDLOG_CRITICAL("Failed to create wake up event");
 
-    WNDCLASS wc = { };
+    WNDCLASS wc = {};
     wc.lpfnWndProc = messageWindowProc;
     wc.lpszClassName = s_msgWindowClassName;
     wc.hInstance = GetCurrentModule();

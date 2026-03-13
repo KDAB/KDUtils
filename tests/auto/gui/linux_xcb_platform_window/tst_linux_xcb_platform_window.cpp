@@ -20,12 +20,12 @@
 
 using namespace KDGui;
 
-static_assert(std::is_destructible<LinuxXcbPlatformWindow>{ });
-static_assert(!std::is_default_constructible<LinuxXcbPlatformWindow>{ });
-static_assert(!std::is_copy_constructible<LinuxXcbPlatformWindow>{ });
-static_assert(!std::is_copy_assignable<LinuxXcbPlatformWindow>{ });
-static_assert(std::is_nothrow_move_constructible<LinuxXcbPlatformWindow>{ });
-static_assert(std::is_nothrow_move_assignable<LinuxXcbPlatformWindow>{ });
+static_assert(std::is_destructible<LinuxXcbPlatformWindow>{});
+static_assert(!std::is_default_constructible<LinuxXcbPlatformWindow>{});
+static_assert(!std::is_copy_constructible<LinuxXcbPlatformWindow>{});
+static_assert(!std::is_copy_assignable<LinuxXcbPlatformWindow>{});
+static_assert(std::is_nothrow_move_constructible<LinuxXcbPlatformWindow>{});
+static_assert(std::is_nothrow_move_assignable<LinuxXcbPlatformWindow>{});
 
 TEST_CASE("Creation")
 {

@@ -27,12 +27,12 @@
 
 using namespace KDFoundation;
 
-static_assert(std::is_destructible<Object>{ });
-static_assert(std::is_default_constructible<Object>{ });
-static_assert(!std::is_copy_constructible<Object>{ });
-static_assert(!std::is_copy_assignable<Object>{ });
-static_assert(std::is_nothrow_move_constructible<Object>{ });
-static_assert(std::is_nothrow_move_assignable<Object>{ });
+static_assert(std::is_destructible<Object>{});
+static_assert(std::is_default_constructible<Object>{});
+static_assert(!std::is_copy_constructible<Object>{});
+static_assert(!std::is_copy_assignable<Object>{});
+static_assert(std::is_nothrow_move_constructible<Object>{});
+static_assert(std::is_nothrow_move_assignable<Object>{});
 
 class IntObject : public Object
 {

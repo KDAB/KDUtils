@@ -88,10 +88,10 @@ bool File::remove()
 ByteArray File::readAll()
 {
     if (!isOpen())
-        return { };
+        return {};
     const size_t s = size();
     if (s == 0)
-        return { };
+        return {};
     ByteArray b;
     b.resize(s);
     // Move to beginning and read all

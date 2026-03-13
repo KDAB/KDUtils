@@ -38,7 +38,7 @@ bool Url::isLocalFile() const
 std::string Url::toLocalFile() const
 {
     if (!isLocalFile())
-        return { };
+        return {};
     return m_path + m_fileName;
 }
 

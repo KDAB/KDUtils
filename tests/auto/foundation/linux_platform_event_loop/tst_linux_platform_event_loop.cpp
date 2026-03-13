@@ -29,12 +29,12 @@
 
 using namespace KDFoundation;
 
-static_assert(std::is_destructible<LinuxPlatformEventLoop>{ });
-static_assert(std::is_default_constructible<LinuxPlatformEventLoop>{ });
-static_assert(!std::is_copy_constructible<LinuxPlatformEventLoop>{ });
-static_assert(!std::is_copy_assignable<LinuxPlatformEventLoop>{ });
-static_assert(!std::is_move_constructible<LinuxPlatformEventLoop>{ });
-static_assert(!std::is_move_assignable<LinuxPlatformEventLoop>{ });
+static_assert(std::is_destructible<LinuxPlatformEventLoop>{});
+static_assert(std::is_default_constructible<LinuxPlatformEventLoop>{});
+static_assert(!std::is_copy_constructible<LinuxPlatformEventLoop>{});
+static_assert(!std::is_copy_assignable<LinuxPlatformEventLoop>{});
+static_assert(!std::is_move_constructible<LinuxPlatformEventLoop>{});
+static_assert(!std::is_move_assignable<LinuxPlatformEventLoop>{});
 
 TEST_CASE("Register and unregister for events")
 {

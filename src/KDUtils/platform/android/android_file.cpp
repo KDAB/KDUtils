@@ -87,7 +87,7 @@ bool File::open(std::ios_base::openmode mode)
         close();
     if (m_type == StorageType::Normal) {
         // Android cannot seem to cope with reopening a stream in a different mode
-        m_data->stream = { };
+        m_data->stream = {};
         m_data->stream.open(m_path, mode);
         return m_data->stream.is_open();
     } else {
@@ -142,10 +142,10 @@ bool File::remove()
 ByteArray File::readAll()
 {
     if (!isOpen())
-        return { };
+        return {};
     const size_t s = size();
     if (s == 0)
-        return { };
+        return {};
     ByteArray b;
     b.resize(s);
     // Move to beginning and read all

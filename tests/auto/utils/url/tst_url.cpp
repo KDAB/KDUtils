@@ -27,17 +27,17 @@ TEST_SUITE("Url")
 
     TEST_CASE("init")
     {
-        static_assert(std::is_destructible<KC::Url>{ },
+        static_assert(std::is_destructible<KC::Url>{},
                       "Url should be destructible");
-        static_assert(std::is_default_constructible<KC::Url>{ },
+        static_assert(std::is_default_constructible<KC::Url>{},
                       "Url should be default constructible");
-        static_assert(std::is_copy_constructible<KC::Url>{ },
+        static_assert(std::is_copy_constructible<KC::Url>{},
                       "Url should be copy constructible");
-        static_assert(std::is_copy_assignable<KC::Url>{ },
+        static_assert(std::is_copy_assignable<KC::Url>{},
                       "Url should be copy assignable");
-        static_assert(std::is_move_constructible<KC::Url>{ },
+        static_assert(std::is_move_constructible<KC::Url>{},
                       "Url should be move constructible");
-        static_assert(std::is_move_assignable<KC::Url>{ },
+        static_assert(std::is_move_assignable<KC::Url>{},
                       "Url should be move assignable");
     }
 

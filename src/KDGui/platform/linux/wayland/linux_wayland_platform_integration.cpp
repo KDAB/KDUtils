@@ -143,7 +143,7 @@ KDUtils::Dir LinuxWaylandPlatformIntegration::standardDir(const KDFoundation::Co
         return KDUtils::Dir(KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
     default:
         SPDLOG_WARN("Unsupported standard directory requested");
-        return { };
+        return {};
     }
 }
 

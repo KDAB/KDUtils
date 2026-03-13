@@ -120,7 +120,7 @@ Dir Dir::applicationDir()
         return Dir(appFSPath.parent_path());
     }
 
-    return { };
+    return {};
 }
 
 std::string Dir::fromNativeSeparators(const std::string &path)
@@ -138,7 +138,7 @@ Dir Dir::parent() const
     auto absolutePath = std::filesystem::absolute(m_path);
     if (!absolutePath.has_parent_path()) {
         SPDLOG_CRITICAL("Parent path not found for {}", m_path.generic_u8string());
-        return { };
+        return {};
     }
 
     return Dir(absolutePath.parent_path());

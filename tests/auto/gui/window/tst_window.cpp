@@ -22,12 +22,12 @@
 using namespace KDFoundation;
 using namespace KDGui;
 
-static_assert(std::is_destructible<Window>{ });
-static_assert(std::is_default_constructible<Window>{ });
-static_assert(!std::is_copy_constructible<Window>{ });
-static_assert(!std::is_copy_assignable<Window>{ });
-static_assert(std::is_nothrow_move_constructible<Window>{ });
-static_assert(std::is_nothrow_move_assignable<Window>{ });
+static_assert(std::is_destructible<Window>{});
+static_assert(std::is_default_constructible<Window>{});
+static_assert(!std::is_copy_constructible<Window>{});
+static_assert(!std::is_copy_assignable<Window>{});
+static_assert(std::is_nothrow_move_constructible<Window>{});
+static_assert(std::is_nothrow_move_assignable<Window>{});
 
 TEST_CASE("Creation")
 {

@@ -22,12 +22,12 @@ TEST_SUITE("ByteArray")
 
     TEST_CASE("init")
     {
-        static_assert(std::is_destructible<ByteArray>{ }, "ByteArray should be destructible");
-        static_assert(std::is_default_constructible<ByteArray>{ }, "ByteArray should be default constructible");
-        static_assert(std::is_copy_constructible<ByteArray>{ }, "ByteArray should be copy constructible");
-        static_assert(std::is_copy_assignable<ByteArray>{ }, "ByteArray should be copy assignable");
-        static_assert(std::is_move_constructible<ByteArray>{ }, "ByteArray should be move constructible");
-        static_assert(std::is_move_assignable<ByteArray>{ }, "ByteArray should be move assignable");
+        static_assert(std::is_destructible<ByteArray>{}, "ByteArray should be destructible");
+        static_assert(std::is_default_constructible<ByteArray>{}, "ByteArray should be default constructible");
+        static_assert(std::is_copy_constructible<ByteArray>{}, "ByteArray should be copy constructible");
+        static_assert(std::is_copy_assignable<ByteArray>{}, "ByteArray should be copy assignable");
+        static_assert(std::is_move_constructible<ByteArray>{}, "ByteArray should be move constructible");
+        static_assert(std::is_move_assignable<ByteArray>{}, "ByteArray should be move assignable");
     }
 
     TEST_CASE("checkEmptyCtor")

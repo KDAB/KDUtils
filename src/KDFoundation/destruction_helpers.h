@@ -89,7 +89,7 @@ void registerDestructionHelper(KDBindings::Property<DependencyType *> *property,
             return;
         }
         *connectionHandle = newVal->destroyed.connect([=]() {
-            (*property) = { };
+            (*property) = {};
         });
     });
     if (owner) {

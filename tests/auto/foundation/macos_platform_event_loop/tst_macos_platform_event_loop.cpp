@@ -26,12 +26,12 @@
 
 using namespace KDFoundation;
 
-static_assert(std::is_destructible<MacOSPlatformEventLoop>{ });
-static_assert(std::is_default_constructible<MacOSPlatformEventLoop>{ });
-static_assert(!std::is_copy_constructible<MacOSPlatformEventLoop>{ });
-static_assert(!std::is_copy_assignable<MacOSPlatformEventLoop>{ });
-static_assert(!std::is_move_constructible<MacOSPlatformEventLoop>{ });
-static_assert(!std::is_move_assignable<MacOSPlatformEventLoop>{ });
+static_assert(std::is_destructible<MacOSPlatformEventLoop>{});
+static_assert(std::is_default_constructible<MacOSPlatformEventLoop>{});
+static_assert(!std::is_copy_constructible<MacOSPlatformEventLoop>{});
+static_assert(!std::is_copy_assignable<MacOSPlatformEventLoop>{});
+static_assert(!std::is_move_constructible<MacOSPlatformEventLoop>{});
+static_assert(!std::is_move_assignable<MacOSPlatformEventLoop>{});
 
 TEST_CASE("Wait for events")
 {

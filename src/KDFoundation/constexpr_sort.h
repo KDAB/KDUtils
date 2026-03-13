@@ -60,7 +60,7 @@ constexpr ForwardIt partition(ForwardIt first, ForwardIt last, UnaryPredicate p)
 }
 
 template<class RAIt, class Compare = std::less<>>
-constexpr void quick_sort(RAIt first, RAIt last, Compare cmp = Compare{ })
+constexpr void quick_sort(RAIt first, RAIt last, Compare cmp = Compare{})
 {
     auto const N = std::distance(first, last);
     if (N <= 1)

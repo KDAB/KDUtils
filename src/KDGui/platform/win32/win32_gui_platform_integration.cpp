@@ -49,7 +49,7 @@ KDUtils::Dir Win32GuiPlatformIntegration::standardDir(const KDFoundation::CoreAp
         return KDUtils::Dir(KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
     default:
         SPDLOG_WARN("Unsupported standard directory requested");
-        return { };
+        return {};
     }
 }
 
@@ -66,7 +66,7 @@ bool Win32GuiPlatformIntegration::registerWindowClass(const std::wstring &classN
 
     const auto appInstance = GetModuleHandle(nullptr);
 
-    WNDCLASSEX wc = { };
+    WNDCLASSEX wc = {};
     wc.cbSize = sizeof(wc);
     wc.style = style;
     wc.lpfnWndProc = windowProc;

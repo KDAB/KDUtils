@@ -21,12 +21,12 @@ TEST_SUITE("File")
 
     TEST_CASE("init")
     {
-        static_assert(std::is_destructible<File>{ }, "File should be destructible");
-        static_assert(!std::is_default_constructible<File>{ }, "File should not be default constructible");
-        static_assert(!std::is_copy_constructible<File>{ }, "File should not be copy constructible");
-        static_assert(!std::is_copy_assignable<File>{ }, "File should not be copy assignable");
-        static_assert(!std::is_move_constructible<File>{ }, "File should not be move constructible");
-        static_assert(!std::is_move_assignable<File>{ }, "File should not be move assignable");
+        static_assert(std::is_destructible<File>{}, "File should be destructible");
+        static_assert(!std::is_default_constructible<File>{}, "File should not be default constructible");
+        static_assert(!std::is_copy_constructible<File>{}, "File should not be copy constructible");
+        static_assert(!std::is_copy_assignable<File>{}, "File should not be copy assignable");
+        static_assert(!std::is_move_constructible<File>{}, "File should not be move constructible");
+        static_assert(!std::is_move_assignable<File>{}, "File should not be move assignable");
     }
 
     TEST_CASE("checkExists")

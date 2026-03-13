@@ -17,7 +17,7 @@
 
 namespace KDUtils {
 
-Logger::LoggerFactoryFunction Logger::ms_loggerFactory = { };
+Logger::LoggerFactoryFunction Logger::ms_loggerFactory = {};
 
 std::shared_ptr<spdlog::logger> Logger::logger(const std::string &name, spdlog::level::level_enum defaultLevel)
 {

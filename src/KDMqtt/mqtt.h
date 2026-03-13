@@ -151,7 +151,7 @@ public:
     KDBindings::Property<ConnectionState> connectionState{ ConnectionState::DISCONNECTED };
     KDBindings::Property<SubscriptionState> subscriptionState{ SubscriptionState::UNSUBSCRIBED };
 
-    KDBindings::Property<std::vector<std::string>> subscriptions{ };
+    KDBindings::Property<std::vector<std::string>> subscriptions{};
 
     KDBindings::Signal<int /*msgId*/> msgPublished;
     KDBindings::Signal<const Message /*msg*/> msgReceived;

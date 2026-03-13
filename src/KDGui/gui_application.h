@@ -23,7 +23,7 @@ class KDGUI_API GuiApplication : public KDFoundation::CoreApplication
 public:
     /// @warning if you want to use custom loggers (@see KDUtils::logger::setLoggerFactory ) you
     //  should call it *before* creation of both this class and any platform integration.
-    explicit GuiApplication(std::unique_ptr<AbstractGuiPlatformIntegration> platformIntegration = { });
+    explicit GuiApplication(std::unique_ptr<AbstractGuiPlatformIntegration> platformIntegration = {});
 
     static inline GuiApplication *instance() { return static_cast<GuiApplication *>(ms_application); }
 

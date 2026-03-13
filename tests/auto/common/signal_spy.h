@@ -40,7 +40,7 @@ public:
 
     void clear()
     {
-        m_args = { };
+        m_args = {};
         m_count = 0;
     }
 

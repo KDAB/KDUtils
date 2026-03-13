@@ -96,7 +96,7 @@ KDUtils::Dir LinuxXcbPlatformIntegration::standardDir(const KDFoundation::CoreAp
         return KDUtils::Dir(KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
     default:
         SPDLOG_WARN("Unsupported standard directory requested");
-        return { };
+        return {};
     }
 }
 

@@ -44,7 +44,7 @@ std::string Win32PlatformIntegration::windowsAppDataPath(const CoreApplication &
     auto appName = app.applicationName();
     if (appName.empty()) {
         SPDLOG_CRITICAL("Application name is required to be set in order to generate an Application Data directory path");
-        return { };
+        return {};
     }
 
     const auto orgName = app.organizationName();
@@ -70,7 +70,7 @@ KDUtils::Dir Win32PlatformIntegration::standardDir(const KDFoundation::CoreAppli
         return KDUtils::Dir(KDUtils::Dir::applicationDir().parent().absoluteFilePath("assets"));
     default:
         SPDLOG_WARN("Unsupported standard directory requested");
-        return { };
+        return {};
     }
 }
 Win32PlatformEventLoop *Win32PlatformIntegration::createPlatformEventLoopImpl()

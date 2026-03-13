@@ -35,10 +35,10 @@ class Postman;
 class KDFOUNDATION_API CoreApplication : public Object
 {
 public:
-    KDBindings::Property<std::string> applicationName{ };
-    KDBindings::Property<std::string> organizationName{ };
+    KDBindings::Property<std::string> applicationName{};
+    KDBindings::Property<std::string> organizationName{};
 
-    CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration = { }, std::unique_ptr<KDFoundation::AbstractPlatformEventLoop> &&platformEventLoop = { });
+    CoreApplication(std::unique_ptr<AbstractPlatformIntegration> &&platformIntegration = {}, std::unique_ptr<KDFoundation::AbstractPlatformEventLoop> &&platformEventLoop = {});
     ~CoreApplication() override;
 
     static inline CoreApplication *instance() { return ms_application; }
