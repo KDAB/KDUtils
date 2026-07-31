@@ -38,7 +38,7 @@ jobs:
                                                                 # TODO: remove when not needed anymore
           brew tap KDAB/tap
           brew trust kdab/tap
-          brew install doctest fmt spdlog KDBindings mosquitto
+          brew install doctest fmt spdlog KDBindings mosquitto glm
 
       - name: Configure project
         run: >
