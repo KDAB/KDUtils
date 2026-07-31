@@ -37,6 +37,7 @@ jobs:
                                                                 # We remove the pinned CMake if it's installed so commands below can succeed
                                                                 # TODO: remove when not needed anymore
           brew tap KDAB/tap
+          brew trust kdab/tap
           brew install doctest fmt spdlog KDBindings mosquitto
 
       - name: Configure project
