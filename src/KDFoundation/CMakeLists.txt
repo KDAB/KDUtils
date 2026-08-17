@@ -99,7 +99,7 @@ add_library(
 
 target_link_libraries(
     KDFoundation
-    PUBLIC KDUtils::KDUtils KDAB::KDBindings
+    PUBLIC KDUtils::KDUtils KDAB::KDBindings glm::glm
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")

@@ -28,6 +28,7 @@ jobs:
         run: |
           git clone https://github.com/gabime/spdlog && cd spdlog && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/opt/android-sdk-linux/ndk/28.0.13004108/prebuilt/linux-x86_64/ && cd build && ninja install
           git clone https://github.com/KDAB/KDBindings && cd KDBindings && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/opt/android-sdk-linux/ndk/28.0.13004108/prebuilt/linux-x86_64/ && cd build && ninja install
+          git clone https://github.com/g-truc/glm.git && cd glm && cmake -S . -B build -DCMAKE_INSTALL_PREFIX=/opt/android-sdk-linux/ndk/28.0.13004108/prebuilt/linux-x86_64/ && cd build && ninja install
 
       - name: Checkout sources
         uses: actions/checkout@v4
