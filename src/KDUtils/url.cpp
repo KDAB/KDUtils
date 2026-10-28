@@ -39,7 +39,13 @@ std::string Url::toLocalFile() const
 {
     if (!isLocalFile())
         return {};
-    return m_path + m_fileName;
+    std::string localFile = m_path + m_fileName;
+    // Undo the leading slash fromLocalFile inserts before Windows drive letters
+    // file:///C:/file.txt -> C:/file.txt
+    const bool isWindowsPath = localFile.size() > 2 && localFile[0] == '/' && localFile[2] == ':';
+    if (isWindowsPath)
+        localFile.erase(localFile.begin());
+    return localFile;
 }
 
 std::string Url::scheme() const
