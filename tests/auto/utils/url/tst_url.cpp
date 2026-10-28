@@ -78,6 +78,27 @@ TEST_SUITE("Url")
             CHECK(url.toLocalFile() == StringLiteral("/home/bruce_w/file.txt"));
         }
         {
+            // GIVEN -> Windows path
+            const KC::Url url(StringLiteral("file:///C:/users/bruce_w/file.txt"));
+
+            // THEN
+            CHECK(url.toLocalFile() == StringLiteral("C:/users/bruce_w/file.txt"));
+        }
+        {
+            // GIVEN -> Windows path round trip
+            const KC::Url url = KC::Url::fromLocalFile(StringLiteral("C:/users/bruce_w/file.txt"));
+
+            // THEN
+            CHECK(url.toLocalFile() == StringLiteral("C:/users/bruce_w/file.txt"));
+        }
+        {
+            // GIVEN -> Unix path round trip
+            const KC::Url url = KC::Url::fromLocalFile(StringLiteral("/home/bruce_w/file.txt"));
+
+            // THEN
+            CHECK(url.toLocalFile() == StringLiteral("/home/bruce_w/file.txt"));
+        }
+        {
             // GIVEN -> No scheme
             const KC::Url url(StringLiteral("file.txt"));
 
