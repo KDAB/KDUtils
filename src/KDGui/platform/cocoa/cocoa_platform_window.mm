@@ -249,6 +249,12 @@ KDGui::KeyboardModifiers mapModifiers(NSEventModifierFlags flags)
     const auto height = static_cast<uint32_t>(contentRect.size.height);
     m_platformWindow->handleResize(width, height);
 }
+
+- (void)windowDidChangeBackingProperties:(NSNotification *)notification
+{
+    // The window moved to a screen with a different pixel density
+    m_platformWindow->window()->scaleFactor = static_cast<float>([m_platformWindow->nativeWindow() backingScaleFactor]);
+}
 @end
 
 @interface KDGuiView : NSView {
@@ -429,6 +435,10 @@ bool CocoaPlatformWindow::create()
         [m_nativeWindow setAcceptsMouseMovedEvents:YES];
         [m_nativeWindow setRestorable:NO];
 
+        // Window sizes are in points; scaleFactor gives the pixels per point.
+        // The window has no screen yet, so start from the main screen.
+        m_window->scaleFactor = static_cast<float>([[NSScreen mainScreen] backingScaleFactor]);
+
         [NSApp activateIgnoringOtherApps:YES];
     }
 
@@ -462,6 +472,7 @@ void CocoaPlatformWindow::map()
     @autoreleasepool {
         [m_nativeWindow makeKeyAndOrderFront:nil];
     }
+    m_window->scaleFactor = static_cast<float>([m_nativeWindow backingScaleFactor]);
 }
 
 void CocoaPlatformWindow::unmap()
