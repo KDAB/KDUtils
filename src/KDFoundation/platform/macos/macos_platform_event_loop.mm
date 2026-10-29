@@ -43,9 +43,20 @@ void MacOSPlatformEventLoop::waitForEventsImpl(int timeout)
                 return [NSDate distantPast];
             return [NSDate dateWithTimeIntervalSinceNow:static_cast<double>(timeout) / 1000.0];
         }();
-        NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:expiration inMode:NSDefaultRunLoopMode dequeue:YES];
-        if (event)
-            [NSApp sendEvent:event];
+        int round = 0;
+        // avoid starving the event loop by limiting the number of rounds
+        while (round < 5) {
+            NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:expiration inMode:NSDefaultRunLoopMode dequeue:YES];
+            if (event)
+                [NSApp sendEvent:event];
+            else
+                break;
+            // once we've processed the first round of events, we set the expiration to distant past to ensure we don't block further.
+            if (round == 0) {
+                expiration = [NSDate distantPast];
+            }
+            ++round;
+        }
     }
 }
 
