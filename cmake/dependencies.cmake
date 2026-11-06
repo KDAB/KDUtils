@@ -14,6 +14,7 @@ message(STATUS "Looking for KDUtils dependencies")
 
 find_package(spdlog REQUIRED)
 find_package(KDBindings REQUIRED)
+find_package(glm CONFIG REQUIRED)
 
 # Following two packages are still acquired via fetchcontent because they aren't
 # available in brew on macOS so the non-vcpkg build would be hard to set up there

@@ -14,6 +14,7 @@ on:
           - fmt
           - KDBindings
           - doctest
+          - glm
 
 name: bump dependencies
 
